@@ -53,6 +53,7 @@ public class LockEnforcer
 	{
 		if (client.getLocalPlayer() == null) return;
 		LocalPoint local = client.getLocalPlayer().getLocalLocation();
+		if (local == null) return;
 		WorldPoint world;
 		if (client.isInInstancedRegion())
 		{

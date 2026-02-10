@@ -50,6 +50,11 @@ public class LeagueScapePlugin extends Plugin
 		log.info("LeagueScape started!");
 		eventBus.register(lockEnforcer);
 		pointsService.loadFromConfig();
+		// Apply configured starting points when no persisted state exists (first run)
+		if (pointsService.getEarnedTotal() == 0 && pointsService.getSpentTotal() == 0)
+		{
+			pointsService.setStartingPoints(config.startingPoints());
+		}
 		loadUnlockedAreas();
 		LeagueScapePanel panel = new LeagueScapePanel(this, config, areaGraphService, pointsService);
 		navButton = NavigationButton.builder()

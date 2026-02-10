@@ -88,8 +88,15 @@ public class LeagueScapePanel extends PluginPanel
 		if (plugin.unlockArea(areaId, cost))
 		{
 			refreshPointsLabel();
-			// TODO: refresh unlock buttons (rebuild panel or update list)
+			refreshCurrentAreaLabel(areaId);
 		}
+	}
+
+	private void refreshCurrentAreaLabel(String areaId)
+	{
+		Area area = areaGraphService.getArea(areaId);
+		String displayName = area != null ? area.getDisplayName() : areaId;
+		currentAreaLabel.setText("Current area: " + displayName);
 	}
 
 	public BufferedImage getIcon()

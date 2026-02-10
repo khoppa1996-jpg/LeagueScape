@@ -1,14 +1,12 @@
 package com.leaguescape.points;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import lombok.Getter;
 import net.runelite.client.config.ConfigManager;
 
 /**
  * Tracks points earned and spent. Persists earned total and spent total via ConfigManager.
+ * Instantiated only via LeagueScapePlugin's @Provides so a single instance is used.
  */
-@Singleton
 public class PointsService
 {
 	private static final String CONFIG_GROUP = "leaguescapeState";
@@ -22,7 +20,6 @@ public class PointsService
 
 	private final ConfigManager configManager;
 
-	@Inject
 	public PointsService(ConfigManager configManager)
 	{
 		this.configManager = configManager;
