@@ -11,10 +11,12 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.ui.overlay.OverlayManager;
 
 @Slf4j
 @PluginDescriptor(
-	name = "LeagueScape"
+	name = "LeagueScape",
+	enabledByDefault = true
 )
 public class LeagueScapePlugin extends Plugin
 {
@@ -40,6 +42,15 @@ public class LeagueScapePlugin extends Plugin
 	private com.leaguescape.lock.LockEnforcer lockEnforcer;
 
 	@Inject
+	private com.leaguescape.overlay.LockedRegionOverlay lockedRegionOverlay;
+
+	@Inject
+	private com.leaguescape.overlay.LeagueScapeMapOverlay leagueScapeMapOverlay;
+
+	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
 	private EventBus eventBus;
 
 	private NavigationButton navButton;
@@ -56,6 +67,8 @@ public class LeagueScapePlugin extends Plugin
 			pointsService.setStartingPoints(config.startingPoints());
 		}
 		loadUnlockedAreas();
+		overlayManager.add(lockedRegionOverlay);
+		overlayManager.add(leagueScapeMapOverlay);
 		LeagueScapePanel panel = new LeagueScapePanel(this, config, areaGraphService, pointsService);
 		navButton = NavigationButton.builder()
 			.tooltip("LeagueScape")
@@ -70,6 +83,8 @@ public class LeagueScapePlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		log.info("LeagueScape stopped!");
+		overlayManager.remove(lockedRegionOverlay);
+		overlayManager.remove(leagueScapeMapOverlay);
 		eventBus.unregister(lockEnforcer);
 		if (navButton != null)
 		{
@@ -85,13 +100,6 @@ public class LeagueScapePlugin extends Plugin
 
 	@Provides
 	@Singleton
-	com.leaguescape.area.AreaGraphService provideAreaGraphService()
-	{
-		return new com.leaguescape.area.AreaGraphService();
-	}
-
-	@Provides
-	@Singleton
 	com.leaguescape.points.PointsService providePointsService(ConfigManager configManager)
 	{
 		return new com.leaguescape.points.PointsService(configManager);
@@ -101,6 +109,18 @@ public class LeagueScapePlugin extends Plugin
 	com.leaguescape.lock.LockEnforcer provideLockEnforcer(Client client, com.leaguescape.area.AreaGraphService areaGraphService)
 	{
 		return new com.leaguescape.lock.LockEnforcer(client, areaGraphService);
+	}
+
+	@Provides
+	com.leaguescape.overlay.LockedRegionOverlay provideLockedRegionOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService, LeagueScapeConfig config)
+	{
+		return new com.leaguescape.overlay.LockedRegionOverlay(client, areaGraphService, config);
+	}
+
+	@Provides
+	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService, LeagueScapeConfig config)
+	{
+		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config);
 	}
 
 	private void loadUnlockedAreas()

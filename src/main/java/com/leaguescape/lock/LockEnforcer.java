@@ -4,6 +4,7 @@ import com.leaguescape.area.AreaGraphService;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Tile;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
@@ -34,18 +35,21 @@ public class LockEnforcer
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
 		if (client.getLocalPlayer() == null) return;
-		// "Walk here" - param0, param1 are canvas coords; we need world tile
+
 		String option = Text.removeFormattingTags(event.getMenuOption());
-		if ("Walk here".equals(option))
+		// Skip Cancel - it just closes the menu and has no spatial target
+		if ("Cancel".equals(option)) return;
+
+		// Resolve target tile: works for Walk here, object clicks, NPC clicks, ground items, etc.
+		// The selected scene tile is set when the user right-clicks or left-clicks on the world
+		WorldPoint target = getTargetWorldPoint(event);
+		if (target == null) return; // No spatial target (e.g. widget-only action) - allow
+
+		if (!areaGraphService.isWorldPointUnlocked(target))
 		{
-			WorldPoint target = getWorldPointFromMenu(event.getParam0(), event.getParam1());
-			if (target != null && !areaGraphService.isWorldPointUnlocked(target))
-			{
-				event.consume();
-				client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Locked area.", null);
-			}
+			event.consume();
+			client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Locked area.", null);
 		}
-		// TODO: object/NPC interactions - resolve target tile from param0/param1/type
 	}
 
 	@Subscribe
@@ -71,11 +75,28 @@ public class LockEnforcer
 		return inLockedZone;
 	}
 
-	/** Resolve menu click to world tile. Param0/1 for Walk here are typically x/y. */
-	private WorldPoint getWorldPointFromMenu(int param0, int param1)
+	/**
+	 * Resolve the target world point for a menu action.
+	 * Uses the client's selected scene tile (the tile under the cursor when the user clicked).
+	 * Works for Walk here, object interactions, NPC interactions, ground items, and targeted spells.
+	 * Returns null if the target cannot be resolved - in that case we do NOT block the click.
+	 */
+	private WorldPoint getTargetWorldPoint(MenuOptionClicked event)
 	{
-		// For "Walk here", the client uses param0/param1 as scene coordinates
-		LocalPoint local = new LocalPoint(param0, param1);
+		int worldViewId = event.getMenuEntry().getWorldViewId();
+		var wv = client.getWorldView(worldViewId);
+		if (wv == null)
+		{
+			wv = client.getTopLevelWorldView();
+		}
+		if (wv == null) return null;
+
+		Tile selectedTile = wv.getSelectedSceneTile();
+		if (selectedTile == null) return null;
+
+		LocalPoint local = selectedTile.getLocalLocation();
+		if (local == null) return null;
+
 		if (client.isInInstancedRegion())
 		{
 			return WorldPoint.fromLocalInstance(client, local);
