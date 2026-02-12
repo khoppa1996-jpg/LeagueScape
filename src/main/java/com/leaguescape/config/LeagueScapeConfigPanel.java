@@ -63,6 +63,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private JPanel cornersPanel;
 	private JPanel neighborsPanel;
 	private JSpinner unlockCostSpinner;
+	private JSpinner pointsToCompleteSpinner;
 	private JButton saveBtn;
 	private JButton cancelBtn;
 
@@ -185,7 +186,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		String tempId = "new_area_" + System.currentTimeMillis();
 		plugin.startEditing(tempId, Collections.emptyList());
 		plugin.setCornerUpdateCallback(this::refreshCornersDisplay);
-		showEditForm(tempId, "", "", Collections.emptyList(), Collections.emptyList(), 0);
+		showEditForm(tempId, "", "", Collections.emptyList(), Collections.emptyList(), 0, 10);
 	}
 
 	private void startEditing(String areaId)
@@ -197,10 +198,11 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		List<String> neighbors = a.getNeighbors() != null ? new ArrayList<>(a.getNeighbors()) : new ArrayList<>();
 		plugin.startEditing(areaId, corners);
 		plugin.setCornerUpdateCallback(this::refreshCornersDisplay);
-		showEditForm(areaId, a.getId(), a.getDisplayName() != null ? a.getDisplayName() : "", corners, neighbors, a.getUnlockCost());
+		int ptsToComplete = a.getPointsToComplete() != null ? a.getPointsToComplete() : a.getUnlockCost();
+		showEditForm(areaId, a.getId(), a.getDisplayName() != null ? a.getDisplayName() : "", corners, neighbors, a.getUnlockCost(), ptsToComplete);
 	}
 
-	private void showEditForm(String areaId, String id, String displayName, List<int[]> corners, List<String> neighbors, int unlockCost)
+	private void showEditForm(String areaId, String id, String displayName, List<int[]> corners, List<String> neighbors, int unlockCost, int pointsToComplete)
 	{
 		editPanel.removeAll();
 
@@ -241,9 +243,13 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		neighborsScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		editPanel.add(neighborsScroll);
 
-		editPanel.add(new JLabel("Unlock cost:"));
+		editPanel.add(new JLabel("Unlock cost (points to spend to unlock this area):"));
 		unlockCostSpinner = new JSpinner(new SpinnerNumberModel(unlockCost, 0, 9999, 1));
 		editPanel.add(unlockCostSpinner);
+
+		editPanel.add(new JLabel("Points to complete (points to earn in this area to complete it; used in Points-to-complete mode):"));
+		pointsToCompleteSpinner = new JSpinner(new SpinnerNumberModel(pointsToComplete, 0, 9999, 1));
+		editPanel.add(pointsToCompleteSpinner);
 
 		editPanel.add(new JLabel(" "));
 		JPanel saveCancel = new JPanel();
@@ -330,14 +336,16 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		}
 
 		int cost = (Integer) unlockCostSpinner.getValue();
+		int ptsToComplete = (Integer) pointsToCompleteSpinner.getValue();
 
 		Area area = Area.builder()
 			.id(id)
 			.displayName(displayName)
-			.polygon(new ArrayList<>(corners))
+			.polygons(Collections.singletonList(new ArrayList<>(corners)))
 			.includes(Collections.emptyList()) // Computed by AreaGraphService
 			.neighbors(neighbors)
 			.unlockCost(cost)
+			.pointsToComplete(ptsToComplete)
 			.build();
 
 		areaGraphService.saveCustomArea(area);

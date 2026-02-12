@@ -6,7 +6,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import com.leaguescape.data.Area;
 import java.io.InputStream;
@@ -42,6 +45,9 @@ public class AreaGraphService
 
 	private static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
+	private static final TypeToken<List<int[]>> LIST_OF_POINTS = new TypeToken<List<int[]>>() { };
+	private static final TypeToken<List<List<int[]>>> LIST_OF_POLYGONS = new TypeToken<List<List<int[]>>>() { };
+
 	private static final Gson GSON = new GsonBuilder()
 		.registerTypeAdapter(int[].class, new JsonDeserializer<int[]>()
 		{
@@ -57,7 +63,64 @@ public class AreaGraphService
 				return result;
 			}
 		})
+		.registerTypeAdapter(Area.class, new AreaPolygonsAdapter())
 		.create();
+
+	/** Handles Area JSON: reads "polygon" (legacy) or "polygons", always writes "polygons". */
+	private static class AreaPolygonsAdapter implements JsonDeserializer<Area>, JsonSerializer<Area>
+	{
+		@Override
+		public Area deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+		{
+			JsonObject obj = json.getAsJsonObject();
+			List<List<int[]>> polygons;
+			if (obj.has("polygons"))
+			{
+				polygons = context.deserialize(obj.get("polygons"), LIST_OF_POLYGONS.getType());
+			}
+			else if (obj.has("polygon"))
+			{
+				List<int[]> single = context.deserialize(obj.get("polygon"), LIST_OF_POINTS.getType());
+				polygons = single != null && !single.isEmpty() ? Collections.singletonList(single) : new ArrayList<>();
+			}
+			else
+			{
+				polygons = new ArrayList<>();
+			}
+			if (polygons == null) polygons = new ArrayList<>();
+
+			String id = obj.has("id") ? obj.get("id").getAsString() : "";
+			String displayName = obj.has("displayName") ? obj.get("displayName").getAsString() : id;
+			List<Integer> includes = obj.has("includes") ? context.deserialize(obj.get("includes"), new TypeToken<List<Integer>>() { }.getType()) : null;
+			List<String> neighbors = obj.has("neighbors") ? context.deserialize(obj.get("neighbors"), new TypeToken<List<String>>() { }.getType()) : null;
+			int unlockCost = obj.has("unlockCost") ? obj.get("unlockCost").getAsInt() : 0;
+			Integer pointsToComplete = obj.has("pointsToComplete") && !obj.get("pointsToComplete").isJsonNull() ? obj.get("pointsToComplete").getAsInt() : null;
+
+			return Area.builder()
+				.id(id)
+				.displayName(displayName)
+				.polygons(polygons)
+				.includes(includes != null ? includes : Collections.emptyList())
+				.neighbors(neighbors != null ? neighbors : Collections.emptyList())
+				.unlockCost(unlockCost)
+				.pointsToComplete(pointsToComplete)
+				.build();
+		}
+
+		@Override
+		public JsonElement serialize(Area src, Type typeOfSrc, JsonSerializationContext context)
+		{
+			JsonObject obj = new JsonObject();
+			obj.add("id", context.serialize(src.getId()));
+			obj.add("displayName", context.serialize(src.getDisplayName()));
+			obj.add("polygons", context.serialize(src.getPolygons()));
+			obj.add("includes", context.serialize(src.getIncludes()));
+			obj.add("neighbors", context.serialize(src.getNeighbors()));
+			obj.addProperty("unlockCost", src.getUnlockCost());
+			if (src.getPointsToComplete() != null) obj.addProperty("pointsToComplete", src.getPointsToComplete());
+			return obj;
+		}
+	}
 
 	private final ConfigManager configManager;
 
@@ -155,10 +218,11 @@ public class AreaGraphService
 		Area withIncludes = Area.builder()
 			.id(area.getId())
 			.displayName(area.getDisplayName())
-			.polygon(area.getPolygon())
+			.polygons(area.getPolygons())
 			.includes(computeIncludesFromPolygon(area.getPolygon()))
 			.neighbors(area.getNeighbors() != null ? area.getNeighbors() : Collections.emptyList())
 			.unlockCost(area.getUnlockCost())
+			.pointsToComplete(area.getPointsToComplete())
 			.build();
 
 		List<Area> custom = new ArrayList<>(loadCustomAreas());
@@ -285,6 +349,10 @@ public class AreaGraphService
 			{
 				throw new IllegalArgumentException("Area \"" + a.getId() + "\" has invalid unlockCost (must be >= 0).");
 			}
+			if (a.getPointsToComplete() != null && a.getPointsToComplete() < 0)
+			{
+				throw new IllegalArgumentException("Area \"" + a.getId() + "\" has invalid pointsToComplete (must be >= 0).");
+			}
 			if (a.getNeighbors() != null)
 			{
 				for (String n : a.getNeighbors())
@@ -302,10 +370,11 @@ public class AreaGraphService
 			Area normalized = Area.builder()
 				.id(a.getId())
 				.displayName(a.getDisplayName() != null ? a.getDisplayName() : a.getId())
-				.polygon(a.getPolygon())
+				.polygons(a.getPolygons())
 				.includes(a.getIncludes() != null && !a.getIncludes().isEmpty() ? a.getIncludes() : computeIncludesFromPolygon(a.getPolygon()))
 				.neighbors(a.getNeighbors() != null ? a.getNeighbors() : Collections.emptyList())
 				.unlockCost(a.getUnlockCost())
+				.pointsToComplete(a.getPointsToComplete())
 				.build();
 			withIncludes.add(normalized);
 		}
@@ -480,11 +549,19 @@ public class AreaGraphService
 		return inside;
 	}
 
-	public List<Area> getUnlockableNeighbors()
+	/**
+	 * Neighbors of unlocked areas that are still locked. In points-to-complete mode pass completedAreaIds
+	 * to only return neighbors that border at least one completed area.
+	 */
+	public List<Area> getUnlockableNeighbors(Set<String> completedAreaIds)
 	{
 		Set<String> neighborIds = new HashSet<>();
-		for (String areaId : unlockedAreaIds)
+		Set<String> sourceAreas = (completedAreaIds != null && !completedAreaIds.isEmpty())
+			? new HashSet<>(completedAreaIds)
+			: unlockedAreaIds;
+		for (String areaId : sourceAreas)
 		{
+			if (!unlockedAreaIds.contains(areaId)) continue;
 			Area area = getArea(areaId);
 			if (area != null && area.getNeighbors() != null)
 			{
@@ -503,10 +580,24 @@ public class AreaGraphService
 			.collect(Collectors.toList());
 	}
 
+	/** All locked neighbors of any unlocked area (point-buy mode). */
+	public List<Area> getUnlockableNeighbors()
+	{
+		return getUnlockableNeighbors(null);
+	}
+
 	public int getCost(String areaId)
 	{
 		Area area = getArea(areaId);
 		return area != null ? area.getUnlockCost() : 0;
+	}
+
+	/** Points to earn in this area to complete it (points-to-complete mode). If area has no pointsToComplete set, returns unlockCost. */
+	public int getPointsToComplete(String areaId)
+	{
+		Area area = getArea(areaId);
+		if (area == null) return 0;
+		return area.getPointsToComplete() != null ? area.getPointsToComplete() : area.getUnlockCost();
 	}
 
 	public Area getArea(String areaId)

@@ -56,7 +56,8 @@
     ],
     "includes": [12850, 12851, 13620],
     "neighbors": [ "draynor", "al_kharid", "varrock_south"],
-    "unlockCost": 0
+    "unlockCost": 0,
+    "pointsToComplete": 10
   },
   {
     "id": "draynor",

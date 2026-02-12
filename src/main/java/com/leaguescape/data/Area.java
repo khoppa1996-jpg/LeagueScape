@@ -5,8 +5,9 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * One unlockable area (city or region). Polygon is list of [x, y, plane] world points.
- * includes = region IDs for dungeons/interiors; neighbors = adjacent area IDs.
+ * One unlockable area (city or region). May have multiple polygons (e.g. main land + island).
+ * Each polygon is a list of [x, y, plane] world points. includes = region IDs for dungeons/interiors; neighbors = adjacent area IDs.
+ * unlockCost = points to spend to unlock this area. pointsToComplete = points to earn in this area to "complete" it (null = use unlockCost).
  */
 @Value
 @Builder
@@ -14,8 +15,17 @@ public class Area
 {
 	String id;
 	String displayName;
-	List<int[]> polygon;       // {x, y, plane} per point
+	/** One or more polygons; each polygon is list of [x, y, plane] corners. */
+	List<List<int[]>> polygons;
 	List<Integer> includes;   // region IDs (surface + interiors)
 	List<String> neighbors;   // adjacent area ids
 	int unlockCost;
+	/** Points to earn in this area to complete it (for points-to-complete mode). If null, unlockCost is used. */
+	Integer pointsToComplete;
+
+	/** Convenience: first polygon, or null if none. */
+	public List<int[]> getPolygon()
+	{
+		return (polygons != null && !polygons.isEmpty()) ? polygons.get(0) : null;
+	}
 }

@@ -24,6 +24,20 @@ public interface LeagueScapeConfig extends Config
 	)
 	String mapSection = "mapSection";
 
+	@ConfigSection(
+		name = "Progression",
+		description = "How areas are unlocked and how points work",
+		position = 2
+	)
+	String progressionSection = "progressionSection";
+
+	@ConfigSection(
+		name = "Task system",
+		description = "Task grid difficulty and points per tier",
+		position = 3
+	)
+	String taskSection = "taskSection";
+
 	// Overlay appearance (scene)
 
 	@ConfigItem(
@@ -180,7 +194,8 @@ public interface LeagueScapeConfig extends Config
 	@ConfigItem(
 		keyName = "startingArea",
 		name = "Starting area",
-		description = "The area or city you start in (pick on map or choose from dropdown)"
+		description = "The area or city you start in (pick on map or choose from dropdown)",
+		section = progressionSection
 	)
 	default String startingArea()
 	{
@@ -190,7 +205,8 @@ public interface LeagueScapeConfig extends Config
 	@ConfigItem(
 		keyName = "startingPoints",
 		name = "Starting points",
-		description = "Number of points you begin with"
+		description = "Number of points you begin with",
+		section = progressionSection
 	)
 	default int startingPoints()
 	{
@@ -198,13 +214,107 @@ public interface LeagueScapeConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "unlockMode",
+		name = "Unlock mode",
+		description = "Point buy = spend points to unlock areas. Points to complete = earn points in each area to complete it, then spend points to unlock the next area.",
+		section = progressionSection
+	)
+	default UnlockMode unlockMode()
+	{
+		return UnlockMode.POINT_BUY;
+	}
+
+	enum UnlockMode
+	{
+		POINT_BUY("Point buy"),
+		POINTS_TO_COMPLETE("Points to complete");
+
+		private final String label;
+
+		UnlockMode(String label)
+		{
+			this.label = label;
+		}
+
+		@Override
+		public String toString()
+		{
+			return label;
+		}
+	}
+
+	// Task system
+
+	@ConfigItem(
 		keyName = "taskDifficultyMultiplier",
 		name = "Task difficulty",
-		description = "Overall multiplier for task difficulty (1.0 = normal)"
+		description = "Overall multiplier for task difficulty (0.5 = Easy, 1.0 = Normal, 1.5 = Hard)",
+		position = 0,
+		section = taskSection
 	)
 	default double taskDifficultyMultiplier()
 	{
 		return 1.0;
+	}
+
+	@ConfigItem(
+		keyName = "taskTier1Points",
+		name = "Tier 1 points",
+		description = "Points awarded for claiming a tier 1 task (first ring)",
+		position = 1,
+		section = taskSection
+	)
+	default int taskTier1Points()
+	{
+		return 1;
+	}
+
+	@ConfigItem(
+		keyName = "taskTier2Points",
+		name = "Tier 2 points",
+		description = "Points awarded for claiming a tier 2 task",
+		position = 2,
+		section = taskSection
+	)
+	default int taskTier2Points()
+	{
+		return 2;
+	}
+
+	@ConfigItem(
+		keyName = "taskTier3Points",
+		name = "Tier 3 points",
+		description = "Points awarded for claiming a tier 3 task",
+		position = 3,
+		section = taskSection
+	)
+	default int taskTier3Points()
+	{
+		return 3;
+	}
+
+	@ConfigItem(
+		keyName = "taskTier4Points",
+		name = "Tier 4 points",
+		description = "Points awarded for claiming a tier 4 task",
+		position = 4,
+		section = taskSection
+	)
+	default int taskTier4Points()
+	{
+		return 4;
+	}
+
+	@ConfigItem(
+		keyName = "taskTier5Points",
+		name = "Tier 5 points",
+		description = "Points awarded for claiming a tier 5 task",
+		position = 5,
+		section = taskSection
+	)
+	default int taskTier5Points()
+	{
+		return 5;
 	}
 
 	@ConfigItem(

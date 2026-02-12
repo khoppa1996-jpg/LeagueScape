@@ -5,7 +5,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.MenuAction;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
@@ -44,6 +46,9 @@ public class LeagueScapePlugin extends Plugin
 	private com.leaguescape.points.PointsService pointsService;
 
 	@Inject
+	private com.leaguescape.points.AreaCompletionService areaCompletionService;
+
+	@Inject
 	private com.leaguescape.lock.LockEnforcer lockEnforcer;
 
 	@Inject
@@ -73,6 +78,7 @@ public class LeagueScapePlugin extends Plugin
 		log.info("LeagueScape started!");
 		eventBus.register(lockEnforcer);
 		pointsService.loadFromConfig();
+		areaCompletionService.loadFromConfig();
 		// Apply configured starting points when no persisted state exists (first run)
 		if (pointsService.getEarnedTotal() == 0 && pointsService.getSpentTotal() == 0)
 		{
@@ -82,8 +88,8 @@ public class LeagueScapePlugin extends Plugin
 		overlayManager.add(lockedRegionOverlay);
 		overlayManager.add(leagueScapeMapOverlay);
 		eventBus.register(this);
-		updateMapMouseListener();
-		LeagueScapePanel panel = new LeagueScapePanel(this, config, areaGraphService, pointsService);
+		// updateMapMouseListener() uses client (getWidget, isHidden) and must run on client thread; onGameTick will call it
+		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService);
 		navButton = NavigationButton.builder()
 			.tooltip("LeagueScape")
 			.icon(panel.getIcon())
@@ -126,6 +132,15 @@ public class LeagueScapePlugin extends Plugin
 	}
 
 	@Provides
+	@Singleton
+	com.leaguescape.points.AreaCompletionService provideAreaCompletionService(ConfigManager configManager,
+		com.leaguescape.area.AreaGraphService areaGraphService, com.leaguescape.points.PointsService pointsService,
+		LeagueScapeConfig config)
+	{
+		return new com.leaguescape.points.AreaCompletionService(configManager, areaGraphService, pointsService, config);
+	}
+
+	@Provides
 	com.leaguescape.lock.LockEnforcer provideLockEnforcer(Client client, com.leaguescape.area.AreaGraphService areaGraphService)
 	{
 		return new com.leaguescape.lock.LockEnforcer(client, areaGraphService);
@@ -138,10 +153,21 @@ public class LeagueScapePlugin extends Plugin
 	}
 
 	@Provides
-	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
-		LeagueScapeConfig config, com.leaguescape.points.PointsService pointsService)
+	@Singleton
+	com.leaguescape.task.TaskGridService provideTaskGridService(ConfigManager configManager, LeagueScapeConfig config,
+		com.leaguescape.points.PointsService pointsService,
+		com.leaguescape.points.AreaCompletionService areaCompletionService)
 	{
-		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, this);
+		return new com.leaguescape.task.TaskGridService(configManager, config, pointsService, areaCompletionService);
+	}
+
+	@Provides
+	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
+		LeagueScapeConfig config, com.leaguescape.points.PointsService pointsService,
+		com.leaguescape.points.AreaCompletionService areaCompletionService,
+		com.leaguescape.task.TaskGridService taskGridService)
+	{
+		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService);
 	}
 
 	private void loadUnlockedAreas()
@@ -173,6 +199,59 @@ public class LeagueScapePlugin extends Plugin
 	public void onGameTick(GameTick event)
 	{
 		updateMapMouseListener();
+	}
+
+	@Subscribe
+	public void onMenuEntryAdded(MenuEntryAdded event)
+	{
+		boolean addViewAreaTasks = false;
+		String option = event.getOption();
+		// (1) Right-click on world map globe/orb (option "World Map") - no need to open the map
+		if ("World Map".equals(option))
+		{
+			addViewAreaTasks = true;
+		}
+		// (2) World map window is open and user right-clicked on it (Close entry)
+		if (!addViewAreaTasks)
+		{
+			Widget mapContainer = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
+			if (mapContainer != null && !mapContainer.isHidden())
+			{
+				Widget entryWidget = event.getMenuEntry().getWidget();
+				if (entryWidget != null && isWidgetInMapHierarchy(entryWidget, mapContainer) && "Close".equals(option))
+				{
+					addViewAreaTasks = true;
+				}
+			}
+		}
+		if (addViewAreaTasks)
+		{
+			client.createMenuEntry(-1)
+				.setOption("View area tasks")
+				.setTarget("World Map")
+				.setType(MenuAction.RUNELITE)
+				.onClick(e -> openTaskPopupForCurrentArea());
+		}
+	}
+
+	private boolean isWidgetInMapHierarchy(Widget w, Widget mapContainer)
+	{
+		while (w != null)
+		{
+			if (w == mapContainer) return true;
+			w = w.getParent();
+		}
+		return false;
+	}
+
+	private void openTaskPopupForCurrentArea()
+	{
+		if (client.getLocalPlayer() == null) return;
+		net.runelite.api.coords.WorldPoint playerLoc = client.getLocalPlayer().getWorldLocation();
+		com.leaguescape.data.Area area = areaGraphService.getAreaAt(playerLoc);
+		if (area == null) return;
+		if (!areaGraphService.getUnlockedAreaIds().contains(area.getId())) return;
+		leagueScapeMapOverlay.openTaskGridForArea(area);
 	}
 
 	private void updateMapMouseListener()
