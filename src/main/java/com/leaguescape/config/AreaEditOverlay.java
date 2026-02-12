@@ -22,6 +22,7 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 /**
  * Overlay shown during area edit mode. Renders all polygon corners from all areas
  * with labels (coordinates) so neighboring/new areas can share boundaries.
+ * Renders UNDER_WIDGETS so inventory, minimap, chatbox, and all game UI stay on top and interactable.
  */
 public class AreaEditOverlay extends Overlay
 {
@@ -44,7 +45,7 @@ public class AreaEditOverlay extends Overlay
 		this.areaGraphService = areaGraphService;
 		this.configPlugin = configPlugin;
 		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_SCENE);
+		setLayer(OverlayLayer.UNDER_WIDGETS);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.data.Area;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -21,13 +22,35 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.Scrollable;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.util.ImageUtil;
+import java.awt.Rectangle;
 
 public class LeagueScapeConfigPanel extends PluginPanel
 {
+	/** Panel that stays within scroll viewport width (no horizontal scroll). */
+	private static class ScrollableWidthPanel extends JPanel implements Scrollable
+	{
+		@Override
+		public boolean getScrollableTracksViewportWidth() { return true; }
+		@Override
+		public boolean getScrollableTracksViewportHeight() { return false; }
+		@Override
+		public Dimension getPreferredScrollableViewportSize() { return getPreferredSize(); }
+		@Override
+		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) { return 10; }
+		@Override
+		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) { return visibleRect.height; }
+	}
+
+	private static JPanel newScrollableTrackWidthPanel()
+	{
+		return new ScrollableWidthPanel();
+	}
+
 	private final LeagueScapeConfigPlugin plugin;
 	private final AreaGraphService areaGraphService;
 
@@ -72,28 +95,35 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		topSection.add(exportBtn);
 		add(topSection, BorderLayout.NORTH);
 
-		// Scrollable content: area list, removed list, edit form
-		mainPanel = new JPanel();
+		// Scrollable content: area list, removed list, edit form. Track viewport width so no horizontal scroll.
+		mainPanel = new ScrollableWidthPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
 		JLabel listLabel = new JLabel("Areas:");
 		mainPanel.add(listLabel);
-		listPanel = new JPanel();
+		listPanel = newScrollableTrackWidthPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
-		mainPanel.add(new JScrollPane(listPanel));
+		JScrollPane listScroll = new JScrollPane(listPanel);
+		listScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		mainPanel.add(listScroll);
 
 		mainPanel.add(new JLabel(" "));
-		mainPanel.add(new JLabel("Removed areas (click Restore to add back):"));
-		removedPanel = new JPanel();
+		mainPanel.add(new JLabel("Removed areas (Restore to add back):"));
+		removedPanel = newScrollableTrackWidthPanel();
 		removedPanel.setLayout(new BoxLayout(removedPanel, BoxLayout.Y_AXIS));
-		mainPanel.add(new JScrollPane(removedPanel));
+		JScrollPane removedScroll = new JScrollPane(removedPanel);
+		removedScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		mainPanel.add(removedScroll);
 
 		editPanel = new JPanel();
 		editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
 		editPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
 		mainPanel.add(editPanel);
 
-		add(new JScrollPane(mainPanel), BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(mainPanel);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		add(scrollPane, BorderLayout.CENTER);
 		refreshAreaList();
 		refreshRemovedList();
 	}
@@ -104,7 +134,10 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		for (Area a : areaGraphService.getAreas())
 		{
 			JPanel row = new JPanel(new BorderLayout());
-			JLabel label = new JLabel(a.getDisplayName() != null ? a.getDisplayName() : a.getId());
+			String name = a.getDisplayName() != null ? a.getDisplayName() : a.getId();
+			JLabel label = new JLabel(name);
+			label.setToolTipText(name);
+			label.setMinimumSize(new Dimension(0, 0));
 			row.add(label, BorderLayout.CENTER);
 
 			JPanel buttons = new JPanel();
@@ -130,7 +163,10 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			Area builtIn = areaGraphService.getBuiltInArea(areaId);
 			String displayName = builtIn != null && builtIn.getDisplayName() != null ? builtIn.getDisplayName() : areaId;
 			JPanel row = new JPanel(new BorderLayout());
-			row.add(new JLabel(displayName), BorderLayout.CENTER);
+			JLabel remLabel = new JLabel(displayName);
+			remLabel.setToolTipText(displayName);
+			remLabel.setMinimumSize(new Dimension(0, 0));
+			row.add(remLabel, BorderLayout.CENTER);
 			JButton restoreBtn = new JButton("Restore");
 			restoreBtn.addActionListener(e -> {
 				areaGraphService.restoreArea(areaId);
@@ -169,19 +205,25 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		editPanel.removeAll();
 
 		editPanel.add(new JLabel("Area ID (slug, e.g. " + (areaId.startsWith("new_") ? "lumbridge):" : "):")));
-		idField = new JTextField(id.startsWith("new_") ? "" : id, 20);
+		idField = new JTextField(id.startsWith("new_") ? "" : id, 12);
 		idField.setEditable(areaId.startsWith("new_"));
+		idField.setMaximumSize(new Dimension(Integer.MAX_VALUE, idField.getPreferredSize().height));
 		editPanel.add(idField);
 
 		editPanel.add(new JLabel("Display name:"));
-		displayNameField = new JTextField(displayName, 20);
+		displayNameField = new JTextField(displayName, 12);
+		displayNameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, displayNameField.getPreferredSize().height));
 		editPanel.add(displayNameField);
 
 		editPanel.add(new JLabel(" "));
-		editPanel.add(new JLabel("Polygon corners (Shift+Right-click to add; Shift+Right-click corner for Move, then Set new corner):"));
+		JLabel cornersHint = new JLabel("<html>Corners: Shift+RMB to add; Shift+RMB corner to Move, then Set.</html>");
+		cornersHint.setToolTipText("Shift+Right-click to add corner; Shift+Right-click a corner to Move it, then click another tile to Set.");
+		editPanel.add(cornersHint);
 		cornersPanel = new JPanel();
 		cornersPanel.setLayout(new BoxLayout(cornersPanel, BoxLayout.Y_AXIS));
-		editPanel.add(new JScrollPane(cornersPanel));
+		JScrollPane cornersScroll = new JScrollPane(cornersPanel);
+		cornersScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		editPanel.add(cornersScroll);
 
 		editPanel.add(new JLabel(" "));
 		editPanel.add(new JLabel("Neighbors:"));
@@ -195,7 +237,9 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			cb.setSelected(neighbors.contains(other.getId()));
 			neighborsPanel.add(cb);
 		}
-		editPanel.add(new JScrollPane(neighborsPanel));
+		JScrollPane neighborsScroll = new JScrollPane(neighborsPanel);
+		neighborsScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		editPanel.add(neighborsScroll);
 
 		editPanel.add(new JLabel("Unlock cost:"));
 		unlockCostSpinner = new JSpinner(new SpinnerNumberModel(unlockCost, 0, 9999, 1));

@@ -419,14 +419,20 @@ public class AreaGraphService
 	/** True if the point is inside any area's polygon. */
 	public boolean isWorldPointInAnyArea(WorldPoint worldPoint)
 	{
+		return getAreaAt(worldPoint) != null;
+	}
+
+	/** Returns the first area whose polygon contains the given world point (surface plane), or null. */
+	public Area getAreaAt(WorldPoint worldPoint)
+	{
 		for (Area a : areas)
 		{
 			if (a.getPolygon() != null && pointInPolygon(worldPoint, a.getPolygon()))
 			{
-				return true;
+				return a;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	public boolean isWorldPointUnlocked(WorldPoint worldPoint)

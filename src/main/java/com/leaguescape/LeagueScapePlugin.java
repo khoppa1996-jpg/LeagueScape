@@ -5,12 +5,17 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.events.GameTick;
+import net.runelite.api.gameval.InterfaceID;
+import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.input.MouseManager;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 @Slf4j
@@ -51,9 +56,16 @@ public class LeagueScapePlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
+	private MouseManager mouseManager;
+
+	@Inject
 	private EventBus eventBus;
 
+	@Inject
+	private Client client;
+
 	private NavigationButton navButton;
+	private boolean mapMouseListenerRegistered;
 
 	@Override
 	protected void startUp() throws Exception
@@ -69,6 +81,8 @@ public class LeagueScapePlugin extends Plugin
 		loadUnlockedAreas();
 		overlayManager.add(lockedRegionOverlay);
 		overlayManager.add(leagueScapeMapOverlay);
+		eventBus.register(this);
+		updateMapMouseListener();
 		LeagueScapePanel panel = new LeagueScapePanel(this, config, areaGraphService, pointsService);
 		navButton = NavigationButton.builder()
 			.tooltip("LeagueScape")
@@ -83,6 +97,12 @@ public class LeagueScapePlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		log.info("LeagueScape stopped!");
+		eventBus.unregister(this);
+		if (mapMouseListenerRegistered)
+		{
+			mouseManager.unregisterMouseListener(leagueScapeMapOverlay);
+			mapMouseListenerRegistered = false;
+		}
 		overlayManager.remove(lockedRegionOverlay);
 		overlayManager.remove(leagueScapeMapOverlay);
 		eventBus.unregister(lockEnforcer);
@@ -118,9 +138,10 @@ public class LeagueScapePlugin extends Plugin
 	}
 
 	@Provides
-	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService, LeagueScapeConfig config)
+	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
+		LeagueScapeConfig config, com.leaguescape.points.PointsService pointsService)
 	{
-		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config);
+		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, this);
 	}
 
 	private void loadUnlockedAreas()
@@ -146,6 +167,28 @@ public class LeagueScapePlugin extends Plugin
 	{
 		String joined = String.join(",", areaGraphService.getUnlockedAreaIds());
 		configManager.setConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS, joined);
+	}
+
+	@Subscribe
+	public void onGameTick(GameTick event)
+	{
+		updateMapMouseListener();
+	}
+
+	private void updateMapMouseListener()
+	{
+		Widget mapContainer = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
+		boolean mapOpen = mapContainer != null && !mapContainer.isHidden();
+		if (mapOpen && !mapMouseListenerRegistered)
+		{
+			mouseManager.registerMouseListener(leagueScapeMapOverlay);
+			mapMouseListenerRegistered = true;
+		}
+		else if (!mapOpen && mapMouseListenerRegistered)
+		{
+			mouseManager.unregisterMouseListener(leagueScapeMapOverlay);
+			mapMouseListenerRegistered = false;
+		}
 	}
 
 	/** Called by panel when user clicks unlock. Returns true if unlocked. */

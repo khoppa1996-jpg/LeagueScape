@@ -23,6 +23,7 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 /**
  * Displays locked regions like region-locker (https://github.com/slaytostay/region-locker).
  * Colors each locked tile individually. Optional 64x64 chunk borders.
+ * Renders UNDER_WIDGETS so inventory, minimap, chatbox, and all game UI stay on top and interactable.
  */
 public class LockedRegionOverlay extends Overlay
 {
@@ -42,7 +43,7 @@ public class LockedRegionOverlay extends Overlay
 		this.areaGraphService = areaGraphService;
 		this.config = config;
 		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_SCENE);
+		setLayer(OverlayLayer.UNDER_WIDGETS);
 	}
 
 	@Override

@@ -1,47 +1,64 @@
 package com.leaguescape.overlay;
 
 import com.leaguescape.LeagueScapeConfig;
+import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.data.Area;
+import com.leaguescape.points.PointsService;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Set;
-import javax.inject.Inject;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.worldmap.WorldMap;
+import net.runelite.client.input.MouseListener;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 
 /**
  * Draws LeagueScape areas (locked, unlocked, unlockable) on the world map when it's open.
- * Matches region-locker style: configurable colors, optional grid, area labels.
+ * Hover: highlights area with white border. Right-click: shows details and Unlock button.
  */
-public class LeagueScapeMapOverlay extends Overlay
+public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 {
 	private static final int REGION_SIZE = 1 << 6;
 	private static final int REGION_TRUNCATE = ~0x3F;
 	private static final int LABEL_PADDING = 4;
+	private static final float HOVER_BORDER_WIDTH = 2.5f;
+	private static final Color HOVER_BORDER_COLOR = Color.WHITE;
 
 	private final Client client;
 	private final AreaGraphService areaGraphService;
 	private final LeagueScapeConfig config;
+	private final PointsService pointsService;
+	private final LeagueScapePlugin plugin;
 
-	@Inject
-	public LeagueScapeMapOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfig config)
+	private volatile Area hoveredArea = null;
+
+	public LeagueScapeMapOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfig config,
+		PointsService pointsService, LeagueScapePlugin plugin)
 	{
 		this.client = client;
 		this.areaGraphService = areaGraphService;
 		this.config = config;
+		this.pointsService = pointsService;
+		this.plugin = plugin;
 		setPosition(OverlayPosition.DYNAMIC);
 		setPriority(Overlay.PRIORITY_HIGH);
 		setLayer(OverlayLayer.MANUAL);
@@ -97,6 +114,19 @@ public class LeagueScapeMapOverlay extends Overlay
 			{
 				graphics.setColor(color);
 				graphics.fillPolygon(poly);
+			}
+		}
+
+		// Hover: white border on hovered area
+		Area hovered = hoveredArea;
+		if (hovered != null && hovered.getPolygon() != null && hovered.getPolygon().size() >= 3)
+		{
+			Polygon hoverPoly = worldPolygonToScreen(hovered.getPolygon(), worldMap, worldMapRect, pixelsPerTile);
+			if (hoverPoly != null && hoverPoly.npoints >= 3)
+			{
+				graphics.setColor(HOVER_BORDER_COLOR);
+				graphics.setStroke(new BasicStroke(HOVER_BORDER_WIDTH));
+				graphics.drawPolygon(hoverPoly);
 			}
 		}
 
@@ -291,4 +321,117 @@ public class LeagueScapeMapOverlay extends Overlay
 
 		return new Point(xGraphDiff, yGraphDiff);
 	}
+
+	/** Convert screen position (canvas coords) inside map rect to world tile (plane 0), or null if outside/invalid. */
+	private WorldPoint screenToWorldPoint(WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile, int sx, int sy)
+	{
+		if (!worldMapRect.contains(sx, sy))
+		{
+			return null;
+		}
+		int widthInTiles = (int) Math.ceil(worldMapRect.getWidth() / pixelsPerTile);
+		int heightInTiles = (int) Math.ceil(worldMapRect.getHeight() / pixelsPerTile);
+		Point worldMapPosition = worldMap.getWorldMapPosition();
+		double halfTile = pixelsPerTile - Math.ceil(pixelsPerTile / 2);
+
+		double xTileOffset = (sx - worldMapRect.getX() - halfTile) / pixelsPerTile;
+		int wx = worldMapPosition.getX() - widthInTiles / 2 + (int) Math.round(xTileOffset);
+
+		double yTileOffset = (worldMapRect.getY() + worldMapRect.getHeight() - sy - halfTile) / pixelsPerTile;
+		int yTileMax = worldMapPosition.getY() - heightInTiles / 2;
+		int wy = yTileMax + (int) Math.round(yTileOffset) - 1;
+
+		if (!worldMap.getWorldMapData().surfaceContainsPosition(wx, wy))
+		{
+			return null;
+		}
+		return new WorldPoint(wx, wy, 0);
+	}
+
+	private void updateHoveredArea(int screenX, int screenY)
+	{
+		if (!config.drawMapOverlay())
+		{
+			hoveredArea = null;
+			return;
+		}
+		Widget map = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
+		if (map == null)
+		{
+			hoveredArea = null;
+			return;
+		}
+		Rectangle worldMapRect = map.getBounds();
+		if (!worldMapRect.contains(screenX, screenY))
+		{
+			hoveredArea = null;
+			return;
+		}
+		WorldMap worldMap = client.getWorldMap();
+		float pixelsPerTile = worldMap.getWorldMapZoom();
+		WorldPoint wp = screenToWorldPoint(worldMap, worldMapRect, pixelsPerTile, screenX, screenY);
+		hoveredArea = (wp != null) ? areaGraphService.getAreaAt(wp) : null;
+	}
+
+	private void showAreaDetailsPopup(Area area)
+	{
+		if (area == null) return;
+		String displayName = area.getDisplayName() != null ? area.getDisplayName() : area.getId();
+		int cost = area.getUnlockCost();
+		Set<String> unlocked = areaGraphService.getUnlockedAreaIds();
+		List<Area> unlockable = areaGraphService.getUnlockableNeighbors();
+		boolean canUnlock = unlockable.contains(area) && pointsService.getSpendable() >= cost;
+
+		JPanel panel = new JPanel();
+		panel.setLayout(new java.awt.BorderLayout(5, 5));
+		panel.add(new JLabel("<html><b>" + displayName + "</b></html>"), java.awt.BorderLayout.NORTH);
+		panel.add(new JLabel("Unlock cost: " + cost + " point" + (cost != 1 ? "s" : "")), java.awt.BorderLayout.CENTER);
+		JButton unlockBtn = new JButton("Unlock");
+		unlockBtn.setEnabled(canUnlock);
+		if (canUnlock)
+		{
+			unlockBtn.addActionListener(e -> {
+				if (plugin.unlockArea(area.getId(), cost))
+				{
+					java.awt.Window w = SwingUtilities.getWindowAncestor((java.awt.Component) e.getSource());
+					if (w != null) w.dispose();
+				}
+			});
+		}
+		panel.add(unlockBtn, java.awt.BorderLayout.SOUTH);
+
+		SwingUtilities.invokeLater(() -> {
+			JOptionPane.showMessageDialog(client.getCanvas(), panel, "Area: " + displayName, JOptionPane.PLAIN_MESSAGE);
+		});
+	}
+
+	@Override
+	public MouseEvent mouseMoved(MouseEvent event)
+	{
+		updateHoveredArea(event.getX(), event.getY());
+		return event;
+	}
+
+	@Override
+	public MouseEvent mousePressed(MouseEvent event)
+	{
+		if (event.getButton() != MouseEvent.BUTTON3) return event;
+		updateHoveredArea(event.getX(), event.getY());
+		if (hoveredArea != null)
+		{
+			showAreaDetailsPopup(hoveredArea);
+		}
+		return event;
+	}
+
+	@Override
+	public MouseEvent mouseReleased(MouseEvent event) { return event; }
+	@Override
+	public MouseEvent mouseClicked(MouseEvent event) { return event; }
+	@Override
+	public MouseEvent mouseEntered(MouseEvent event) { return event; }
+	@Override
+	public MouseEvent mouseExited(MouseEvent event) { hoveredArea = null; return event; }
+	@Override
+	public MouseEvent mouseDragged(MouseEvent event) { return event; }
 }
