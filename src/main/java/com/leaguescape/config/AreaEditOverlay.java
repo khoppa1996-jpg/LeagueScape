@@ -74,18 +74,37 @@ public class AreaEditOverlay extends Overlay
 		// Draw all saved areas
 		for (Area area : areaGraphService.getAreas())
 		{
-			List<int[]> corners = area.getId().equals(editingId) ? editingCorners : (area.getPolygon() != null ? area.getPolygon() : List.of());
-			if (corners.size() < 3) continue;
-
 			String areaLabel = area.getDisplayName() != null ? area.getDisplayName() : area.getId();
 			Color areaColor = area.getId().equals(editingId) ? EDITING_AREA_COLOR : OTHER_AREA_COLOR;
-			drawPolygonCorners(graphics, wv, plane, areaLabel, corners, areaColor, area.getId().equals(editingId) ? moveIdx : -1);
+			if (area.getId().equals(editingId))
+			{
+				// Editing this area: draw all completed polygons then current polygon (with move index)
+				for (List<int[]> poly : plugin.getEditingPolygons())
+				{
+					if (poly != null && poly.size() >= 3)
+						drawPolygonCorners(graphics, wv, plane, areaLabel, poly, areaColor, -1);
+				}
+				if (editingCorners.size() >= 2)
+					drawPolygonCorners(graphics, wv, plane, areaLabel, editingCorners, areaColor, moveIdx);
+			}
+			else
+			{
+				List<int[]> corners = area.getPolygon() != null ? area.getPolygon() : List.of();
+				if (corners.size() >= 3)
+					drawPolygonCorners(graphics, wv, plane, areaLabel, corners, areaColor, -1);
+			}
 		}
 
-		// If editing a new area (not in getAreas), draw its corners
-		if (editingId != null && editingId.startsWith("new_") && editingCorners.size() >= 2)
+		// If editing a new area (not in getAreas), draw all its polygons
+		if (editingId != null && editingId.startsWith("new_"))
 		{
-			drawPolygonCorners(graphics, wv, plane, "New area", editingCorners, EDITING_AREA_COLOR, moveIdx);
+			for (List<int[]> poly : plugin.getEditingPolygons())
+			{
+				if (poly != null && poly.size() >= 3)
+					drawPolygonCorners(graphics, wv, plane, "New area", poly, EDITING_AREA_COLOR, -1);
+			}
+			if (editingCorners.size() >= 2)
+				drawPolygonCorners(graphics, wv, plane, "New area", editingCorners, EDITING_AREA_COLOR, moveIdx);
 		}
 
 		return null;

@@ -501,14 +501,18 @@ public class AreaGraphService
 		return getAreaAt(worldPoint) != null;
 	}
 
-	/** Returns the first area whose polygon contains the given world point (surface plane), or null. */
+	/** Returns the first area that has any polygon containing the given world point (surface plane), or null. */
 	public Area getAreaAt(WorldPoint worldPoint)
 	{
 		for (Area a : areas)
 		{
-			if (a.getPolygon() != null && pointInPolygon(worldPoint, a.getPolygon()))
+			if (a.getPolygons() != null)
 			{
-				return a;
+				for (List<int[]> poly : a.getPolygons())
+				{
+					if (poly != null && poly.size() >= 3 && pointInPolygon(worldPoint, poly))
+						return a;
+				}
 			}
 		}
 		return null;
@@ -521,14 +525,17 @@ public class AreaGraphService
 		{
 			Area area = getArea(areaId);
 			if (area == null) continue;
-			// Check surface polygon regions + includes
 			if (area.getIncludes() != null && area.getIncludes().contains(regionId))
 			{
 				return true;
 			}
-			if (area.getPolygon() != null && pointInPolygon(worldPoint, area.getPolygon()))
+			if (area.getPolygons() != null)
 			{
-				return true;
+				for (List<int[]> poly : area.getPolygons())
+				{
+					if (poly != null && poly.size() >= 3 && pointInPolygon(worldPoint, poly))
+						return true;
+				}
 			}
 		}
 		return false;

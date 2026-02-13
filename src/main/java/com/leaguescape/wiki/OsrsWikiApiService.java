@@ -29,8 +29,9 @@ import lombok.extern.slf4j.Slf4j;
  * API base: https://oldschool.runescape.wiki/api.php
  * Use a descriptive User-Agent; the wiki may block or rate-limit generic clients.
  * <p>
- * Supports: resolving image URLs, fetching images as BufferedImage, and search.
- * More actions (e.g. page content, Cargo/data queries) can be added as needed.
+ * Supports: resolving image URLs, fetching images as BufferedImage, search, and page content (for item sources).
+ * <p>
+ * Exact URLs and JSON response shapes for page content and OpenSearch are documented in docs/WIKI_API.md.
  */
 @Slf4j
 @Singleton
@@ -162,8 +163,20 @@ public class OsrsWikiApiService
 				if ("-1".equals(id)) continue;
 				JsonElement revs = pages.getAsJsonObject(id).get("revisions");
 				if (revs == null || !revs.isJsonArray() || revs.getAsJsonArray().size() == 0) continue;
-				// Legacy format: wikitext in revision "*"
-				JsonElement content = revs.getAsJsonArray().get(0).getAsJsonObject().get("*");
+				JsonObject rev = revs.getAsJsonArray().get(0).getAsJsonObject();
+				// Current format: wikitext in revision.slots.main["*"]
+				JsonElement slots = rev.get("slots");
+				if (slots != null && slots.isJsonObject())
+				{
+					JsonElement main = slots.getAsJsonObject().get("main");
+					if (main != null && main.isJsonObject())
+					{
+						JsonElement content = main.getAsJsonObject().get("*");
+						if (content != null) return content.getAsString();
+					}
+				}
+				// Legacy format: wikitext in revision["*"]
+				JsonElement content = rev.get("*");
 				if (content != null) return content.getAsString();
 			}
 		}

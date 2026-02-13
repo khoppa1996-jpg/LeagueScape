@@ -3,12 +3,14 @@ package com.leaguescape.points;
 import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.data.AreaStatus;
+import com.leaguescape.task.TaskGridService;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.config.ConfigManager;
@@ -32,14 +34,17 @@ public class AreaCompletionService
 
 	private final Map<String, Integer> pointsEarnedInArea = new ConcurrentHashMap<>();
 	private final Set<String> completedAreaIds = new HashSet<>();
+	private final Provider<TaskGridService> taskGridServiceProvider;
 
 	@Inject
-	public AreaCompletionService(ConfigManager configManager, AreaGraphService areaGraphService, PointsService pointsService, LeagueScapeConfig config)
+	public AreaCompletionService(ConfigManager configManager, AreaGraphService areaGraphService, PointsService pointsService, LeagueScapeConfig config,
+		Provider<TaskGridService> taskGridServiceProvider)
 	{
 		this.configManager = configManager;
 		this.areaGraphService = areaGraphService;
 		this.pointsService = pointsService;
 		this.config = config;
+		this.taskGridServiceProvider = taskGridServiceProvider;
 	}
 
 	public void loadFromConfig()
@@ -114,15 +119,28 @@ public class AreaCompletionService
 
 	/**
 	 * Set of area IDs that count as "complete" for gating the next unlock.
-	 * Only areas that have earned at least their points-to-complete threshold (including the starting area).
+	 * Points-to-complete mode: areas that have earned at least their points-to-complete threshold.
+	 * Point-buy mode: unlocked areas that have every task completed.
 	 */
 	public Set<String> getEffectiveCompletedAreaIds()
 	{
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINT_BUY)
+		{
+			Set<String> out = new HashSet<>();
+			TaskGridService taskGrid = taskGridServiceProvider.get();
+			for (String areaId : areaGraphService.getUnlockedAreaIds())
+			{
+				if (taskGrid.isAreaFullyCompleted(areaId)) out.add(areaId);
+			}
+			return out;
+		}
 		return Collections.unmodifiableSet(completedAreaIds);
 	}
 
 	/**
-	 * Current status of an area: Locked (no interaction), Unlocked (interaction + tasks, not complete), or Complete (fully done, may still have tasks for points).
+	 * Current status of an area: Locked (no interaction), Unlocked (interaction + tasks, not complete), or Complete (fully done).
+	 * In point-buy mode: complete only when every task in the area is completed (not just when area is unlocked).
+	 * In points-to-complete mode: complete when the area has earned enough points to complete it.
 	 */
 	public AreaStatus getAreaStatus(String areaId)
 	{
@@ -132,8 +150,10 @@ public class AreaCompletionService
 		}
 		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINT_BUY)
 		{
-			return AreaStatus.COMPLETE;
+			// Unlocked area is complete only when all tasks in that area are completed
+			return taskGridServiceProvider.get().isAreaFullyCompleted(areaId) ? AreaStatus.COMPLETE : AreaStatus.UNLOCKED;
 		}
+		// Points-to-complete: complete when earned enough points in this area
 		return completedAreaIds.contains(areaId) ? AreaStatus.COMPLETE : AreaStatus.UNLOCKED;
 	}
 

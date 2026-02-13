@@ -1,75 +1,129 @@
 package com.leaguescape.lock;
 
+import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.area.AreaGraphService;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.MenuAction;
+import net.runelite.api.MenuEntry;
 import net.runelite.api.Tile;
 import net.runelite.api.WorldView;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.MenuOpened;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.util.Text;
 
 /**
- * Prevents interaction with locked areas: consume walk/click to locked tiles,
- * show breach banner when player is outside unlocked space.
+ * When the locked region overlay is active, blocks any click on a tile where the overlay
+ * is drawn. Uses the same logic as the overlay: the tile must be inside a locked area's
+ * polygon (getTilesInLockedAreas). If the click is inside a locked polygon, intercept and
+ * block; otherwise do nothing.
  */
 @Slf4j
 public class LockEnforcer
 {
 	private final Client client;
+	private final LeagueScapeConfig config;
 	private final AreaGraphService areaGraphService;
 
+	/** Tile under the cursor, updated every tick so we have it when menu events fire. */
+	private WorldPoint cursorTileWorldPoint = null;
 	private boolean inLockedZone = false;
 
 	@Inject
-	public LockEnforcer(Client client, AreaGraphService areaGraphService)
+	public LockEnforcer(Client client, LeagueScapeConfig config, AreaGraphService areaGraphService)
 	{
 		this.client = client;
+		this.config = config;
 		this.areaGraphService = areaGraphService;
-	}
-
-	@Subscribe
-	public void onMenuOptionClicked(MenuOptionClicked event)
-	{
-		if (client.getLocalPlayer() == null) return;
-
-		String option = Text.removeFormattingTags(event.getMenuOption());
-		// Skip Cancel - it just closes the menu and has no spatial target
-		if ("Cancel".equals(option)) return;
-
-		// Resolve target tile: works for Walk here, object clicks, NPC clicks, ground items, etc.
-		// The selected scene tile is set when the user right-clicks or left-clicks on the world
-		WorldPoint target = getTargetWorldPoint(event);
-		if (target == null) return; // No spatial target (e.g. widget-only action) - allow
-
-		if (!areaGraphService.isWorldPointUnlocked(target))
-		{
-			event.consume();
-			client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Locked area.", null);
-		}
 	}
 
 	@Subscribe
 	public void onGameTick(GameTick e)
 	{
-		if (client.getLocalPlayer() == null) return;
+		if (client.getLocalPlayer() == null)
+		{
+			cursorTileWorldPoint = null;
+			return;
+		}
+		// Capture the tile under the cursor every tick so we have it when MenuOpened/MenuOptionClicked fire
+		cursorTileWorldPoint = getSelectedTileWorldPoint();
+
 		LocalPoint local = client.getLocalPlayer().getLocalLocation();
 		if (local == null) return;
 		WorldPoint world;
 		if (client.isInInstancedRegion())
-		{
 			world = WorldPoint.fromLocalInstance(client, local);
-		}
 		else
-		{
 			world = WorldPoint.fromLocal(client, local);
+		// Same as overlay: player is in locked zone if their tile is in the locked-tiles set (polygon-based)
+		inLockedZone = world != null && areaGraphService.getTilesInLockedAreas(world.getPlane()).contains(world);
+	}
+
+	/**
+	 * If the overlay is active and the click was on a locked tile, remove all world-targeting
+	 * menu entries so the user cannot choose any of them.
+	 */
+	@Subscribe
+	public void onMenuOpened(MenuOpened event)
+	{
+		if (!config.renderLockedOverlay()) return;
+		if (client.getLocalPlayer() == null) return;
+
+		WorldPoint clickedTile = getClickedTileWorldPoint();
+		if (clickedTile == null) return;
+		// Same logic as overlay: block only if this tile is in the locked polygon set (not includes-based)
+		if (!areaGraphService.getTilesInLockedAreas(clickedTile.getPlane()).contains(clickedTile)) return;
+
+		// Click was on a locked overlay tile: remove every entry that targets the world (walk, object, npc, etc.)
+		MenuEntry[] entries = client.getMenuEntries();
+		if (entries == null || entries.length == 0) return;
+
+		List<MenuEntry> keep = new ArrayList<>(entries.length);
+		for (MenuEntry entry : entries)
+		{
+			if (entry.getWidget() != null)
+			{
+				keep.add(entry);
+				continue;
+			}
+			if (!isWorldTargetingAction(entry.getType()))
+				keep.add(entry);
 		}
-		inLockedZone = world != null && !areaGraphService.isWorldPointUnlocked(world);
+		if (keep.size() < entries.length)
+			client.setMenuEntries(keep.toArray(new MenuEntry[0]));
+	}
+
+	/**
+	 * If the overlay is active and the click was on a locked tile, consume the event so
+	 * the game never receives the action (no path, no interact).
+	 */
+	@Subscribe
+	public void onMenuOptionClicked(MenuOptionClicked event)
+	{
+		if (!config.renderLockedOverlay()) return;
+		if (client.getLocalPlayer() == null) return;
+
+		String option = Text.removeFormattingTags(event.getMenuOption());
+		if ("Cancel".equals(option)) return;
+		// Clicks on widgets (inventory, spellbook, etc.) are not blocked by the overlay
+		if (event.getMenuEntry().getWidget() != null) return;
+		if (!isWorldTargetingAction(event.getMenuEntry().getType())) return;
+
+		WorldPoint clickedTile = getClickedTileWorldPoint();
+		if (clickedTile == null) return;
+		// Same logic as overlay: block only if this tile is inside a locked polygon
+		if (!areaGraphService.getTilesInLockedAreas(clickedTile.getPlane()).contains(clickedTile)) return;
+
+		// Click was on a locked overlay tile: block it
+		event.consume();
+		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Locked area.", null);
 	}
 
 	public boolean isInLockedZone()
@@ -77,56 +131,27 @@ public class LockEnforcer
 		return inLockedZone;
 	}
 
-	/**
-	 * Resolve the target world point for a menu action.
-	 * Uses the client's selected scene tile (the tile under the cursor when the user clicked).
-	 * Works for Walk here, object interactions, NPC interactions, ground items, and targeted spells.
-	 * Returns null if the target cannot be resolved - in that case we do NOT block the click.
-	 */
-	private WorldPoint getTargetWorldPoint(MenuOptionClicked event)
+	/** The tile under the cursor (where the user clicked). Uses last tick's value so it's set when menu events run. */
+	private WorldPoint getClickedTileWorldPoint()
 	{
-		var entry = event.getMenuEntry();
-		// Do not use selected scene tile when the click was on a widget/UI (e.g. inventory, spell).
-		// The selected tile would be whatever is under the UI on the main view and can be locked,
-		// which would wrongly block all interface interactions when they appear over locked areas.
-		if (entry.getWidget() != null)
-		{
-			return null;
-		}
+		// Prefer current selected tile in case it's still set
+		WorldPoint current = getSelectedTileWorldPoint();
+		if (current != null) return current;
+		return cursorTileWorldPoint;
+	}
 
-		MenuAction action = entry.getType();
-		// Only enforce for actions that actually target a world tile. Skip widget-only and runelite actions.
-		if (!isWorldTargetingAction(action))
-		{
-			return null;
-		}
-
-		WorldView wv = client.getWorldView(entry.getWorldViewId());
-		if (wv == null)
-		{
-			wv = client.getTopLevelWorldView();
-		}
-		if (wv == null) return null;
-
-		Tile selectedTile = wv.getSelectedSceneTile();
-		// For WALK/SET_HEADING (e.g. minimap click), the destination may be in a different world view (minimap).
-		if (selectedTile == null && (action == MenuAction.WALK || action == MenuAction.SET_HEADING))
-		{
-			selectedTile = findSelectedTileInAnyWorldView();
-		}
-		if (selectedTile == null) return null;
-
-		LocalPoint local = selectedTile.getLocalLocation();
+	/** Current selected scene tile as world point (tile under cursor), from main view or minimap. */
+	private WorldPoint getSelectedTileWorldPoint()
+	{
+		Tile tile = findSelectedTileInAnyWorldView();
+		if (tile == null) return null;
+		LocalPoint local = tile.getLocalLocation();
 		if (local == null) return null;
-
 		if (client.isInInstancedRegion())
-		{
 			return WorldPoint.fromLocalInstance(client, local);
-		}
 		return WorldPoint.fromLocal(client, local);
 	}
 
-	/** True if this menu action targets a tile in the world (walk, object, NPC, ground item, etc.). */
 	private static boolean isWorldTargetingAction(MenuAction action)
 	{
 		switch (action)
@@ -175,7 +200,6 @@ public class LockEnforcer
 		}
 	}
 
-	/** Find a selected scene tile in the top-level world view or any of its children (e.g. minimap). */
 	private Tile findSelectedTileInAnyWorldView()
 	{
 		WorldView top = client.getTopLevelWorldView();

@@ -1,5 +1,5 @@
 {
-  "_comment": "Task properties: displayName, taskType, difficulty (1-5). Optional 'area' limits the task to that area id (omit for any area).",
+  "_comment": "Task properties: displayName, taskType, difficulty (1-5). Optional 'area' is a single area id or an array of area ids; array = task appears in each listed area's grid and is shown as a mystery (?) until all listed areas are unlocked.",
   "defaultTasks": [
     {"displayName": "Mine 5 Tin Ore", "taskType": "Mining", "difficulty": 1},
     {"displayName": "Defeat a Goblin", "taskType": "Combat", "difficulty": 1},
@@ -25,7 +25,7 @@
     {"displayName": "Obtain a Bird Nest", "taskType": "Woodcutting", "difficulty": 2},
     {"displayName": "Make an Attack Potion", "taskType": "Herblore", "difficulty": 2},
     {"displayName": "Visit Death's Domain", "taskType": "Quest", "difficulty": 2},
-    {"displayName": "Complete the Varrock Agility Course", "taskType": "Agility", "difficulty": 3, "area": "varrock"},
+    {"displayName": "Complete the Varrock Agility Course", "taskType": "Agility", "difficulty": 3, "area": ["varrock"]},
     {"displayName": "Kill a Chicken with your fists", "taskType": "Combat", "difficulty": 3},
     {"displayName": "Defeat the Lesser Demon in the Wizards' Tower", "taskType": "Combat", "difficulty": 3},
     {"displayName": "1 Wintertodt Kill", "taskType": "Firemaking", "difficulty": 3},
@@ -69,6 +69,7 @@
     {"displayName": "Get your revenge against a Dark Wizard", "taskType": "Combat", "difficulty": 5},
     {"displayName": "Milk a cow", "taskType": "Farming", "difficulty": 5},
     {"displayName": "Have Ned make you some rope", "taskType": "Quest", "difficulty": 5},
+    {"displayName": "Complete a quest spanning two areas", "taskType": "Quest", "difficulty": 4, "area": ["varrock", "lumbridge"]},
     {"displayName": "Kill a Cow in one hit", "taskType": "Combat", "difficulty": 5},
     {"displayName": "Pan for an Uncut Jade", "taskType": "Mining", "difficulty": 5},
     {"displayName": "Complete the Al Kharid Agility Course", "taskType": "Agility", "difficulty": 5, "area": "al_kharid"},

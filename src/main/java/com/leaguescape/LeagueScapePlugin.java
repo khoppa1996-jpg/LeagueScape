@@ -9,8 +9,9 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.SwingUtilities;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.runelite.api.KeyCode;
 import net.runelite.api.MenuAction;
 import net.runelite.api.Tile;
@@ -31,13 +32,13 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-@Slf4j
 @PluginDescriptor(
 	name = "LeagueScape",
 	enabledByDefault = true
 )
 public class LeagueScapePlugin extends Plugin
 {
+	private static final Logger log = LoggerFactory.getLogger(LeagueScapePlugin.class);
 	private static final String STATE_GROUP = "leaguescapeState";
 	private static final String KEY_UNLOCKED_AREAS = "unlockedAreas";
 
@@ -72,6 +73,9 @@ public class LeagueScapePlugin extends Plugin
 	private Provider<com.leaguescape.config.AreaEditOverlay> areaEditOverlayProvider;
 
 	@Inject
+	private Provider<com.leaguescape.task.TaskGridService> taskGridServiceProvider;
+
+	@Inject
 	private OverlayManager overlayManager;
 
 	@Inject
@@ -99,7 +103,9 @@ public class LeagueScapePlugin extends Plugin
 	private static final String CANCEL_MOVE_OPTION = "Cancel move";
 	/** Area being edited (null = not editing). */
 	private String editingAreaId = null;
-	/** Corners for the area being edited. */
+	/** Completed polygons (each has >= 3 corners). Current polygon is editingCorners. */
+	private final List<List<int[]>> editingPolygons = new ArrayList<>();
+	/** Corners for the current polygon being edited. */
 	private final List<int[]> editingCorners = new ArrayList<>();
 	/** Index of corner being moved (-1 = not in move mode). */
 	private int moveCornerIndex = -1;
@@ -133,7 +139,7 @@ public class LeagueScapePlugin extends Plugin
 			.panel(panel)
 			.build();
 		clientToolbar.addNavigation(navButton);
-		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService);
+		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService, taskGridServiceProvider.get());
 		configNavButton = NavigationButton.builder()
 			.tooltip("LeagueScape Area Config")
 			.icon(configPanel.getIcon())
@@ -190,15 +196,15 @@ public class LeagueScapePlugin extends Plugin
 	@Singleton
 	com.leaguescape.points.AreaCompletionService provideAreaCompletionService(ConfigManager configManager,
 		com.leaguescape.area.AreaGraphService areaGraphService, com.leaguescape.points.PointsService pointsService,
-		LeagueScapeConfig config)
+		LeagueScapeConfig config, javax.inject.Provider<com.leaguescape.task.TaskGridService> taskGridServiceProvider)
 	{
-		return new com.leaguescape.points.AreaCompletionService(configManager, areaGraphService, pointsService, config);
+		return new com.leaguescape.points.AreaCompletionService(configManager, areaGraphService, pointsService, config, taskGridServiceProvider);
 	}
 
 	@Provides
-	com.leaguescape.lock.LockEnforcer provideLockEnforcer(Client client, com.leaguescape.area.AreaGraphService areaGraphService)
+	com.leaguescape.lock.LockEnforcer provideLockEnforcer(Client client, LeagueScapeConfig config, com.leaguescape.area.AreaGraphService areaGraphService)
 	{
-		return new com.leaguescape.lock.LockEnforcer(client, areaGraphService);
+		return new com.leaguescape.lock.LockEnforcer(client, config, areaGraphService);
 	}
 
 	@Provides
@@ -212,6 +218,13 @@ public class LeagueScapePlugin extends Plugin
 	com.leaguescape.wiki.OsrsWikiApiService provideOsrsWikiApiService()
 	{
 		return new com.leaguescape.wiki.OsrsWikiApiService();
+	}
+
+	@Provides
+	@Singleton
+	com.leaguescape.wiki.OsrsItemService provideOsrsItemService()
+	{
+		return new com.leaguescape.wiki.OsrsItemService();
 	}
 
 	@Provides
@@ -413,10 +426,32 @@ public class LeagueScapePlugin extends Plugin
 	public void startEditing(String areaId, List<int[]> initialCorners)
 	{
 		editingAreaId = areaId;
+		editingPolygons.clear();
 		editingCorners.clear();
-		if (initialCorners != null)
+		if (initialCorners != null && !initialCorners.isEmpty())
 		{
 			editingCorners.addAll(initialCorners);
+		}
+		notifyCornersUpdated();
+	}
+
+	/** Start editing an area with multiple polygons (e.g. when loading existing area). */
+	public void startEditingWithPolygons(String areaId, List<List<int[]>> polygons)
+	{
+		editingAreaId = areaId;
+		editingPolygons.clear();
+		editingCorners.clear();
+		if (polygons != null && !polygons.isEmpty())
+		{
+			for (int i = 0; i < polygons.size() - 1; i++)
+			{
+				List<int[]> poly = polygons.get(i);
+				if (poly != null && poly.size() >= 3)
+					editingPolygons.add(new ArrayList<>(poly));
+			}
+			List<int[]> last = polygons.get(polygons.size() - 1);
+			if (last != null)
+				editingCorners.addAll(last);
 		}
 		notifyCornersUpdated();
 	}
@@ -424,6 +459,7 @@ public class LeagueScapePlugin extends Plugin
 	public void stopAreaEditing()
 	{
 		editingAreaId = null;
+		editingPolygons.clear();
 		editingCorners.clear();
 		moveCornerIndex = -1;
 		cornerUpdateCallback = null;
@@ -443,6 +479,50 @@ public class LeagueScapePlugin extends Plugin
 	public List<int[]> getEditingCorners()
 	{
 		return Collections.unmodifiableList(new ArrayList<>(editingCorners));
+	}
+
+	/** Completed polygons (each with >= 3 corners). Current polygon is from getEditingCorners(). */
+	public List<List<int[]>> getEditingPolygons()
+	{
+		return Collections.unmodifiableList(new ArrayList<>(editingPolygons));
+	}
+
+	/** All polygons for save: editingPolygons + current polygon if it has >= 3 corners. */
+	public List<List<int[]>> getAllEditingPolygons()
+	{
+		List<List<int[]>> all = new ArrayList<>(editingPolygons);
+		if (editingCorners.size() >= 3)
+			all.add(new ArrayList<>(editingCorners));
+		return all;
+	}
+
+	/** Start a new polygon (commits current if >= 3 corners). Use in Add New Area or Edit Area on map. */
+	public void startNewPolygon()
+	{
+		if (editingCorners.size() >= 3)
+			editingPolygons.add(new ArrayList<>(editingCorners));
+		editingCorners.clear();
+		moveCornerIndex = -1;
+		notifyCornersUpdated();
+		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Started new polygon.", null);
+	}
+
+	/** Remove corner at index (for map right-click menu). */
+	public void removeCorner(int index)
+	{
+		if (index < 0 || index >= editingCorners.size()) return;
+		editingCorners.remove(index);
+		if (moveCornerIndex == index) moveCornerIndex = -1;
+		else if (moveCornerIndex > index) moveCornerIndex--;
+		notifyCornersUpdated();
+	}
+
+	/** Set corner position (for map move-corner). */
+	public void setCornerPosition(int index, net.runelite.api.coords.WorldPoint wp)
+	{
+		if (wp == null || index < 0 || index >= editingCorners.size()) return;
+		editingCorners.set(index, new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+		notifyCornersUpdated();
 	}
 
 	public boolean isEditingArea()

@@ -3,6 +3,8 @@ package com.leaguescape.config;
 import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.data.Area;
+import com.leaguescape.task.TaskDefinition;
+import com.leaguescape.task.TaskGridService;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -11,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.BoxLayout;
@@ -20,6 +23,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
@@ -27,6 +31,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.util.ImageUtil;
+import java.awt.Container;
 import java.awt.Rectangle;
 
 public class LeagueScapeConfigPanel extends PluginPanel
@@ -51,13 +56,46 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		return new ScrollableWidthPanel();
 	}
 
+	/** Builds a collapsible section: header (title + ▼/▶) and content panel. If headerOut is non-null, stores the header for external expand/collapse. */
+	private JPanel createCollapsibleSection(String title, JPanel content, boolean expandedByDefault, JToggleButton[] headerOut)
+	{
+		JPanel wrapper = new JPanel(new BorderLayout());
+		wrapper.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		JToggleButton header = new JToggleButton(expandedByDefault ? "▼ " + title : "▶ " + title, expandedByDefault);
+		header.setFocusPainted(false);
+		header.setBorderPainted(false);
+		header.setContentAreaFilled(false);
+		header.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+		content.setVisible(expandedByDefault);
+		final String titleFinal = title;
+		header.addActionListener(e -> {
+			boolean on = header.isSelected();
+			content.setVisible(on);
+			header.setText(on ? "▼ " + titleFinal : "▶ " + titleFinal);
+			wrapper.revalidate();
+			// Propagate revalidation up so the scroll pane view recalculates and the section returns to full height when expanded
+			for (Container p = wrapper.getParent(); p != null; p = p.getParent())
+			{
+				p.revalidate();
+			}
+			wrapper.repaint();
+		});
+		wrapper.add(header, BorderLayout.NORTH);
+		wrapper.add(content, BorderLayout.CENTER);
+		if (headerOut != null && headerOut.length > 0)
+			headerOut[0] = header;
+		return wrapper;
+	}
+
 	private final LeagueScapePlugin plugin;
 	private final AreaGraphService areaGraphService;
+	private final TaskGridService taskGridService;
 
 	private JPanel mainPanel;
 	private JPanel listPanel;
 	private JPanel removedPanel;
 	private JPanel editPanel;
+	private JToggleButton editSectionHeader;
 	private JTextField idField;
 	private JTextField displayNameField;
 	private JPanel cornersPanel;
@@ -67,10 +105,21 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private JButton saveBtn;
 	private JButton cancelBtn;
 
-	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService)
+	private JPanel taskListPanel;
+	private JPanel taskEditPanel;
+	private JToggleButton taskEditSectionHeader;
+	private JButton clearTasksOverrideBtn;
+	private JTextField taskDisplayNameField;
+	private JTextField taskTypeField;
+	private JSpinner taskDifficultySpinner;
+	private JPanel taskAreasPanel;
+	private int editingTaskIndex = -1;
+
+	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService, TaskGridService taskGridService)
 	{
 		this.plugin = plugin;
 		this.areaGraphService = areaGraphService;
+		this.taskGridService = taskGridService;
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(6, 6, 6, 6));
 
@@ -96,30 +145,74 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		topSection.add(exportBtn);
 		add(topSection, BorderLayout.NORTH);
 
-		// Scrollable content: area list, removed list, edit form. Track viewport width so no horizontal scroll.
+		// Scrollable content: collapsible sections for area list, removed list, edit form.
 		mainPanel = new ScrollableWidthPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-		JLabel listLabel = new JLabel("Areas:");
-		mainPanel.add(listLabel);
 		listPanel = newScrollableTrackWidthPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 		JScrollPane listScroll = new JScrollPane(listPanel);
 		listScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		mainPanel.add(listScroll);
+		JPanel areasContent = new JPanel(new BorderLayout());
+		areasContent.add(listScroll, BorderLayout.CENTER);
+		mainPanel.add(createCollapsibleSection("Areas", areasContent, true, null));
 
 		mainPanel.add(new JLabel(" "));
-		mainPanel.add(new JLabel("Removed areas (Restore to add back):"));
 		removedPanel = newScrollableTrackWidthPanel();
 		removedPanel.setLayout(new BoxLayout(removedPanel, BoxLayout.Y_AXIS));
 		JScrollPane removedScroll = new JScrollPane(removedPanel);
 		removedScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		mainPanel.add(removedScroll);
+		JPanel removedContent = new JPanel(new BorderLayout());
+		removedContent.add(removedScroll, BorderLayout.CENTER);
+		mainPanel.add(createCollapsibleSection("Removed areas (Restore to add back)", removedContent, false, null));
 
 		editPanel = new JPanel();
 		editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
 		editPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
-		mainPanel.add(editPanel);
+		JToggleButton[] editHeaderRef = new JToggleButton[1];
+		mainPanel.add(createCollapsibleSection("Edit area", editPanel, false, editHeaderRef));
+		editSectionHeader = editHeaderRef[0];
+
+		mainPanel.add(new JLabel(" "));
+		JPanel tasksTop = new JPanel();
+		tasksTop.setLayout(new BoxLayout(tasksTop, BoxLayout.Y_AXIS));
+		JButton importTasksBtn = new JButton("Import Task JSON");
+		importTasksBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		importTasksBtn.addActionListener(e -> importTaskJson());
+		tasksTop.add(importTasksBtn);
+		JButton exportTasksBtn = new JButton("Export Task JSON");
+		exportTasksBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		exportTasksBtn.addActionListener(e -> exportTaskJson());
+		tasksTop.add(exportTasksBtn);
+		clearTasksOverrideBtn = new JButton("Clear imported tasks (use file/built-in again)");
+		clearTasksOverrideBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		clearTasksOverrideBtn.addActionListener(e -> {
+			taskGridService.clearTasksOverride();
+			refreshTaskList();
+		});
+		tasksTop.add(clearTasksOverrideBtn);
+		taskListPanel = newScrollableTrackWidthPanel();
+		taskListPanel.setLayout(new BoxLayout(taskListPanel, BoxLayout.Y_AXIS));
+		JScrollPane taskListScroll = new JScrollPane(taskListPanel);
+		taskListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		JPanel taskListContent = new JPanel(new BorderLayout());
+		taskListContent.add(taskListScroll, BorderLayout.CENTER);
+		JButton addTaskBtn = new JButton("Add custom task");
+		addTaskBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		addTaskBtn.addActionListener(e -> startEditingNewTask());
+		JPanel tasksContent = new JPanel();
+		tasksContent.setLayout(new BoxLayout(tasksContent, BoxLayout.Y_AXIS));
+		tasksContent.add(tasksTop);
+		tasksContent.add(addTaskBtn);
+		tasksContent.add(new JLabel("Custom tasks:"));
+		tasksContent.add(taskListContent);
+		taskEditPanel = new JPanel();
+		taskEditPanel.setLayout(new BoxLayout(taskEditPanel, BoxLayout.Y_AXIS));
+		taskEditPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
+		JToggleButton[] taskEditHeaderRef = new JToggleButton[1];
+		mainPanel.add(createCollapsibleSection("Tasks", tasksContent, true, null));
+		mainPanel.add(createCollapsibleSection("Edit task", taskEditPanel, false, taskEditHeaderRef));
+		taskEditSectionHeader = taskEditHeaderRef[0];
 
 		JScrollPane scrollPane = new JScrollPane(mainPanel);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -127,12 +220,19 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		add(scrollPane, BorderLayout.CENTER);
 		refreshAreaList();
 		refreshRemovedList();
+		refreshTaskList();
 	}
+
+	private static final Comparator<Area> AREA_DISPLAY_ORDER = Comparator
+		.comparing((Area a) -> a.getDisplayName() != null ? a.getDisplayName() : a.getId(), String.CASE_INSENSITIVE_ORDER)
+		.thenComparing(Area::getId, String.CASE_INSENSITIVE_ORDER);
 
 	private void refreshAreaList()
 	{
 		listPanel.removeAll();
-		for (Area a : areaGraphService.getAreas())
+		List<Area> areas = new ArrayList<>(areaGraphService.getAreas());
+		areas.sort(AREA_DISPLAY_ORDER);
+		for (Area a : areas)
 		{
 			JPanel row = new JPanel(new BorderLayout());
 			String name = a.getDisplayName() != null ? a.getDisplayName() : a.getId();
@@ -159,10 +259,15 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	{
 		if (removedPanel == null) return;
 		removedPanel.removeAll();
-		for (String areaId : areaGraphService.getRemovedAreaIds())
+		List<String> removedIds = new ArrayList<>(areaGraphService.getRemovedAreaIds());
+		removedIds.sort((a, b) -> {
+			String na = getDisplayNameForRemoved(a);
+			String nb = getDisplayNameForRemoved(b);
+			return String.CASE_INSENSITIVE_ORDER.compare(na, nb);
+		});
+		for (String areaId : removedIds)
 		{
-			Area builtIn = areaGraphService.getBuiltInArea(areaId);
-			String displayName = builtIn != null && builtIn.getDisplayName() != null ? builtIn.getDisplayName() : areaId;
+			String displayName = getDisplayNameForRemoved(areaId);
 			JPanel row = new JPanel(new BorderLayout());
 			JLabel remLabel = new JLabel(displayName);
 			remLabel.setToolTipText(displayName);
@@ -194,16 +299,29 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		Area a = areaGraphService.getArea(areaId);
 		if (a == null) return;
 
-		List<int[]> corners = a.getPolygon() != null ? new ArrayList<>(a.getPolygon()) : new ArrayList<>();
 		List<String> neighbors = a.getNeighbors() != null ? new ArrayList<>(a.getNeighbors()) : new ArrayList<>();
-		plugin.startEditing(areaId, corners);
+		List<int[]> firstPolygon = a.getPolygon() != null ? new ArrayList<>(a.getPolygon()) : new ArrayList<>();
+		if (a.getPolygons() != null && a.getPolygons().size() > 1)
+			plugin.startEditingWithPolygons(areaId, a.getPolygons());
+		else
+			plugin.startEditing(areaId, firstPolygon);
 		plugin.setCornerUpdateCallback(this::refreshCornersDisplay);
 		int ptsToComplete = a.getPointsToComplete() != null ? a.getPointsToComplete() : a.getUnlockCost();
-		showEditForm(areaId, a.getId(), a.getDisplayName() != null ? a.getDisplayName() : "", corners, neighbors, a.getUnlockCost(), ptsToComplete);
+		showEditForm(areaId, a.getId(), a.getDisplayName() != null ? a.getDisplayName() : "", firstPolygon, neighbors, a.getUnlockCost(), ptsToComplete);
 	}
 
 	private void showEditForm(String areaId, String id, String displayName, List<int[]> corners, List<String> neighbors, int unlockCost, int pointsToComplete)
 	{
+		if (editSectionHeader != null)
+		{
+			editSectionHeader.setSelected(true);
+			editSectionHeader.setText("▼ Edit area");
+			editPanel.setVisible(true);
+			for (Container p = editSectionHeader.getParent(); p != null; p = p.getParent())
+			{
+				p.revalidate();
+			}
+		}
 		editPanel.removeAll();
 
 		editPanel.add(new JLabel("Area ID (slug, e.g. " + (areaId.startsWith("new_") ? "lumbridge):" : "):")));
@@ -231,9 +349,11 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		editPanel.add(new JLabel("Neighbors:"));
 		neighborsPanel = new JPanel();
 		neighborsPanel.setLayout(new BoxLayout(neighborsPanel, BoxLayout.Y_AXIS));
-		for (Area other : areaGraphService.getAreas())
+		List<Area> others = new ArrayList<>(areaGraphService.getAreas());
+		others.removeIf(a -> a.getId().equals(areaId));
+		others.sort(AREA_DISPLAY_ORDER);
+		for (Area other : others)
 		{
-			if (other.getId().equals(areaId)) continue;
 			JCheckBox cb = new JCheckBox(other.getDisplayName() != null ? other.getDisplayName() : other.getId());
 			cb.setName(other.getId()); // Store id for lookup
 			cb.setSelected(neighbors.contains(other.getId()));
@@ -299,11 +419,10 @@ public class LeagueScapeConfigPanel extends PluginPanel
 
 	private void removeCorner(int index)
 	{
-		List<int[]> corners = new ArrayList<>(plugin.getEditingCorners());
-		if (index >= 0 && index < corners.size())
+		if (index >= 0 && index < plugin.getEditingCorners().size())
 		{
-			corners.remove(index);
-			plugin.startEditing(plugin.getEditingAreaId(), corners);
+			plugin.removeCorner(index);
+			refreshCornersDisplay(plugin.getEditingCorners());
 		}
 	}
 
@@ -315,10 +434,10 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		String displayName = displayNameField.getText().trim();
 		if (displayName.isEmpty()) displayName = id;
 
-		List<int[]> corners = plugin.getEditingCorners();
-		if (corners.size() < 3)
+		List<List<int[]>> allPolygons = plugin.getAllEditingPolygons();
+		if (allPolygons.isEmpty() || allPolygons.stream().anyMatch(p -> p.size() < 3))
 		{
-			// Could show message
+			// Need at least one polygon with >= 3 corners
 			return;
 		}
 
@@ -341,7 +460,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		Area area = Area.builder()
 			.id(id)
 			.displayName(displayName)
-			.polygons(Collections.singletonList(new ArrayList<>(corners)))
+			.polygons(allPolygons)
 			.includes(Collections.emptyList()) // Computed by AreaGraphService
 			.neighbors(neighbors)
 			.unlockCost(cost)
@@ -427,6 +546,224 @@ public class LeagueScapeConfigPanel extends PluginPanel
 					javax.swing.JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+
+	private void refreshTaskList()
+	{
+		if (clearTasksOverrideBtn != null)
+			clearTasksOverrideBtn.setVisible(taskGridService.hasTasksOverride());
+		if (taskListPanel == null) return;
+		taskListPanel.removeAll();
+		List<TaskDefinition> custom = taskGridService.getCustomTasks();
+		for (int i = 0; i < custom.size(); i++)
+		{
+			final int index = i;
+			TaskDefinition t = custom.get(i);
+			String name = t.getDisplayName() != null ? t.getDisplayName() : "(no name)";
+			String type = t.getTaskType() != null ? t.getTaskType() : "";
+			int diff = t.getDifficulty();
+			List<String> areaIds = t.getRequiredAreaIds();
+			String areaSummary = areaIds.isEmpty() ? "any" : String.join(", ", areaIds);
+			JPanel row = new JPanel(new BorderLayout());
+			JLabel label = new JLabel(name + "  |  " + type + "  |  " + diff + "  |  " + areaSummary);
+			label.setToolTipText(name);
+			label.setMinimumSize(new Dimension(0, 0));
+			row.add(label, BorderLayout.CENTER);
+			JPanel btns = new JPanel();
+			JButton editTaskBtn = new JButton("Edit");
+			editTaskBtn.addActionListener(e -> startEditingTask(index));
+			btns.add(editTaskBtn);
+			JButton removeTaskBtn = new JButton("Remove");
+			removeTaskBtn.addActionListener(e -> {
+				taskGridService.removeCustomTask(index);
+				refreshTaskList();
+			});
+			btns.add(removeTaskBtn);
+			row.add(btns, BorderLayout.EAST);
+			taskListPanel.add(row);
+		}
+		taskListPanel.revalidate();
+		taskListPanel.repaint();
+	}
+
+	private void importTaskJson()
+	{
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Import Task JSON");
+		chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON files", "json"));
+		if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
+		File file = chooser.getSelectedFile();
+		try
+		{
+			String json = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
+			taskGridService.setTasksOverride(json);
+			refreshTaskList();
+			javax.swing.JOptionPane.showMessageDialog(this,
+				"Imported tasks from " + file.getName() + ". They will be used instead of the file or built-in list until you clear the override.",
+				"Import Complete", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+		}
+		catch (IllegalArgumentException ex)
+		{
+			javax.swing.JOptionPane.showMessageDialog(this, "Invalid task JSON:\n\n" + ex.getMessage(),
+				"Import Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+		catch (Exception ex)
+		{
+			javax.swing.JOptionPane.showMessageDialog(this, "Import failed: " + ex.getMessage(),
+				"Import Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void exportTaskJson()
+	{
+		JFileChooser chooser = new JFileChooser();
+		chooser.setDialogTitle("Export Task JSON");
+		chooser.setSelectedFile(new File("tasks.json"));
+		chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON files", "json"));
+		if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+		File file = chooser.getSelectedFile();
+		if (!file.getName().toLowerCase().endsWith(".json"))
+			file = new File(file.getParent(), file.getName() + ".json");
+		try
+		{
+			String json = taskGridService.exportTasksToJson();
+			Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
+			javax.swing.JOptionPane.showMessageDialog(this, "Exported tasks to " + file.getName(),
+				"Export Complete", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+		}
+		catch (Exception ex)
+		{
+			javax.swing.JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage(),
+				"Export Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	private void startEditingNewTask()
+	{
+		editingTaskIndex = -1;
+		TaskDefinition t = new TaskDefinition();
+		t.setDisplayName("");
+		t.setTaskType("");
+		t.setDifficulty(1);
+		t.setAreas(new ArrayList<>());
+		showTaskEditForm(t);
+	}
+
+	private void startEditingTask(int index)
+	{
+		List<TaskDefinition> custom = taskGridService.getCustomTasks();
+		if (index < 0 || index >= custom.size()) return;
+		editingTaskIndex = index;
+		showTaskEditForm(custom.get(index));
+	}
+
+	private void showTaskEditForm(TaskDefinition t)
+	{
+		if (taskEditSectionHeader != null)
+		{
+			taskEditSectionHeader.setSelected(true);
+			taskEditSectionHeader.setText("▼ Edit task");
+			taskEditPanel.setVisible(true);
+			for (Container p = taskEditSectionHeader.getParent(); p != null; p = p.getParent())
+				p.revalidate();
+		}
+		taskEditPanel.removeAll();
+		taskEditPanel.add(new JLabel("Display name:"));
+		taskDisplayNameField = new JTextField(t.getDisplayName() != null ? t.getDisplayName() : "", 20);
+		taskDisplayNameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, taskDisplayNameField.getPreferredSize().height));
+		taskEditPanel.add(taskDisplayNameField);
+		taskEditPanel.add(new JLabel("Task type (e.g. Combat, Mining):"));
+		taskTypeField = new JTextField(t.getTaskType() != null ? t.getTaskType() : "", 20);
+		taskTypeField.setMaximumSize(new Dimension(Integer.MAX_VALUE, taskTypeField.getPreferredSize().height));
+		taskEditPanel.add(taskTypeField);
+		taskEditPanel.add(new JLabel("Difficulty (1–5):"));
+		taskDifficultySpinner = new JSpinner(new SpinnerNumberModel(
+			Math.max(1, Math.min(5, t.getDifficulty())), 1, 5, 1));
+		taskEditPanel.add(taskDifficultySpinner);
+		taskEditPanel.add(new JLabel("Area(s) – leave all unchecked for any area; or select areas this task appears in:"));
+		taskAreasPanel = new JPanel();
+		taskAreasPanel.setLayout(new BoxLayout(taskAreasPanel, BoxLayout.Y_AXIS));
+		List<Area> areas = new ArrayList<>(areaGraphService.getAreas());
+		areas.sort(AREA_DISPLAY_ORDER);
+		List<String> selectedIds = t.getRequiredAreaIds();
+		for (Area a : areas)
+		{
+			JCheckBox cb = new JCheckBox(a.getDisplayName() != null ? a.getDisplayName() : a.getId());
+			cb.setName(a.getId());
+			cb.setSelected(selectedIds != null && selectedIds.contains(a.getId()));
+			taskAreasPanel.add(cb);
+		}
+		JScrollPane taskAreasScroll = new JScrollPane(taskAreasPanel);
+		taskAreasScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		taskEditPanel.add(taskAreasScroll);
+		taskEditPanel.add(new JLabel(" "));
+		JPanel taskSaveCancel = new JPanel();
+		JButton taskSaveBtn = new JButton("Save");
+		taskSaveBtn.addActionListener(e -> saveTask());
+		JButton taskCancelBtn = new JButton("Cancel");
+		taskCancelBtn.addActionListener(e -> cancelTaskEdit());
+		taskSaveCancel.add(taskSaveBtn);
+		taskSaveCancel.add(taskCancelBtn);
+		taskEditPanel.add(taskSaveCancel);
+		taskEditPanel.revalidate();
+		taskEditPanel.repaint();
+	}
+
+	private void saveTask()
+	{
+		String displayName = taskDisplayNameField.getText().trim();
+		if (displayName.isEmpty()) displayName = "Unnamed task";
+		String taskType = taskTypeField.getText().trim();
+		int difficulty = (Integer) taskDifficultySpinner.getValue();
+		List<String> areaIds = new ArrayList<>();
+		for (int i = 0; i < taskAreasPanel.getComponentCount(); i++)
+		{
+			if (taskAreasPanel.getComponent(i) instanceof JCheckBox)
+			{
+				JCheckBox cb = (JCheckBox) taskAreasPanel.getComponent(i);
+				if (cb.isSelected() && cb.getName() != null)
+					areaIds.add(cb.getName());
+			}
+		}
+		TaskDefinition def = new TaskDefinition();
+		def.setDisplayName(displayName);
+		def.setTaskType(taskType.isEmpty() ? null : taskType);
+		def.setDifficulty(difficulty);
+		if (areaIds.isEmpty())
+		{
+			def.setArea(null);
+			def.setAreas(null);
+		}
+		else if (areaIds.size() == 1)
+		{
+			def.setArea(areaIds.get(0));
+			def.setAreas(null);
+		}
+		else
+		{
+			def.setArea(null);
+			def.setAreas(areaIds);
+		}
+		if (editingTaskIndex >= 0)
+			taskGridService.updateCustomTask(editingTaskIndex, def);
+		else
+			taskGridService.addCustomTask(def);
+		cancelTaskEdit();
+		refreshTaskList();
+	}
+
+	private void cancelTaskEdit()
+	{
+		editingTaskIndex = -1;
+		taskEditPanel.removeAll();
+		taskEditPanel.revalidate();
+		taskEditPanel.repaint();
+	}
+
+	private String getDisplayNameForRemoved(String areaId)
+	{
+		Area builtIn = areaGraphService.getBuiltInArea(areaId);
+		return builtIn != null && builtIn.getDisplayName() != null ? builtIn.getDisplayName() : areaId;
 	}
 
 	private void removeArea(String areaId)

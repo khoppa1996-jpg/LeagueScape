@@ -134,53 +134,105 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			: null;
 		List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
 
-		// Draw area polygons
+		// Draw area polygons (all polygons per area for locked/unlocked/unlockable)
 		for (Area area : areaGraphService.getAreas())
 		{
-			if (area.getPolygon() == null || area.getPolygon().size() < 3)
-			{
-				continue;
-			}
+			if (area.getPolygons() == null) continue;
 
 			Color color;
 			if (unlocked.contains(area.getId()))
-			{
 				color = config.mapUnlockedColor();
-			}
 			else if (unlockable.contains(area))
-			{
 				color = config.mapUnlockableColor();
-			}
 			else
-			{
 				color = config.mapLockedColor();
-			}
 
-			Polygon poly = worldPolygonToScreen(area.getPolygon(), worldMap, worldMapRect, pixelsPerTile);
-			if (poly != null && poly.npoints >= 3)
+			for (List<int[]> polygon : area.getPolygons())
 			{
-				graphics.setColor(color);
-				graphics.fillPolygon(poly);
+				if (polygon == null || polygon.size() < 3) continue;
+				Polygon poly = worldPolygonToScreen(polygon, worldMap, worldMapRect, pixelsPerTile);
+				if (poly != null && poly.npoints >= 3)
+				{
+					graphics.setColor(color);
+					graphics.fillPolygon(poly);
+				}
 			}
 		}
 
-		// Hover: white border on hovered area
+		// Hover: white border on all polygons of hovered area
 		Area hovered = hoveredArea;
-		if (hovered != null && hovered.getPolygon() != null && hovered.getPolygon().size() >= 3)
+		if (hovered != null && hovered.getPolygons() != null)
 		{
-			Polygon hoverPoly = worldPolygonToScreen(hovered.getPolygon(), worldMap, worldMapRect, pixelsPerTile);
-			if (hoverPoly != null && hoverPoly.npoints >= 3)
+			graphics.setColor(HOVER_BORDER_COLOR);
+			graphics.setStroke(new BasicStroke(HOVER_BORDER_WIDTH));
+			for (List<int[]> polygon : hovered.getPolygons())
 			{
-				graphics.setColor(HOVER_BORDER_COLOR);
-				graphics.setStroke(new BasicStroke(HOVER_BORDER_WIDTH));
-				graphics.drawPolygon(hoverPoly);
+				if (polygon == null || polygon.size() < 3) continue;
+				Polygon hoverPoly = worldPolygonToScreen(polygon, worldMap, worldMapRect, pixelsPerTile);
+				if (hoverPoly != null && hoverPoly.npoints >= 3)
+					graphics.drawPolygon(hoverPoly);
 			}
 		}
 
-		// Corner markers: when option on (hovered area), when editing an area on map, or when in Add New Area mode (all other areas, read-only)
+		// Corner markers: overlay map-edit state, plugin Area Edit mode, or Add New Area mode
 		boolean isEditMode = (editingAreaId != null && editingCorners != null);
+		boolean pluginEditMode = plugin.isEditingArea() && !plugin.isAddNewAreaMode();
 		boolean addNewAreaMode = plugin.isAddNewAreaMode();
-		if (isEditMode)
+		if (pluginEditMode)
+		{
+			// Draw completed polygons (read-only style) then current polygon corners
+			List<List<int[]>> allPolygons = plugin.getEditingPolygons();
+			for (List<int[]> poly : allPolygons)
+			{
+				if (poly == null || poly.size() < 3) continue;
+				for (int[] v : poly)
+				{
+					Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+					if (screen == null) continue;
+					if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
+					graphics.setColor(CORNER_MARKER_COLOR);
+					graphics.fillOval(screen.getX() - CORNER_MARKER_RADIUS, screen.getY() - CORNER_MARKER_RADIUS,
+						CORNER_MARKER_RADIUS * 2, CORNER_MARKER_RADIUS * 2);
+				}
+				Polygon screenPoly = worldPolygonToScreen(poly, worldMap, worldMapRect, pixelsPerTile);
+				if (screenPoly != null && screenPoly.npoints >= 3)
+				{
+					graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 80));
+					graphics.fillPolygon(screenPoly);
+					graphics.setColor(CORNER_MARKER_COLOR);
+					graphics.setStroke(new BasicStroke(1.5f));
+					graphics.drawPolygon(screenPoly);
+				}
+			}
+			List<int[]> currentCorners = plugin.getEditingCorners();
+			int movingIdx = plugin.getMoveCornerIndex();
+			for (int i = 0; i < currentCorners.size(); i++)
+			{
+				int[] v = currentCorners.get(i);
+				Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+				if (screen == null) continue;
+				if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
+				if (i == movingIdx)
+					graphics.setColor(CORNER_MARKER_MOVE_COLOR);
+				else
+					graphics.setColor(CORNER_MARKER_EDIT_COLOR);
+				graphics.fillOval(screen.getX() - CORNER_MARKER_RADIUS, screen.getY() - CORNER_MARKER_RADIUS,
+					CORNER_MARKER_RADIUS * 2, CORNER_MARKER_RADIUS * 2);
+			}
+			if (currentCorners.size() >= 3)
+			{
+				Polygon editPoly = worldPolygonToScreen(currentCorners, worldMap, worldMapRect, pixelsPerTile);
+				if (editPoly != null && editPoly.npoints >= 3)
+				{
+					graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 120));
+					graphics.fillPolygon(editPoly);
+					graphics.setColor(CORNER_MARKER_EDIT_COLOR);
+					graphics.setStroke(new BasicStroke(2f));
+					graphics.drawPolygon(editPoly);
+				}
+			}
+		}
+		else if (isEditMode)
 		{
 			List<int[]> cornersToDraw = editingCorners;
 			int movingIdx = moveCornerIndex;
@@ -200,18 +252,22 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		}
 		else if (addNewAreaMode)
 		{
-			// Show corners of all existing areas (read-only) when adding a new area
+			// Show corners of all polygons of all existing areas (read-only) when adding a new area
 			for (Area area : areaGraphService.getAreas())
 			{
-				if (area.getPolygon() == null) continue;
-				for (int[] v : area.getPolygon())
+				if (area.getPolygons() == null) continue;
+				for (List<int[]> polygon : area.getPolygons())
 				{
-					Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
-					if (screen == null) continue;
-					if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
-					graphics.setColor(CORNER_MARKER_COLOR);
-					graphics.fillOval(screen.getX() - CORNER_MARKER_RADIUS, screen.getY() - CORNER_MARKER_RADIUS,
-						CORNER_MARKER_RADIUS * 2, CORNER_MARKER_RADIUS * 2);
+					if (polygon == null) continue;
+					for (int[] v : polygon)
+					{
+						Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+						if (screen == null) continue;
+						if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
+						graphics.setColor(CORNER_MARKER_COLOR);
+						graphics.fillOval(screen.getX() - CORNER_MARKER_RADIUS, screen.getY() - CORNER_MARKER_RADIUS,
+							CORNER_MARKER_RADIUS * 2, CORNER_MARKER_RADIUS * 2);
+					}
 				}
 			}
 			// Draw the new area's corners so far (the polygon being built)
@@ -240,19 +296,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				}
 			}
 		}
-		else if (config.drawAreaCornersOnMap() && hovered != null && hovered.getPolygon() != null)
-		{
-			List<int[]> cornersToDraw = hovered.getPolygon();
-			for (int[] v : cornersToDraw)
-			{
-				Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
-				if (screen == null) continue;
-				if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
-				graphics.setColor(CORNER_MARKER_COLOR);
-				graphics.fillOval(screen.getX() - CORNER_MARKER_RADIUS, screen.getY() - CORNER_MARKER_RADIUS,
-					CORNER_MARKER_RADIUS * 2, CORNER_MARKER_RADIUS * 2);
-			}
-		}
+		// Corners are only shown in Edit Area mode or Add New Area mode; not when just hovering
 
 		// In edit mode, draw the editing polygon outline (and fill if >= 3 points)
 		if (isEditMode && editingCorners.size() >= 3)
@@ -372,16 +416,15 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	{
 		for (Area area : areaGraphService.getAreas())
 		{
-			if (area.getPolygon() == null || area.getPolygon().size() < 3)
-			{
-				continue;
-			}
+			// Use first polygon for label placement
+			List<int[]> firstPoly = area.getPolygon();
+			if (firstPoly == null || firstPoly.size() < 3) continue;
 
-			// Compute centroid
+			// Compute centroid of first polygon
 			double cx = 0;
 			double cy = 0;
 			int count = 0;
-			for (int[] v : area.getPolygon())
+			for (int[] v : firstPoly)
 			{
 				if (v.length > 2 && v[2] != 0)
 				{
@@ -529,7 +572,29 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 	private void exitMapEditMode(boolean save)
 	{
-		if (save && editingAreaId != null && editingCorners != null && editingCorners.size() >= 3)
+		if (save && plugin.isEditingArea())
+		{
+			List<List<int[]>> all = plugin.getAllEditingPolygons();
+			if (!all.isEmpty() && all.stream().noneMatch(p -> p == null || p.size() < 3))
+			{
+				Area current = areaGraphService.getArea(plugin.getEditingAreaId());
+				if (current != null)
+				{
+					Area updated = Area.builder()
+						.id(current.getId())
+						.displayName(current.getDisplayName())
+						.polygons(all)
+						.includes(current.getIncludes())
+						.neighbors(current.getNeighbors())
+						.unlockCost(current.getUnlockCost())
+						.pointsToComplete(current.getPointsToComplete())
+						.build();
+					areaGraphService.saveCustomArea(updated);
+				}
+			}
+			plugin.stopEditing();
+		}
+		else if (save && editingAreaId != null && editingCorners != null && editingCorners.size() >= 3)
 		{
 			Area current = areaGraphService.getArea(editingAreaId);
 			if (current != null)
@@ -546,6 +611,10 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				areaGraphService.saveCustomArea(updated);
 			}
 		}
+		else if (!save && plugin.isEditingArea())
+		{
+			plugin.stopEditing();
+		}
 		editingAreaId = null;
 		editingCorners = null;
 		moveCornerIndex = -1;
@@ -554,7 +623,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Returns corner index if (screenX, screenY) is within CORNER_HIT_RADIUS of a corner; -1 otherwise. */
 	private int getCornerIndexAtScreen(int screenX, int screenY)
 	{
-		if (editingCorners == null) return -1;
+		List<int[]> corners = plugin.isEditingArea() ? plugin.getEditingCorners() : editingCorners;
+		if (corners == null) return -1;
 		Widget map = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
 		if (map == null) return -1;
 		Rectangle worldMapRect = map.getBounds();
@@ -562,9 +632,9 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		float pixelsPerTile = worldMap.getWorldMapZoom();
 		int best = -1;
 		int bestDistSq = CORNER_HIT_RADIUS * CORNER_HIT_RADIUS + 1;
-		for (int i = 0; i < editingCorners.size(); i++)
+		for (int i = 0; i < corners.size(); i++)
 		{
-			int[] v = editingCorners.get(i);
+			int[] v = corners.get(i);
 			Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 			if (screen == null) continue;
 			int dx = screen.getX() - screenX;
@@ -586,28 +656,32 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	private static final int PRESSED_INSET = 2;
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int TASK_ICON_SIZE = 28;
-	/** Wiki search term per task type for consistent tile icons (Raging Echoes–style). */
+	/** Wiki image filename per task type: skill overview icons (Skill_icon_(detail).png) and map icons for Quest/Diary. */
 	private static final Map<String, String> TASK_TYPE_WIKI_ICON = new HashMap<>();
 	static
 	{
-		TASK_TYPE_WIKI_ICON.put("Combat", "Combat_icon.png");
-		TASK_TYPE_WIKI_ICON.put("Mining", "Pickaxe");
-		TASK_TYPE_WIKI_ICON.put("Fishing", "Fishing rod");
-		TASK_TYPE_WIKI_ICON.put("Cooking", "Shark");
-		TASK_TYPE_WIKI_ICON.put("Woodcutting", "Dragon axe");
-		TASK_TYPE_WIKI_ICON.put("Prayer", "Prayer potion");
-		TASK_TYPE_WIKI_ICON.put("Crafting", "Needle");
-		TASK_TYPE_WIKI_ICON.put("Quest", "Quest point cape");
-		TASK_TYPE_WIKI_ICON.put("Smithing", "Hammer");
-		TASK_TYPE_WIKI_ICON.put("Fletching", "Knife");
-		TASK_TYPE_WIKI_ICON.put("Herblore", "Strength potion");
-		TASK_TYPE_WIKI_ICON.put("Thieving", "Lockpick");
-		TASK_TYPE_WIKI_ICON.put("Agility", "Graceful boots");
-		TASK_TYPE_WIKI_ICON.put("Firemaking", "Tinderbox");
-		TASK_TYPE_WIKI_ICON.put("Farming", "Spade");
-		TASK_TYPE_WIKI_ICON.put("Runecraft", "Rune essence");
-		TASK_TYPE_WIKI_ICON.put("Magic", "Staff of fire");
-		TASK_TYPE_WIKI_ICON.put("Hunter", "Box trap");
+		// Skills: icon from skill overview wiki page (e.g. Farming_icon_(detail).png)
+		TASK_TYPE_WIKI_ICON.put("Combat", "Combat_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Mining", "Mining_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Fishing", "Fishing_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Cooking", "Cooking_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Woodcutting", "Woodcutting_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Prayer", "Prayer_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Crafting", "Crafting_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Smithing", "Smithing_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Fletching", "Fletching_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Herblore", "Herblore_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Thieving", "Thieving_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Agility", "Agility_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Firemaking", "Firemaking_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Farming", "Farming_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Runecraft", "Runecraft_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Magic", "Magic_icon_(detail).png");
+		TASK_TYPE_WIKI_ICON.put("Hunter", "Hunter_icon_(detail).png");
+		// Quest and achievement diary: map icons
+		TASK_TYPE_WIKI_ICON.put("Quest", "Quests.png");
+		TASK_TYPE_WIKI_ICON.put("Achievement diary", "Achievement Diaries.png");
+		TASK_TYPE_WIKI_ICON.put("Diary", "Achievement Diaries.png");
 	}
 
 	/** Load a small icon for task tiles (quest-style from resources). */
@@ -619,6 +693,24 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			return ImageUtil.resizeImage(img, TASK_ICON_SIZE, TASK_ICON_SIZE);
 		}
 		return null;
+	}
+
+	/** Icon for mystery tasks (question mark) until all required areas are unlocked. */
+	private static BufferedImage createMysteryIcon()
+	{
+		int size = TASK_ICON_SIZE;
+		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = img.createGraphics();
+		g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+		g.setColor(new Color(180, 180, 180, 220));
+		g.setFont(new java.awt.Font(java.awt.Font.SANS_SERIF, java.awt.Font.BOLD, Math.max(14, size - 4)));
+		java.awt.FontMetrics fm = g.getFontMetrics();
+		String q = "?";
+		int x = (size - fm.stringWidth(q)) / 2;
+		int y = (size + fm.getAscent()) / 2 - 2;
+		g.drawString(q, x, y);
+		g.dispose();
+		return img;
 	}
 
 	/** Button with empty_button_rectangle background and pressed shadow. Use for Tasks, Back to area, Complete, Claim. */
@@ -813,18 +905,6 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				southPanel.add(tasksBtn);
 			}
 
-			// Edit on map: only when not in Add New Area mode (so we don't edit other areas while placing new area corners)
-			if (!plugin.isAddNewAreaMode())
-			{
-				JButton editOnMapBtn = newRectangleButton("Edit on map", buttonRect, POPUP_TEXT);
-				editOnMapBtn.addActionListener(e -> {
-					LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.EQUIP_FUN);
-					dialog.dispose();
-					startMapEditMode(area);
-				});
-				southPanel.add(editOnMapBtn);
-			}
-
 			// Unlock button (styled with empty_button_rectangle + pressed shadow)
 			JButton unlockBtn = new JButton("Unlock")
 			{
@@ -958,6 +1038,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				gridPanel.removeAll();
 				gridPanel.setLayout(new GridBagLayout());
 				List<TaskTile> grid = taskGridService.getGridForArea(areaId);
+				Set<String> unlocked = areaGraphService.getUnlockedAreaIds();
 				int center = 5;
 				for (TaskTile tile : grid)
 				{
@@ -966,39 +1047,53 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					{
 						continue; // hide locked tiles
 					}
-					String cacheKey = tile.getTaskType() != null ? ("type:" + tile.getTaskType()) : tile.getDisplayName();
-					String wikiSearch = tile.getTaskType() != null && TASK_TYPE_WIKI_ICON.containsKey(tile.getTaskType())
-						? TASK_TYPE_WIKI_ICON.get(tile.getTaskType()) : tile.getDisplayName();
-					BufferedImage taskIcon = taskIconCache.get(cacheKey);
-					if (taskIcon == null)
+					boolean isMystery = tile.isMystery(unlocked);
+					BufferedImage taskIcon;
+					if (isMystery)
 					{
-						taskIcon = defaultTaskIcon;
-						taskIconCache.put(cacheKey, taskIcon);
-					if (wikiApi != null && wikiSearch != null && !wikiSearch.isEmpty())
-					{
-						String keyForCallback = cacheKey;
-						boolean isDirectFile = wikiSearch.endsWith(".png") || wikiSearch.endsWith(".jpg") || wikiSearch.endsWith(".gif");
-						if (isDirectFile)
+						taskIcon = taskIconCache.get("mystery");
+						if (taskIcon == null)
 						{
-							wikiApi.fetchImageAsync(wikiSearch).thenAccept(img -> {
-								if (img != null)
-								{
-									taskIconCache.put(keyForCallback, ImageUtil.resizeImage(img, TASK_ICON_SIZE, TASK_ICON_SIZE));
-									SwingUtilities.invokeLater(refreshHolder[0]);
-								}
-							});
-						}
-						else
-						{
-							wikiApi.fetchItemIconAsync(wikiSearch, img -> {
-								if (img != null)
-								{
-									taskIconCache.put(keyForCallback, ImageUtil.resizeImage(img, TASK_ICON_SIZE, TASK_ICON_SIZE));
-									SwingUtilities.invokeLater(refreshHolder[0]);
-								}
-							});
+							taskIcon = createMysteryIcon();
+							taskIconCache.put("mystery", taskIcon);
 						}
 					}
+					else
+					{
+						String cacheKey = tile.getTaskType() != null ? ("type:" + tile.getTaskType()) : tile.getDisplayName();
+						String wikiSearch = tile.getTaskType() != null && TASK_TYPE_WIKI_ICON.containsKey(tile.getTaskType())
+							? TASK_TYPE_WIKI_ICON.get(tile.getTaskType()) : tile.getDisplayName();
+						taskIcon = taskIconCache.get(cacheKey);
+						if (taskIcon == null)
+						{
+							taskIcon = defaultTaskIcon;
+							taskIconCache.put(cacheKey, taskIcon);
+						if (wikiApi != null && wikiSearch != null && !wikiSearch.isEmpty())
+						{
+							String keyForCallback = cacheKey;
+							boolean isDirectFile = wikiSearch.endsWith(".png") || wikiSearch.endsWith(".jpg") || wikiSearch.endsWith(".gif");
+							if (isDirectFile)
+							{
+								wikiApi.fetchImageAsync(wikiSearch).thenAccept(img -> {
+									if (img != null)
+									{
+										taskIconCache.put(keyForCallback, ImageUtil.resizeImage(img, TASK_ICON_SIZE, TASK_ICON_SIZE));
+										SwingUtilities.invokeLater(refreshHolder[0]);
+									}
+								});
+							}
+							else
+							{
+								wikiApi.fetchItemIconAsync(wikiSearch, img -> {
+									if (img != null)
+									{
+										taskIconCache.put(keyForCallback, ImageUtil.resizeImage(img, TASK_ICON_SIZE, TASK_ICON_SIZE));
+										SwingUtilities.invokeLater(refreshHolder[0]);
+									}
+								});
+							}
+						}
+						}
 					}
 					int gx = tile.getCol() + center;
 					int gy = center - tile.getRow();
@@ -1006,7 +1101,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					gbc.gridx = gx;
 					gbc.gridy = gy;
 					gbc.insets = new Insets(2, 2, 2, 2);
-					JPanel cell = buildTaskCell(areaId, tile, state, checkmarkImg, padlockImg, tileSquare, buttonRect, taskIcon, POPUP_TEXT, refreshHolder[0], dialog, area);
+					JPanel cell = buildTaskCell(areaId, tile, state, checkmarkImg, padlockImg, tileSquare, buttonRect, taskIcon, POPUP_TEXT, refreshHolder[0], dialog, area, isMystery);
 					gridPanel.add(cell, gbc);
 				}
 				gridPanel.revalidate();
@@ -1074,7 +1169,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 	private JPanel buildTaskCell(String areaId, TaskTile tile, TaskState state,
 		BufferedImage checkmarkImg, BufferedImage padlockImg, BufferedImage tileBg, BufferedImage buttonRect,
-		BufferedImage taskIcon, Color textColor, Runnable onRefresh, JDialog parentDialog, Area area)
+		BufferedImage taskIcon, Color textColor, Runnable onRefresh, JDialog parentDialog, Area area, boolean isMystery)
 	{
 		if (state == TaskState.CLAIMED)
 		{
@@ -1098,22 +1193,19 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				super.paintComponent(g);
 			}
 		};
-		cell.setLayout(new BoxLayout(cell, BoxLayout.Y_AXIS));
+		cell.setLayout(new java.awt.BorderLayout());
 		cell.setOpaque(false);
 		cell.setPreferredSize(new Dimension(72, 72));
 
 		if (taskIcon != null)
 		{
-			JLabel iconLabel = new JLabel(new javax.swing.ImageIcon(taskIcon));
-			iconLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-			cell.add(iconLabel);
+			JLabel iconLabel = new JLabel(new javax.swing.ImageIcon(taskIcon), javax.swing.SwingConstants.CENTER);
+			iconLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+			iconLabel.setVerticalAlignment(javax.swing.SwingConstants.CENTER);
+			cell.add(iconLabel, java.awt.BorderLayout.CENTER);
 		}
-		JLabel nameLabel = new JLabel(tile.getDisplayName());
-		nameLabel.setForeground(textColor);
-		nameLabel.setFont(nameLabel.getFont().deriveFont(10f));
-		nameLabel.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-		cell.add(nameLabel);
-
+		// Title and details only in Task Details popup (opened on click)
+		final boolean mystery = isMystery;
 		cell.addMouseListener(new MouseAdapter()
 		{
 			@Override
@@ -1121,7 +1213,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			{
 				if (e.getButton() != MouseEvent.BUTTON1) return;
 				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.EQUIP_FUN);
-				showTaskDetailPopup(parentDialog, areaId, tile, state, buttonRect, checkmarkImg, textColor, onRefresh);
+				showTaskDetailPopup(parentDialog, areaId, tile, state, buttonRect, checkmarkImg, textColor, onRefresh, mystery);
 			}
 		});
 		cell.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1167,7 +1259,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	}
 
 	private void showTaskDetailPopup(JDialog parentDialog, String areaId, TaskTile tile, TaskState state,
-		BufferedImage buttonRect, BufferedImage checkmarkImg, Color textColor, Runnable onRefresh)
+		BufferedImage buttonRect, BufferedImage checkmarkImg, Color textColor, Runnable onRefresh, boolean isMystery)
 	{
 		Frame frameOwner = null;
 		if (parentDialog != null)
@@ -1180,7 +1272,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof Frame) frameOwner = (Frame) w;
 		}
-		JDialog detail = new JDialog(frameOwner, tile.getDisplayName(), false);
+		String windowTitle = isMystery ? "Mystery tile" : tile.getDisplayName();
+		JDialog detail = new JDialog(frameOwner, windowTitle, false);
 		detail.setUndecorated(true);
 
 		JPanel content = new JPanel(new java.awt.BorderLayout(8, 8));
@@ -1192,7 +1285,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		// Header: title + X close button
 		JPanel header = new JPanel(new java.awt.BorderLayout(4, 0));
 		header.setOpaque(false);
-		JLabel titleLabel = new JLabel(tile.getDisplayName());
+		JLabel titleLabel = new JLabel(windowTitle);
 		titleLabel.setForeground(textColor);
 		titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 13f));
 		header.add(titleLabel, java.awt.BorderLayout.CENTER);
@@ -1205,7 +1298,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		header.add(closeBtn, java.awt.BorderLayout.EAST);
 		content.add(header, java.awt.BorderLayout.NORTH);
 
-		// Body: tier/points, then Claim / Complete / Claimed
+		// Body: tier/points, then Claim / Complete / Claimed (or mystery message)
 		JPanel body = new JPanel();
 		body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
 		body.setOpaque(false);
@@ -1214,7 +1307,13 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		body.add(detailsLabel);
 		body.add(new JLabel(" "));
 
-		if (state == TaskState.COMPLETED_UNCLAIMED)
+		if (isMystery)
+		{
+			JLabel mysteryLabel = new JLabel("<html>Unlock all required areas to reveal this task.</html>");
+			mysteryLabel.setForeground(textColor);
+			body.add(mysteryLabel);
+		}
+		else if (state == TaskState.COMPLETED_UNCLAIMED)
 		{
 			JButton claimBtn = newRectangleButton("Claim", buttonRect, textColor);
 			claimBtn.addActionListener(e -> {
@@ -1288,7 +1387,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	{
 		if (event.getButton() != MouseEvent.BUTTON3) return event;
 		updateHoveredArea(event.getX(), event.getY());
-		if (editingAreaId != null)
+		if (editingAreaId != null || plugin.isEditingArea())
 		{
 			showMapEditContextMenu(event.getX(), event.getY());
 			return event;
@@ -1324,7 +1423,21 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			return event;
 		}
 
-		// Map edit mode (existing area): left-click adds or moves corner
+		// Plugin Area Edit mode (config-panel edit): left-click adds or moves corner via plugin
+		if (plugin.isEditingArea() && !plugin.isAddNewAreaMode())
+		{
+			if (plugin.getMoveCornerIndex() >= 0)
+			{
+				plugin.setCornerPosition(plugin.getMoveCornerIndex(), wp);
+				plugin.setMoveCornerIndex(-1);
+				return event;
+			}
+			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.EQUIP_FUN);
+			plugin.addCornerFromWorldPoint(wp);
+			return event;
+		}
+
+		// Overlay map-edit state (legacy): left-click adds or moves corner
 		if (editingAreaId == null || editingCorners == null) return event;
 		if (moveCornerIndex >= 0)
 		{
@@ -1343,16 +1456,25 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	private void showMapEditContextMenu(int screenX, int screenY)
 	{
 		int cornerIdx = getCornerIndexAtScreen(screenX, screenY);
+		boolean pluginDriven = plugin.isEditingArea();
 		JPopupMenu menu = new JPopupMenu();
 		if (cornerIdx >= 0)
 		{
 			JMenuItem moveItem = new JMenuItem("Move corner");
 			int idx = cornerIdx;
-			moveItem.addActionListener(e -> moveCornerIndex = idx);
+			moveItem.addActionListener(e -> {
+				if (pluginDriven) plugin.setMoveCornerIndex(idx);
+				else moveCornerIndex = idx;
+			});
 			menu.add(moveItem);
 			JMenuItem removeItem = new JMenuItem("Remove corner");
 			removeItem.addActionListener(e -> {
-				if (editingCorners != null && idx >= 0 && idx < editingCorners.size())
+				if (pluginDriven)
+				{
+					if (idx >= 0 && idx < plugin.getEditingCorners().size())
+						plugin.removeCorner(idx);
+				}
+				else if (editingCorners != null && idx >= 0 && idx < editingCorners.size())
 				{
 					editingCorners.remove(idx);
 					if (moveCornerIndex == idx) moveCornerIndex = -1;
@@ -1362,6 +1484,13 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			menu.add(removeItem);
 			menu.addSeparator();
 		}
+		JMenuItem beginNewItem = new JMenuItem("Begin new polygon");
+		beginNewItem.addActionListener(e -> {
+			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.EQUIP_FUN);
+			plugin.startNewPolygon();
+		});
+		menu.add(beginNewItem);
+		menu.addSeparator();
 		JMenuItem doneItem = new JMenuItem("Done editing");
 		doneItem.addActionListener(e -> {
 			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.EQUIP_FUN);
