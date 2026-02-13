@@ -192,6 +192,18 @@ public interface LeagueScapeConfig extends Config
 	}
 
 	@ConfigItem(
+		keyName = "drawAreaCornersOnMap",
+		name = "Show area corners on map",
+		description = "Draw polygon corner markers on the world map (hovered area, or area being edited)",
+		position = 16,
+		section = mapSection
+	)
+	default boolean drawAreaCornersOnMap()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 		keyName = "startingArea",
 		name = "Starting area",
 		description = "The area or city you start in (pick on map or choose from dropdown)",
@@ -315,6 +327,18 @@ public interface LeagueScapeConfig extends Config
 	default int taskTier5Points()
 	{
 		return 5;
+	}
+
+	@ConfigItem(
+		keyName = "tasksFilePath",
+		name = "Tasks file path",
+		description = "Optional path to a tasks.json file. If empty, the built-in default tasks are used. File format: defaultTasks array with displayName, taskType, difficulty (1–5); optional areas map for per-area overrides.",
+		position = 6,
+		section = taskSection
+	)
+	default String tasksFilePath()
+	{
+		return "";
 	}
 
 	@ConfigItem(

@@ -1,5 +1,6 @@
 package com.leaguescape.config;
 
+import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.data.Area;
 import java.awt.BasicStroke;
@@ -11,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.List;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
 import net.runelite.api.coords.LocalPoint;
@@ -36,14 +38,14 @@ public class AreaEditOverlay extends Overlay
 
 	private final Client client;
 	private final AreaGraphService areaGraphService;
-	private final LeagueScapeConfigPlugin configPlugin;
+	private final Provider<LeagueScapePlugin> pluginProvider;
 
 	@Inject
-	public AreaEditOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfigPlugin configPlugin)
+	public AreaEditOverlay(Client client, AreaGraphService areaGraphService, Provider<LeagueScapePlugin> pluginProvider)
 	{
 		this.client = client;
 		this.areaGraphService = areaGraphService;
-		this.configPlugin = configPlugin;
+		this.pluginProvider = pluginProvider;
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.UNDER_WIDGETS);
 	}
@@ -51,7 +53,8 @@ public class AreaEditOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		if (!configPlugin.isEditing()) return null;
+		LeagueScapePlugin plugin = pluginProvider.get();
+		if (plugin == null || !plugin.isEditingArea()) return null;
 
 		var player = client.getLocalPlayer();
 		if (player == null) return null;
@@ -61,12 +64,12 @@ public class AreaEditOverlay extends Overlay
 		if (wv == null) return null;
 
 		int plane = wv.getPlane();
-		String editingId = configPlugin.getEditingAreaId();
-		List<int[]> editingCorners = configPlugin.getEditingCorners();
+		String editingId = plugin.getEditingAreaId();
+		List<int[]> editingCorners = plugin.getEditingCorners();
 
 		graphics.setFont(new Font("Arial", Font.PLAIN, 12));
 
-		int moveIdx = configPlugin.getMoveCornerIndex();
+		int moveIdx = plugin.getMoveCornerIndex();
 
 		// Draw all saved areas
 		for (Area area : areaGraphService.getAreas())

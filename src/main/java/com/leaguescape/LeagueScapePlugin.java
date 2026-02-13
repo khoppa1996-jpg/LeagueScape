@@ -1,11 +1,21 @@
 package com.leaguescape;
 
 import com.google.inject.Provides;
+import com.google.inject.Provider;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.swing.SwingUtilities;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.KeyCode;
 import net.runelite.api.MenuAction;
+import net.runelite.api.Tile;
+import net.runelite.api.WorldView;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.gameval.InterfaceID;
@@ -13,6 +23,7 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
@@ -58,6 +69,9 @@ public class LeagueScapePlugin extends Plugin
 	private com.leaguescape.overlay.LeagueScapeMapOverlay leagueScapeMapOverlay;
 
 	@Inject
+	private Provider<com.leaguescape.config.AreaEditOverlay> areaEditOverlayProvider;
+
+	@Inject
 	private OverlayManager overlayManager;
 
 	@Inject
@@ -69,8 +83,28 @@ public class LeagueScapePlugin extends Plugin
 	@Inject
 	private Client client;
 
+	@Inject
+	private AudioPlayer audioPlayer;
+
 	private NavigationButton navButton;
+	private NavigationButton configNavButton;
+	private com.leaguescape.config.AreaEditOverlay areaEditOverlay;
 	private boolean mapMouseListenerRegistered;
+
+	// --- Area config editing (merged from LeagueScape Config plugin) ---
+	private static final String ADD_CORNER_OPTION = "Add polygon corner";
+	private static final String ADD_CORNER_TARGET = "Tile";
+	private static final String MOVE_CORNER_OPTION = "Move";
+	private static final String SET_CORNER_OPTION = "Set new corner";
+	private static final String CANCEL_MOVE_OPTION = "Cancel move";
+	/** Area being edited (null = not editing). */
+	private String editingAreaId = null;
+	/** Corners for the area being edited. */
+	private final List<int[]> editingCorners = new ArrayList<>();
+	/** Index of corner being moved (-1 = not in move mode). */
+	private int moveCornerIndex = -1;
+	/** Called when corners change (from plugin thread). */
+	private Consumer<List<int[]>> cornerUpdateCallback;
 
 	@Override
 	protected void startUp() throws Exception
@@ -87,9 +121,11 @@ public class LeagueScapePlugin extends Plugin
 		loadUnlockedAreas();
 		overlayManager.add(lockedRegionOverlay);
 		overlayManager.add(leagueScapeMapOverlay);
+		areaEditOverlay = areaEditOverlayProvider.get();
+		overlayManager.add(areaEditOverlay);
 		eventBus.register(this);
 		// updateMapMouseListener() uses client (getWidget, isHidden) and must run on client thread; onGameTick will call it
-		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService);
+		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService, audioPlayer);
 		navButton = NavigationButton.builder()
 			.tooltip("LeagueScape")
 			.icon(panel.getIcon())
@@ -97,12 +133,21 @@ public class LeagueScapePlugin extends Plugin
 			.panel(panel)
 			.build();
 		clientToolbar.addNavigation(navButton);
+		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService);
+		configNavButton = NavigationButton.builder()
+			.tooltip("LeagueScape Area Config")
+			.icon(configPanel.getIcon())
+			.priority(71)
+			.panel(configPanel)
+			.build();
+		clientToolbar.addNavigation(configNavButton);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
 		log.info("LeagueScape stopped!");
+		stopAreaEditing();
 		eventBus.unregister(this);
 		if (mapMouseListenerRegistered)
 		{
@@ -111,7 +156,17 @@ public class LeagueScapePlugin extends Plugin
 		}
 		overlayManager.remove(lockedRegionOverlay);
 		overlayManager.remove(leagueScapeMapOverlay);
+		if (areaEditOverlay != null)
+		{
+			overlayManager.remove(areaEditOverlay);
+			areaEditOverlay = null;
+		}
 		eventBus.unregister(lockEnforcer);
+		if (configNavButton != null)
+		{
+			clientToolbar.removeNavigation(configNavButton);
+			configNavButton = null;
+		}
 		if (navButton != null)
 		{
 			clientToolbar.removeNavigation(navButton);
@@ -154,6 +209,13 @@ public class LeagueScapePlugin extends Plugin
 
 	@Provides
 	@Singleton
+	com.leaguescape.wiki.OsrsWikiApiService provideOsrsWikiApiService()
+	{
+		return new com.leaguescape.wiki.OsrsWikiApiService();
+	}
+
+	@Provides
+	@Singleton
 	com.leaguescape.task.TaskGridService provideTaskGridService(ConfigManager configManager, LeagueScapeConfig config,
 		com.leaguescape.points.PointsService pointsService,
 		com.leaguescape.points.AreaCompletionService areaCompletionService)
@@ -165,9 +227,18 @@ public class LeagueScapePlugin extends Plugin
 	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
 		LeagueScapeConfig config, com.leaguescape.points.PointsService pointsService,
 		com.leaguescape.points.AreaCompletionService areaCompletionService,
-		com.leaguescape.task.TaskGridService taskGridService)
+		com.leaguescape.task.TaskGridService taskGridService,
+		com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService,
+		AudioPlayer audioPlayer)
 	{
-		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService);
+		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService, osrsWikiApiService, audioPlayer);
+	}
+
+	@Provides
+	com.leaguescape.config.AreaEditOverlay provideAreaEditOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
+		Provider<LeagueScapePlugin> pluginProvider)
+	{
+		return new com.leaguescape.config.AreaEditOverlay(client, areaGraphService, pluginProvider);
 	}
 
 	private void loadUnlockedAreas()
@@ -204,6 +275,64 @@ public class LeagueScapePlugin extends Plugin
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
+		// Area config: Shift+right-click on tile to add/move polygon corners when editing an area
+		if (editingAreaId != null)
+		{
+			MenuAction action = event.getMenuEntry().getType();
+			if (action == MenuAction.WALK || action == MenuAction.SET_HEADING)
+			{
+				int worldViewId = event.getMenuEntry().getWorldViewId();
+				WorldView wv = client.getWorldView(worldViewId);
+				if (wv == null) wv = client.getTopLevelWorldView();
+				if (wv != null)
+				{
+					Tile tile = wv.getSelectedSceneTile();
+					if (tile != null)
+					{
+						WorldPoint wp = tileToWorldPoint(client, tile, wv);
+						if (wp != null && client.isKeyPressed(KeyCode.KC_SHIFT))
+						{
+							if (moveCornerIndex >= 0)
+							{
+								client.createMenuEntry(-1)
+									.setOption(SET_CORNER_OPTION)
+									.setTarget(ADD_CORNER_TARGET)
+									.setType(MenuAction.RUNELITE)
+									.onClick(e -> setCornerAtSelectedTile());
+								client.createMenuEntry(-1)
+									.setOption(CANCEL_MOVE_OPTION)
+									.setTarget(ADD_CORNER_TARGET)
+									.setType(MenuAction.RUNELITE)
+									.onClick(e -> { moveCornerIndex = -1; notifyCornersUpdated(); });
+							}
+							else
+							{
+								int idx = findCornerAt(wp.getX(), wp.getY(), wp.getPlane());
+								if (idx >= 0)
+								{
+									final int cornerIdx = idx;
+									client.createMenuEntry(-1)
+										.setOption(MOVE_CORNER_OPTION)
+										.setTarget(ADD_CORNER_TARGET)
+										.setType(MenuAction.RUNELITE)
+										.onClick(e -> { moveCornerIndex = cornerIdx; notifyCornersUpdated(); });
+								}
+								else
+								{
+									client.createMenuEntry(-1)
+										.setOption(ADD_CORNER_OPTION)
+										.setTarget(ADD_CORNER_TARGET)
+										.setType(MenuAction.RUNELITE)
+										.onClick(e -> addCornerAtSelectedTile());
+								}
+							}
+							return;
+						}
+					}
+				}
+			}
+		}
+
 		boolean addViewAreaTasks = false;
 		String option = event.getOption();
 		// (1) Right-click on world map globe/orb (option "World Map") - no need to open the map
@@ -277,5 +406,140 @@ public class LeagueScapePlugin extends Plugin
 		areaGraphService.addUnlocked(areaId);
 		persistUnlockedAreas();
 		return true;
+	}
+
+	// --- Area config editing API (used by LeagueScapeConfigPanel, AreaEditOverlay, LeagueScapeMapOverlay) ---
+
+	public void startEditing(String areaId, List<int[]> initialCorners)
+	{
+		editingAreaId = areaId;
+		editingCorners.clear();
+		if (initialCorners != null)
+		{
+			editingCorners.addAll(initialCorners);
+		}
+		notifyCornersUpdated();
+	}
+
+	public void stopAreaEditing()
+	{
+		editingAreaId = null;
+		editingCorners.clear();
+		moveCornerIndex = -1;
+		cornerUpdateCallback = null;
+	}
+
+	/** Alias for config panel (same API as former config plugin). */
+	public void stopEditing()
+	{
+		stopAreaEditing();
+	}
+
+	public void setCornerUpdateCallback(Consumer<List<int[]>> callback)
+	{
+		this.cornerUpdateCallback = callback;
+	}
+
+	public List<int[]> getEditingCorners()
+	{
+		return Collections.unmodifiableList(new ArrayList<>(editingCorners));
+	}
+
+	public boolean isEditingArea()
+	{
+		return editingAreaId != null;
+	}
+
+	public boolean isAddNewAreaMode()
+	{
+		return editingAreaId != null && editingAreaId.startsWith("new_");
+	}
+
+	public void addCornerFromWorldPoint(WorldPoint wp)
+	{
+		if (editingAreaId == null || wp == null) return;
+		editingCorners.add(new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+		notifyCornersUpdated();
+		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Added corner: " + wp.getX() + ", " + wp.getY(), null);
+	}
+
+	public String getEditingAreaId()
+	{
+		return editingAreaId;
+	}
+
+	public int getMoveCornerIndex()
+	{
+		return moveCornerIndex;
+	}
+
+	/** Used by area-edit menu (Shift+right-click corner -> Move). */
+	public void setMoveCornerIndex(int index)
+	{
+		this.moveCornerIndex = index;
+		notifyCornersUpdated();
+	}
+
+	private void notifyCornersUpdated()
+	{
+		if (cornerUpdateCallback != null)
+		{
+			List<int[]> copy = new ArrayList<>(editingCorners);
+			SwingUtilities.invokeLater(() -> cornerUpdateCallback.accept(copy));
+		}
+	}
+
+	private void addCornerAtSelectedTile()
+	{
+		if (editingAreaId == null) return;
+		WorldPoint wp = getSelectedWorldPoint();
+		if (wp == null) return;
+		editingCorners.add(new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+		notifyCornersUpdated();
+		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Added corner: " + wp.getX() + ", " + wp.getY(), null);
+	}
+
+	private void setCornerAtSelectedTile()
+	{
+		if (editingAreaId == null || moveCornerIndex < 0) return;
+		WorldPoint wp = getSelectedWorldPoint();
+		if (wp == null) return;
+		if (moveCornerIndex < editingCorners.size())
+		{
+			editingCorners.set(moveCornerIndex, new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+			notifyCornersUpdated();
+			client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Moved corner #" + moveCornerIndex + " to " + wp.getX() + ", " + wp.getY(), null);
+		}
+		moveCornerIndex = -1;
+	}
+
+	private int findCornerAt(int x, int y, int plane)
+	{
+		for (int i = 0; i < editingCorners.size(); i++)
+		{
+			int[] c = editingCorners.get(i);
+			if (c.length >= 3 && c[0] == x && c[1] == y && c[2] == plane)
+				return i;
+		}
+		return -1;
+	}
+
+	private WorldPoint getSelectedWorldPoint()
+	{
+		WorldView wv = client.getTopLevelWorldView();
+		if (wv == null) return null;
+		Tile tile = wv.getSelectedSceneTile();
+		if (tile == null) return null;
+		return tileToWorldPoint(client, tile, wv);
+	}
+
+	private static WorldPoint tileToWorldPoint(Client client, Tile tile, WorldView wv)
+	{
+		if (tile == null || wv == null) return null;
+		var local = tile.getLocalLocation();
+		if (local == null) return null;
+		if (client.isInInstancedRegion())
+			return WorldPoint.fromLocalInstance(client, local);
+		return WorldPoint.fromLocal(wv, local.getX(), local.getY(), wv.getPlane());
 	}
 }

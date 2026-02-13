@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -127,6 +128,11 @@ public class AreaGraphService
 	private volatile List<Area> areas = new ArrayList<>();
 	private final Set<String> unlockedAreaIds = new HashSet<>();
 
+	/** Cache: "areaId|plane" -> tiles inside that area's polygons. Cleared when areas reload. */
+	private final Map<String, Set<WorldPoint>> tilesInAreaCache = new ConcurrentHashMap<>();
+	/** Cache: plane -> tiles inside any locked area. Cleared when unlocked set or areas change. */
+	private final Map<Integer, Set<WorldPoint>> tilesInLockedAreasCache = new ConcurrentHashMap<>();
+
 	@Inject
 	public AreaGraphService(ConfigManager configManager)
 	{
@@ -147,6 +153,8 @@ public class AreaGraphService
 			areas.removeIf(a -> a.getId().equals(c.getId()));
 			areas.add(c);
 		}
+		tilesInAreaCache.clear();
+		tilesInLockedAreasCache.clear();
 		log.debug("Loaded {} areas ({} built-in, {} removed, {} custom)", areas.size(), builtIn.size(), removed.size(), custom.size());
 	}
 
@@ -473,11 +481,13 @@ public class AreaGraphService
 		{
 			unlockedAreaIds.addAll(ids);
 		}
+		tilesInLockedAreasCache.clear();
 	}
 
 	public void addUnlocked(String areaId)
 	{
 		unlockedAreaIds.add(areaId);
+		tilesInLockedAreasCache.clear();
 	}
 
 	public Set<String> getUnlockedAreaIds()
@@ -547,6 +557,76 @@ public class AreaGraphService
 			}
 		}
 		return inside;
+	}
+
+	/**
+	 * Returns all world tiles (origin x,y) that lie inside the area's polygons on the given plane.
+	 * Cached per (areaId, plane); cache cleared when areas reload.
+	 */
+	public Set<WorldPoint> getTilesInArea(Area area, int plane)
+	{
+		String key = area.getId() + "|" + plane;
+		Set<WorldPoint> cached = tilesInAreaCache.get(key);
+		if (cached != null)
+		{
+			return cached;
+		}
+		Set<WorldPoint> out = new HashSet<>();
+		List<List<int[]>> polygons = area.getPolygons();
+		if (polygons != null)
+		{
+			for (List<int[]> polygon : polygons)
+			{
+				if (polygon == null || polygon.size() < 3) continue;
+				int polyPlane = polygon.get(0).length >= 3 ? polygon.get(0)[2] : 0;
+				if (polyPlane != plane) continue;
+				int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+				int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+				for (int[] v : polygon)
+				{
+					if (v.length < 2) continue;
+					int vx = v[0], vy = v[1];
+					minX = Math.min(minX, vx);
+					maxX = Math.max(maxX, vx);
+					minY = Math.min(minY, vy);
+					maxY = Math.max(maxY, vy);
+				}
+				for (int x = minX; x <= maxX; x++)
+				{
+					for (int y = minY; y <= maxY; y++)
+					{
+						if (pointInPolygonRaw(x, y, polygon))
+						{
+							out.add(new WorldPoint(x, y, plane));
+						}
+					}
+				}
+			}
+		}
+		tilesInAreaCache.put(key, out);
+		return out;
+	}
+
+	/**
+	 * Returns all tiles on the given plane that lie inside any locked area's polygons (areas not in unlocked set).
+	 * Cached per plane; cache cleared when unlocked set or areas change.
+	 */
+	public Set<WorldPoint> getTilesInLockedAreas(int plane)
+	{
+		Set<WorldPoint> cached = tilesInLockedAreasCache.get(plane);
+		if (cached != null)
+		{
+			return cached;
+		}
+		Set<WorldPoint> out = new HashSet<>();
+		Set<String> unlocked = getUnlockedAreaIds();
+		for (Area area : areas)
+		{
+			if (unlocked.contains(area.getId())) continue;
+			out.addAll(getTilesInArea(area, plane));
+		}
+		tilesInLockedAreasCache.put(plane, out);
+		return out;
 	}
 
 	/**

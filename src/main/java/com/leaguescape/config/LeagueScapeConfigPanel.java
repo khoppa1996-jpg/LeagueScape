@@ -51,7 +51,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		return new ScrollableWidthPanel();
 	}
 
-	private final LeagueScapeConfigPlugin plugin;
+	private final LeagueScapePlugin plugin;
 	private final AreaGraphService areaGraphService;
 
 	private JPanel mainPanel;
@@ -67,7 +67,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private JButton saveBtn;
 	private JButton cancelBtn;
 
-	public LeagueScapeConfigPanel(LeagueScapeConfigPlugin plugin, AreaGraphService areaGraphService)
+	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService)
 	{
 		this.plugin = plugin;
 		this.areaGraphService = areaGraphService;

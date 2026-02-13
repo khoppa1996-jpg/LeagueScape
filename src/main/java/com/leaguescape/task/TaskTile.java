@@ -15,6 +15,14 @@ public class TaskTile
 	int points;
 	int row;
 	int col;
+	/** Optional task type for icon lookup (e.g. "Combat", "Mining", "Quest"). */
+	String taskType;
+
+	/** Create tile with no task type (icon falls back to display name). */
+	public static TaskTile of(String id, int tier, String displayName, int points, int row, int col)
+	{
+		return new TaskTile(id, tier, displayName, points, row, col, null);
+	}
 
 	public static String idFor(int row, int col)
 	{

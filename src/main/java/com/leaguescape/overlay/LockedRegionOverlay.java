@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.GeneralPath;
+import java.util.Set;
 import javax.inject.Inject;
 import net.runelite.api.Client;
 import net.runelite.api.Perspective;
@@ -78,6 +79,7 @@ public class LockedRegionOverlay extends Overlay
 
 		Color fillColor = config.lockedOverlayColor();
 		int plane = wv.getPlane();
+		Set<WorldPoint> lockedTiles = areaGraphService.getTilesInLockedAreas(plane);
 		for (int x = 0; x < tiles[plane].length; x++)
 		{
 			for (int y = 0; y < tiles[plane][x].length; y++)
@@ -96,7 +98,8 @@ public class LockedRegionOverlay extends Overlay
 				}
 				if (world == null) continue;
 
-				if (!areaGraphService.isWorldPointUnlocked(world))
+				// Only draw if this tile is in the set of tiles contained in locked areas (from areas.json)
+				if (lockedTiles.contains(world))
 				{
 					LocalPoint local = tile.getLocalLocation();
 					if (local == null) continue;

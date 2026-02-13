@@ -2,6 +2,13 @@ plugins {
 	id 'java'
 }
 
+java {
+	// RuneLite expects JDK 11; newer JDKs change reflection internals (e.g. NoSuchFieldException: root)
+	toolchain {
+		languageVersion = org.gradle.jvm.toolchain.JavaLanguageVersion.of(11)
+	}
+}
+
 repositories {
 	mavenLocal()
 	maven {
@@ -39,7 +46,11 @@ tasks.register('run', JavaExec) {
 	classpath = sourceSets.test.runtimeClasspath
 	mainClass = pluginMainClass
 
-	jvmArgs "-ea"
+	// -ea for assertions; --add-opens so RuneLite reflection (plugin/annotation discovery) works on Java 17+
+	jvmArgs "-ea",
+		"--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+		"--add-opens=java.base/java.lang=ALL-UNNAMED",
+		"--add-opens=java.base/jdk.internal.loader=ALL-UNNAMED"
 	args "--developer-mode", "--debug"
 }
 
