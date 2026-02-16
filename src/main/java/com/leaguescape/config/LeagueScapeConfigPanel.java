@@ -1,10 +1,12 @@
 package com.leaguescape.config;
 
+import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.data.Area;
 import com.leaguescape.task.TaskDefinition;
 import com.leaguescape.task.TaskGridService;
+import net.runelite.client.config.ConfigManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -24,7 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
+import javax.swing.JComboBox;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Scrollable;
 import javax.swing.SpinnerNumberModel;
@@ -87,18 +91,30 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		return wrapper;
 	}
 
+	private static final String CONFIG_GROUP = "leaguescape";
+
 	private final LeagueScapePlugin plugin;
 	private final AreaGraphService areaGraphService;
 	private final TaskGridService taskGridService;
+	private final ConfigManager configManager;
+	private final LeagueScapeConfig config;
 
 	private JPanel mainPanel;
 	private JPanel listPanel;
 	private JPanel removedPanel;
 	private JPanel editPanel;
+	private JPanel makeHoleSectionPanel;
+	private JToggleButton makeHoleSectionHeader;
 	private JToggleButton editSectionHeader;
 	private JTextField idField;
 	private JTextField displayNameField;
+	private JTextArea descriptionField;
 	private JPanel cornersPanel;
+	private JComboBox<String> makeHoleOuterCombo;
+	private JComboBox<String> makeHoleInnerCombo;
+	private JLabel holesCountLabel;
+	private List<List<int[]>> editingHoles = new ArrayList<>();
+	private JPanel holesListPanel;
 	private JPanel neighborsPanel;
 	private JSpinner unlockCostSpinner;
 	private JSpinner pointsToCompleteSpinner;
@@ -112,14 +128,18 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private JTextField taskDisplayNameField;
 	private JTextField taskTypeField;
 	private JSpinner taskDifficultySpinner;
+	private JCheckBox taskF2pCheckBox;
 	private JPanel taskAreasPanel;
 	private int editingTaskIndex = -1;
 
-	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService, TaskGridService taskGridService)
+	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService, TaskGridService taskGridService,
+		ConfigManager configManager, LeagueScapeConfig config)
 	{
 		this.plugin = plugin;
 		this.areaGraphService = areaGraphService;
 		this.taskGridService = taskGridService;
+		this.configManager = configManager;
+		this.config = config;
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(6, 6, 6, 6));
 
@@ -172,6 +192,64 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		JToggleButton[] editHeaderRef = new JToggleButton[1];
 		mainPanel.add(createCollapsibleSection("Edit area", editPanel, false, editHeaderRef));
 		editSectionHeader = editHeaderRef[0];
+
+		// Make hole section: stacked rows like Task system so nothing is clipped in narrow sidebar
+		makeHoleSectionPanel = new JPanel();
+		makeHoleSectionPanel.setLayout(new BoxLayout(makeHoleSectionPanel, BoxLayout.Y_AXIS));
+		makeHoleSectionPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		makeHoleOuterCombo = new JComboBox<>();
+		makeHoleInnerCombo = new JComboBox<>();
+		JPanel removeRow = new JPanel(new BorderLayout());
+		removeRow.add(new JLabel("Remove polygon"), BorderLayout.WEST);
+		removeRow.add(makeHoleInnerCombo, BorderLayout.EAST);
+		makeHoleSectionPanel.add(removeRow);
+		JPanel fromRow = new JPanel(new BorderLayout());
+		fromRow.add(new JLabel("from polygon"), BorderLayout.WEST);
+		fromRow.add(makeHoleOuterCombo, BorderLayout.EAST);
+		makeHoleSectionPanel.add(fromRow);
+		JButton makeHoleBtn = new JButton("Make hole");
+		makeHoleBtn.addActionListener(e -> applyMakeHole());
+		makeHoleBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		makeHoleSectionPanel.add(makeHoleBtn);
+		JToggleButton[] makeHoleHeaderRef = new JToggleButton[1];
+		mainPanel.add(createCollapsibleSection("Make hole", makeHoleSectionPanel, false, makeHoleHeaderRef));
+		makeHoleSectionHeader = makeHoleHeaderRef[0];
+
+		mainPanel.add(new JLabel(" "));
+		// Task system: task mode, difficulty multiplier and points per tier
+		JPanel taskSystemPanel = new JPanel();
+		taskSystemPanel.setLayout(new BoxLayout(taskSystemPanel, BoxLayout.Y_AXIS));
+		JPanel taskModeRow = new JPanel(new BorderLayout());
+		taskModeRow.add(new JLabel("Task mode:"), BorderLayout.WEST);
+		JComboBox<LeagueScapeConfig.TaskMode> taskModeCombo = new JComboBox<>(LeagueScapeConfig.TaskMode.values());
+		taskModeCombo.setSelectedItem(config.taskMode());
+		taskModeCombo.addItemListener(e -> {
+			if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED && e.getItem() instanceof LeagueScapeConfig.TaskMode)
+				configManager.setConfiguration(CONFIG_GROUP, "taskMode", ((LeagueScapeConfig.TaskMode) e.getItem()).name());
+		});
+		taskModeRow.add(taskModeCombo, BorderLayout.EAST);
+		taskSystemPanel.add(taskModeRow);
+		JPanel difficultyRow = new JPanel(new BorderLayout());
+		difficultyRow.add(new JLabel("Task difficulty (0.5=Easy, 1=Normal, 1.5=Hard):"), BorderLayout.WEST);
+		JSpinner difficultySpinner = new JSpinner(new SpinnerNumberModel(config.taskDifficultyMultiplier(), 0.5, 2.0, 0.5));
+		difficultySpinner.setMaximumSize(new Dimension(80, difficultySpinner.getPreferredSize().height));
+		difficultySpinner.addChangeListener(e -> configManager.setConfiguration(CONFIG_GROUP, "taskDifficultyMultiplier", ((Number) difficultySpinner.getValue()).doubleValue()));
+		difficultyRow.add(difficultySpinner, BorderLayout.EAST);
+		taskSystemPanel.add(difficultyRow);
+		for (int tier = 1; tier <= 5; tier++)
+		{
+			final int t = tier;
+			int pts = tierPoints(tier);
+			JPanel tierRow = new JPanel(new BorderLayout());
+			tierRow.add(new JLabel("Tier " + tier + " points:"), BorderLayout.WEST);
+			JSpinner tierSpinner = new JSpinner(new SpinnerNumberModel(pts, 0, 999, 1));
+			tierSpinner.setMaximumSize(new Dimension(80, tierSpinner.getPreferredSize().height));
+			tierSpinner.addChangeListener(e -> configManager.setConfiguration(CONFIG_GROUP, "taskTier" + t + "Points", ((Number) tierSpinner.getValue()).intValue()));
+			tierRow.add(tierSpinner, BorderLayout.EAST);
+			taskSystemPanel.add(tierRow);
+		}
+		taskSystemPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		mainPanel.add(createCollapsibleSection("Task system", taskSystemPanel, true, null));
 
 		mainPanel.add(new JLabel(" "));
 		JPanel tasksTop = new JPanel();
@@ -226,6 +304,19 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private static final Comparator<Area> AREA_DISPLAY_ORDER = Comparator
 		.comparing((Area a) -> a.getDisplayName() != null ? a.getDisplayName() : a.getId(), String.CASE_INSENSITIVE_ORDER)
 		.thenComparing(Area::getId, String.CASE_INSENSITIVE_ORDER);
+
+	private int tierPoints(int tier)
+	{
+		switch (tier)
+		{
+			case 1: return config.taskTier1Points();
+			case 2: return config.taskTier2Points();
+			case 3: return config.taskTier3Points();
+			case 4: return config.taskTier4Points();
+			case 5: return config.taskTier5Points();
+			default: return tier;
+		}
+	}
 
 	private void refreshAreaList()
 	{
@@ -291,7 +382,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		String tempId = "new_area_" + System.currentTimeMillis();
 		plugin.startEditing(tempId, Collections.emptyList());
 		plugin.setCornerUpdateCallback(this::refreshCornersDisplay);
-		showEditForm(tempId, "", "", Collections.emptyList(), Collections.emptyList(), 0, 10);
+		plugin.setNeighborUpdateCallback(this::refreshNeighborsFromPlugin);
+		showEditForm(tempId, "", "", null, Collections.emptyList(), Collections.emptyList(), 0, 10, Collections.emptyList());
 	}
 
 	private void startEditing(String areaId)
@@ -306,23 +398,36 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		else
 			plugin.startEditing(areaId, firstPolygon);
 		plugin.setCornerUpdateCallback(this::refreshCornersDisplay);
+		plugin.setNeighborUpdateCallback(this::refreshNeighborsFromPlugin);
 		int ptsToComplete = a.getPointsToComplete() != null ? a.getPointsToComplete() : a.getUnlockCost();
-		showEditForm(areaId, a.getId(), a.getDisplayName() != null ? a.getDisplayName() : "", firstPolygon, neighbors, a.getUnlockCost(), ptsToComplete);
+		String desc = a.getDescription() != null ? a.getDescription() : "";
+		List<List<int[]>> holes = new ArrayList<>();
+		if (a.getHoles() != null)
+			for (List<int[]> h : a.getHoles()) holes.add(new ArrayList<>(h));
+		showEditForm(areaId, a.getId(), a.getDisplayName() != null ? a.getDisplayName() : "", desc, firstPolygon, neighbors, a.getUnlockCost(), ptsToComplete, holes);
 	}
 
-	private void showEditForm(String areaId, String id, String displayName, List<int[]> corners, List<String> neighbors, int unlockCost, int pointsToComplete)
+	private void showEditForm(String areaId, String id, String displayName, String description, List<int[]> corners, List<String> neighbors, int unlockCost, int pointsToComplete, List<List<int[]>> holes)
 	{
 		if (editSectionHeader != null)
 		{
 			editSectionHeader.setSelected(true);
 			editSectionHeader.setText("▼ Edit area");
 			editPanel.setVisible(true);
+			if (makeHoleSectionHeader != null && makeHoleSectionPanel != null)
+			{
+				makeHoleSectionHeader.setSelected(true);
+				makeHoleSectionHeader.setText("▼ Make hole");
+				makeHoleSectionPanel.setVisible(true);
+			}
 			for (Container p = editSectionHeader.getParent(); p != null; p = p.getParent())
 			{
 				p.revalidate();
 			}
 		}
 		editPanel.removeAll();
+		editingHoles.clear();
+		if (holes != null) for (List<int[]> h : holes) editingHoles.add(new ArrayList<>(h));
 
 		editPanel.add(new JLabel("Area ID (slug, e.g. " + (areaId.startsWith("new_") ? "lumbridge):" : "):")));
 		idField = new JTextField(id.startsWith("new_") ? "" : id, 12);
@@ -335,6 +440,13 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		displayNameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, displayNameField.getPreferredSize().height));
 		editPanel.add(displayNameField);
 
+		editPanel.add(new JLabel("Description (shown in Area Details on world map):"));
+		descriptionField = new JTextArea(description != null ? description : "", 3, 20);
+		descriptionField.setLineWrap(true);
+		descriptionField.setWrapStyleWord(true);
+		descriptionField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 80));
+		editPanel.add(new JScrollPane(descriptionField));
+
 		editPanel.add(new JLabel(" "));
 		JLabel cornersHint = new JLabel("<html>Corners: Shift+RMB to add; Shift+RMB corner to Move, then Set.</html>");
 		cornersHint.setToolTipText("Shift+Right-click to add corner; Shift+Right-click a corner to Move it, then click another tile to Set.");
@@ -343,12 +455,30 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		cornersPanel.setLayout(new BoxLayout(cornersPanel, BoxLayout.Y_AXIS));
 		JScrollPane cornersScroll = new JScrollPane(cornersPanel);
 		cornersScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		int maxCornersHeight = 200;
+		cornersScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, maxCornersHeight));
+		cornersScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, maxCornersHeight));
 		editPanel.add(cornersScroll);
+
+		editPanel.add(new JLabel(" "));
+		holesCountLabel = new JLabel();
+		editPanel.add(holesCountLabel);
+		holesListPanel = new JPanel();
+		holesListPanel.setLayout(new BoxLayout(holesListPanel, BoxLayout.Y_AXIS));
+		JScrollPane holesScroll = new JScrollPane(holesListPanel);
+		int maxHolesHeight = 80;
+		holesScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, maxHolesHeight));
+		holesScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, maxHolesHeight));
+		editPanel.add(holesScroll);
+		refreshHolesDisplay();
+
+		refreshMakeHoleCombos();
 
 		editPanel.add(new JLabel(" "));
 		editPanel.add(new JLabel("Neighbors:"));
 		neighborsPanel = new JPanel();
 		neighborsPanel.setLayout(new BoxLayout(neighborsPanel, BoxLayout.Y_AXIS));
+		List<String> neighborsToShow = (plugin.getEditingNeighbors() != null) ? plugin.getEditingNeighbors() : neighbors;
 		List<Area> others = new ArrayList<>(areaGraphService.getAreas());
 		others.removeIf(a -> a.getId().equals(areaId));
 		others.sort(AREA_DISPLAY_ORDER);
@@ -356,11 +486,15 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		{
 			JCheckBox cb = new JCheckBox(other.getDisplayName() != null ? other.getDisplayName() : other.getId());
 			cb.setName(other.getId()); // Store id for lookup
-			cb.setSelected(neighbors.contains(other.getId()));
+			cb.setSelected(neighborsToShow.contains(other.getId()));
+			cb.addItemListener(e -> syncNeighborsToPlugin());
 			neighborsPanel.add(cb);
 		}
 		JScrollPane neighborsScroll = new JScrollPane(neighborsPanel);
 		neighborsScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		int maxNeighborsHeight = 120;
+		neighborsScroll.setPreferredSize(new Dimension(Integer.MAX_VALUE, maxNeighborsHeight));
+		neighborsScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, maxNeighborsHeight));
 		editPanel.add(neighborsScroll);
 
 		editPanel.add(new JLabel("Unlock cost (points to spend to unlock this area):"));
@@ -384,6 +518,100 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		refreshCornersDisplay(plugin.getEditingCorners());
 		editPanel.revalidate();
 		editPanel.repaint();
+	}
+
+	private void refreshMakeHoleCombos()
+	{
+		if (makeHoleOuterCombo == null || makeHoleInnerCombo == null) return;
+		makeHoleOuterCombo.removeAllItems();
+		makeHoleInnerCombo.removeAllItems();
+		List<List<int[]>> all = plugin.getAllEditingPolygons();
+		for (int i = 0; i < all.size(); i++)
+		{
+			String label = "Polygon " + (i + 1) + " (" + all.get(i).size() + " pts)";
+			makeHoleOuterCombo.addItem(label);
+			makeHoleInnerCombo.addItem(label);
+		}
+	}
+
+	private void applyMakeHole()
+	{
+		if (makeHoleOuterCombo == null || makeHoleInnerCombo == null) return;
+		int outerIdx = makeHoleOuterCombo.getSelectedIndex();
+		int innerIdx = makeHoleInnerCombo.getSelectedIndex();
+		if (outerIdx < 0 || innerIdx < 0) return;
+		if (outerIdx == innerIdx)
+		{
+			javax.swing.JOptionPane.showMessageDialog(this, "Choose different polygons: outer and inner must differ.", "Make hole", javax.swing.JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		List<List<int[]>> all = plugin.getAllEditingPolygons();
+		if (outerIdx >= all.size() || innerIdx >= all.size()) return;
+		List<int[]> outerPoly = all.get(outerIdx);
+		List<int[]> innerPoly = all.get(innerIdx);
+		if (outerPoly.size() < 3 || innerPoly.size() < 3)
+		{
+			javax.swing.JOptionPane.showMessageDialog(this, "Both polygons need at least 3 vertices.", "Make hole", javax.swing.JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		if (!areaGraphService.isPolygonInsidePolygon(outerPoly, innerPoly))
+		{
+			javax.swing.JOptionPane.showMessageDialog(this, "The inner polygon must be entirely inside the outer polygon (e.g. island inside ocean).", "Make hole", javax.swing.JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		List<int[]> removed = plugin.removeEditingPolygonAt(innerIdx);
+		if (removed != null)
+		{
+			editingHoles.add(removed);
+			plugin.setEditingHoles(editingHoles);
+			refreshMakeHoleCombos();
+			refreshCornersDisplay(plugin.getEditingCorners());
+			refreshHolesDisplay();
+			editPanel.revalidate();
+			editPanel.repaint();
+		}
+	}
+
+	private void syncNeighborsToPlugin()
+	{
+		if (neighborsPanel == null) return;
+		List<String> selected = new ArrayList<>();
+		for (int i = 0; i < neighborsPanel.getComponentCount(); i++)
+		{
+			if (neighborsPanel.getComponent(i) instanceof JCheckBox)
+			{
+				JCheckBox cb = (JCheckBox) neighborsPanel.getComponent(i);
+				if (cb.isSelected() && cb.getName() != null) selected.add(cb.getName());
+			}
+		}
+		plugin.setEditingNeighbors(selected);
+	}
+
+	private void refreshNeighborsFromPlugin(List<String> neighborIds)
+	{
+		if (neighborsPanel == null || neighborIds == null) return;
+		for (int i = 0; i < neighborsPanel.getComponentCount(); i++)
+		{
+			if (neighborsPanel.getComponent(i) instanceof JCheckBox)
+			{
+				JCheckBox cb = (JCheckBox) neighborsPanel.getComponent(i);
+				if (cb.getName() != null) cb.setSelected(neighborIds.contains(cb.getName()));
+			}
+		}
+	}
+
+	private void refreshHolesDisplay()
+	{
+		if (holesCountLabel == null || holesListPanel == null) return;
+		holesCountLabel.setText("Holes (cut out): " + editingHoles.size());
+		holesListPanel.removeAll();
+		for (int i = 0; i < editingHoles.size(); i++)
+		{
+			List<int[]> h = editingHoles.get(i);
+			holesListPanel.add(new JLabel("  Hole " + (i + 1) + ": " + h.size() + " vertices"));
+		}
+		holesListPanel.revalidate();
+		holesListPanel.repaint();
 	}
 
 	private void refreshCornersDisplay(List<int[]> corners)
@@ -415,6 +643,14 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		}
 		cornersPanel.revalidate();
 		cornersPanel.repaint();
+		if (makeHoleOuterCombo != null) refreshMakeHoleCombos();
+		// Sync holes from plugin so "Fill using others' corners" updates the panel's holes list
+		if (plugin.getEditingHoles() != null)
+		{
+			editingHoles.clear();
+			for (List<int[]> h : plugin.getEditingHoles()) editingHoles.add(new ArrayList<>(h));
+			refreshHolesDisplay();
+		}
 	}
 
 	private void removeCorner(int index)
@@ -433,6 +669,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 
 		String displayName = displayNameField.getText().trim();
 		if (displayName.isEmpty()) displayName = id;
+		String description = descriptionField.getText().trim();
+		if (description.isEmpty()) description = null;
 
 		List<List<int[]>> allPolygons = plugin.getAllEditingPolygons();
 		if (allPolygons.isEmpty() || allPolygons.stream().anyMatch(p -> p.size() < 3))
@@ -441,15 +679,17 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			return;
 		}
 
-		List<String> neighbors = new ArrayList<>();
-		for (int i = 0; i < neighborsPanel.getComponentCount(); i++)
+		List<String> neighborsToSave = new ArrayList<>();
+		if (plugin.getEditingNeighbors() != null)
+			neighborsToSave.addAll(plugin.getEditingNeighbors());
+		else if (neighborsPanel != null)
 		{
-			if (neighborsPanel.getComponent(i) instanceof JCheckBox)
+			for (int i = 0; i < neighborsPanel.getComponentCount(); i++)
 			{
-				JCheckBox cb = (JCheckBox) neighborsPanel.getComponent(i);
-				if (cb.isSelected() && cb.getName() != null)
+				if (neighborsPanel.getComponent(i) instanceof JCheckBox)
 				{
-					neighbors.add(cb.getName());
+					JCheckBox cb = (JCheckBox) neighborsPanel.getComponent(i);
+					if (cb.isSelected() && cb.getName() != null) neighborsToSave.add(cb.getName());
 				}
 			}
 		}
@@ -457,12 +697,19 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		int cost = (Integer) unlockCostSpinner.getValue();
 		int ptsToComplete = (Integer) pointsToCompleteSpinner.getValue();
 
+		// Use plugin's holes so "Fill using others' corners" and Make hole are both persisted
+		List<List<int[]>> holesToSave = new ArrayList<>();
+		List<List<int[]>> sourceHoles = plugin.getEditingHoles() != null ? plugin.getEditingHoles() : editingHoles;
+		for (List<int[]> h : sourceHoles) holesToSave.add(new ArrayList<>(h));
+
 		Area area = Area.builder()
 			.id(id)
 			.displayName(displayName)
+			.description(description)
 			.polygons(allPolygons)
+			.holes(holesToSave)
 			.includes(Collections.emptyList()) // Computed by AreaGraphService
-			.neighbors(neighbors)
+			.neighbors(neighborsToSave)
 			.unlockCost(cost)
 			.pointsToComplete(ptsToComplete)
 			.build();
@@ -680,6 +927,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		taskDifficultySpinner = new JSpinner(new SpinnerNumberModel(
 			Math.max(1, Math.min(5, t.getDifficulty())), 1, 5, 1));
 		taskEditPanel.add(taskDifficultySpinner);
+		taskF2pCheckBox = new JCheckBox("Free to Play (available in F2P worlds)", Boolean.TRUE.equals(t.getF2p()));
+		taskEditPanel.add(taskF2pCheckBox);
 		taskEditPanel.add(new JLabel("Area(s) – leave all unchecked for any area; or select areas this task appears in:"));
 		taskAreasPanel = new JPanel();
 		taskAreasPanel.setLayout(new BoxLayout(taskAreasPanel, BoxLayout.Y_AXIS));
@@ -729,6 +978,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		def.setDisplayName(displayName);
 		def.setTaskType(taskType.isEmpty() ? null : taskType);
 		def.setDifficulty(difficulty);
+		def.setF2p(taskF2pCheckBox.isSelected());
 		if (areaIds.isEmpty())
 		{
 			def.setArea(null);

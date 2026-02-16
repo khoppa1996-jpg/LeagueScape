@@ -255,13 +255,44 @@ public interface LeagueScapeConfig extends Config
 		}
 	}
 
+	enum TaskMode
+	{
+		MEMBERS("Members"),
+		FREE_TO_PLAY("Free to Play");
+
+		private final String label;
+
+		TaskMode(String label)
+		{
+			this.label = label;
+		}
+
+		@Override
+		public String toString()
+		{
+			return label;
+		}
+	}
+
 	// Task system
+
+	@ConfigItem(
+		keyName = "taskMode",
+		name = "Task mode",
+		description = "Free to Play: only tasks marked F2P are available. Members: all tasks (including F2P) are available.",
+		position = 0,
+		section = taskSection
+	)
+	default TaskMode taskMode()
+	{
+		return TaskMode.MEMBERS;
+	}
 
 	@ConfigItem(
 		keyName = "taskDifficultyMultiplier",
 		name = "Task difficulty",
 		description = "Overall multiplier for task difficulty (0.5 = Easy, 1.0 = Normal, 1.5 = Hard)",
-		position = 0,
+		position = 1,
 		section = taskSection
 	)
 	default double taskDifficultyMultiplier()
@@ -273,7 +304,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier1Points",
 		name = "Tier 1 points",
 		description = "Points awarded for claiming a tier 1 task (first ring)",
-		position = 1,
+		position = 2,
 		section = taskSection
 	)
 	default int taskTier1Points()
@@ -285,7 +316,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier2Points",
 		name = "Tier 2 points",
 		description = "Points awarded for claiming a tier 2 task",
-		position = 2,
+		position = 3,
 		section = taskSection
 	)
 	default int taskTier2Points()
@@ -297,7 +328,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier3Points",
 		name = "Tier 3 points",
 		description = "Points awarded for claiming a tier 3 task",
-		position = 3,
+		position = 4,
 		section = taskSection
 	)
 	default int taskTier3Points()
@@ -309,7 +340,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier4Points",
 		name = "Tier 4 points",
 		description = "Points awarded for claiming a tier 4 task",
-		position = 4,
+		position = 5,
 		section = taskSection
 	)
 	default int taskTier4Points()
@@ -321,7 +352,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier5Points",
 		name = "Tier 5 points",
 		description = "Points awarded for claiming a tier 5 task",
-		position = 5,
+		position = 6,
 		section = taskSection
 	)
 	default int taskTier5Points()
@@ -333,7 +364,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "tasksFilePath",
 		name = "Tasks file path",
 		description = "Optional path to a tasks.json file. If empty, the built-in default tasks are used. File format: defaultTasks array with displayName, taskType, difficulty (1–5); optional areas map for per-area overrides.",
-		position = 6,
+		position = 7,
 		section = taskSection
 	)
 	default String tasksFilePath()

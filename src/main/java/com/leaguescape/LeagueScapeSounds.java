@@ -15,8 +15,12 @@ public final class LeagueScapeSounds
 
 	public static final String LOCKED = PREFIX + "Locked.wav";
 	public static final String WRONG = PREFIX + "Wrong_sound_effect.wav.ogg";
+	/** Played on general button/clicks (dialogs, menus, etc.). Use button_press.wav in soundeffects/ (convert M4A to WAV if needed). */
+	public static final String BUTTON_PRESS = PREFIX + "button_press.wav";
 	public static final String EQUIP_FUN = PREFIX + "Equip_fun.wav";
 	public static final String COINS_JINGLE = PREFIX + "Coins_jingle_(4).wav.ogg";
+	/** Played when a task is auto-completed (collection-log style). Add soundeffects/Task_complete.wav to resources. */
+	public static final String TASK_COMPLETE = PREFIX + "Task_complete.wav";
 
 	private static final float GAIN_DB = 0f;
 

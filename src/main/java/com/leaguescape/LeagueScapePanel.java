@@ -23,8 +23,6 @@ import net.runelite.client.util.ImageUtil;
 
 public class LeagueScapePanel extends PluginPanel
 {
-	private static final String CONFIG_GROUP = "leaguescape";
-
 	private final LeagueScapePlugin plugin;
 	private final LeagueScapeConfig config;
 	private final ConfigManager configManager;
@@ -90,40 +88,9 @@ public class LeagueScapePanel extends PluginPanel
 
 		content.add(new JLabel(" "));
 
-		// Task system: difficulty and points per tier
-		content.add(new JLabel("Task system"));
-		JPanel taskPanel = new JPanel();
-		taskPanel.setLayout(new BoxLayout(taskPanel, BoxLayout.Y_AXIS));
-		JPanel difficultyRow = new JPanel(new BorderLayout());
-		difficultyRow.add(new JLabel("Task difficulty (0.5=Easy, 1=Normal, 1.5=Hard):"), BorderLayout.WEST);
-		JSpinner difficultySpinner = new JSpinner(new SpinnerNumberModel(config.taskDifficultyMultiplier(), 0.5, 2.0, 0.5));
-		difficultySpinner.setMaximumSize(new java.awt.Dimension(80, difficultySpinner.getPreferredSize().height));
-		difficultySpinner.addChangeListener(e -> configManager.setConfiguration(CONFIG_GROUP, "taskDifficultyMultiplier", ((Number) difficultySpinner.getValue()).doubleValue()));
-		difficultyRow.add(difficultySpinner, BorderLayout.EAST);
-		taskPanel.add(difficultyRow);
-		for (int tier = 1; tier <= 5; tier++)
-		{
-			final int t = tier;
-			int pts = tierPoints(tier);
-			JPanel tierRow = new JPanel(new BorderLayout());
-			tierRow.add(new JLabel("Tier " + tier + " points:"), BorderLayout.WEST);
-			JSpinner tierSpinner = new JSpinner(new SpinnerNumberModel(pts, 0, 999, 1));
-			tierSpinner.setMaximumSize(new java.awt.Dimension(80, tierSpinner.getPreferredSize().height));
-			tierSpinner.addChangeListener(e -> configManager.setConfiguration(CONFIG_GROUP, "taskTier" + t + "Points", ((Number) tierSpinner.getValue()).intValue()));
-			tierRow.add(tierSpinner, BorderLayout.EAST);
-			taskPanel.add(tierRow);
-		}
-		content.add(taskPanel);
-
-		content.add(new JLabel(" "));
-
-		JButton worldMapBtn = new JButton("World Map");
-		worldMapBtn.addActionListener(e -> { /* TODO: open map */ });
-		content.add(worldMapBtn);
-
-		JButton taskBoardBtn = new JButton("Task Board");
-		taskBoardBtn.addActionListener(e -> { /* TODO: open task board */ });
-		content.add(taskBoardBtn);
+		JButton tasksBtn = new JButton("Tasks");
+		tasksBtn.addActionListener(e -> plugin.openTasksForCurrentArea());
+		content.add(tasksBtn);
 
 		JButton rulesSetupBtn = new JButton("Rules & Setup");
 		rulesSetupBtn.addActionListener(e -> { /* TODO: open config / setup */ });
@@ -201,19 +168,6 @@ public class LeagueScapePanel extends PluginPanel
 		else
 		{
 			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.WRONG);
-		}
-	}
-
-	private int tierPoints(int tier)
-	{
-		switch (tier)
-		{
-			case 1: return config.taskTier1Points();
-			case 2: return config.taskTier2Points();
-			case 3: return config.taskTier3Points();
-			case 4: return config.taskTier4Points();
-			case 5: return config.taskTier5Points();
-			default: return tier;
 		}
 	}
 

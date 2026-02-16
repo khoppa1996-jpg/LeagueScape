@@ -20,6 +20,8 @@ public class TaskDefinition
 	private String area;
 	/** Optional list of area ids; used when "area" is an array. Task appears in each area's grid and is mystery until all are unlocked. */
 	private List<String> areas;
+	/** When true, task is available in Free to Play worlds. In Members mode all tasks (including f2p) are available. */
+	private Boolean f2p;
 
 	/** Area ids this task is limited to. Empty = appears in any area. Non-empty = appears only in these areas' grids; task is "mystery" until all are unlocked. */
 	public List<String> getRequiredAreaIds()

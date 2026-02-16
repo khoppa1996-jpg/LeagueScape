@@ -15,8 +15,12 @@ public class Area
 {
 	String id;
 	String displayName;
+	/** Optional description shown in the Area Details popup on the world map. */
+	String description;
 	/** One or more polygons; each polygon is list of [x, y, plane] corners. */
 	List<List<int[]>> polygons;
+	/** Holes (subtracted from the union of polygons). Each hole is a list of [x, y, plane]. Used e.g. to cut islands out of an ocean. */
+	List<List<int[]>> holes;
 	List<Integer> includes;   // region IDs (surface + interiors)
 	List<String> neighbors;   // adjacent area ids
 	int unlockCost;

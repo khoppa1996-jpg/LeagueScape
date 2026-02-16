@@ -92,6 +92,13 @@ public class AreaGraphService
 
 			String id = obj.has("id") ? obj.get("id").getAsString() : "";
 			String displayName = obj.has("displayName") ? obj.get("displayName").getAsString() : id;
+			String description = obj.has("description") && !obj.get("description").isJsonNull() ? obj.get("description").getAsString() : null;
+			List<List<int[]>> holes = null;
+			if (obj.has("holes"))
+			{
+				holes = context.deserialize(obj.get("holes"), LIST_OF_POLYGONS.getType());
+			}
+			if (holes == null) holes = new ArrayList<>();
 			List<Integer> includes = obj.has("includes") ? context.deserialize(obj.get("includes"), new TypeToken<List<Integer>>() { }.getType()) : null;
 			List<String> neighbors = obj.has("neighbors") ? context.deserialize(obj.get("neighbors"), new TypeToken<List<String>>() { }.getType()) : null;
 			int unlockCost = obj.has("unlockCost") ? obj.get("unlockCost").getAsInt() : 0;
@@ -100,7 +107,9 @@ public class AreaGraphService
 			return Area.builder()
 				.id(id)
 				.displayName(displayName)
+				.description(description)
 				.polygons(polygons)
+				.holes(holes)
 				.includes(includes != null ? includes : Collections.emptyList())
 				.neighbors(neighbors != null ? neighbors : Collections.emptyList())
 				.unlockCost(unlockCost)
@@ -114,7 +123,9 @@ public class AreaGraphService
 			JsonObject obj = new JsonObject();
 			obj.add("id", context.serialize(src.getId()));
 			obj.add("displayName", context.serialize(src.getDisplayName()));
+			if (src.getDescription() != null) obj.add("description", context.serialize(src.getDescription()));
 			obj.add("polygons", context.serialize(src.getPolygons()));
+			if (src.getHoles() != null && !src.getHoles().isEmpty()) obj.add("holes", context.serialize(src.getHoles()));
 			obj.add("includes", context.serialize(src.getIncludes()));
 			obj.add("neighbors", context.serialize(src.getNeighbors()));
 			obj.addProperty("unlockCost", src.getUnlockCost());
@@ -226,7 +237,9 @@ public class AreaGraphService
 		Area withIncludes = Area.builder()
 			.id(area.getId())
 			.displayName(area.getDisplayName())
+			.description(area.getDescription())
 			.polygons(area.getPolygons())
+			.holes(area.getHoles() != null ? area.getHoles() : Collections.emptyList())
 			.includes(computeIncludesFromPolygon(area.getPolygon()))
 			.neighbors(area.getNeighbors() != null ? area.getNeighbors() : Collections.emptyList())
 			.unlockCost(area.getUnlockCost())
@@ -378,7 +391,9 @@ public class AreaGraphService
 			Area normalized = Area.builder()
 				.id(a.getId())
 				.displayName(a.getDisplayName() != null ? a.getDisplayName() : a.getId())
+				.description(a.getDescription())
 				.polygons(a.getPolygons())
+				.holes(a.getHoles() != null ? a.getHoles() : Collections.emptyList())
 				.includes(a.getIncludes() != null && !a.getIncludes().isEmpty() ? a.getIncludes() : computeIncludesFromPolygon(a.getPolygon()))
 				.neighbors(a.getNeighbors() != null ? a.getNeighbors() : Collections.emptyList())
 				.unlockCost(a.getUnlockCost())
@@ -474,6 +489,23 @@ public class AreaGraphService
 		return inside;
 	}
 
+	/**
+	 * True if polygon inner is entirely inside polygon outer (every vertex of inner is inside outer).
+	 * Both must have 3+ vertices and the same plane.
+	 */
+	public boolean isPolygonInsidePolygon(List<int[]> outer, List<int[]> inner)
+	{
+		if (outer == null || outer.size() < 3 || inner == null || inner.size() < 3) return false;
+		int outerPlane = outer.get(0).length >= 3 ? outer.get(0)[2] : 0;
+		for (int[] v : inner)
+		{
+			if (v.length < 2) return false;
+			if (v.length >= 3 && v[2] != outerPlane) return false;
+			if (!pointInPolygonRaw(v[0], v[1], outer)) return false;
+		}
+		return true;
+	}
+
 	public void setUnlockedAreaIds(Set<String> ids)
 	{
 		unlockedAreaIds.clear();
@@ -501,21 +533,42 @@ public class AreaGraphService
 		return getAreaAt(worldPoint) != null;
 	}
 
-	/** Returns the first area that has any polygon containing the given world point (surface plane), or null. */
+	/** Returns the first area that has any polygon containing the given world point (surface plane), or null. Points inside any hole are excluded. */
 	public Area getAreaAt(WorldPoint worldPoint)
 	{
 		for (Area a : areas)
 		{
-			if (a.getPolygons() != null)
+			if (!isWorldPointInArea(worldPoint, a)) continue;
+			return a;
+		}
+		return null;
+	}
+
+	/** True if the world point is inside the area (in some polygon and not in any hole). */
+	public boolean isWorldPointInArea(WorldPoint worldPoint, Area area)
+	{
+		boolean inPoly = false;
+		if (area.getPolygons() != null)
+		{
+			for (List<int[]> poly : area.getPolygons())
 			{
-				for (List<int[]> poly : a.getPolygons())
+				if (poly != null && poly.size() >= 3 && pointInPolygon(worldPoint, poly))
 				{
-					if (poly != null && poly.size() >= 3 && pointInPolygon(worldPoint, poly))
-						return a;
+					inPoly = true;
+					break;
 				}
 			}
 		}
-		return null;
+		if (!inPoly) return false;
+		if (area.getHoles() != null)
+		{
+			for (List<int[]> hole : area.getHoles())
+			{
+				if (hole != null && hole.size() >= 3 && pointInPolygon(worldPoint, hole))
+					return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean isWorldPointUnlocked(WorldPoint worldPoint)
@@ -529,14 +582,8 @@ public class AreaGraphService
 			{
 				return true;
 			}
-			if (area.getPolygons() != null)
-			{
-				for (List<int[]> poly : area.getPolygons())
-				{
-					if (poly != null && poly.size() >= 3 && pointInPolygon(worldPoint, poly))
-						return true;
-				}
-			}
+			if (isWorldPointInArea(worldPoint, area))
+				return true;
 		}
 		return false;
 	}
@@ -607,6 +654,23 @@ public class AreaGraphService
 							out.add(new WorldPoint(x, y, plane));
 						}
 					}
+				}
+			}
+		}
+		// Remove tiles that fall inside any hole
+		List<List<int[]>> holes = area.getHoles();
+		if (holes != null && !holes.isEmpty())
+		{
+			for (List<int[]> hole : holes)
+			{
+				if (hole == null || hole.size() < 3) continue;
+				int holePlane = hole.get(0).length >= 3 ? hole.get(0)[2] : 0;
+				if (holePlane != plane) continue;
+				for (java.util.Iterator<WorldPoint> it = out.iterator(); it.hasNext(); )
+				{
+					WorldPoint wp = it.next();
+					if (pointInPolygonRaw(wp.getX(), wp.getY(), hole))
+						it.remove();
 				}
 			}
 		}
@@ -811,4 +875,5 @@ public class AreaGraphService
 		}
 		return x2 + "," + y2 + "," + x1 + "," + y1;
 	}
+}
 }

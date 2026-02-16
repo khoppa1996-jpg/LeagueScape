@@ -48,7 +48,7 @@ public class TaskGridService
 	private static final String ID_SEP = "|";
 
 	private static final int MAX_TIER = 5;
-	private static final String TASKS_RESOURCE = "tasks.json";
+	private static final String TASKS_RESOURCE = "/tasks.json";
 	private static final String KEY_TASKS_OVERRIDE = "tasksJsonOverride";
 	private static final String KEY_CUSTOM_TASKS = "customTasksJson";
 
@@ -75,6 +75,7 @@ public class TaskGridService
 				else if (areaEl.isJsonPrimitive())
 					def.setArea(areaEl.getAsString());
 			}
+			if (obj.has("f2p")) def.setF2p(obj.get("f2p").getAsBoolean());
 			return def;
 		}
 	};
@@ -97,6 +98,7 @@ public class TaskGridService
 				obj.add("area", arr);
 			}
 		}
+		if (src.getF2p() != null) obj.addProperty("f2p", src.getF2p());
 		return obj;
 	};
 
@@ -318,18 +320,27 @@ public class TaskGridService
 		return GSON_SERIALIZE.toJson(root);
 	}
 
-	/** Get task list for an area (area override or default filtered by task.area). */
+	/** Get task list for an area (area override or default filtered by task.area and task mode). */
 	private List<TaskDefinition> getTasksForArea(String areaId)
 	{
 		TasksData data = getEffectiveTasksData();
+		List<TaskDefinition> list;
 		if (data.getAreas() != null && data.getAreas().containsKey(areaId))
 		{
 			TasksData.AreaTasks at = data.getAreas().get(areaId);
 			if (at != null && at.getTasks() != null && !at.getTasks().isEmpty())
-				return filterTasksByArea(at.getTasks(), areaId);
+				list = filterTasksByArea(at.getTasks(), areaId);
+			else
+				list = filterTasksByArea(data.getDefaultTasks() != null ? data.getDefaultTasks() : new ArrayList<>(), areaId);
 		}
-		List<TaskDefinition> defaultList = data.getDefaultTasks() != null ? data.getDefaultTasks() : new ArrayList<>();
-		return filterTasksByArea(defaultList, areaId);
+		else
+			list = filterTasksByArea(data.getDefaultTasks() != null ? data.getDefaultTasks() : new ArrayList<>(), areaId);
+		// Free to Play mode: only tasks with f2p == true
+		if (config.taskMode() == LeagueScapeConfig.TaskMode.FREE_TO_PLAY)
+			list = list.stream()
+				.filter(t -> Boolean.TRUE.equals(t.getF2p()))
+				.collect(java.util.stream.Collectors.toList());
+		return list;
 	}
 
 	/** Keep only tasks that apply to this area (task has no area restriction, or areaId is in task's required area list). */
@@ -485,6 +496,23 @@ public class TaskGridService
 			if (claimed.contains(neighborId)) return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Returns all task tiles in the given area that are currently revealed (neighbor of a claimed tile, not yet completed or claimed).
+	 * Used by task completion listeners to only consider revealed tasks for auto-completion.
+	 */
+	public List<TaskTile> getRevealedTiles(String areaId)
+	{
+		List<TaskTile> grid = getGridForArea(areaId);
+		List<TaskTile> out = new ArrayList<>();
+		for (TaskTile tile : grid)
+		{
+			if (tile.getTier() == 0) continue; // center "Free" tile
+			if (getState(areaId, tile.getId(), grid) == TaskState.REVEALED)
+				out.add(tile);
+		}
+		return out;
 	}
 
 	public void setCompleted(String areaId, String taskId)

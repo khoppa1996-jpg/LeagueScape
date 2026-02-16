@@ -67,6 +67,12 @@ public class LeagueScapePlugin extends Plugin
 	private com.leaguescape.overlay.LockedRegionOverlay lockedRegionOverlay;
 
 	@Inject
+	private com.leaguescape.overlay.TaskCompletionPopupOverlay taskCompletionPopupOverlay;
+
+	@Inject
+	private com.leaguescape.task.TaskCompletionListener taskCompletionListener;
+
+	@Inject
 	private com.leaguescape.overlay.LeagueScapeMapOverlay leagueScapeMapOverlay;
 
 	@Inject
@@ -86,6 +92,9 @@ public class LeagueScapePlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private net.runelite.client.callback.ClientThread clientThread;
 
 	@Inject
 	private AudioPlayer audioPlayer;
@@ -109,8 +118,14 @@ public class LeagueScapePlugin extends Plugin
 	private final List<int[]> editingCorners = new ArrayList<>();
 	/** Index of corner being moved (-1 = not in move mode). */
 	private int moveCornerIndex = -1;
+	/** Holes for the area being edited (subtracted from polygons). Set when loading area or by "Fill using others' corners". */
+	private List<List<int[]>> editingHoles = null;
+	/** Neighbors for the area being edited. Set when loading area; updated from config panel or map "Add neighbors" dialog. */
+	private List<String> editingNeighbors = null;
 	/** Called when corners change (from plugin thread). */
 	private Consumer<List<int[]>> cornerUpdateCallback;
+	/** Called when neighbors change (e.g. from map "Add neighbors" dialog). */
+	private Consumer<List<String>> neighborUpdateCallback;
 
 	@Override
 	protected void startUp() throws Exception
@@ -126,9 +141,11 @@ public class LeagueScapePlugin extends Plugin
 		}
 		loadUnlockedAreas();
 		overlayManager.add(lockedRegionOverlay);
+		overlayManager.add(taskCompletionPopupOverlay);
 		overlayManager.add(leagueScapeMapOverlay);
 		areaEditOverlay = areaEditOverlayProvider.get();
 		overlayManager.add(areaEditOverlay);
+		eventBus.register(taskCompletionListener);
 		eventBus.register(this);
 		// updateMapMouseListener() uses client (getWidget, isHidden) and must run on client thread; onGameTick will call it
 		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService, audioPlayer);
@@ -139,7 +156,7 @@ public class LeagueScapePlugin extends Plugin
 			.panel(panel)
 			.build();
 		clientToolbar.addNavigation(navButton);
-		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService, taskGridServiceProvider.get());
+		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService, taskGridServiceProvider.get(), configManager, config);
 		configNavButton = NavigationButton.builder()
 			.tooltip("LeagueScape Area Config")
 			.icon(configPanel.getIcon())
@@ -154,6 +171,7 @@ public class LeagueScapePlugin extends Plugin
 	{
 		log.info("LeagueScape stopped!");
 		stopAreaEditing();
+		eventBus.unregister(taskCompletionListener);
 		eventBus.unregister(this);
 		if (mapMouseListenerRegistered)
 		{
@@ -161,6 +179,7 @@ public class LeagueScapePlugin extends Plugin
 			mapMouseListenerRegistered = false;
 		}
 		overlayManager.remove(lockedRegionOverlay);
+		overlayManager.remove(taskCompletionPopupOverlay);
 		overlayManager.remove(leagueScapeMapOverlay);
 		if (areaEditOverlay != null)
 		{
@@ -211,6 +230,20 @@ public class LeagueScapePlugin extends Plugin
 	com.leaguescape.overlay.LockedRegionOverlay provideLockedRegionOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService, LeagueScapeConfig config)
 	{
 		return new com.leaguescape.overlay.LockedRegionOverlay(client, areaGraphService, config);
+	}
+
+	@Provides
+	com.leaguescape.overlay.TaskCompletionPopupOverlay provideTaskCompletionPopupOverlay(Client client)
+	{
+		return new com.leaguescape.overlay.TaskCompletionPopupOverlay(client);
+	}
+
+	@Provides
+	com.leaguescape.task.TaskCompletionListener provideTaskCompletionListener(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
+		com.leaguescape.task.TaskGridService taskGridService, com.leaguescape.overlay.TaskCompletionPopupOverlay taskCompletionPopupOverlay,
+		AudioPlayer audioPlayer, net.runelite.client.game.ItemManager itemManager)
+	{
+		return new com.leaguescape.task.TaskCompletionListener(client, areaGraphService, taskGridService, taskCompletionPopupOverlay, audioPlayer, itemManager);
 	}
 
 	@Provides
@@ -348,22 +381,14 @@ public class LeagueScapePlugin extends Plugin
 
 		boolean addViewAreaTasks = false;
 		String option = event.getOption();
-		// (1) Right-click on world map globe/orb (option "World Map") - no need to open the map
-		if ("World Map".equals(option))
+		// World map window is open and user right-clicked on it (Close entry) — add "View area tasks"
+		Widget mapContainer = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
+		if (mapContainer != null && !mapContainer.isHidden())
 		{
-			addViewAreaTasks = true;
-		}
-		// (2) World map window is open and user right-clicked on it (Close entry)
-		if (!addViewAreaTasks)
-		{
-			Widget mapContainer = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
-			if (mapContainer != null && !mapContainer.isHidden())
+			Widget entryWidget = event.getMenuEntry().getWidget();
+			if (entryWidget != null && isWidgetInMapHierarchy(entryWidget, mapContainer) && "Close".equals(option))
 			{
-				Widget entryWidget = event.getMenuEntry().getWidget();
-				if (entryWidget != null && isWidgetInMapHierarchy(entryWidget, mapContainer) && "Close".equals(option))
-				{
-					addViewAreaTasks = true;
-				}
+				addViewAreaTasks = true;
 			}
 		}
 		if (addViewAreaTasks)
@@ -384,6 +409,19 @@ public class LeagueScapePlugin extends Plugin
 			w = w.getParent();
 		}
 		return false;
+	}
+
+	/** Opens the task grid popup for the area the player is currently in. Call from UI or client thread. */
+	public void openTasksForCurrentArea()
+	{
+		clientThread.invoke(() -> {
+			if (client.getLocalPlayer() == null) return;
+			net.runelite.api.coords.WorldPoint playerLoc = client.getLocalPlayer().getWorldLocation();
+			com.leaguescape.data.Area area = areaGraphService.getAreaAt(playerLoc);
+			if (area == null) return;
+			if (!areaGraphService.getUnlockedAreaIds().contains(area.getId())) return;
+			leagueScapeMapOverlay.openTaskGridForArea(area);
+		});
 	}
 
 	private void openTaskPopupForCurrentArea()
@@ -428,6 +466,9 @@ public class LeagueScapePlugin extends Plugin
 		editingAreaId = areaId;
 		editingPolygons.clear();
 		editingCorners.clear();
+		com.leaguescape.data.Area a = areaGraphService.getArea(areaId);
+		editingHoles = (a != null && a.getHoles() != null) ? new ArrayList<>(a.getHoles()) : new ArrayList<>();
+		editingNeighbors = (a != null && a.getNeighbors() != null) ? new ArrayList<>(a.getNeighbors()) : new ArrayList<>();
 		if (initialCorners != null && !initialCorners.isEmpty())
 		{
 			editingCorners.addAll(initialCorners);
@@ -441,6 +482,9 @@ public class LeagueScapePlugin extends Plugin
 		editingAreaId = areaId;
 		editingPolygons.clear();
 		editingCorners.clear();
+		com.leaguescape.data.Area a = areaGraphService.getArea(areaId);
+		editingHoles = (a != null && a.getHoles() != null) ? new ArrayList<>(a.getHoles()) : new ArrayList<>();
+		editingNeighbors = (a != null && a.getNeighbors() != null) ? new ArrayList<>(a.getNeighbors()) : new ArrayList<>();
 		if (polygons != null && !polygons.isEmpty())
 		{
 			for (int i = 0; i < polygons.size() - 1; i++)
@@ -461,8 +505,11 @@ public class LeagueScapePlugin extends Plugin
 		editingAreaId = null;
 		editingPolygons.clear();
 		editingCorners.clear();
+		editingHoles = null;
+		editingNeighbors = null;
 		moveCornerIndex = -1;
 		cornerUpdateCallback = null;
+		neighborUpdateCallback = null;
 	}
 
 	/** Alias for config panel (same API as former config plugin). */
@@ -505,6 +552,32 @@ public class LeagueScapePlugin extends Plugin
 		moveCornerIndex = -1;
 		notifyCornersUpdated();
 		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Started new polygon.", null);
+	}
+
+	/**
+	 * Remove the polygon at the given index (0-based over all polygons: completed first, then current if it has 3+ corners).
+	 * Used when converting a polygon to a hole (remove it from the polygon list so it can be stored as a hole).
+	 * @return the removed polygon, or null if index invalid or nothing to remove
+	 */
+	public List<int[]> removeEditingPolygonAt(int index)
+	{
+		if (index < 0) return null;
+		if (index < editingPolygons.size())
+		{
+			List<int[]> removed = new ArrayList<>(editingPolygons.get(index));
+			editingPolygons.remove(index);
+			notifyCornersUpdated();
+			return removed;
+		}
+		if (index == editingPolygons.size() && editingCorners.size() >= 3)
+		{
+			List<int[]> removed = new ArrayList<>(editingCorners);
+			editingCorners.clear();
+			moveCornerIndex = -1;
+			notifyCornersUpdated();
+			return removed;
+		}
+		return null;
 	}
 
 	/** Remove corner at index (for map right-click menu). */
@@ -557,6 +630,49 @@ public class LeagueScapePlugin extends Plugin
 	public void setMoveCornerIndex(int index)
 	{
 		this.moveCornerIndex = index;
+		notifyCornersUpdated();
+	}
+
+	/** Holes for the area being edited (from area load or "Fill using others' corners"). */
+	public List<List<int[]>> getEditingHoles()
+	{
+		return editingHoles == null ? null : Collections.unmodifiableList(new ArrayList<>(editingHoles));
+	}
+
+	/** Set holes (e.g. after "Fill using others' corners"). */
+	public void setEditingHoles(List<List<int[]>> holes)
+	{
+		this.editingHoles = (holes != null) ? new ArrayList<>(holes) : new ArrayList<>();
+	}
+
+	/** Neighbors for the area being edited (from load or "Add neighbors" on map). */
+	public List<String> getEditingNeighbors()
+	{
+		return editingNeighbors == null ? null : Collections.unmodifiableList(new ArrayList<>(editingNeighbors));
+	}
+
+	public void setEditingNeighbors(List<String> neighbors)
+	{
+		this.editingNeighbors = (neighbors != null) ? new ArrayList<>(neighbors) : new ArrayList<>();
+		if (neighborUpdateCallback != null)
+		{
+			List<String> copy = new ArrayList<>(this.editingNeighbors);
+			SwingUtilities.invokeLater(() -> neighborUpdateCallback.accept(copy));
+		}
+	}
+
+	public void setNeighborUpdateCallback(Consumer<List<String>> callback)
+	{
+		this.neighborUpdateCallback = callback;
+	}
+
+	/** Replace the current polygon being edited (e.g. after paint-bucket fill). */
+	public void setEditingCorners(List<int[]> corners)
+	{
+		editingCorners.clear();
+		if (corners != null)
+			editingCorners.addAll(corners);
+		moveCornerIndex = -1;
 		notifyCornersUpdated();
 	}
 
