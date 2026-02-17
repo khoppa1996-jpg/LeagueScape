@@ -876,4 +876,3 @@ public class AreaGraphService
 		return x2 + "," + y2 + "," + x1 + "," + y1;
 	}
 }
-}
