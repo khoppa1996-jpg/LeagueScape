@@ -22,6 +22,8 @@ public class TaskDefinition
 	private List<String> areas;
 	/** When true, task is available in Free to Play worlds. In Members mode all tasks (including f2p) are available. */
 	private Boolean f2p;
+	/** Optional requirements or prerequisites description. */
+	private String requirements;
 
 	/**
 	 * Returns the list of area IDs this task is restricted to. Used to filter which area grids show this task

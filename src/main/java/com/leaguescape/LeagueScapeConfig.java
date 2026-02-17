@@ -44,6 +44,13 @@ public interface LeagueScapeConfig extends Config
 	)
 	String taskSection = "taskSection";
 
+	@ConfigSection(
+		name = "Resetting progress",
+		description = "Reset all LeagueScape progress (points, area unlocks, task completions). Use the Reset Progress button on the LeagueScape sidebar panel (LeagueScape icon in the sidebar).",
+		position = 4
+	)
+	String resetSection = "resetSection";
+
 	// Overlay appearance (scene)
 
 	@ConfigItem(

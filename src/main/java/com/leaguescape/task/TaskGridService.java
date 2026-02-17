@@ -48,9 +48,14 @@ public class TaskGridService
 	private static final String ID_SEP = "|";
 
 	private static final int MAX_TIER = 5;
+	/** Minimum number of tasks in the pool for each area's task panel (pad by repeating if needed). */
+	private static final int MIN_TASKS_PER_AREA = 100;
+	/** Maximum number of tasks in the pool for each area's task panel (cap after prioritizing area-specific then filler). */
+	private static final int MAX_TASKS_PER_AREA = 400;
 	private static final String TASKS_RESOURCE = "/tasks.json";
 	private static final String KEY_TASKS_OVERRIDE = "tasksJsonOverride";
 	private static final String KEY_CUSTOM_TASKS = "customTasksJson";
+	private static final String KEY_GRID_RESET_COUNTER = "taskGridResetCounter";
 
 	/** Custom Gson deserializer for TaskDefinition: reads displayName, taskType, difficulty, area (string or array), f2p. */
 	private static final JsonDeserializer<TaskDefinition> TASK_DESERIALIZER = new JsonDeserializer<TaskDefinition>()
@@ -63,26 +68,38 @@ public class TaskGridService
 			if (obj.has("displayName")) def.setDisplayName(obj.get("displayName").getAsString());
 			if (obj.has("taskType")) def.setTaskType(obj.get("taskType").getAsString());
 			if (obj.has("difficulty")) def.setDifficulty(obj.get("difficulty").getAsInt());
-			// area can be a single string (setArea) or array of strings (setAreas)
+			// area: comma-separated string (e.g. "lumbridge, draynor, varrock") or legacy JSON array
 			if (obj.has("area"))
 			{
 				JsonElement areaEl = obj.get("area");
+				List<String> list = new ArrayList<>();
 				if (areaEl.isJsonArray())
 				{
-					List<String> list = new ArrayList<>();
 					for (JsonElement e : areaEl.getAsJsonArray())
-						list.add(e.getAsString());
-					def.setAreas(list);
+						list.add(e.getAsString().trim());
 				}
 				else if (areaEl.isJsonPrimitive())
-					def.setArea(areaEl.getAsString());
+				{
+					for (String part : areaEl.getAsString().split(","))
+					{
+						String id = part.trim();
+						if (!id.isEmpty()) list.add(id);
+					}
+				}
+				if (list.isEmpty())
+					{ /* leave area/areas null */ }
+				else if (list.size() == 1)
+					def.setArea(list.get(0));
+				else
+					def.setAreas(list);
 			}
 			if (obj.has("f2p")) def.setF2p(obj.get("f2p").getAsBoolean());
+			if (obj.has("requirements")) def.setRequirements(obj.get("requirements").getAsString());
 			return def;
 		}
 	};
 
-	/** Custom Gson serializer for TaskDefinition: writes displayName, taskType, difficulty, area (single or array), f2p. */
+	/** Custom Gson serializer for TaskDefinition: writes displayName, taskType, difficulty, area (single or array), f2p, requirements. */
 	private static final JsonSerializer<TaskDefinition> TASK_SERIALIZER = (src, typeOfSrc, context) ->
 	{
 		JsonObject obj = new JsonObject();
@@ -91,17 +108,9 @@ public class TaskGridService
 		obj.addProperty("difficulty", src.getDifficulty());
 		List<String> areaIds = src.getRequiredAreaIds();
 		if (!areaIds.isEmpty())
-		{
-			if (areaIds.size() == 1)
-				obj.addProperty("area", areaIds.get(0));
-			else
-			{
-				JsonArray arr = new JsonArray();
-				for (String id : areaIds) arr.add(id);
-				obj.add("area", arr);
-			}
-		}
+			obj.addProperty("area", String.join(", ", areaIds));
 		if (src.getF2p() != null) obj.addProperty("f2p", src.getF2p());
+		if (src.getRequirements() != null) obj.addProperty("requirements", src.getRequirements());
 		return obj;
 	};
 
@@ -306,6 +315,16 @@ public class TaskGridService
 		saveCustomTasksToConfig(list);
 	}
 
+	/** Append multiple tasks to the custom task list and persist once. */
+	public void addCustomTasks(List<TaskDefinition> tasks)
+	{
+		if (tasks == null || tasks.isEmpty()) return;
+		List<TaskDefinition> list = loadCustomTasksFromConfig();
+		for (TaskDefinition t : tasks)
+			if (t != null) list.add(t);
+		saveCustomTasksToConfig(list);
+	}
+
 	public void updateCustomTask(int index, TaskDefinition task)
 	{
 		List<TaskDefinition> list = loadCustomTasksFromConfig();
@@ -340,7 +359,24 @@ public class TaskGridService
 		return GSON_SERIALIZE.toJson(root);
 	}
 
-	/** Get task list for an area (area override or default filtered by task.area and task mode). */
+	/** Export a list of tasks as JSON (defaultTasks array + areas empty). For Task Creator Helper export. */
+	public String exportTaskListAsJson(List<TaskDefinition> tasks)
+	{
+		JsonObject root = new JsonObject();
+		root.addProperty("_comment", "Task properties: displayName, taskType, difficulty (1-5). Optional area, requirements.");
+		JsonArray defaultArr = new JsonArray();
+		for (TaskDefinition t : (tasks != null ? tasks : Collections.<TaskDefinition>emptyList()))
+			defaultArr.add(GSON_SERIALIZE.toJsonTree(t));
+		root.add("defaultTasks", defaultArr);
+		root.add("areas", new JsonObject());
+		return GSON_SERIALIZE.toJson(root);
+	}
+
+	/**
+	 * Get task list for an area: area override or default, filtered by area and task mode, then
+	 * prioritized (area-specific first, filler tasks second), capped at MAX_TASKS_PER_AREA, and
+	 * padded to MIN_TASKS_PER_AREA by repeating if needed.
+	 */
 	private List<TaskDefinition> getTasksForArea(String areaId)
 	{
 		TasksData data = getEffectiveTasksData();
@@ -360,7 +396,59 @@ public class TaskGridService
 			list = list.stream()
 				.filter(t -> Boolean.TRUE.equals(t.getF2p()))
 				.collect(java.util.stream.Collectors.toList());
-		return list;
+		return prioritizeAndCapTasksForArea(list, areaId);
+	}
+
+	/**
+	 * Prioritizes tasks for an area: tasks with "area" (or "areas") containing this areaId come first,
+	 * then filler tasks (no area restriction). No task may appear more than once in the same area
+	 * (deduplicated by display name). Caps at MAX_TASKS_PER_AREA; if fewer than MIN_TASKS_PER_AREA
+	 * unique tasks exist, the pool is left smaller (no repeating to pad).
+	 */
+	private List<TaskDefinition> prioritizeAndCapTasksForArea(List<TaskDefinition> tasks, String areaId)
+	{
+		if (tasks == null || tasks.isEmpty())
+			return new ArrayList<>();
+
+		// Area-specific: task's requiredAreaIds is non-empty and contains this area
+		List<TaskDefinition> areaSpecific = new ArrayList<>();
+		List<TaskDefinition> filler = new ArrayList<>();
+		for (TaskDefinition t : tasks)
+		{
+			List<String> required = t.getRequiredAreaIds();
+			if (!required.isEmpty() && required.contains(areaId))
+				areaSpecific.add(t);
+			else if (required.isEmpty())
+				filler.add(t);
+		}
+
+		// Build combined with no duplicates within this area (same displayName = same task)
+		Set<String> seenInArea = new HashSet<>();
+		List<TaskDefinition> combined = new ArrayList<>();
+		for (TaskDefinition t : areaSpecific)
+		{
+			String key = taskKey(t);
+			if (seenInArea.add(key))
+				combined.add(t);
+		}
+		for (TaskDefinition t : filler)
+		{
+			String key = taskKey(t);
+			if (seenInArea.add(key))
+				combined.add(t);
+		}
+
+		if (combined.size() > MAX_TASKS_PER_AREA)
+			combined = new ArrayList<>(combined.subList(0, MAX_TASKS_PER_AREA));
+
+		return combined;
+	}
+
+	/** Normalized key for deduplication: same task (e.g. "Defeat a Guard") has the same key within an area. */
+	private static String taskKey(TaskDefinition t)
+	{
+		String name = t.getDisplayName();
+		return name != null ? name.trim().toLowerCase() : "";
 	}
 
 	/** Keep only tasks that apply to this area (task has no area restriction, or areaId is in task's required area list). */
@@ -383,7 +471,8 @@ public class TaskGridService
 	public List<TaskTile> getGridForArea(String areaId)
 	{
 		List<TaskDefinition> taskDefs = getTasksForArea(areaId);
-		Random rng = new Random(areaId.hashCode());
+		long seed = (long) areaId.hashCode() + getGridResetCounter();
+		Random rng = new Random(seed);
 
 		// Build (row, col) positions grouped by tier (1..5), in consistent order
 		List<List<int[]>> positionsByTier = new ArrayList<>();
@@ -624,5 +713,48 @@ public class TaskGridService
 		String key = KEY_PREFIX + areaId + suffix;
 		String value = String.join(ID_SEP, set);
 		configManager.setConfiguration(STATE_GROUP, key, value);
+	}
+
+	/**
+	 * Returns the current grid reset counter (used in random seed so reset progress gives fresh shuffle).
+	 */
+	public int getGridResetCounter()
+	{
+		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GRID_RESET_COUNTER);
+		if (raw == null || raw.isEmpty()) return 0;
+		try
+		{
+			return Integer.parseInt(raw);
+		}
+		catch (NumberFormatException e)
+		{
+			return 0;
+		}
+	}
+
+	/**
+	 * Increments the grid reset counter so next getGridForArea produces a new random assignment per area.
+	 * Does not clear task claimed/completed state; use clearAllTaskProgress for that.
+	 */
+	public void incrementGridResetCounter()
+	{
+		int next = getGridResetCounter() + 1;
+		configManager.setConfiguration(STATE_GROUP, KEY_GRID_RESET_COUNTER, next);
+		invalidateTasksCache();
+	}
+
+	/**
+	 * Clears claimed and completed task state for the given area IDs. Used on reset progress; does not
+	 * remove custom tasks or task override. Custom areas are not modified by this plugin.
+	 */
+	public void clearAllTaskProgress(java.util.Collection<String> areaIds)
+	{
+		if (areaIds == null) return;
+		for (String areaId : areaIds)
+		{
+			configManager.unsetConfiguration(STATE_GROUP, KEY_PREFIX + areaId + SUFFIX_CLAIMED);
+			configManager.unsetConfiguration(STATE_GROUP, KEY_PREFIX + areaId + SUFFIX_COMPLETED);
+		}
+		invalidateTasksCache();
 	}
 }

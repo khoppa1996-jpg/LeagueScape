@@ -6,9 +6,15 @@ import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.data.Area;
 import com.leaguescape.task.TaskDefinition;
 import com.leaguescape.task.TaskGridService;
+import com.leaguescape.wiki.OsrsWikiApiService;
+import com.leaguescape.wiki.WikiTaskGenerator;
+import com.leaguescape.wiki.WikiTaskSource;
 import net.runelite.client.config.ConfigManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -16,23 +22,37 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.Scrollable;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.util.ImageUtil;
 import java.awt.Container;
@@ -100,11 +120,24 @@ public class LeagueScapeConfigPanel extends PluginPanel
 
 	private static final String CONFIG_GROUP = "leaguescape";
 
+	private static final String[] TASK_TYPE_PRESETS = {
+		"Achievement Diary", "Activity", "Quest", "Other", "Equipment", "Collection Log", "Clue Scroll", "Combat",
+		"Agility", "Cooking", "Crafting", "Farming", "Firemaking", "Fletching", "Fishing", "Herblore", "Hunter",
+		"Magic", "Mining", "Prayer", "Runecraft", "Slayer", "Smithing", "Sailing", "Thieving", "Woodcutting"
+	};
+
 	private final LeagueScapePlugin plugin;
 	private final AreaGraphService areaGraphService;
 	private final TaskGridService taskGridService;
 	private final ConfigManager configManager;
 	private final LeagueScapeConfig config;
+	private final OsrsWikiApiService wikiApi;
+	private final WikiTaskGenerator wikiTaskGenerator;
+	private final ExecutorService helperExecutor = Executors.newSingleThreadExecutor(r -> {
+		Thread t = new Thread(r, "LeagueScape-TaskHelper");
+		t.setDaemon(true);
+		return t;
+	});
 
 	private JPanel mainPanel;
 	private JPanel listPanel;
@@ -137,16 +170,19 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private JSpinner taskDifficultySpinner;
 	private JCheckBox taskF2pCheckBox;
 	private JPanel taskAreasPanel;
+	private JTextField taskRequirementsField;
 	private int editingTaskIndex = -1;
 
 	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService, TaskGridService taskGridService,
-		ConfigManager configManager, LeagueScapeConfig config)
+		ConfigManager configManager, LeagueScapeConfig config, OsrsWikiApiService wikiApi, WikiTaskGenerator wikiTaskGenerator)
 	{
 		this.plugin = plugin;
 		this.areaGraphService = areaGraphService;
 		this.taskGridService = taskGridService;
 		this.configManager = configManager;
 		this.config = config;
+		this.wikiApi = wikiApi;
+		this.wikiTaskGenerator = wikiTaskGenerator;
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(6, 6, 6, 6));
 
@@ -298,6 +334,13 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		mainPanel.add(createCollapsibleSection("Tasks", tasksContent, true, null));
 		mainPanel.add(createCollapsibleSection("Edit task", taskEditPanel, false, taskEditHeaderRef));
 		taskEditSectionHeader = taskEditHeaderRef[0];
+
+		JPanel helperPanel = new JPanel(new BorderLayout());
+		JButton openHelperBtn = new JButton("Open Task Creator Helper");
+		openHelperBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
+		openHelperBtn.addActionListener(e -> openTaskCreatorHelperDialog());
+		helperPanel.add(openHelperBtn, BorderLayout.NORTH);
+		mainPanel.add(createCollapsibleSection("Task Creator Helper", helperPanel, false, null));
 
 		JScrollPane scrollPane = new JScrollPane(mainPanel);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -952,6 +995,10 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		JScrollPane taskAreasScroll = new JScrollPane(taskAreasPanel);
 		taskAreasScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		taskEditPanel.add(taskAreasScroll);
+		taskEditPanel.add(new JLabel("Requirements (optional):"));
+		taskRequirementsField = new JTextField(t.getRequirements() != null ? t.getRequirements() : "", 20);
+		taskRequirementsField.setMaximumSize(new Dimension(Integer.MAX_VALUE, taskRequirementsField.getPreferredSize().height));
+		taskEditPanel.add(taskRequirementsField);
 		taskEditPanel.add(new JLabel(" "));
 		JPanel taskSaveCancel = new JPanel();
 		JButton taskSaveBtn = new JButton("Save");
@@ -986,6 +1033,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		def.setTaskType(taskType.isEmpty() ? null : taskType);
 		def.setDifficulty(difficulty);
 		def.setF2p(taskF2pCheckBox.isSelected());
+		def.setRequirements(taskRequirementsField != null && taskRequirementsField.getText() != null && !taskRequirementsField.getText().trim().isEmpty() ? taskRequirementsField.getText().trim() : null);
 		if (areaIds.isEmpty())
 		{
 			def.setArea(null);
@@ -1046,6 +1094,263 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		editPanel.removeAll();
 		editPanel.revalidate();
 		editPanel.repaint();
+	}
+
+	private void openTaskCreatorHelperDialog()
+	{
+		if (wikiApi == null || wikiTaskGenerator == null) return;
+		Frame owner = null;
+		java.awt.Window w = SwingUtilities.windowForComponent(this);
+		if (w instanceof Frame) owner = (Frame) w;
+		JDialog dialog = new JDialog(owner, "Task Creator Helper", true);
+		dialog.setLayout(new BorderLayout(8, 8));
+
+		JTabbedPane tabs = new JTabbedPane();
+		// Manual tab
+		JPanel manualPanel = new JPanel(new BorderLayout(6, 6));
+		JPanel manualTop = new JPanel(new BorderLayout(4, 4));
+		JPanel sourceRow = new JPanel(new BorderLayout(4, 0));
+		sourceRow.add(new JLabel("Source:"), BorderLayout.WEST);
+		JComboBox<WikiTaskSource> sourceCombo = new JComboBox<>(WikiTaskSource.values());
+		sourceRow.add(sourceCombo, BorderLayout.CENTER);
+		JButton fetchBtn = new JButton("Fetch from Wiki");
+		sourceRow.add(fetchBtn, BorderLayout.EAST);
+		manualTop.add(sourceRow, BorderLayout.NORTH);
+		DefaultListModel<String> candidateModel = new DefaultListModel<>();
+		JList<String> candidateList = new JList<>(candidateModel);
+		candidateList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		manualTop.add(new JScrollPane(candidateList), BorderLayout.CENTER);
+		manualPanel.add(manualTop, BorderLayout.NORTH);
+
+		JPanel formPanel = new JPanel();
+		formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+		formPanel.add(new JLabel("Display name:"));
+		JTextField helperDisplayName = new JTextField(30);
+		formPanel.add(helperDisplayName);
+		formPanel.add(new JLabel("Task type:"));
+		JComboBox<String> helperTaskType = new JComboBox<>(TASK_TYPE_PRESETS);
+		formPanel.add(helperTaskType);
+		formPanel.add(new JLabel("Difficulty (1-5):"));
+		JSpinner helperDifficulty = new JSpinner(new SpinnerNumberModel(3, 1, 5, 1));
+		formPanel.add(helperDifficulty);
+		JCheckBox helperF2p = new JCheckBox("F2P", true);
+		formPanel.add(helperF2p);
+		formPanel.add(new JLabel("Area (optional):"));
+		JPanel helperAreasPanel = new JPanel();
+		helperAreasPanel.setLayout(new BoxLayout(helperAreasPanel, BoxLayout.Y_AXIS));
+		List<Area> areasForHelper = new ArrayList<>(areaGraphService.getAreas());
+		areasForHelper.sort(AREA_DISPLAY_ORDER);
+		for (Area a : areasForHelper)
+		{
+			JCheckBox cb = new JCheckBox(a.getDisplayName() != null ? a.getDisplayName() : a.getId());
+			cb.setName(a.getId());
+			helperAreasPanel.add(cb);
+		}
+		formPanel.add(new JScrollPane(helperAreasPanel));
+		formPanel.add(new JLabel("Requirements (optional):"));
+		JTextField helperRequirements = new JTextField(30);
+		formPanel.add(helperRequirements);
+		JPanel manualButtons = new JPanel();
+		JButton addOneBtn = new JButton("Add to task list");
+		JButton copyJsonBtn = new JButton("Copy JSON");
+		JButton clearBtn = new JButton("Clear");
+		manualButtons.add(addOneBtn);
+		manualButtons.add(copyJsonBtn);
+		manualButtons.add(clearBtn);
+		formPanel.add(manualButtons);
+		manualPanel.add(new JScrollPane(formPanel), BorderLayout.CENTER);
+
+		candidateList.addListSelectionListener(e -> {
+			if (e.getValueIsAdjusting()) return;
+			int i = candidateList.getSelectedIndex();
+			if (i >= 0 && i < candidateModel.getSize())
+			{
+				WikiTaskSource src = (WikiTaskSource) sourceCombo.getSelectedItem();
+				String title = candidateModel.get(i);
+				String prefix = src != null && src.getDisplayNamePrefix() != null ? src.getDisplayNamePrefix() : "";
+				helperDisplayName.setText(prefix + title);
+				if (src != null) helperTaskType.setSelectedItem(src.getDefaultTaskType());
+			}
+		});
+		fetchBtn.addActionListener(e -> {
+			fetchBtn.setEnabled(false);
+			WikiTaskSource src = (WikiTaskSource) sourceCombo.getSelectedItem();
+			if (src == null) { fetchBtn.setEnabled(true); return; }
+			helperExecutor.execute(() -> {
+				List<String> all = new ArrayList<>();
+				String ct = null;
+				do
+				{
+					OsrsWikiApiService.CategoryMembersResult res = wikiApi.listCategoryMembers(src.getCategoryName(), 500, ct);
+					all.addAll(res.getTitles());
+					ct = res.getNextContinue();
+				}
+				while (ct != null && !ct.isEmpty());
+				SwingUtilities.invokeLater(() -> {
+					candidateModel.clear();
+					for (String t : all) candidateModel.addElement(t);
+					fetchBtn.setEnabled(true);
+				});
+			});
+		});
+		addOneBtn.addActionListener(e -> {
+			TaskDefinition def = buildTaskFromHelperForm(helperDisplayName, helperTaskType, helperDifficulty, helperF2p, helperAreasPanel, helperRequirements);
+			if (def != null) { taskGridService.addCustomTask(def); refreshTaskList(); JOptionPane.showMessageDialog(dialog, "Task added."); }
+		});
+		copyJsonBtn.addActionListener(e -> {
+			TaskDefinition def = buildTaskFromHelperForm(helperDisplayName, helperTaskType, helperDifficulty, helperF2p, helperAreasPanel, helperRequirements);
+			if (def != null)
+			{
+				String json = taskGridService.exportTaskListAsJson(Collections.singletonList(def));
+				Clipboard cl = dialog.getToolkit().getSystemClipboard();
+				if (cl != null) cl.setContents(new StringSelection(json), null);
+				JOptionPane.showMessageDialog(dialog, "JSON copied to clipboard.");
+			}
+		});
+		clearBtn.addActionListener(e -> {
+			helperDisplayName.setText("");
+			helperTaskType.setSelectedIndex(0);
+			helperDifficulty.setValue(3);
+			helperF2p.setSelected(true);
+			helperRequirements.setText("");
+			for (int i = 0; i < helperAreasPanel.getComponentCount(); i++)
+				if (helperAreasPanel.getComponent(i) instanceof JCheckBox)
+					((JCheckBox) helperAreasPanel.getComponent(i)).setSelected(false);
+		});
+
+		tabs.addTab("Manual", manualPanel);
+
+		// Generate tab
+		JPanel genPanel = new JPanel(new BorderLayout(6, 6));
+		JPanel genOptions = new JPanel();
+		genOptions.setLayout(new BoxLayout(genOptions, BoxLayout.Y_AXIS));
+		genOptions.add(new JLabel("Source types to include:"));
+		JPanel sourceCheckboxes = new JPanel();
+		sourceCheckboxes.setLayout(new BoxLayout(sourceCheckboxes, BoxLayout.Y_AXIS));
+		for (WikiTaskSource src : WikiTaskSource.values())
+		{
+			JCheckBox cb = new JCheckBox(src.getDisplayName());
+			cb.setName(src.name());
+			sourceCheckboxes.add(cb);
+		}
+		genOptions.add(new JScrollPane(sourceCheckboxes));
+		genOptions.add(new JLabel("Default difficulty:"));
+		JSpinner genDefDiff = new JSpinner(new SpinnerNumberModel(3, 1, 5, 1));
+		genOptions.add(genDefDiff);
+		genOptions.add(new JLabel("Difficulty range (min-max):"));
+		JPanel rangeRow = new JPanel();
+		JSpinner genRangeMin = new JSpinner(new SpinnerNumberModel(1, 1, 5, 1));
+		JSpinner genRangeMax = new JSpinner(new SpinnerNumberModel(5, 1, 5, 1));
+		rangeRow.add(genRangeMin);
+		rangeRow.add(new JLabel(" to "));
+		rangeRow.add(genRangeMax);
+		genOptions.add(rangeRow);
+		JCheckBox genF2p = new JCheckBox("F2P by default", true);
+		genOptions.add(genF2p);
+		JButton generateBtn = new JButton("Generate");
+		genOptions.add(generateBtn);
+		JLabel progressLabel = new JLabel(" ");
+		genOptions.add(progressLabel);
+		genPanel.add(genOptions, BorderLayout.NORTH);
+		DefaultTableModel previewModel = new DefaultTableModel(new String[] { "Display name", "Type", "Difficulty" }, 0);
+		JTable previewTable = new JTable(previewModel);
+		genPanel.add(new JScrollPane(previewTable), BorderLayout.CENTER);
+		JPanel genActions = new JPanel();
+		JButton addAllBtn = new JButton("Add all to task list");
+		JButton exportJsonBtn = new JButton("Export as JSON");
+		genActions.add(addAllBtn);
+		genActions.add(exportJsonBtn);
+		genPanel.add(genActions, BorderLayout.SOUTH);
+
+		List<TaskDefinition>[] generatedHolder = new List[] { new ArrayList<>() };
+		generateBtn.addActionListener(e -> {
+			Set<WikiTaskSource> selected = new HashSet<>();
+			for (int i = 0; i < sourceCheckboxes.getComponentCount(); i++)
+				if (sourceCheckboxes.getComponent(i) instanceof JCheckBox)
+				{
+					JCheckBox cb = (JCheckBox) sourceCheckboxes.getComponent(i);
+					if (cb.isSelected() && cb.getName() != null)
+					{
+						try { selected.add(WikiTaskSource.valueOf(cb.getName())); } catch (Exception ignored) { }
+					}
+				}
+			if (selected.isEmpty()) { JOptionPane.showMessageDialog(dialog, "Select at least one source."); return; }
+			generateBtn.setEnabled(false);
+			WikiTaskGenerator.GeneratorDefaults defaults = new WikiTaskGenerator.GeneratorDefaults();
+			defaults.setDefaultDifficulty((Integer) genDefDiff.getValue());
+			defaults.setDefaultF2p(genF2p.isSelected());
+			defaults.setDifficultyRangeMin((Integer) genRangeMin.getValue());
+			defaults.setDifficultyRangeMax((Integer) genRangeMax.getValue());
+			helperExecutor.execute(() -> {
+				List<TaskDefinition> result = wikiTaskGenerator.generate(selected, defaults, msg ->
+					SwingUtilities.invokeLater(() -> progressLabel.setText(msg)));
+				generatedHolder[0] = result != null ? result : new ArrayList<>();
+				SwingUtilities.invokeLater(() -> {
+					previewModel.setRowCount(0);
+					for (int i = 0; i < Math.min(50, generatedHolder[0].size()); i++)
+					{
+						TaskDefinition t = generatedHolder[0].get(i);
+						previewModel.addRow(new Object[] {
+							t.getDisplayName() != null ? t.getDisplayName() : "",
+							t.getTaskType() != null ? t.getTaskType() : "",
+							t.getDifficulty()
+						});
+					}
+					progressLabel.setText("Generated " + generatedHolder[0].size() + " tasks.");
+					generateBtn.setEnabled(true);
+				});
+			});
+		});
+		addAllBtn.addActionListener(e -> {
+			if (generatedHolder[0].isEmpty()) { JOptionPane.showMessageDialog(dialog, "Generate first."); return; }
+			taskGridService.addCustomTasks(generatedHolder[0]);
+			refreshTaskList();
+			JOptionPane.showMessageDialog(dialog, "Added " + generatedHolder[0].size() + " tasks.");
+		});
+		exportJsonBtn.addActionListener(e -> {
+			if (generatedHolder[0].isEmpty()) { JOptionPane.showMessageDialog(dialog, "Generate first."); return; }
+			String json = taskGridService.exportTaskListAsJson(generatedHolder[0]);
+			Clipboard cl = dialog.getToolkit().getSystemClipboard();
+			if (cl != null) cl.setContents(new StringSelection(json), null);
+			JOptionPane.showMessageDialog(dialog, "JSON copied to clipboard (" + generatedHolder[0].size() + " tasks).");
+		});
+
+		tabs.addTab("Generate", genPanel);
+
+		dialog.add(tabs, BorderLayout.CENTER);
+		JButton closeBtn = new JButton("Close");
+		closeBtn.addActionListener(ev -> dialog.dispose());
+		JPanel closeRow = new JPanel();
+		closeRow.add(closeBtn);
+		dialog.add(closeRow, BorderLayout.SOUTH);
+		dialog.pack();
+		dialog.setSize(Math.min(600, dialog.getWidth()), Math.min(500, dialog.getHeight()));
+		dialog.setLocationRelativeTo(this);
+		dialog.setVisible(true);
+	}
+
+	private TaskDefinition buildTaskFromHelperForm(JTextField displayName, JComboBox<String> taskType, JSpinner difficulty,
+		JCheckBox f2p, JPanel areasPanel, JTextField requirements)
+	{
+		String name = displayName.getText() != null ? displayName.getText().trim() : "";
+		if (name.isEmpty()) return null;
+		TaskDefinition def = new TaskDefinition();
+		def.setDisplayName(name);
+		def.setTaskType(taskType.getSelectedItem() != null ? taskType.getSelectedItem().toString() : null);
+		def.setDifficulty((Integer) difficulty.getValue());
+		def.setF2p(f2p.isSelected());
+		def.setRequirements(requirements.getText() != null && !requirements.getText().trim().isEmpty() ? requirements.getText().trim() : null);
+		List<String> areaIds = new ArrayList<>();
+		for (int i = 0; i < areasPanel.getComponentCount(); i++)
+			if (areasPanel.getComponent(i) instanceof JCheckBox)
+			{
+				JCheckBox cb = (JCheckBox) areasPanel.getComponent(i);
+				if (cb.isSelected() && cb.getName() != null) areaIds.add(cb.getName());
+			}
+		if (areaIds.isEmpty()) { def.setArea(null); def.setAreas(null); }
+		else if (areaIds.size() == 1) { def.setArea(areaIds.get(0)); def.setAreas(null); }
+		else { def.setArea(null); def.setAreas(areaIds); }
+		return def;
 	}
 
 	public BufferedImage getIcon()

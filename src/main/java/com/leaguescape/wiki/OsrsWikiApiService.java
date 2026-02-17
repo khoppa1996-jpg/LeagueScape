@@ -113,6 +113,68 @@ public class OsrsWikiApiService
 	}
 
 	/**
+	 * List page titles in a category (MediaWiki categorymembers).
+	 *
+	 * @param categoryTitle category name with or without "Category:" prefix (e.g. "Quests" or "Category:Quests")
+	 * @param limit max results per request (1–500)
+	 * @param cmcontinue continuation token from previous call, or null for first page
+	 * @return result with titles and next continuation token (null if no more)
+	 */
+	public CategoryMembersResult listCategoryMembers(String categoryTitle, int limit, String cmcontinue)
+	{
+		String title = categoryTitle == null || categoryTitle.trim().isEmpty() ? "" : categoryTitle.trim();
+		if (!title.startsWith("Category:")) title = "Category:" + title;
+		int clamped = Math.max(1, Math.min(500, limit));
+		String query = "?action=query&list=categorymembers&cmtitle=" + urlEncode(title)
+			+ "&cmlimit=" + clamped + "&cmtype=page&format=json";
+		if (cmcontinue != null && !cmcontinue.isEmpty())
+			query += "&cmcontinue=" + urlEncode(cmcontinue);
+		try
+		{
+			String json = httpGet(API_BASE + query);
+			if (json == null) return new CategoryMembersResult(new ArrayList<>(), null);
+			JsonObject root = new JsonParser().parse(json).getAsJsonObject();
+			JsonObject queryObj = root.getAsJsonObject("query");
+			JsonArray members = queryObj != null && queryObj.has("categorymembers")
+				? queryObj.getAsJsonArray("categorymembers") : new JsonArray();
+			List<String> titles = new ArrayList<>(members.size());
+			for (JsonElement e : members)
+			{
+				JsonObject m = e.getAsJsonObject();
+				if (m.has("title")) titles.add(m.get("title").getAsString());
+			}
+			String next = null;
+			if (root.has("continue"))
+			{
+				JsonElement c = root.getAsJsonObject("continue").get("cmcontinue");
+				if (c != null) next = c.getAsString();
+			}
+			return new CategoryMembersResult(titles, next);
+		}
+		catch (Exception e)
+		{
+			log.warn("Wiki API listCategoryMembers failed for {}: {}", categoryTitle, e.getMessage());
+			return new CategoryMembersResult(new ArrayList<>(), null);
+		}
+	}
+
+	/** Result of listCategoryMembers: page titles and optional continuation token. */
+	public static final class CategoryMembersResult
+	{
+		private final List<String> titles;
+		private final String nextContinue;
+
+		public CategoryMembersResult(List<String> titles, String nextContinue)
+		{
+			this.titles = titles == null ? new ArrayList<>() : titles;
+			this.nextContinue = nextContinue;
+		}
+
+		public List<String> getTitles() { return titles; }
+		public String getNextContinue() { return nextContinue; }
+	}
+
+	/**
 	 * Search the wiki (OpenSearch).
 	 *
 	 * @param search search string

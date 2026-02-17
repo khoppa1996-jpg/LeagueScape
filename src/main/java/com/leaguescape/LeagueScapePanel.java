@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -101,7 +102,52 @@ public class LeagueScapePanel extends PluginPanel
 		rulesSetupBtn.addActionListener(e -> { /* TODO: open config / setup */ });
 		content.add(rulesSetupBtn);
 
+		content.add(new JLabel(" "));
+
+		// Resetting progress section (matches "Resetting progress" section at bottom of LeagueScape config panel)
+		JLabel resetSectionLabel = new JLabel("Resetting progress");
+		resetSectionLabel.setAlignmentX(LEFT_ALIGNMENT);
+		content.add(resetSectionLabel);
+		JButton resetProgressBtn = new JButton("Reset Progress");
+		resetProgressBtn.setAlignmentX(LEFT_ALIGNMENT);
+		resetProgressBtn.addActionListener(e -> showResetProgressFlow());
+		content.add(resetProgressBtn);
+
 		add(content, BorderLayout.NORTH);
+	}
+
+	/**
+	 * Confirms with the user, then prompts for account username, then resets all LeagueScape progress
+	 * (points, area unlocks, task completions) via the plugin and refreshes the panel.
+	 */
+	private void showResetProgressFlow()
+	{
+		// Use null parent so dialogs center on screen and are not hidden behind the sidebar
+		int confirm = JOptionPane.showConfirmDialog(
+			null,
+			"Reset all LeagueScape progress (points, area unlocks, and task completions)? This cannot be undone.",
+			"Reset progress",
+			JOptionPane.YES_NO_OPTION,
+			JOptionPane.WARNING_MESSAGE
+		);
+		if (confirm != JOptionPane.YES_OPTION)
+		{
+			return;
+		}
+		String username = JOptionPane.showInputDialog(
+			null,
+			"Enter your account username to confirm:",
+			"Confirm reset",
+			JOptionPane.QUESTION_MESSAGE
+		);
+		if (username == null || username.isBlank())
+		{
+			return;
+		}
+		plugin.resetProgress();
+		refresh();
+		refreshCurrentAreaLabel(config.startingArea());
+		JOptionPane.showMessageDialog(null, "Progress has been reset.", "Reset complete", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/** Updates the points label to show spendable and total earned. */

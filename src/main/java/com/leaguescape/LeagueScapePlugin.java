@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -108,6 +109,12 @@ public class LeagueScapePlugin extends Plugin
 	@Inject
 	private AudioPlayer audioPlayer;
 
+	@Inject
+	private com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService;
+
+	@Inject
+	private com.leaguescape.wiki.WikiTaskGenerator wikiTaskGenerator;
+
 	private NavigationButton navButton;
 	private NavigationButton configNavButton;
 	private com.leaguescape.config.AreaEditOverlay areaEditOverlay;
@@ -165,7 +172,7 @@ public class LeagueScapePlugin extends Plugin
 			.panel(panel)
 			.build();
 		clientToolbar.addNavigation(navButton);
-		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService, taskGridServiceProvider.get(), configManager, config);
+		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService, taskGridServiceProvider.get(), configManager, config, osrsWikiApiService, wikiTaskGenerator);
 		configNavButton = NavigationButton.builder()
 			.tooltip("LeagueScape Area Config")
 			.icon(configPanel.getIcon())
@@ -264,6 +271,13 @@ public class LeagueScapePlugin extends Plugin
 
 	@Provides
 	@Singleton
+	com.leaguescape.wiki.WikiTaskGenerator provideWikiTaskGenerator(com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService)
+	{
+		return new com.leaguescape.wiki.WikiTaskGenerator(osrsWikiApiService);
+	}
+
+	@Provides
+	@Singleton
 	com.leaguescape.wiki.OsrsItemService provideOsrsItemService()
 	{
 		return new com.leaguescape.wiki.OsrsItemService();
@@ -319,6 +333,46 @@ public class LeagueScapePlugin extends Plugin
 	{
 		String joined = String.join(",", areaGraphService.getUnlockedAreaIds());
 		configManager.setConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS, joined);
+	}
+
+	/**
+	 * Resets all LeagueScape progress: points to 0, all area unlocks cleared, all task completions
+	 * cleared, area completion state (points-to-complete mode) cleared, and task grids reshuffled.
+	 * Does not remove custom areas or custom tasks.
+	 */
+	public void resetProgress()
+	{
+		pointsService.setStartingPoints(0);
+		// Clear unlocks then set only the starting area as unlocked (so player is not locked out)
+		String start = config.startingArea();
+		if (start != null && !start.isEmpty())
+		{
+			areaGraphService.setUnlockedAreaIds(Collections.singleton(start));
+			persistUnlockedAreas();
+		}
+		else
+		{
+			configManager.setConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS, "");
+			areaGraphService.setUnlockedAreaIds(Collections.emptySet());
+		}
+		List<String> areaIds = areaGraphService.getAreas().stream()
+			.map(com.leaguescape.data.Area::getId)
+			.collect(Collectors.toList());
+		taskGridServiceProvider.get().clearAllTaskProgress(areaIds);
+		configManager.setConfiguration(STATE_GROUP, "pointsEarnedPerArea", "");
+		configManager.setConfiguration(STATE_GROUP, "completedAreas", "");
+		areaCompletionService.loadFromConfig();
+		taskGridServiceProvider.get().incrementGridResetCounter();
+		log.info("LeagueScape progress reset.");
+
+		// Update overlays and UI to match reset: close progress popups and request repaint
+		leagueScapeMapOverlay.closeProgressPopups();
+		clientThread.invokeLater(() -> {
+			if (client.getCanvas() != null)
+			{
+				client.getCanvas().repaint();
+			}
+		});
 	}
 
 	@Subscribe

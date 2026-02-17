@@ -98,6 +98,9 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	private volatile List<int[]> editingCorners = null;
 	/** Index of corner being moved; next left-click sets its position. -1 = none. */
 	private volatile int moveCornerIndex = -1;
+	/** Progress-related dialogs so they can be closed on reset (overlays/UI then match reset state). */
+	private volatile JDialog openAreaDetailsDialog = null;
+	private volatile JDialog openTaskGridDialog = null;
 
 	public LeagueScapeMapOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfig config,
 		PointsService pointsService, AreaCompletionService areaCompletionService, LeagueScapePlugin plugin,
@@ -1204,6 +1207,12 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 			JDialog dialog = new JDialog(owner, "Area: " + displayName, false);
 			dialog.setUndecorated(true);
+			openAreaDetailsDialog = dialog;
+			dialog.addWindowListener(new java.awt.event.WindowAdapter()
+			{
+				@Override
+				public void windowClosed(java.awt.event.WindowEvent e) { openAreaDetailsDialog = null; }
+			});
 
 			JPanel content = new JPanel()
 			{
@@ -1378,6 +1387,26 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		showTaskGridPopup(area);
 	}
 
+	/**
+	 * Closes any open area-details or task-grid dialogs so overlays and UI match progression state.
+	 * Call after reset progress so stale popups are removed; run on EDT.
+	 */
+	public void closeProgressPopups()
+	{
+		SwingUtilities.invokeLater(() -> {
+			if (openTaskGridDialog != null)
+			{
+				openTaskGridDialog.dispose();
+				openTaskGridDialog = null;
+			}
+			if (openAreaDetailsDialog != null)
+			{
+				openAreaDetailsDialog.dispose();
+				openAreaDetailsDialog = null;
+			}
+		});
+	}
+
 	private void showTaskGridPopup(Area area)
 	{
 		if (area == null) return;
@@ -1400,6 +1429,12 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 			JDialog dialog = new JDialog(owner, displayName + " tasks", false);
 			dialog.setUndecorated(true);
+			openTaskGridDialog = dialog;
+			dialog.addWindowListener(new java.awt.event.WindowAdapter()
+			{
+				@Override
+				public void windowClosed(java.awt.event.WindowEvent e) { openTaskGridDialog = null; }
+			});
 
 			JPanel content = new JPanel()
 			{
