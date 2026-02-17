@@ -7,6 +7,12 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
+/**
+ * LeagueScape configuration: overlay appearance (locked overlay, boundary lines, colors), map
+ * overlay options, progression (starting area, points, unlock mode), and task system (task mode
+ * F2P/Members, difficulty multiplier, points per tier, tasks file path). Used by the plugin and
+ * config panel; values are persisted by RuneLite's config system.
+ */
 @ConfigGroup("leaguescape")
 public interface LeagueScapeConfig extends Config
 {

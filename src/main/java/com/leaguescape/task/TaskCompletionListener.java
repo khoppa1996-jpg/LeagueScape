@@ -332,6 +332,10 @@ public class TaskCompletionListener
 		return false;
 	}
 
+	/**
+	 * Marks the task as completed in TaskGridService, shows the completion popup overlay, and
+	 * plays the task-complete sound. Call from game thread after a condition is met (e.g. chat message).
+	 */
 	private void completeAndNotify(String areaId, TaskTile tile)
 	{
 		taskGridService.setCompleted(areaId, tile.getId());

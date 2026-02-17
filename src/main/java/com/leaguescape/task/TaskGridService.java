@@ -52,6 +52,7 @@ public class TaskGridService
 	private static final String KEY_TASKS_OVERRIDE = "tasksJsonOverride";
 	private static final String KEY_CUSTOM_TASKS = "customTasksJson";
 
+	/** Custom Gson deserializer for TaskDefinition: reads displayName, taskType, difficulty, area (string or array), f2p. */
 	private static final JsonDeserializer<TaskDefinition> TASK_DESERIALIZER = new JsonDeserializer<TaskDefinition>()
 	{
 		@Override
@@ -62,6 +63,7 @@ public class TaskGridService
 			if (obj.has("displayName")) def.setDisplayName(obj.get("displayName").getAsString());
 			if (obj.has("taskType")) def.setTaskType(obj.get("taskType").getAsString());
 			if (obj.has("difficulty")) def.setDifficulty(obj.get("difficulty").getAsInt());
+			// area can be a single string (setArea) or array of strings (setAreas)
 			if (obj.has("area"))
 			{
 				JsonElement areaEl = obj.get("area");
@@ -80,6 +82,7 @@ public class TaskGridService
 		}
 	};
 
+	/** Custom Gson serializer for TaskDefinition: writes displayName, taskType, difficulty, area (single or array), f2p. */
 	private static final JsonSerializer<TaskDefinition> TASK_SERIALIZER = (src, typeOfSrc, context) ->
 	{
 		JsonObject obj = new JsonObject();
@@ -117,7 +120,10 @@ public class TaskGridService
 
 	private volatile TasksData tasksData;
 
-	/** Call after changing tasks override or custom tasks in config so next get uses updated data. */
+	/**
+	 * Clears the cached tasks data. Call after changing the tasks file path, override, or custom
+	 * tasks in config so the next {@link #getGridForArea(String)} or related call uses updated data.
+	 */
 	public void invalidateTasksCache()
 	{
 		tasksData = null;
@@ -133,12 +139,19 @@ public class TaskGridService
 		this.areaCompletionService = areaCompletionService;
 	}
 
+	/**
+	 * Loads tasks from config file path (if set and valid), else from built-in /tasks.json.
+	 * Result is cached in {@link #tasksData}. Double-checked locking used for thread-safe lazy init.
+	 *
+	 * @return never null; defaultTasks may be empty if loading failed
+	 */
 	private TasksData loadTasksData()
 	{
 		if (tasksData != null) return tasksData;
 		synchronized (this)
 		{
 			if (tasksData != null) return tasksData;
+			// 1) Try config file path first
 			String pathStr = config.tasksFilePath();
 			if (pathStr != null && !pathStr.trim().isEmpty())
 			{
@@ -163,6 +176,7 @@ public class TaskGridService
 					log.warn("LeagueScape failed to load tasks from config path: {}", e.getMessage());
 				}
 			}
+			// 2) Fall back to built-in resource
 			try (InputStream in = LeagueScapePlugin.class.getResourceAsStream(TASKS_RESOURCE))
 			{
 				if (in != null)
@@ -179,13 +193,17 @@ public class TaskGridService
 			{
 				log.warn("LeagueScape failed to load built-in tasks: {}", e.getMessage());
 			}
+			// 3) Empty fallback so callers never get null
 			tasksData = new TasksData();
 			tasksData.setDefaultTasks(new ArrayList<>());
 			return tasksData;
 		}
 	}
 
-	/** Base tasks: from config override if set, else from file or built-in resource. */
+	/**
+	 * Base task set: from imported JSON override (KEY_TASKS_OVERRIDE) if present, otherwise
+	 * from {@link #loadTasksData()} (file path or built-in). Used by getEffectiveTasksData.
+	 */
 	private TasksData loadBaseTasksData()
 	{
 		String override = configManager.getConfiguration(STATE_GROUP, KEY_TASKS_OVERRIDE);
@@ -205,6 +223,7 @@ public class TaskGridService
 		return loadTasksData();
 	}
 
+	/** Loads the user's custom (in-plugin added) tasks from config. Returns empty list if unset or invalid. */
 	private List<TaskDefinition> loadCustomTasksFromConfig()
 	{
 		String raw = configManager.getConfiguration(STATE_GROUP, KEY_CUSTOM_TASKS);
@@ -222,6 +241,7 @@ public class TaskGridService
 		}
 	}
 
+	/** Saves custom tasks to config as JSON and invalidates the tasks cache. */
 	private void saveCustomTasksToConfig(List<TaskDefinition> list)
 	{
 		String json = GSON_SERIALIZE.toJson(list != null ? list : new ArrayList<>());
@@ -448,6 +468,7 @@ public class TaskGridService
 		return out;
 	}
 
+	/** Returns points awarded when a task in the given tier is claimed (from config tier 1–5 points). */
 	private int pointsForTier(int tier)
 	{
 		switch (tier)
@@ -462,6 +483,14 @@ public class TaskGridService
 		}
 	}
 
+	/**
+	 * Returns the current state of a task tile in an area (LOCKED, REVEALED, COMPLETED_UNCLAIMED, CLAIMED).
+	 * Center tile "0,0" is treated as always revealed and completes to COMPLETED_UNCLAIMED until claimed.
+	 *
+	 * @param areaId  area ID
+	 * @param taskId  tile ID (e.g. "0,0", "1,0")
+	 * @param grid    full grid for this area (used to resolve neighbors for reveal check)
+	 */
 	public TaskState getState(String areaId, String taskId, List<TaskTile> grid)
 	{
 		Set<String> claimed = loadSet(areaId, SUFFIX_CLAIMED);
@@ -482,11 +511,15 @@ public class TaskGridService
 		return revealed ? TaskState.REVEALED : TaskState.LOCKED;
 	}
 
+	/**
+	 * True if this task tile is revealed (at least one cardinal neighbor is claimed, or center counts for tier 1).
+	 * Used by getState to distinguish LOCKED vs REVEALED.
+	 */
 	private boolean isRevealed(String taskId, Set<String> claimed, List<TaskTile> grid)
 	{
 		TaskTile tile = grid.stream().filter(t -> t.getId().equals(taskId)).findFirst().orElse(null);
 		if (tile == null) return false;
-		// Neighbors: cardinal only
+		// Cardinal neighbors only: (r±1,c) and (r,c±1)
 		int[][] deltas = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 		for (int[] d : deltas)
 		{
@@ -515,6 +548,10 @@ public class TaskGridService
 		return out;
 	}
 
+	/**
+	 * Marks a task as completed (e.g. by auto-completion logic). Does not award points; that happens
+	 * when the player clicks Claim. Persists to config immediately.
+	 */
 	public void setCompleted(String areaId, String taskId)
 	{
 		Set<String> completed = loadSet(areaId, SUFFIX_COMPLETED);
@@ -522,6 +559,10 @@ public class TaskGridService
 		saveSet(areaId, SUFFIX_COMPLETED, completed);
 	}
 
+	/**
+	 * Marks a task as claimed: adds to claimed set, persists, and awards tier points to
+	 * PointsService and AreaCompletionService. Idempotent if already claimed.
+	 */
 	public void setClaimed(String areaId, String taskId)
 	{
 		Set<String> claimed = loadSet(areaId, SUFFIX_CLAIMED);
@@ -560,6 +601,7 @@ public class TaskGridService
 		return true;
 	}
 
+	/** Loads a set of task IDs from config (key = taskProgress_&lt;areaId&gt;&lt;suffix&gt;, value = ID_SEP-separated). */
 	private Set<String> loadSet(String areaId, String suffix)
 	{
 		String key = KEY_PREFIX + areaId + suffix;
@@ -576,6 +618,7 @@ public class TaskGridService
 		return set;
 	}
 
+	/** Persists a set of task IDs to config (same key format as loadSet). */
 	private void saveSet(String areaId, String suffix, Set<String> set)
 	{
 		String key = KEY_PREFIX + areaId + suffix;

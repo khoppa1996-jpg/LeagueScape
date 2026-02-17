@@ -22,18 +22,41 @@ public class TaskTile
 	/** When non-null and non-empty, task appears in each listed area and is mystery until all are unlocked. */
 	List<String> requiredAreaIds;
 
-	/** Create tile with no task type (icon falls back to display name). */
+	/**
+	 * Creates a task tile with no task type (icon lookup will fall back to display name).
+	 *
+	 * @param id         unique tile id (e.g. "0,0")
+	 * @param tier       ring tier (0 = center, 1+ = outer rings)
+	 * @param displayName text shown to the player
+	 * @param points     points awarded when claimed
+	 * @param row        grid row (for layout)
+	 * @param col        grid column (for layout)
+	 * @return new TaskTile with taskType and requiredAreaIds null
+	 */
 	public static TaskTile of(String id, int tier, String displayName, int points, int row, int col)
 	{
 		return new TaskTile(id, tier, displayName, points, row, col, null, null);
 	}
 
+	/**
+	 * Builds the standard tile ID string from grid coordinates (used for persistence and lookup).
+	 *
+	 * @param row grid row
+	 * @param col grid column
+	 * @return id string "row,col"
+	 */
 	public static String idFor(int row, int col)
 	{
 		return row + "," + col;
 	}
 
-	/** True if this task is mystery (required areas not all unlocked yet). */
+	/**
+	 * Returns true if this task should be shown as a mystery (question mark) because not all
+	 * required areas are unlocked yet. When requiredAreaIds is empty, the task is never a mystery.
+	 *
+	 * @param unlockedAreaIds set of area IDs the player has unlocked
+	 * @return true if requiredAreaIds is non-empty and at least one required area is not in unlockedAreaIds
+	 */
 	public boolean isMystery(java.util.Set<String> unlockedAreaIds)
 	{
 		if (requiredAreaIds == null || requiredAreaIds.isEmpty()) return false;

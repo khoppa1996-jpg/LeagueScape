@@ -61,8 +61,14 @@ import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 
 /**
- * Draws LeagueScape areas (locked, unlocked, unlockable) on the world map when it's open.
- * Hover: highlights area with white border. Right-click: shows details and Unlock button.
+ * World-map overlay for LeagueScape. Draws area polygons (locked/unlocked/unlockable) when the
+ * world map is open; hover highlights an area with a white border; right-click opens an area
+ * details popup (description, status, Unlock button, Tasks button). Tasks button opens the task
+ * grid popup for that area (tiles, claim/complete, icons from task type or Wiki). Also handles
+ * polygon editing on the map (corner markers, move corner, add corner) when the plugin is in edit
+ * mode. Renders on the map layer; does not draw on the game scene (use LockedRegionOverlay for
+ * that). All popups and dialogs are created on the EDT; game-thread code uses SwingUtilities.invokeLater
+ * where needed.
  */
 public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 {

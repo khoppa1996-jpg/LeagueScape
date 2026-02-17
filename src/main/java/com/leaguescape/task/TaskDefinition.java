@@ -23,7 +23,12 @@ public class TaskDefinition
 	/** When true, task is available in Free to Play worlds. In Members mode all tasks (including f2p) are available. */
 	private Boolean f2p;
 
-	/** Area ids this task is limited to. Empty = appears in any area. Non-empty = appears only in these areas' grids; task is "mystery" until all are unlocked. */
+	/**
+	 * Returns the list of area IDs this task is restricted to. Used to filter which area grids show this task
+	 * and to determine if the task is shown as a "mystery" (when not all required areas are unlocked).
+	 *
+	 * @return non-empty list of area IDs if task is area-specific; empty list if task appears in any area
+	 */
 	public List<String> getRequiredAreaIds()
 	{
 		if (areas != null && !areas.isEmpty())

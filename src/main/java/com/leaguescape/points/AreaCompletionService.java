@@ -47,6 +47,12 @@ public class AreaCompletionService
 		this.taskGridServiceProvider = taskGridServiceProvider;
 	}
 
+	/**
+	 * Loads points-per-area and completed-areas from config. Clears in-memory maps first, then
+	 * parses KEY_POINTS_PER_AREA (format "areaId:points,areaId:points,...") and KEY_COMPLETED_AREAS
+	 * (comma-separated area IDs). Recomputes completed set from points in case the area's
+	 * points-to-complete threshold changed, then persists the completed list.
+	 */
 	public void loadFromConfig()
 	{
 		pointsEarnedInArea.clear();
@@ -63,9 +69,7 @@ public class AreaCompletionService
 						String areaId = kv[0].trim();
 						int points = Integer.parseInt(kv[1].trim());
 						if (!areaId.isEmpty() && points > 0)
-						{
 							pointsEarnedInArea.put(areaId, points);
-						}
 					}
 					catch (NumberFormatException ignored) { }
 				}
@@ -82,13 +86,11 @@ public class AreaCompletionService
 				if (!tid.isEmpty()) completedAreaIds.add(tid);
 			}
 		}
-		// Recompute completed from points (in case threshold changed)
+		// Recompute completed from points (in case area pointsToComplete threshold changed in config)
 		for (String areaId : pointsEarnedInArea.keySet())
 		{
 			if (getPointsEarnedInArea(areaId) >= getPointsToComplete(areaId))
-			{
 				completedAreaIds.add(areaId);
-			}
 		}
 		persistCompleted();
 	}
@@ -177,6 +179,7 @@ public class AreaCompletionService
 		}
 	}
 
+	/** Persists points-per-area as "areaId:points,areaId:points,...". Skips areas with <= 0 points. */
 	private void persistPointsPerArea()
 	{
 		StringBuilder sb = new StringBuilder();
@@ -189,6 +192,7 @@ public class AreaCompletionService
 		configManager.setConfiguration(CONFIG_GROUP, KEY_POINTS_PER_AREA, sb.toString());
 	}
 
+	/** Persists completed area IDs as comma-separated string. */
 	private void persistCompleted()
 	{
 		String joined = String.join(",", completedAreaIds);

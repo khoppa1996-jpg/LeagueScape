@@ -38,6 +38,13 @@ import net.runelite.client.util.ImageUtil;
 import java.awt.Container;
 import java.awt.Rectangle;
 
+/**
+ * LeagueScape config/setup panel: area list (edit, remove, restore), "Make hole" for subtracting
+ * regions from areas, task system settings (task mode, difficulty, tier points, tasks file path),
+ * task list with import/export and custom task add/edit (display name, type, difficulty, f2p, areas).
+ * Areas and tasks are persisted via ConfigManager and AreaGraphService/TaskGridService. Opening
+ * the panel does not reload areas/tasks from file until the user triggers reload or save.
+ */
 public class LeagueScapeConfigPanel extends PluginPanel
 {
 	/** Panel that stays within scroll viewport width (no horizontal scroll). */

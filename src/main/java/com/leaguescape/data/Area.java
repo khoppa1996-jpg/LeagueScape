@@ -27,7 +27,12 @@ public class Area
 	/** Points to earn in this area to complete it (for points-to-complete mode). If null, unlockCost is used. */
 	Integer pointsToComplete;
 
-	/** Convenience: first polygon, or null if none. */
+	/**
+	 * Returns the first polygon for this area, for callers that only need a single polygon.
+	 * Used when drawing or testing point-in-area with a single outline.
+	 *
+	 * @return the first polygon (list of [x, y, plane] points), or null if this area has no polygons
+	 */
 	public List<int[]> getPolygon()
 	{
 		return (polygons != null && !polygons.isEmpty()) ? polygons.get(0) : null;

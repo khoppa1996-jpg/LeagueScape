@@ -21,6 +21,11 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.util.ImageUtil;
 
+/**
+ * LeagueScape side panel: shows current area, points, and unlock buttons. In points-to-complete
+ * mode also shows area completion progress. "Tasks" opens the task grid for the current area;
+ * "Rules & Setup" is reserved for future config/setup UI.
+ */
 public class LeagueScapePanel extends PluginPanel
 {
 	private final LeagueScapePlugin plugin;
@@ -99,11 +104,16 @@ public class LeagueScapePanel extends PluginPanel
 		add(content, BorderLayout.NORTH);
 	}
 
+	/** Updates the points label to show spendable and total earned. */
 	private void refreshPointsLabel()
 	{
 		pointsLabel.setText("Points: " + pointsService.getSpendable() + " / " + pointsService.getEarnedTotal());
 	}
 
+	/**
+	 * Rebuilds the unlock buttons from getUnlockableNeighbors (and in points-to-complete mode
+	 * only neighbors of completed areas). Each button shows area name and cost; disabled if not enough points.
+	 */
 	private void refreshUnlockButtons()
 	{
 		unlockPanel.removeAll();
@@ -131,6 +141,7 @@ public class LeagueScapePanel extends PluginPanel
 		}
 	}
 
+	/** Fills completionPanel with one line per unlocked area: name, earned/needed, status (and ✓ if complete). */
 	private void refreshCompletionPanel()
 	{
 		if (completionPanel == null) return;
@@ -150,12 +161,14 @@ public class LeagueScapePanel extends PluginPanel
 		completionPanel.repaint();
 	}
 
+	/** Refreshes points label and unlock buttons (and completion panel if in points-to-complete mode). Call when points or unlock state may have changed. */
 	public void refresh()
 	{
 		refreshPointsLabel();
 		refreshUnlockButtons();
 	}
 
+	/** Attempts to unlock the area via plugin; on success plays sound and refreshes panel labels and buttons. */
 	private void unlockArea(String areaId, int cost)
 	{
 		if (plugin.unlockArea(areaId, cost))
@@ -171,6 +184,7 @@ public class LeagueScapePanel extends PluginPanel
 		}
 	}
 
+	/** Sets the "Current area" label to the display name of the given area (or areaId if area not found). */
 	private void refreshCurrentAreaLabel(String areaId)
 	{
 		Area area = areaGraphService.getArea(areaId);
@@ -178,6 +192,7 @@ public class LeagueScapePanel extends PluginPanel
 		currentAreaLabel.setText("Current area: " + displayName);
 	}
 
+	/** Returns the plugin panel icon from resources, or a small teal placeholder if missing. */
 	public BufferedImage getIcon()
 	{
 		BufferedImage icon = ImageUtil.loadImageResource(getClass(), "icon.png");

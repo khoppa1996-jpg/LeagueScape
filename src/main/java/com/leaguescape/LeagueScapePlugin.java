@@ -32,6 +32,14 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.ui.overlay.OverlayManager;
 
+/**
+ * LeagueScape plugin: area-based progression with unlockable regions, task grids per area, and
+ * point economy. Loads areas from areas.json (and custom/removed from config), tracks unlocked
+ * areas and points, enforces locking of tiles in locked areas, and provides the world-map overlay
+ * (area details, task grid popups) and side panel (points, unlock buttons, tasks). Config editing
+ * (areas, tasks) is in the config panel; area polygon editing uses right-click "Add polygon corner"
+ * and "Set new corner" on the world map.
+ */
 @PluginDescriptor(
 	name = "LeagueScape",
 	enabledByDefault = true
@@ -39,6 +47,7 @@ import net.runelite.client.ui.overlay.OverlayManager;
 public class LeagueScapePlugin extends Plugin
 {
 	private static final Logger log = LoggerFactory.getLogger(LeagueScapePlugin.class);
+	/** Config group for persisted state (unlocked areas, task progress, etc.). */
 	private static final String STATE_GROUP = "leaguescapeState";
 	private static final String KEY_UNLOCKED_AREAS = "unlockedAreas";
 

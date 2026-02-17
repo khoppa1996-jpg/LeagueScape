@@ -4,8 +4,10 @@ import lombok.Getter;
 import net.runelite.client.config.ConfigManager;
 
 /**
- * Tracks points earned and spent. Persists earned total and spent total via ConfigManager.
- * Instantiated only via LeagueScapePlugin's @Provides so a single instance is used.
+ * Tracks points earned and spent for LeagueScape. Persists earned total and spent total via
+ * ConfigManager so progress survives restarts. Instantiated only via LeagueScapePlugin's
+ * {@code @Provides} so a single instance is used. Spendable = earnedTotal - spentTotal (used for
+ * unlocking areas in point-buy mode).
  */
 public class PointsService
 {
@@ -25,11 +27,19 @@ public class PointsService
 		this.configManager = configManager;
 	}
 
+	/**
+	 * Returns the number of points the player can currently spend (e.g. on unlocking areas).
+	 * Never negative.
+	 */
 	public int getSpendable()
 	{
 		return Math.max(0, earnedTotal - spentTotal);
 	}
 
+	/**
+	 * Adds points to the earned total (e.g. from claiming a task). Does nothing if amount <= 0.
+	 * Persists to config after update.
+	 */
 	public void addEarned(int amount)
 	{
 		if (amount <= 0) return;
@@ -38,7 +48,11 @@ public class PointsService
 	}
 
 	/**
-	 * Spend points (e.g. to unlock an area). Returns true if enough spendable points.
+	 * Spends points (e.g. to unlock an area). Only succeeds if amount is positive and not greater
+	 * than spendable points. Persists to config on success.
+	 *
+	 * @param amount points to spend
+	 * @return true if the spend was applied, false if amount invalid or insufficient spendable
 	 */
 	public boolean spend(int amount)
 	{
@@ -48,6 +62,9 @@ public class PointsService
 		return true;
 	}
 
+	/**
+	 * Loads earned and spent totals from config. Call on plugin start or when loading saved state.
+	 */
 	public void loadFromConfig()
 	{
 		String e = configManager.getConfiguration(CONFIG_GROUP, KEY_EARNED);
@@ -56,20 +73,25 @@ public class PointsService
 		spentTotal = parseInt(s, 0);
 	}
 
+	/**
+	 * Sets the starting points (e.g. from config). Resets spent to 0 so spendable = starting points.
+	 * Used when the user changes "Starting points" in config.
+	 */
 	public void setStartingPoints(int points)
 	{
-		// When user sets starting points, we treat it as initial "earned" so spendable = startingPoints
 		earnedTotal = points;
 		spentTotal = 0;
 		persist();
 	}
 
+	/** Writes current earned and spent totals to config. */
 	private void persist()
 	{
 		configManager.setConfiguration(CONFIG_GROUP, KEY_EARNED, earnedTotal);
 		configManager.setConfiguration(CONFIG_GROUP, KEY_SPENT, spentTotal);
 	}
 
+	/** Parses an integer from config string; returns default if null, empty, or invalid. */
 	private static int parseInt(String s, int def)
 	{
 		if (s == null || s.isEmpty()) return def;
