@@ -31,6 +31,9 @@ import net.runelite.api.Skill;
 /**
  * Listens to game events and auto-completes revealed tasks in the player's current area when conditions are met.
  * Triggers the completion popup and task-complete sound. One completion per event.
+ * <p>
+ * taskType values align with the task schema (e.g. tasks_json_object_properties.json): Mining, Cooking, Fishing,
+ * Quest, Combat, Equipment, Woodcutting, Firemaking, Prayer, Crafting, Fletching, etc.
  */
 @Slf4j
 @Singleton
@@ -38,9 +41,14 @@ public class TaskCompletionListener
 {
 	private static final Pattern NUMBER_PREFIX = Pattern.compile("^(\\d+)\\s+(.+)$");
 	private static final Pattern CHAT_YOU_GET = Pattern.compile("You get (?:some |a )?(.+)", Pattern.CASE_INSENSITIVE);
-	private static final Pattern CHAT_YOU_COOK = Pattern.compile("You cook (?:some |a )?(.+)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CHAT_YOU_COOK = Pattern.compile("You successfully cook (.+)", Pattern.CASE_INSENSITIVE);
 	private static final Pattern CHAT_YOU_CATCH = Pattern.compile("You catch (?:a |some )?(.+)", Pattern.CASE_INSENSITIVE);
 	private static final Pattern CHAT_QUEST_COMPLETE = Pattern.compile("You have completed (.+)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CHAT_FIREMAKING = Pattern.compile("The fire catches and the logs begin to burn\\.", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CHAT_YOU_BURN = Pattern.compile("You burn (?:the |some )?(.+)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CHAT_YOU_LIGHT = Pattern.compile("You light (?:a |the )?(.+)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CHAT_YOU_BURY = Pattern.compile("You bury (?:the |some |a )?(.+)", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CHAT_YOU_MAKE = Pattern.compile("You make (?:a |an |some )?(.+)", Pattern.CASE_INSENSITIVE);
 
 	private static final Pattern EQUIP_AN = Pattern.compile("^Equip an (.+)$", Pattern.CASE_INSENSITIVE);
 	private static final Pattern EQUIP_A = Pattern.compile("^Equip a (.+)$", Pattern.CASE_INSENSITIVE);
@@ -80,14 +88,15 @@ public class TaskCompletionListener
 		List<TaskTile> revealed = taskGridService.getRevealedTiles(area.getId());
 		if (revealed.isEmpty()) return;
 
-		// Mining: "You get some tin ore" / "You get some copper ore"
+		// Mining / Woodcutting: "You get some tin ore" / "You get some logs" (taskType from schema: Mining, Woodcutting)
 		Matcher getMatcher = CHAT_YOU_GET.matcher(msg);
 		if (getMatcher.matches())
 		{
 			String item = normalize(getMatcher.group(1));
 			for (TaskTile tile : revealed)
 			{
-				if (!"Mining".equals(tile.getTaskType())) continue;
+				String type = tile.getTaskType();
+				if (!"Mining".equals(type) && !"Woodcutting".equals(type)) continue;
 				if (!displayNameContains(tile.getDisplayName(), item)) continue;
 				if (incrementAndCheck(area.getId(), tile, 1))
 				{
@@ -98,7 +107,7 @@ public class TaskCompletionListener
 			return;
 		}
 
-		// Cooking: "You cook some shrimp"
+		// Cooking: "You successfully cook (item)"
 		Matcher cookMatcher = CHAT_YOU_COOK.matcher(msg);
 		if (cookMatcher.matches())
 		{
@@ -128,7 +137,7 @@ public class TaskCompletionListener
 			return;
 		}
 
-		// Quest: "You have completed ..."
+		// Quest: "You have completed ..." (taskType: Quest)
 		Matcher questMatcher = CHAT_QUEST_COMPLETE.matcher(msg);
 		if (questMatcher.matches())
 		{
@@ -140,6 +149,79 @@ public class TaskCompletionListener
 					completeAndNotify(area.getId(), tile);
 					return;
 				}
+			}
+			return;
+		}
+
+		// Firemaking: "The fire catches and the logs begin to burn." (taskType: Firemaking; message doesn't specify log type, complete first revealed)
+		if (CHAT_FIREMAKING.matcher(msg).matches())
+		{
+			for (TaskTile tile : revealed)
+			{
+				if (!"Firemaking".equals(tile.getTaskType())) continue;
+				completeAndNotify(area.getId(), tile);
+				return;
+			}
+			return;
+		}
+		// Fallback: "You burn the X" / "You light a X" (match by item name)
+		Matcher burnMatcher = CHAT_YOU_BURN.matcher(msg);
+		if (burnMatcher.matches())
+		{
+			String what = normalize(burnMatcher.group(1));
+			for (TaskTile tile : revealed)
+			{
+				if (!"Firemaking".equals(tile.getTaskType())) continue;
+				if (!displayNameContains(tile.getDisplayName(), what)) continue;
+				completeAndNotify(area.getId(), tile);
+				return;
+			}
+			return;
+		}
+		Matcher lightMatcher = CHAT_YOU_LIGHT.matcher(msg);
+		if (lightMatcher.matches())
+		{
+			String what = normalize(lightMatcher.group(1));
+			for (TaskTile tile : revealed)
+			{
+				if (!"Firemaking".equals(tile.getTaskType())) continue;
+				if (!displayNameContains(tile.getDisplayName(), what)) continue;
+				completeAndNotify(area.getId(), tile);
+				return;
+			}
+			return;
+		}
+
+		// Prayer: "You bury the bones" (taskType: Prayer)
+		Matcher buryMatcher = CHAT_YOU_BURY.matcher(msg);
+		if (buryMatcher.matches())
+		{
+			String what = normalize(buryMatcher.group(1));
+			for (TaskTile tile : revealed)
+			{
+				if (!"Prayer".equals(tile.getTaskType())) continue;
+				if (!displayNameContains(tile.getDisplayName(), what)) continue;
+				if (incrementAndCheck(area.getId(), tile, 1))
+				{
+					completeAndNotify(area.getId(), tile);
+					return;
+				}
+			}
+			return;
+		}
+
+		// Crafting / Fletching: "You make a leather body" / "You make a shortbow" (taskType: Crafting, Fletching)
+		Matcher makeMatcher = CHAT_YOU_MAKE.matcher(msg);
+		if (makeMatcher.matches())
+		{
+			String what = normalize(makeMatcher.group(1));
+			for (TaskTile tile : revealed)
+			{
+				String type = tile.getTaskType();
+				if (!"Crafting".equals(type) && !"Fletching".equals(type)) continue;
+				if (!displayNameContains(tile.getDisplayName(), what)) continue;
+				completeAndNotify(area.getId(), tile);
+				return;
 			}
 		}
 	}
@@ -198,6 +280,7 @@ public class TaskCompletionListener
 		}
 		for (TaskTile tile : revealed)
 		{
+			if (!"Equipment".equals(tile.getTaskType())) continue;
 			String taskItem = extractEquipItemName(tile.getDisplayName());
 			if (taskItem == null) continue;
 			if (equippedNames.contains(taskItem.toLowerCase()))

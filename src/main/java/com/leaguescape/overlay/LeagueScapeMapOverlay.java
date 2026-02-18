@@ -1486,13 +1486,21 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			// Grid panel: only non-locked tiles, inside scroll pane with vertical + horizontal scroll bars
 			JPanel gridPanel = new JPanel();
 			gridPanel.setOpaque(false);
+			final float[] zoomHolder = new float[]{ 1.0f };
+			final float ZOOM_MIN = 0.5f;
+			final float ZOOM_MAX = 2.0f;
+			final float ZOOM_STEP = 0.15f;
 			Runnable[] refreshHolder = new Runnable[1];
 			refreshHolder[0] = () -> {
 				gridPanel.removeAll();
 				gridPanel.setLayout(new GridBagLayout());
 				List<TaskTile> grid = taskGridService.getGridForArea(areaId);
 				Set<String> unlocked = areaGraphService.getUnlockedAreaIds();
-				int center = 5;
+				// Center the grid in the panel; support overfill and larger grids (effectiveMaxTier > 5)
+				int center = grid.stream()
+					.mapToInt(t -> Math.max(Math.abs(t.getRow()), Math.abs(t.getCol())))
+					.max().orElse(5);
+				int tileSize = Math.max(24, (int)(72 * zoomHolder[0]));
 				for (TaskTile tile : grid)
 				{
 					TaskState state = taskGridService.getState(areaId, tile.getId(), grid);
@@ -1500,7 +1508,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					{
 						continue; // hide locked tiles
 					}
-					boolean isMystery = tile.isMystery(unlocked);
+					boolean isMystery = tile.isMystery(unlocked, areaId);
 					BufferedImage taskIcon;
 					if (isMystery)
 					{
@@ -1551,7 +1559,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					gbc.gridx = gx;
 					gbc.gridy = gy;
 					gbc.insets = new Insets(2, 2, 2, 2);
-					JPanel cell = buildTaskCell(areaId, tile, state, checkmarkImg, padlockImg, tileSquare, buttonRect, taskIcon, POPUP_TEXT, refreshHolder[0], dialog, area, isMystery);
+					JPanel cell = buildTaskCell(areaId, tile, state, checkmarkImg, padlockImg, tileSquare, buttonRect, taskIcon, POPUP_TEXT, refreshHolder[0], dialog, area, isMystery, tileSize);
 					gridPanel.add(cell, gbc);
 				}
 				gridPanel.revalidate();
@@ -1568,6 +1576,19 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 			scrollPane.setPreferredSize(new Dimension(400, 320));
 			scrollPane.setBorder(null);
+			// Scroll wheel over grid: zoom in/out (consume so scroll pane doesn't scroll)
+			scrollPane.getViewport().addMouseWheelListener(e -> {
+				float prev = zoomHolder[0];
+				if (e.getWheelRotation() < 0)
+					zoomHolder[0] = Math.min(ZOOM_MAX, zoomHolder[0] + ZOOM_STEP);
+				else
+					zoomHolder[0] = Math.max(ZOOM_MIN, zoomHolder[0] - ZOOM_STEP);
+				if (zoomHolder[0] != prev)
+				{
+					e.consume();
+					SwingUtilities.invokeLater(refreshHolder[0]);
+				}
+			});
 			// Click-and-drag to scroll
 			final java.awt.Point[] dragStart = new java.awt.Point[1];
 			scrollPane.getViewport().addMouseListener(new java.awt.event.MouseAdapter()
@@ -1603,9 +1624,28 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				dialog.dispose();
 				showAreaDetailsPopup(area);
 			});
-			JPanel southPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 0, 8));
+			// Zoom out / Zoom in buttons, right-aligned
+			JButton zoomOutBtn = newRectangleButton("−", buttonRect, POPUP_TEXT);
+			zoomOutBtn.setToolTipText("Zoom out");
+			zoomOutBtn.addActionListener(e -> {
+				zoomHolder[0] = Math.max(ZOOM_MIN, zoomHolder[0] - ZOOM_STEP);
+				SwingUtilities.invokeLater(refreshHolder[0]);
+			});
+			JButton zoomInBtn = newRectangleButton("+", buttonRect, POPUP_TEXT);
+			zoomInBtn.setToolTipText("Zoom in");
+			zoomInBtn.addActionListener(e -> {
+				zoomHolder[0] = Math.min(ZOOM_MAX, zoomHolder[0] + ZOOM_STEP);
+				SwingUtilities.invokeLater(refreshHolder[0]);
+			});
+			JPanel southPanel = new JPanel(new java.awt.BorderLayout(8, 0));
 			southPanel.setOpaque(false);
-			southPanel.add(backBtn);
+			southPanel.setBorder(new javax.swing.border.EmptyBorder(0, 0, 8, 0));
+			southPanel.add(backBtn, java.awt.BorderLayout.WEST);
+			JPanel zoomPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.TRAILING, 4, 0));
+			zoomPanel.setOpaque(false);
+			zoomPanel.add(zoomOutBtn);
+			zoomPanel.add(zoomInBtn);
+			southPanel.add(zoomPanel, java.awt.BorderLayout.EAST);
 			content.add(southPanel, java.awt.BorderLayout.SOUTH);
 
 			dialog.setContentPane(content);
@@ -1621,11 +1661,11 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 	private JPanel buildTaskCell(String areaId, TaskTile tile, TaskState state,
 		BufferedImage checkmarkImg, BufferedImage padlockImg, BufferedImage tileBg, BufferedImage buttonRect,
-		BufferedImage taskIcon, Color textColor, Runnable onRefresh, JDialog parentDialog, Area area, boolean isMystery)
+		BufferedImage taskIcon, Color textColor, Runnable onRefresh, JDialog parentDialog, Area area, boolean isMystery, int tileSize)
 	{
 		if (state == TaskState.CLAIMED)
 		{
-			return buildClaimedTaskCell(tileBg, checkmarkImg);
+			return buildClaimedTaskCell(tileBg, checkmarkImg, tileSize);
 		}
 		final BufferedImage tileBgFinal = tileBg;
 		JPanel cell = new JPanel()
@@ -1647,7 +1687,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		};
 		cell.setLayout(new java.awt.BorderLayout());
 		cell.setOpaque(false);
-		cell.setPreferredSize(new Dimension(72, 72));
+		cell.setPreferredSize(new Dimension(tileSize, tileSize));
 
 		if (taskIcon != null)
 		{
@@ -1682,7 +1722,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	}
 
 	/** Claimed task: desaturated tile, single small checkmark in corner, not clickable. */
-	private JPanel buildClaimedTaskCell(BufferedImage tileBg, BufferedImage checkmarkImg)
+	private JPanel buildClaimedTaskCell(BufferedImage tileBg, BufferedImage checkmarkImg, int tileSize)
 	{
 		final BufferedImage bg = tileBg;
 		final BufferedImage checkmark = checkmarkImg != null ? ImageUtil.resizeImage(checkmarkImg, CLAIMED_CHECKMARK_SIZE, CLAIMED_CHECKMARK_SIZE) : null;
@@ -1713,7 +1753,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			}
 		};
 		cell.setOpaque(false);
-		cell.setPreferredSize(new Dimension(72, 72));
+		cell.setPreferredSize(new Dimension(tileSize, tileSize));
 		cell.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 		return cell;
 	}

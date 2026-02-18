@@ -287,9 +287,10 @@ public class LeagueScapePlugin extends Plugin
 	@Singleton
 	com.leaguescape.task.TaskGridService provideTaskGridService(ConfigManager configManager, LeagueScapeConfig config,
 		com.leaguescape.points.PointsService pointsService,
-		com.leaguescape.points.AreaCompletionService areaCompletionService)
+		com.leaguescape.points.AreaCompletionService areaCompletionService,
+		com.leaguescape.area.AreaGraphService areaGraphService)
 	{
-		return new com.leaguescape.task.TaskGridService(configManager, config, pointsService, areaCompletionService);
+		return new com.leaguescape.task.TaskGridService(configManager, config, pointsService, areaCompletionService, areaGraphService);
 	}
 
 	@Provides

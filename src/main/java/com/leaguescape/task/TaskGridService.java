@@ -12,6 +12,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.LeagueScapePlugin;
+import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.points.AreaCompletionService;
 import com.leaguescape.points.PointsService;
 import java.io.InputStream;
@@ -22,11 +23,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import net.runelite.client.config.ConfigManager;
@@ -95,6 +99,8 @@ public class TaskGridService
 			}
 			if (obj.has("f2p")) def.setF2p(obj.get("f2p").getAsBoolean());
 			if (obj.has("requirements")) def.setRequirements(obj.get("requirements").getAsString());
+			if (obj.has("areaRequirement")) def.setAreaRequirement(obj.get("areaRequirement").getAsString());
+			if (obj.has("onceOnly")) def.setOnceOnly(obj.get("onceOnly").getAsBoolean());
 			return def;
 		}
 	};
@@ -111,6 +117,8 @@ public class TaskGridService
 			obj.addProperty("area", String.join(", ", areaIds));
 		if (src.getF2p() != null) obj.addProperty("f2p", src.getF2p());
 		if (src.getRequirements() != null) obj.addProperty("requirements", src.getRequirements());
+		if (src.getAreaRequirement() != null && !src.getAreaRequirement().isEmpty()) obj.addProperty("areaRequirement", src.getAreaRequirement());
+		if (src.getOnceOnly() != null && src.getOnceOnly()) obj.addProperty("onceOnly", true);
 		return obj;
 	};
 
@@ -126,8 +134,12 @@ public class TaskGridService
 	private final LeagueScapeConfig config;
 	private final PointsService pointsService;
 	private final AreaCompletionService areaCompletionService;
+	private final AreaGraphService areaGraphService;
 
 	private volatile TasksData tasksData;
+
+	/** Cache: task key -> area id for onceOnly tasks. Cleared when tasks cache is invalidated. */
+	private volatile Map<String, String> onceOnlyAssignmentCache;
 
 	/**
 	 * Clears the cached tasks data. Call after changing the tasks file path, override, or custom
@@ -136,16 +148,19 @@ public class TaskGridService
 	public void invalidateTasksCache()
 	{
 		tasksData = null;
+		onceOnlyAssignmentCache = null;
 	}
 
 	@Inject
 	public TaskGridService(ConfigManager configManager, LeagueScapeConfig config,
-		PointsService pointsService, AreaCompletionService areaCompletionService)
+		PointsService pointsService, AreaCompletionService areaCompletionService,
+		AreaGraphService areaGraphService)
 	{
 		this.configManager = configManager;
 		this.config = config;
 		this.pointsService = pointsService;
 		this.areaCompletionService = areaCompletionService;
+		this.areaGraphService = areaGraphService;
 	}
 
 	/**
@@ -391,11 +406,20 @@ public class TaskGridService
 		}
 		else
 			list = filterTasksByArea(data.getDefaultTasks() != null ? data.getDefaultTasks() : new ArrayList<>(), areaId);
+		// onceOnly: include only if this area is the one assigned to this task
+		Map<String, String> onceOnlyMap = getOnceOnlyAssignments();
+		list = list.stream()
+			.filter(t -> {
+				if (!Boolean.TRUE.equals(t.getOnceOnly())) return true;
+				String assigned = onceOnlyMap.get(taskKey(t));
+				return assigned != null && assigned.equals(areaId);
+			})
+			.collect(Collectors.toList());
 		// Free to Play mode: only tasks with f2p == true
 		if (config.taskMode() == LeagueScapeConfig.TaskMode.FREE_TO_PLAY)
 			list = list.stream()
 				.filter(t -> Boolean.TRUE.equals(t.getF2p()))
-				.collect(java.util.stream.Collectors.toList());
+				.collect(Collectors.toList());
 		return prioritizeAndCapTasksForArea(list, areaId);
 	}
 
@@ -460,11 +484,44 @@ public class TaskGridService
 				List<String> required = t.getRequiredAreaIds();
 				return required.isEmpty() || required.contains(areaId);
 			})
-			.collect(java.util.stream.Collectors.toList());
+			.collect(Collectors.toList());
+	}
+
+	/** Builds map: task key -> area id for each onceOnly task (deterministic: first eligible area in sorted order). */
+	private Map<String, String> getOnceOnlyAssignments()
+	{
+		Map<String, String> cache = onceOnlyAssignmentCache;
+		if (cache != null) return cache;
+		TasksData data = getEffectiveTasksData();
+		List<String> sortedAreaIds = areaGraphService.getAreas().stream()
+			.map(a -> a.getId())
+			.sorted()
+			.collect(Collectors.toList());
+		List<TaskDefinition> allTasks = new ArrayList<>(data.getDefaultTasks() != null ? data.getDefaultTasks() : Collections.emptyList());
+		Map<String, String> map = new HashMap<>();
+		for (TaskDefinition t : allTasks)
+		{
+			if (!Boolean.TRUE.equals(t.getOnceOnly())) continue;
+			List<String> required = t.getRequiredAreaIds();
+			String assign = null;
+			for (String aid : sortedAreaIds)
+			{
+				if (required.isEmpty() || required.contains(aid))
+				{
+					assign = aid;
+					break;
+				}
+			}
+			if (assign != null)
+				map.put(taskKey(t), assign);
+		}
+		onceOnlyAssignmentCache = map;
+		return map;
 	}
 
 	/**
-	 * Generate the full task grid for an area (all tiers up to MAX_TIER).
+	 * Generate the full task grid for an area. Uses {@link #computeEffectiveMaxTier(String)} so the grid
+	 * has enough tiers (up to {@value #MAX_GRID_TIERS}) to meet the area's point target and avoid soft lock.
 	 * Center (0,0) is tier 0 "Free". Tasks are randomized per area (seeded by areaId):
 	 * difficulty 1 near center, difficulty 5 at the outer edge.
 	 */
@@ -474,22 +531,8 @@ public class TaskGridService
 		long seed = (long) areaId.hashCode() + getGridResetCounter();
 		Random rng = new Random(seed);
 
-		// Build (row, col) positions grouped by tier (1..5), in consistent order
-		List<List<int[]>> positionsByTier = new ArrayList<>();
-		for (int t = 0; t <= MAX_TIER; t++)
-			positionsByTier.add(new ArrayList<>());
-		for (int r = -MAX_TIER; r <= MAX_TIER; r++)
-		{
-			for (int c = -MAX_TIER; c <= MAX_TIER; c++)
-			{
-				int tier = Math.max(Math.abs(r), Math.abs(c));
-				if (tier > MAX_TIER) continue;
-				if (r == 0 && c == 0) continue;
-				positionsByTier.get(tier).add(new int[]{r, c});
-			}
-		}
-
-		// Partition tasks by difficulty (1-5); clamp invalid to 1
+		int effectiveMaxTier = computeEffectiveMaxTier(areaId);
+		// Partition tasks by difficulty (1-5); clamp invalid to 1 (needed before building positions for overfill)
 		List<List<TaskDefinition>> byDifficulty = new ArrayList<>();
 		for (int d = 0; d <= MAX_TIER; d++)
 			byDifficulty.add(new ArrayList<>());
@@ -501,14 +544,58 @@ public class TaskGridService
 			byDifficulty.get(d).add(def);
 		}
 
-		// Assign tasks to positions by tier: tier t uses difficulty t, random order (with replacement if needed)
-		List<TaskDefinition> assigned = new ArrayList<>(120);
-		for (int tier = 1; tier <= MAX_TIER; tier++)
+		// Area-specific task count per tier (tier t uses difficulty min(t,5)) for overfill sizing
+		int[] areaCountByTier = new int[effectiveMaxTier + 1];
+		for (int t = 1; t <= effectiveMaxTier; t++)
+		{
+			int d = Math.min(t, MAX_TIER);
+			areaCountByTier[t] = (int) byDifficulty.get(d).stream()
+				.filter(def -> def.getRequiredAreaIds() != null && def.getRequiredAreaIds().contains(areaId))
+				.count();
+		}
+
+		// Build (row, col) positions grouped by tier; allow overfill so all area tasks fit (grid may extend on sides)
+		List<List<int[]>> positionsByTier = new ArrayList<>();
+		for (int t = 0; t <= effectiveMaxTier; t++)
+			positionsByTier.add(new ArrayList<>());
+		for (int r = -effectiveMaxTier; r <= effectiveMaxTier; r++)
+		{
+			for (int c = -effectiveMaxTier; c <= effectiveMaxTier; c++)
+			{
+				int tier = Math.max(Math.abs(r), Math.abs(c));
+				if (tier > effectiveMaxTier) continue;
+				if (r == 0 && c == 0) continue;
+				positionsByTier.get(tier).add(new int[]{r, c});
+			}
+		}
+		// Overfill: ensure each tier has at least enough slots for its area-specific tasks
+		int overfillIndex = 0;
+		for (int t = 1; t <= effectiveMaxTier; t++)
+		{
+			int needSlots = Math.max(8 * t, areaCountByTier[t]);
+			while (positionsByTier.get(t).size() < needSlots)
+				positionsByTier.get(t).add(nextOverfillPosition(effectiveMaxTier, overfillIndex++));
+		}
+
+		// Assign tasks to positions by tier: tier t uses difficulty min(t,5). Area-specific first, then filler.
+		// Each task appears at most once (no duplicates); extra slots get a placeholder.
+		List<TaskDefinition> assigned = new ArrayList<>(4 * effectiveMaxTier * (effectiveMaxTier + 1));
+		for (int tier = 1; tier <= effectiveMaxTier; tier++)
 		{
 			List<int[]> positions = positionsByTier.get(tier);
-			List<TaskDefinition> pool = byDifficulty.get(tier);
+			int difficultyIndex = Math.min(tier, MAX_TIER);
+			List<TaskDefinition> pool = byDifficulty.get(difficultyIndex);
 			if (pool.isEmpty())
 				pool = taskDefs.isEmpty() ? new ArrayList<>() : byDifficulty.get(1);
+			// Deduplicate pool by displayName so same task never appears twice
+			Set<String> seenKey = new HashSet<>();
+			List<TaskDefinition> poolDeduped = new ArrayList<>();
+			for (TaskDefinition t : pool)
+			{
+				if (seenKey.add(taskKey(t)))
+					poolDeduped.add(t);
+			}
+			pool = poolDeduped;
 			if (pool.isEmpty())
 			{
 				TaskDefinition fallback = new TaskDefinition();
@@ -517,47 +604,85 @@ public class TaskGridService
 				fallback.setDifficulty(tier);
 				pool = Collections.singletonList(fallback);
 			}
-			List<TaskDefinition> shuffled = new ArrayList<>(pool);
-			Collections.shuffle(shuffled, rng);
-			for (int i = 0; i < positions.size(); i++)
-				assigned.add(shuffled.get(i % shuffled.size()));
+			List<TaskDefinition> onceOnly = pool.stream().filter(t -> Boolean.TRUE.equals(t.getOnceOnly())).collect(Collectors.toList());
+			List<TaskDefinition> rest = pool.stream().filter(t -> !Boolean.TRUE.equals(t.getOnceOnly())).collect(Collectors.toList());
+			if (rest.isEmpty() && !onceOnly.isEmpty()) rest = new ArrayList<>(onceOnly);
+			// Preserve area prioritization: partition rest into area-specific (for this area) and filler, shuffle each, then area-specific first
+			List<TaskDefinition> areaSpecificRest = rest.stream()
+				.filter(t -> {
+					List<String> req = t.getRequiredAreaIds();
+					return !req.isEmpty() && req.contains(areaId);
+				})
+				.collect(Collectors.toList());
+			List<TaskDefinition> fillerRest = rest.stream()
+				.filter(t -> t.getRequiredAreaIds().isEmpty())
+				.collect(Collectors.toList());
+			Collections.shuffle(onceOnly, rng);
+			Collections.shuffle(areaSpecificRest, rng);
+			Collections.shuffle(fillerRest, rng);
+			List<TaskDefinition> restOrdered = new ArrayList<>(areaSpecificRest.size() + fillerRest.size());
+			restOrdered.addAll(areaSpecificRest);
+			restOrdered.addAll(fillerRest);
+			if (restOrdered.isEmpty() && !rest.isEmpty()) restOrdered.addAll(rest);
+			int n = positions.size();
+			TaskDefinition tierPlaceholder = null;
+			for (int i = 0; i < n; i++)
+			{
+				if (i < onceOnly.size())
+				{
+					assigned.add(onceOnly.get(i));
+				}
+				else
+				{
+					int restIndex = i - onceOnly.size();
+					if (restIndex < restOrdered.size())
+						assigned.add(restOrdered.get(restIndex));
+					else
+					{
+						if (tierPlaceholder == null)
+						{
+							tierPlaceholder = new TaskDefinition();
+							tierPlaceholder.setDisplayName("—");
+							tierPlaceholder.setTaskType(null);
+							tierPlaceholder.setDifficulty(tier);
+						}
+						assigned.add(tierPlaceholder);
+					}
+				}
+			}
 		}
 
 		// Map (r,c) -> index into assigned (same order: tier 1 cells, then tier 2, ...)
 		java.util.Map<String, Integer> positionToIndex = new java.util.HashMap<>();
 		int idx = 0;
-		for (int tier = 1; tier <= MAX_TIER; tier++)
+		for (int tier = 1; tier <= effectiveMaxTier; tier++)
 			for (int[] rc : positionsByTier.get(tier))
 				positionToIndex.put(rc[0] + "," + rc[1], idx++);
 
-		// Build TaskTile list in (r,c) iteration order
+		// Build TaskTile list: center then all positions by tier (includes overfill cells)
 		List<TaskTile> out = new ArrayList<>();
-		for (int r = -MAX_TIER; r <= MAX_TIER; r++)
+		out.add(new TaskTile(TaskTile.idFor(0, 0), 0, "Free", 0, 0, 0, null, null, true));
+		for (int tier = 1; tier <= effectiveMaxTier; tier++)
 		{
-			for (int c = -MAX_TIER; c <= MAX_TIER; c++)
+			for (int[] rc : positionsByTier.get(tier))
 			{
-				int tier = Math.max(Math.abs(r), Math.abs(c));
-				if (tier > MAX_TIER) continue;
+				int r = rc[0], c = rc[1];
 				String id = TaskTile.idFor(r, c);
 				int points = pointsForTier(tier);
-				if (r == 0 && c == 0)
-				{
-					out.add(new TaskTile(id, 0, "Free", 0, r, c, null, null));
-					continue;
-				}
 				Integer ai = positionToIndex.get(r + "," + c);
 				TaskDefinition def = (ai != null && ai < assigned.size()) ? assigned.get(ai) : null;
 				String displayName = def != null && def.getDisplayName() != null ? def.getDisplayName() : ("Task " + id);
 				String taskType = def != null ? def.getTaskType() : null;
 				List<String> requiredAreaIds = (def != null && !def.getRequiredAreaIds().isEmpty())
 					? new ArrayList<>(def.getRequiredAreaIds()) : null;
-				out.add(new TaskTile(id, tier, displayName, points, r, c, taskType, requiredAreaIds));
+				boolean requireAllAreas = def == null || !def.isAreaRequirementAny();
+				out.add(new TaskTile(id, tier, displayName, points, r, c, taskType, requiredAreaIds, requireAllAreas));
 			}
 		}
 		return out;
 	}
 
-	/** Returns points awarded when a task in the given tier is claimed (from config tier 1–5 points). */
+	/** Returns points awarded when a task in the given tier is claimed (from config tier 1–5 points). Tier 6+ uses tier 5 value. */
 	private int pointsForTier(int tier)
 	{
 		switch (tier)
@@ -568,8 +693,72 @@ public class TaskGridService
 			case 3: return config.taskTier3Points();
 			case 4: return config.taskTier4Points();
 			case 5: return config.taskTier5Points();
-			default: return tier;
+			default: return config.taskTier5Points();
 		}
+	}
+
+	/** Total points on grid if we have tiers 1..maxTier (each tier t has 8*t slots). */
+	private int totalPointsForTiers(int maxTier)
+	{
+		int total = 0;
+		for (int t = 1; t <= maxTier; t++)
+			total += 8 * t * pointsForTier(t);
+		return total;
+	}
+
+	/** Buffer multiplier so the board has enough points to avoid soft lock (e.g. 1.2 = 20% extra). */
+	private static final double TARGET_POINTS_BUFFER = 1.2;
+	/** Maximum grid size (tiers) to avoid huge boards; 5 is default. */
+	private static final int MAX_GRID_TIERS = 12;
+
+	/**
+	 * Computes the minimum number of tiers so the grid offers enough points to avoid soft lock:
+	 * - Point buy: total points >= (most expensive unlockable neighbor cost) * buffer.
+	 * - Points to complete: total points >= (area's completion threshold) * buffer.
+	 */
+	private int computeEffectiveMaxTier(String areaId)
+	{
+		int target;
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINT_BUY)
+		{
+			Set<String> unlocked = areaGraphService.getUnlockedAreaIds();
+			List<com.leaguescape.data.Area> neighbors = areaGraphService.getUnlockableNeighbors(unlocked);
+			int maxCost = 0;
+			for (com.leaguescape.data.Area a : neighbors)
+			{
+				if (a == null) continue;
+				int cost = areaGraphService.getCost(a.getId());
+				if (cost > maxCost) maxCost = cost;
+			}
+			target = (int) Math.ceil(maxCost * TARGET_POINTS_BUFFER);
+		}
+		else
+		{
+			int toComplete = areaGraphService.getPointsToComplete(areaId);
+			target = (int) Math.ceil(toComplete * TARGET_POINTS_BUFFER);
+		}
+		if (target <= 0)
+			return MAX_TIER;
+		for (int T = MAX_TIER; T <= MAX_GRID_TIERS; T++)
+		{
+			if (totalPointsForTiers(T) >= target)
+				return T;
+		}
+		return MAX_GRID_TIERS;
+	}
+
+	/** Columns per overfill row so overfill positions are deterministic and compact. */
+	private static final int OVERFILL_COLS = 50;
+
+	/**
+	 * Returns the (r,c) for the {@code index}-th overfill position, placed just beyond the base grid (row baseMaxTier+1 and beyond).
+	 * Used so tiers can have more slots than 8*t when there are many area-specific tasks.
+	 */
+	private int[] nextOverfillPosition(int baseMaxTier, int index)
+	{
+		int row = baseMaxTier + 1 + (index / OVERFILL_COLS);
+		int col = (index % OVERFILL_COLS) - (OVERFILL_COLS / 2);
+		return new int[]{ row, col };
 	}
 
 	/**
@@ -659,7 +848,7 @@ public class TaskGridService
 		claimed.add(taskId);
 		saveSet(areaId, SUFFIX_CLAIMED, claimed);
 
-		// Award points (tier 0 = 0)
+		// Award points from the tile (user-configured tier points). addEarnedInArea updates both per-area and global total.
 		List<TaskTile> grid = getGridForArea(areaId);
 		int points = grid.stream()
 			.filter(t -> t.getId().equals(taskId))
@@ -668,7 +857,6 @@ public class TaskGridService
 			.orElse(0);
 		if (points > 0)
 		{
-			pointsService.addEarned(points);
 			areaCompletionService.addEarnedInArea(areaId, points);
 			log.debug("Task {} claimed in area {}, +{} points", taskId, areaId, points);
 		}

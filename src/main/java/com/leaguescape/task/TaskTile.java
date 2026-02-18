@@ -6,7 +6,8 @@ import lombok.Value;
 /**
  * One tile in the task grid for an area. Immutable.
  * id is e.g. "0,0" for center; tier 0 = center (free), tier 1+ = rings.
- * requiredAreaIds: when non-empty, task is shown as "mystery" until all these areas are unlocked.
+ * requiredAreaIds: when non-empty, task is shown as "mystery" until visibility condition is met.
+ * requireAllAreas: when true, mystery until all required areas unlocked; when false (any), mystery only until this area is unlocked.
  */
 @Value
 public class TaskTile
@@ -19,8 +20,10 @@ public class TaskTile
 	int col;
 	/** Optional task type for icon lookup (e.g. "Combat", "Mining", "Quest"). */
 	String taskType;
-	/** When non-null and non-empty, task appears in each listed area and is mystery until all are unlocked. */
+	/** When non-null and non-empty, task appears in each listed area; mystery logic depends on requireAllAreas. */
 	List<String> requiredAreaIds;
+	/** True = mystery until all required areas unlocked; false = mystery only until current area unlocked (either/or task). */
+	boolean requireAllAreas;
 
 	/**
 	 * Creates a task tile with no task type (icon lookup will fall back to display name).
@@ -31,11 +34,11 @@ public class TaskTile
 	 * @param points     points awarded when claimed
 	 * @param row        grid row (for layout)
 	 * @param col        grid column (for layout)
-	 * @return new TaskTile with taskType and requiredAreaIds null
+	 * @return new TaskTile with taskType and requiredAreaIds null, requireAllAreas true
 	 */
 	public static TaskTile of(String id, int tier, String displayName, int points, int row, int col)
 	{
-		return new TaskTile(id, tier, displayName, points, row, col, null, null);
+		return new TaskTile(id, tier, displayName, points, row, col, null, null, true);
 	}
 
 	/**
@@ -51,15 +54,26 @@ public class TaskTile
 	}
 
 	/**
-	 * Returns true if this task should be shown as a mystery (question mark) because not all
-	 * required areas are unlocked yet. When requiredAreaIds is empty, the task is never a mystery.
+	 * Returns true if this task should be shown as a mystery (question mark).
+	 * When requiredAreaIds is empty, the task is never a mystery.
+	 * When requireAllAreas is true: mystery until all required areas are unlocked.
+	 * When requireAllAreas is false (either/or): mystery only until currentAreaId is unlocked; pass the area this grid is for.
 	 *
 	 * @param unlockedAreaIds set of area IDs the player has unlocked
-	 * @return true if requiredAreaIds is non-empty and at least one required area is not in unlockedAreaIds
+	 * @param currentAreaId   area ID this grid is for (required when requireAllAreas is false)
+	 * @return true if the task should be shown as a mystery
 	 */
-	public boolean isMystery(java.util.Set<String> unlockedAreaIds)
+	public boolean isMystery(java.util.Set<String> unlockedAreaIds, String currentAreaId)
 	{
 		if (requiredAreaIds == null || requiredAreaIds.isEmpty()) return false;
+		if (!requireAllAreas && currentAreaId != null)
+			return requiredAreaIds.contains(currentAreaId) && !unlockedAreaIds.contains(currentAreaId);
 		return !unlockedAreaIds.containsAll(requiredAreaIds);
+	}
+
+	/** Legacy: same as isMystery(unlockedAreaIds, null), i.e. requireAllAreas behavior. */
+	public boolean isMystery(java.util.Set<String> unlockedAreaIds)
+	{
+		return isMystery(unlockedAreaIds, null);
 	}
 }

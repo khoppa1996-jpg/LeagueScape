@@ -171,6 +171,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private JCheckBox taskF2pCheckBox;
 	private JPanel taskAreasPanel;
 	private JTextField taskRequirementsField;
+	private JComboBox<String> taskAreaRequirementCombo;
+	private JCheckBox taskOnceOnlyCheckBox;
 	private int editingTaskIndex = -1;
 
 	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService, TaskGridService taskGridService,
@@ -995,6 +997,12 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		JScrollPane taskAreasScroll = new JScrollPane(taskAreasPanel);
 		taskAreasScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		taskEditPanel.add(taskAreasScroll);
+		taskEditPanel.add(new JLabel("Area requirement (when multiple areas):"));
+		taskAreaRequirementCombo = new JComboBox<>(new String[] { "all", "any" });
+		taskAreaRequirementCombo.setSelectedItem((t.getAreaRequirement() != null && "any".equalsIgnoreCase(t.getAreaRequirement())) ? "any" : "all");
+		taskEditPanel.add(taskAreaRequirementCombo);
+		taskOnceOnlyCheckBox = new JCheckBox("Appear only once (in one area, one slot)", Boolean.TRUE.equals(t.getOnceOnly()));
+		taskEditPanel.add(taskOnceOnlyCheckBox);
 		taskEditPanel.add(new JLabel("Requirements (optional):"));
 		taskRequirementsField = new JTextField(t.getRequirements() != null ? t.getRequirements() : "", 20);
 		taskRequirementsField.setMaximumSize(new Dimension(Integer.MAX_VALUE, taskRequirementsField.getPreferredSize().height));
@@ -1033,6 +1041,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		def.setTaskType(taskType.isEmpty() ? null : taskType);
 		def.setDifficulty(difficulty);
 		def.setF2p(taskF2pCheckBox.isSelected());
+		def.setAreaRequirement(taskAreaRequirementCombo != null && "any".equals(taskAreaRequirementCombo.getSelectedItem()) ? "any" : "all");
+		def.setOnceOnly(taskOnceOnlyCheckBox != null && taskOnceOnlyCheckBox.isSelected());
 		def.setRequirements(taskRequirementsField != null && taskRequirementsField.getText() != null && !taskRequirementsField.getText().trim().isEmpty() ? taskRequirementsField.getText().trim() : null);
 		if (areaIds.isEmpty())
 		{
@@ -1147,6 +1157,11 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			helperAreasPanel.add(cb);
 		}
 		formPanel.add(new JScrollPane(helperAreasPanel));
+		formPanel.add(new JLabel("Area requirement (when multiple areas):"));
+		JComboBox<String> helperAreaRequirement = new JComboBox<>(new String[] { "all", "any" });
+		formPanel.add(helperAreaRequirement);
+		JCheckBox helperOnceOnly = new JCheckBox("Appear only once", false);
+		formPanel.add(helperOnceOnly);
 		formPanel.add(new JLabel("Requirements (optional):"));
 		JTextField helperRequirements = new JTextField(30);
 		formPanel.add(helperRequirements);
@@ -1194,11 +1209,11 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			});
 		});
 		addOneBtn.addActionListener(e -> {
-			TaskDefinition def = buildTaskFromHelperForm(helperDisplayName, helperTaskType, helperDifficulty, helperF2p, helperAreasPanel, helperRequirements);
+			TaskDefinition def = buildTaskFromHelperForm(helperDisplayName, helperTaskType, helperDifficulty, helperF2p, helperAreasPanel, helperAreaRequirement, helperOnceOnly, helperRequirements);
 			if (def != null) { taskGridService.addCustomTask(def); refreshTaskList(); JOptionPane.showMessageDialog(dialog, "Task added."); }
 		});
 		copyJsonBtn.addActionListener(e -> {
-			TaskDefinition def = buildTaskFromHelperForm(helperDisplayName, helperTaskType, helperDifficulty, helperF2p, helperAreasPanel, helperRequirements);
+			TaskDefinition def = buildTaskFromHelperForm(helperDisplayName, helperTaskType, helperDifficulty, helperF2p, helperAreasPanel, helperAreaRequirement, helperOnceOnly, helperRequirements);
 			if (def != null)
 			{
 				String json = taskGridService.exportTaskListAsJson(Collections.singletonList(def));
@@ -1212,6 +1227,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			helperTaskType.setSelectedIndex(0);
 			helperDifficulty.setValue(3);
 			helperF2p.setSelected(true);
+			helperAreaRequirement.setSelectedItem("all");
+			helperOnceOnly.setSelected(false);
 			helperRequirements.setText("");
 			for (int i = 0; i < helperAreasPanel.getComponentCount(); i++)
 				if (helperAreasPanel.getComponent(i) instanceof JCheckBox)
@@ -1330,7 +1347,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	}
 
 	private TaskDefinition buildTaskFromHelperForm(JTextField displayName, JComboBox<String> taskType, JSpinner difficulty,
-		JCheckBox f2p, JPanel areasPanel, JTextField requirements)
+		JCheckBox f2p, JPanel areasPanel, JComboBox<String> areaRequirement, JCheckBox onceOnly, JTextField requirements)
 	{
 		String name = displayName.getText() != null ? displayName.getText().trim() : "";
 		if (name.isEmpty()) return null;
@@ -1339,6 +1356,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		def.setTaskType(taskType.getSelectedItem() != null ? taskType.getSelectedItem().toString() : null);
 		def.setDifficulty((Integer) difficulty.getValue());
 		def.setF2p(f2p.isSelected());
+		def.setAreaRequirement(areaRequirement != null && "any".equals(areaRequirement.getSelectedItem()) ? "any" : "all");
+		def.setOnceOnly(onceOnly != null && onceOnly.isSelected());
 		def.setRequirements(requirements.getText() != null && !requirements.getText().trim().isEmpty() ? requirements.getText().trim() : null);
 		List<String> areaIds = new ArrayList<>();
 		for (int i = 0; i < areasPanel.getComponentCount(); i++)

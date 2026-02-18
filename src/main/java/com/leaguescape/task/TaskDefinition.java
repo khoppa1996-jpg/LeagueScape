@@ -24,6 +24,10 @@ public class TaskDefinition
 	private Boolean f2p;
 	/** Optional requirements or prerequisites description. */
 	private String requirements;
+	/** "all" = task is mystery until all listed areas are unlocked; "any" = completable in any one of the listed areas. Default "all". */
+	private String areaRequirement;
+	/** When true, this task may appear in only one area's grid and only once in that grid. */
+	private Boolean onceOnly;
 
 	/**
 	 * Returns the list of area IDs this task is restricted to. Used to filter which area grids show this task
@@ -38,5 +42,11 @@ public class TaskDefinition
 		if (area != null && !area.trim().isEmpty())
 			return Collections.singletonList(area.trim());
 		return Collections.emptyList();
+	}
+
+	/** True when areaRequirement is "any" (completable in any one of the listed areas). */
+	public boolean isAreaRequirementAny()
+	{
+		return "any".equalsIgnoreCase(areaRequirement);
 	}
 }

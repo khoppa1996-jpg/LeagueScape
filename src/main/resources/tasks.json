@@ -1,1 +1,1233 @@
-{"_comment":"Task properties: displayName, taskType, difficulty (1-5). Optional 'area' is a single area id or an array of area ids; array = task appears in each listed area's grid and is shown as a mystery (?) until all listed areas are unlocked.","defaultTasks":[{"displayName":"Mine 5 Tin Ore","taskType":"Mining","difficulty":1},{"displayName":"Defeat a Goblin","taskType":"Combat","difficulty":1},{"displayName":"Catch a Shrimp","taskType":"Fishing","difficulty":1},{"displayName":"Cook Shrimp","taskType":"Cooking","difficulty":1},{"displayName":"Chop Some Logs","taskType":"Woodcutting","difficulty":1},{"displayName":"Bury Some Bones","taskType":"Prayer","difficulty":1},{"displayName":"Craft a Leather Body","taskType":"Crafting","difficulty":1},{"displayName":"Complete the Leagues Tutorial","taskType":"Quest","difficulty":1},{"displayName":"Reach Combat Level 10","taskType":"Combat","difficulty":1},{"displayName":"Mine some Copper Ore","taskType":"Mining","difficulty":1},{"displayName":"Smelt a Bronze Bar","taskType":"Smithing","difficulty":1},{"displayName":"Fletch Some Arrow Shafts","taskType":"Fletching","difficulty":1},{"displayName":"Open the Leagues Menu","taskType":"Quest","difficulty":2},{"displayName":"Defeat a Moss Giant","taskType":"Combat","difficulty":2},{"displayName":"Clean a Grimy Guam","taskType":"Herblore","difficulty":2},{"displayName":"Pickpocket a Citizen","taskType":"Thieving","difficulty":2},{"displayName":"Restore 5 Prayer Points at an Altar","taskType":"Prayer","difficulty":2},{"displayName":"Enter your Player Owned House","taskType":"Quest","difficulty":2},{"displayName":"Defeat a Guard","taskType":"Combat","difficulty":2},{"displayName":"Light a Torch","taskType":"Firemaking","difficulty":2},{"displayName":"Mine some Ore With a Steel Pickaxe","taskType":"Mining","difficulty":2},{"displayName":"Obtain a Bird Nest","taskType":"Woodcutting","difficulty":2},{"displayName":"Make an Attack Potion","taskType":"Herblore","difficulty":2},{"displayName":"Visit Death's Domain","taskType":"Quest","difficulty":2},{"displayName":"Complete the Varrock Agility Course","taskType":"Agility","difficulty":3,"area":["varrock"]},{"displayName":"Kill a Chicken with your fists","taskType":"Combat","difficulty":3},{"displayName":"Defeat the Lesser Demon in the Wizards' Tower","taskType":"Combat","difficulty":3},{"displayName":"1 Wintertodt Kill","taskType":"Firemaking","difficulty":3},{"displayName":"1 Sarachnis Kill","taskType":"Combat","difficulty":3},{"displayName":"Complete 1 Farming Contract","taskType":"Farming","difficulty":3},{"displayName":"Catch a Salmon","taskType":"Fishing","difficulty":3},{"displayName":"Defeat a Bloodveld in Kandarin","taskType":"Combat","difficulty":3},{"displayName":"Switch to the Lunar Spellbook","taskType":"Magic","difficulty":3},{"displayName":"Craft a Fire Rune","taskType":"Runecraft","difficulty":3},{"displayName":"Enter the Kalphite Lair","taskType":"Quest","difficulty":3},{"displayName":"Kill a Necromancer","taskType":"Combat","difficulty":4},{"displayName":"Equip a Spiny Helmet","taskType":"Combat","difficulty":4},{"displayName":"Steal Some Silk","taskType":"Thieving","difficulty":4},{"displayName":"Drink a Strength Potion","taskType":"Herblore","difficulty":4},{"displayName":"Plant Seeds in an Allotment Patch","taskType":"Farming","difficulty":4},{"displayName":"Smith a Bronze full helm","taskType":"Smithing","difficulty":4},{"displayName":"Cut a Sapphire","taskType":"Crafting","difficulty":4},{"displayName":"Enter Zanaris","taskType":"Quest","difficulty":4},{"displayName":"Balance 5 barrels on your head","taskType":"Combat","difficulty":4},{"displayName":"Give Thurgo a redberry pie","taskType":"Quest","difficulty":4},{"displayName":"Use the Falador Party room","taskType":"Quest","difficulty":4},{"displayName":"Catch a Cerulean Twitch","taskType":"Hunter","difficulty":4},{"displayName":"Defeat a Troll in Asgarnia","taskType":"Combat","difficulty":5},{"displayName":"Craft an Air Rune","taskType":"Runecraft","difficulty":5},{"displayName":"Kill a Yak","taskType":"Combat","difficulty":5},{"displayName":"Use the Bank on Lunar Isle","taskType":"Quest","difficulty":5},{"displayName":"Visit the Tree Gnome Stronghold","taskType":"Quest","difficulty":5},{"displayName":"Pick Wheat in Catherby","taskType":"Farming","difficulty":5},{"displayName":"Kill Salarin the Twisted","taskType":"Combat","difficulty":5},{"displayName":"Complete the Gnome Stronghold Agility Course","taskType":"Agility","difficulty":5},{"displayName":"Fill a Crate With Bananas","taskType":"Farming","difficulty":5},{"displayName":"Kill a Snake in Karamja","taskType":"Combat","difficulty":5},{"displayName":"Pick a Pineapple on Karamja","taskType":"Farming","difficulty":5},{"displayName":"Receive an Agility Arena Ticket","taskType":"Agility","difficulty":5},{"displayName":"Bank at Land's End","taskType":"Quest","difficulty":5},{"displayName":"Turn in 1 Library Book","taskType":"Quest","difficulty":5},{"displayName":"Use the Mine cart transportation System","taskType":"Quest","difficulty":5},{"displayName":"Open 1 Grubby Chest","taskType":"Thieving","difficulty":5},{"displayName":"Complete the Draynor Agility Course","taskType":"Agility","difficulty":5,"area":"draynor"},{"displayName":"Complete the Natural History Quiz","taskType":"Quest","difficulty":5},{"displayName":"Get your revenge against a Dark Wizard","taskType":"Combat","difficulty":5},{"displayName":"Milk a cow","taskType":"Farming","difficulty":5},{"displayName":"Have Ned make you some rope","taskType":"Quest","difficulty":5},{"displayName":"Complete a quest spanning two areas","taskType":"Quest","difficulty":4,"area":["varrock","lumbridge"]},{"displayName":"Kill a Cow in one hit","taskType":"Combat","difficulty":5},{"displayName":"Pan for an Uncut Jade","taskType":"Mining","difficulty":5},{"displayName":"Complete the Al Kharid Agility Course","taskType":"Agility","difficulty":5,"area":"al_kharid"},{"displayName":"Room 1 of Pyramid Plunder","taskType":"Thieving","difficulty":5},{"displayName":"Take a Carpet Ride from Pollnivneach to Sophanem","taskType":"Quest","difficulty":5},{"displayName":"Set a mummy ablaze","taskType":"Combat","difficulty":5},{"displayName":"Use the Bank in Nardah","taskType":"Quest","difficulty":5,"area":"nardah_desert"},{"displayName":"Drink some of Ali's tea","taskType":"Quest","difficulty":5},{"displayName":"Kill a Billy Goat","taskType":"Combat","difficulty":5}],"areas":{}}
+{
+  "defaultTasks": [
+  {
+    "displayName": "Chop some Logs",
+    "taskType": "Woodcutting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Chop some Oak Logs",
+    "taskType": "Woodcutting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Chop some Willow Logs",
+    "taskType": "Woodcutting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Chop some Maple Logs",
+    "taskType": "Woodcutting",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Chop some Yew Logs",
+    "taskType": "Woodcutting",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn some Logs",
+    "taskType": "Firemaking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn some Oak Logs",
+    "taskType": "Firemaking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn some Willow Logs",
+    "taskType": "Firemaking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn some Maple Logs",
+    "taskType": "Firemaking",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn some Yew Logs",
+    "taskType": "Firemaking",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Fletch some Arrowshafts",
+    "taskType": "Fletching",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Fletch a Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Fletch an Oak Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Fletch a Maple Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Fletch a Willow Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Fletch a Yew Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Chop some Magic Logs",
+    "taskType": "Woodcutting",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Burn some Magic Logs",
+    "taskType": "Woodcutting",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Fletch a Magic Longbow",
+    "taskType": "Fletching",
+    "difficulty": 4
+  },
+  {
+    "displayName": "Catch some Shrimp",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch some Anchovies",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch a Trout",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch a Pike",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch a Salmon",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch a Tuna",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch a Cave Eel",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Catch A Lobster",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch a Swordfish",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Catch a Monkfish",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "area": "piscatoris"
+  },
+  {
+    "displayName": "Catch a Shark",
+    "taskType": "Fishing",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Mine some Copper Ore",
+    "taskType": "Mining",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Tim Ore",
+    "taskType": "Mining",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Iron Ore",
+    "taskType": "Mining",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Coal",
+    "taskType": "Mining",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Gold Ore",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Mithril Ore",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Adamantite Ore",
+    "taskType": "Mining",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Runeite Ore",
+    "taskType": "Mining",
+    "difficulty": 4,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Lovakite Ore",
+    "taskType": "Mining",
+    "difficulty": 3,
+    "area": "lovakengj"
+  },
+  {
+    "displayName": "Smelt a Bronze Bar",
+    "taskType": "Smithing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Smelt an Iron Bar",
+    "taskType": "Smithing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Smelt a Steel Bar",
+    "taskType": "Smithing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Smelt a Gold Bar",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Smelt a Mithril Bar",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Smelt an Adamantite Bar",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Smelt a Runite Bar",
+    "taskType": "Smithing",
+    "difficulty": 4,
+    "f2p": true
+  },
+  {
+    "displayName": "Smith a Bronze Platebody",
+    "taskType": "Smithing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Smith an Iron Platebody",
+    "taskType": "Smithing",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Smith a Steel Platebody",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Smith a Mithril Platebody",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Smith an Adamant Platebody",
+    "taskType": "Smithing",
+    "difficulty": 4,
+    "f2p": true
+  },
+  {
+    "displayName": "Smith a Runite Platebody",
+    "taskType": "Smithing",
+    "difficulty": 5,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine a Sapphire",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine an Emerald",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine a Ruby",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine from a Fallen Star",
+    "taskType": "Mining",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Pay-Dirt",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "area": "falador"
+  },
+  {
+    "displayName": "Cook Some Bread",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook some Shrimp",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook some Anchovies",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook a Trout",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook a Pike",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook a Salmon",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook a Tuna",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook a Lobster",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook a Swordfish",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Cook a Monkfish",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "f2p": false,
+    "area": "piscatoris"
+  },
+  {
+    "displayName": "Cook a Shark",
+    "taskType": "Cooking",
+    "difficulty": 4,
+    "f2p": true
+  },
+  {
+    "displayName": "Spin some Wool",
+    "taskType": "Crafting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Spin some Linen Yarn",
+    "taskType": "Crafting",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Spin some Hemp Yarn",
+    "taskType": "Crafting",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Spin some Cotton Yarn",
+    "taskType": "Crafting",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Cut a Sapphire",
+    "taskType": "Crafting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cut an Emerald",
+    "taskType": "Crafting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cut a Ruby",
+    "taskType": "Crafting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Cut a Diamond",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Cut a Dragonstone",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Craft a Sapphire Amulet",
+    "taskType": "Crafting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Craft an Emerald Ring",
+    "taskType": "Crafting",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Craft a Ruby Amulet",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Craft a Diamond Amulet",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Craft a Dragonstone Ring",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "f2p": false
+  },
+  {
+    "displayName": "Craft a Dragonstone Amulet",
+    "taskType": "Crafting",
+    "difficulty": 4
+  },
+  {
+    "displayName": "Craft a Water Rune",
+    "taskType": "Runecraft",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge",
+    "requirements": "Rune Mysteries"
+  },
+  {
+    "displayName": "Craft an Air Rune",
+    "taskType": "Runecraft",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "falador",
+    "requirements": "Rune Mysteries"
+  },
+  {
+    "displayName": "Craft an Earth Rune",
+    "taskType": "Runecraft",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock",
+    "requirements": "Rune Mysteries"
+  },
+  {
+    "displayName": "Craft a Fire Rune",
+    "taskType": "Runecraft",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "al_kharid",
+    "requirements": "Rune Mysteries"
+  },
+  {
+    "displayName": "Pickpocket a Lumbridge Citizen",
+    "taskType": "Thieving",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Pickpocket a H.A.M. Member",
+    "taskType": "Thieving",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Obtain a Bronze Axe from a Stump",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Purchase a Steel Axe from Bob's Axes",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Activate Protect from Magic",
+    "taskType": "Prayer",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Activate Protect From Melee",
+    "taskType": "Prayer",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Activate Superhuman Strength and Improved Reflexes",
+    "taskType": "Prayer",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Activate Smite",
+    "taskType": "Prayer",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Activate Piety",
+    "taskType": "Prayer",
+    "difficulty": 3,
+    "area": "camelot_seers",
+    "requirements": "Knight Waves Training Grounds"
+  },
+  {
+    "displayName": "Restore 60 Prayer Points at an Altar",
+    "taskType": "Prayer",
+    "difficulty": 3,
+    "f2p": true
+  },
+  {
+    "displayName": "Bury some Bones",
+    "taskType": "Prayer",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Cow",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Goblin",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Ram",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Hill Giant",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Scorpion",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Bear",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Unicorn",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Guard",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Moss Giant",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Fire Giant",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "f2p": false
+  },
+  {
+    "displayName": "Defeat an Ice Giant",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Defeat a Green Dragon",
+    "taskType": "Combat",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Defeat a Blue Dragon",
+    "taskType": "Combat",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Defeat a Red Dragon",
+    "taskType": "Combat",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Defeat a Black Dragon",
+    "taskType": "Combat",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Defeat a Bronze Dragon",
+    "taskType": "Combat",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Defeat an Iron Dragon",
+    "taskType": "Combat",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Defeat a Steel Dragon",
+    "taskType": "Combat",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Defeat a Mithril Dragon",
+    "taskType": "Combat",
+    "difficulty": 3,
+    "area": "barbarian_waterfall",
+    "requirements": "Waterfall Quest"
+  },
+  {
+    "displayName": "Defeat an Adamant Dragon",
+    "taskType": "Combat",
+    "difficulty": 3,
+    "area": "fossil_island",
+    "requirements": "Dragon Slayer II"
+  },
+  {
+    "displayName": "Defeat a Rune Dragon",
+    "taskType": "Combat",
+    "difficulty": 4,
+    "area": "fossil_island",
+    "requirements": "Dragon Slayer II"
+  },
+  {
+    "displayName": "Defeat a Lesser Demon",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "port_sarim_mudskipper, kingstown, draynor, musa_point, unquiet, slepe, taverly, northeast_wilderness, southeast_wilderness, northwestern_wilderness, shayzien, ardougne, karamja, isle_of_souls",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Defeat a Greater Demon",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "area": "northeast_wilderness, musa_point, slepe, entrana, kingstown, shayzien, kebos_lowlands, feldip_hills, isle_of_souls, southeast_wilderness, northwestern_wilderness",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Defeat a Black Demon",
+    "taskType": "Combat",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Defeat an Imp",
+    "taskType": "Combat",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Attempt to Shear the Thing",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Complete Cook's Assistant",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Complete Sheer Shearer",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Claim some Runes from the Magic Tutor",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Smith a Bronze Dagger on the Bronze Anvil",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Enter the Lumbridge Swamp Caves",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Use the Stepping stone in the Lumbridge Swamp Caves",
+    "taskType": "Agility",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Rake some Weeds",
+    "taskType": "Farming",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Obtain a Bird's Nest",
+    "taskType": "Woodcutting",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Complete a Beginner Clue in Lumbridge",
+    "taskType": "Clue Scroll",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Complete and Easy Clue in Lumbridge",
+    "taskType": "Clue Scroll",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Equip a Bronze Spear",
+    "taskType": "Equipment",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Equip a Bronze Scimitar from a Goblin",
+    "taskType": "Equipment",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Read a Goblin Book",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Equip an Iron Dagger in Lumbridge",
+    "taskType": "Equipment",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Slay a Cave Bug beneath Lumbridge Swamp",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Learn your age from Hans in Lumbridge",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Chop and Burn some Oak Logs in Lumbridge",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Bake some Bread on the Lumbridge Range",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge",
+    "requirements": "Cook's Assistant"
+  },
+  {
+    "displayName": "Enter the H.A.M. Hideout",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Slay a Cave Crawler beneath Lumbridge Swamp",
+    "taskType": "Slayer",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Slay a Cave Slime beneath Lumbridge Swamp",
+    "taskType": "Slayer",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Obtain Bronze Boots in Lumbridge",
+    "taskType": "Collection Log",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Obtain Iron Boots in Lumbridge",
+    "taskType": "Collection Log",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Mine some Ore with a Steel Pickaxe",
+    "taskType": "Mining",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Plant a Tree in Lumbridge",
+    "taskType": "Farming",
+    "difficulty": 2,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Check the health of a Magic Tree in Lumbridge",
+    "taskType": "Farming",
+    "difficulty": 3,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Equip the Skillcape of Woodcutting",
+    "taskType": "Equipment",
+    "difficulty": 5,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Equip the Skillcape of Defense",
+    "taskType": "Equipment",
+    "difficulty": 5,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Ask for a Quest from Bob",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Complete a Lap of the Draynor Agility Course",
+    "taskType": "Agility",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Defeat the Lesser Demon in the Wizards' Tower",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Get a Chair to follow you",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Have Ned Make you some Rope",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Insult Aggie the Witch",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Defeat a Mugger",
+    "taskType": "Combat",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Defeat a Zombie in the Draynor Sewers",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Complete the Restless Ghost",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "area": "lumbridge, draynor"
+  },
+  {
+    "displayName": "Have Archmage Sedridor teleport you to the Rune Essence mine",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "draynor",
+    "requirements": "Rune Mysteries"
+  },
+  {
+    "displayName": "Complete Rune Mysteries",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge, draynor, varrock"
+  },
+  {
+    "displayName": "Mine some Iron Ore in the Al Kharid Mine",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "f2p": false,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Catch some Anchovies in Al Kharid",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Complete a lap of the Al Kharid Agility Course",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Grapple across the River Lum",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge, al_kharid"
+  },
+  {
+    "displayName": "Purchase an Upgraded device from Ava",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "draynor",
+    "requirements": "Animal Magnetism"
+  },
+  {
+    "displayName": "Travel to the Wizards' Tower by Fairy Ring",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "draynor",
+    "requirements": "Fairy Tale Part II"
+  },
+  {
+    "displayName": "Cast Teleport to Lumbridge spell",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Catch some Salmon in Lumbridge",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Craft a Coif in the Cow Pen",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Chop some Willow Logs in Draynor",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Pickpocket Martin the Master Farmer",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Catch an Essence or Eclectic impling in Puro-Puro",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "lumbridge",
+    "requirements": "Lost City"
+  },
+  {
+    "displayName": "Craft a Lava Rune at the fire altar in Al Kharid",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "al_kharid",
+    "requirements": "Rune Mysteries"
+  },
+  {
+    "displayName": "Cast Bones to Peaches in Al Kharid Palace",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Squeeze Past the justting wall on your way to the Cosmic Altar",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "lumbridge",
+    "requirements": "Lost City"
+  },
+  {
+    "displayName": "Craft 56 Cosmic Runes simultaneously from Essence without the use of Extracts",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "lumbridge",
+    "requirements": "Lost City"
+  },
+  {
+    "displayName": "Travel from Lumbridge to Edgeville on a Waka Canoe",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "lumbridge, edgeville"
+  },
+  {
+    "displayName": "Take the Train from Dorgesh Kaan to Keldagrim",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "lumbridge, rellekka",
+    "requirements": "Another Slice of H.A.M., Giant Dwarf"
+  },
+  {
+    "displayName": "Collect 100 Tears of Guthix in one visit",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "lumbridge",
+    "requirements": "Tears of Guthix"
+  },
+  {
+    "displayName": "Purchase some Barrows Gloves from the Lumbridge Bank Chest",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
+    "area": "lumbridge",
+    "requirements": "Recipe for Disaster"
+  },
+  {
+    "displayName": "Pick some Belladonna from the farming patch at Draynor Manor",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Light your Mining Helmet in the Lumbridge Castle Basement",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Recharge your Prayer at Emir's Arena with Smite activated",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Craft, String and Enchant an Amulet of Power in Lumbridge",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Steal from a Dorgesh Kaan rich chest",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "lumbridge",
+    "requirements": "Death to the Dorgeshuun"
+  },
+  {
+    "displayName": "Grapple across a pylon on the Dorgesh Kaan Agility Course",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "lumbridge",
+    "requirements": "Death to the Dorgeshuun"
+  },
+  {
+    "displayName": "Chop some Magic Logs at the Mage Training Arena",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Smith an Adamant Platebody down Draynor Sewer",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Craft 140 or more Water Runes simultaneously from Essence without the use of Extracts",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "lumbridge",
+    "requirements": "Rune Mysteries"
+  },
+  {
+    "displayName": "Perform the Quest Cape emote in the Wise Old Man's house",
+    "taskType": "Achievement Diary",
+    "difficulty": 5,
+    "area": "draynor",
+    "requirements": "100% Quest Completion"
+  },
+  {
+    "displayName": "Equip the Hitpoints Skillcape",
+    "taskType": "Equipment",
+    "difficulty": 5,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Plant a Cactus in Al Kharid",
+    "taskType": "Farming",
+    "difficulty": 2,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Plant a Potato Cactus in Al Kharid",
+    "taskType": "Farming",
+    "difficulty": 3,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Cook a Fried Onion in Lumbridge",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Frighten Hans",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Obtain a Tormented Synapse",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "area": "lumbridge",
+    "requirements": "While Guthix Sleeps"
+  },
+  {
+    "displayName": "Obtain a Burning Claw",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "area": "lumbridge",
+    "requirements": "While Guthix Sleeps"
+  },
+  {
+    "displayName": "Enter Zanaris through the Lumbridge Swamp Shed",
+    "taskType": "Other",
+    "difficulty": 3,
+    "area": "lumbridge",
+    "requirements": "Lost City"
+  }
+  ]
+}
