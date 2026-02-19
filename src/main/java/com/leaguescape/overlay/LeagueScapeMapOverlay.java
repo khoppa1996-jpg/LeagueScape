@@ -1717,6 +1717,17 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				if (e.getButton() != MouseEvent.BUTTON1) return;
 				if (state == TaskState.COMPLETED_UNCLAIMED)
 				{
+					if (tile.getRequirements() != null && !tile.getRequirements().isEmpty())
+					{
+						java.util.List<String> unmet = taskGridService.getUnmetQuestRequirements(tile.getRequirements());
+						if (!unmet.isEmpty())
+						{
+							javax.swing.JOptionPane.showMessageDialog(parentDialog,
+								"Complete these quests first: " + String.join(", ", unmet),
+								"Quest requirements", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+							return;
+						}
+					}
 					LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE);
 					taskGridService.setClaimed(areaId, tile.getId());
 					SwingUtilities.invokeLater(onRefresh);
@@ -1828,6 +1839,17 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			// Should not normally reach here (single-click claims); show Claim as fallback
 			JButton claimBtn = newRectangleButton("Claim", buttonRect, textColor);
 			claimBtn.addActionListener(e -> {
+				if (tile.getRequirements() != null && !tile.getRequirements().isEmpty())
+				{
+					java.util.List<String> unmet = taskGridService.getUnmetQuestRequirements(tile.getRequirements());
+					if (!unmet.isEmpty())
+					{
+						javax.swing.JOptionPane.showMessageDialog(detail,
+							"Complete these quests first: " + String.join(", ", unmet),
+							"Quest requirements", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+				}
 				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE);
 				taskGridService.setClaimed(areaId, tile.getId());
 				detail.dispose();
@@ -1842,6 +1864,17 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			body.add(revealLabel);
 			JButton claimBtn = newRectangleButton("Claim", buttonRect, textColor);
 			claimBtn.addActionListener(e -> {
+				if (tile.getRequirements() != null && !tile.getRequirements().isEmpty())
+				{
+					java.util.List<String> unmet = taskGridService.getUnmetQuestRequirements(tile.getRequirements());
+					if (!unmet.isEmpty())
+					{
+						javax.swing.JOptionPane.showMessageDialog(detail,
+							"Complete these quests first: " + String.join(", ", unmet),
+							"Quest requirements", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+						return;
+					}
+				}
 				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE);
 				taskGridService.setCompleted(areaId, tile.getId());
 				taskGridService.setClaimed(areaId, tile.getId());

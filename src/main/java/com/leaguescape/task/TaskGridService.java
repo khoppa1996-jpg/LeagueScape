@@ -33,6 +33,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import net.runelite.api.Client;
+import net.runelite.api.Quest;
+import net.runelite.api.QuestState;
 import net.runelite.client.config.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,6 +138,7 @@ public class TaskGridService
 	private final PointsService pointsService;
 	private final AreaCompletionService areaCompletionService;
 	private final AreaGraphService areaGraphService;
+	private final Client client;
 
 	private volatile TasksData tasksData;
 
@@ -154,13 +158,14 @@ public class TaskGridService
 	@Inject
 	public TaskGridService(ConfigManager configManager, LeagueScapeConfig config,
 		PointsService pointsService, AreaCompletionService areaCompletionService,
-		AreaGraphService areaGraphService)
+		AreaGraphService areaGraphService, Client client)
 	{
 		this.configManager = configManager;
 		this.config = config;
 		this.pointsService = pointsService;
 		this.areaCompletionService = areaCompletionService;
 		this.areaGraphService = areaGraphService;
+		this.client = client;
 	}
 
 	/**
@@ -660,7 +665,7 @@ public class TaskGridService
 
 		// Build TaskTile list: center then all positions by tier (includes overfill cells)
 		List<TaskTile> out = new ArrayList<>();
-		out.add(new TaskTile(TaskTile.idFor(0, 0), 0, "Free", 0, 0, 0, null, null, true));
+		out.add(new TaskTile(TaskTile.idFor(0, 0), 0, "Free", 0, 0, 0, null, null, true, null));
 		for (int tier = 1; tier <= effectiveMaxTier; tier++)
 		{
 			for (int[] rc : positionsByTier.get(tier))
@@ -675,7 +680,8 @@ public class TaskGridService
 				List<String> requiredAreaIds = (def != null && !def.getRequiredAreaIds().isEmpty())
 					? new ArrayList<>(def.getRequiredAreaIds()) : null;
 				boolean requireAllAreas = def == null || !def.isAreaRequirementAny();
-				out.add(new TaskTile(id, tier, displayName, points, r, c, taskType, requiredAreaIds, requireAllAreas));
+				String requirements = (def != null && def.getRequirements() != null && !def.getRequirements().isEmpty()) ? def.getRequirements().trim() : null;
+				out.add(new TaskTile(id, tier, displayName, points, r, c, taskType, requiredAreaIds, requireAllAreas, requirements));
 			}
 		}
 		return out;
@@ -866,19 +872,98 @@ public class TaskGridService
 	}
 
 	/**
+	 * Returns true if all quests listed in the requirements string are complete.
+	 * Requirements can be comma-separated quest names (e.g. "Waterfall Quest, Dragon Slayer II")
+	 * or "100% Quest Completion" to require every quest finished.
+	 */
+	public boolean areQuestRequirementsMet(String requirements)
+	{
+		if (requirements == null || requirements.isEmpty()) return true;
+		String req = requirements.trim();
+		if (req.equalsIgnoreCase("100% Quest Completion"))
+		{
+			for (Quest q : Quest.values())
+			{
+				if (q.getState(client) != QuestState.FINISHED) return false;
+			}
+			return true;
+		}
+		for (String name : parseQuestNamesFromRequirements(req))
+		{
+			Quest quest = findQuestByName(name);
+			if (quest == null || quest.getState(client) != QuestState.FINISHED) return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Returns the list of required quest names that are not yet finished (for UI message).
+	 * Empty if all requirements are met or there are no quest requirements.
+	 */
+	public List<String> getUnmetQuestRequirements(String requirements)
+	{
+		List<String> unmet = new ArrayList<>();
+		if (requirements == null || requirements.isEmpty()) return unmet;
+		String req = requirements.trim();
+		if (req.equalsIgnoreCase("100% Quest Completion"))
+		{
+			for (Quest q : Quest.values())
+			{
+				if (q.getState(client) != QuestState.FINISHED) unmet.add(q.getName());
+			}
+			return unmet;
+		}
+		for (String name : parseQuestNamesFromRequirements(req))
+		{
+			Quest quest = findQuestByName(name);
+			if (quest == null) unmet.add(name);
+			else if (quest.getState(client) != QuestState.FINISHED) unmet.add(quest.getName());
+		}
+		return unmet;
+	}
+
+	private static List<String> parseQuestNamesFromRequirements(String requirements)
+	{
+		List<String> out = new ArrayList<>();
+		for (String part : requirements.split(","))
+		{
+			String name = part.trim();
+			if (!name.isEmpty()) out.add(name);
+		}
+		return out;
+	}
+
+	private static Quest findQuestByName(String name)
+	{
+		if (name == null || name.isEmpty()) return null;
+		String n = name.trim();
+		for (Quest q : Quest.values())
+		{
+			if (q.getName().equalsIgnoreCase(n)) return q;
+		}
+		return null;
+	}
+
+	/**
 	 * Marks a task as claimed: adds to claimed set, persists, and awards tier points to
 	 * PointsService and AreaCompletionService. Idempotent if already claimed.
+	 * If the task has a "requirements" (quest) string, all listed quests must be finished or claim is blocked.
 	 */
 	public void setClaimed(String areaId, String taskId)
 	{
 		Set<String> claimed = loadSet(areaId, SUFFIX_CLAIMED);
 		if (claimed.contains(taskId)) return;
+
+		List<TaskTile> grid = getGridForArea(areaId);
+		TaskTile tile = grid.stream().filter(t -> t.getId().equals(taskId)).findFirst().orElse(null);
+		if (tile != null && tile.getRequirements() != null && !tile.getRequirements().isEmpty()
+			&& !areQuestRequirementsMet(tile.getRequirements()))
+			return;
+
 		claimed.add(taskId);
 		saveSet(areaId, SUFFIX_CLAIMED, claimed);
 
-		// Award points from the tile (user-configured tier points). addEarnedInArea updates both per-area and global total.
-		List<TaskTile> grid = getGridForArea(areaId);
-		int points = grid.stream()
+		int points = tile != null ? tile.getPoints() : grid.stream()
 			.filter(t -> t.getId().equals(taskId))
 			.mapToInt(TaskTile::getPoints)
 			.findFirst()

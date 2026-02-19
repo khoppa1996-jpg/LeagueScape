@@ -24,6 +24,8 @@ public class TaskTile
 	List<String> requiredAreaIds;
 	/** True = mystery until all required areas unlocked; false = mystery only until current area unlocked (either/or task). */
 	boolean requireAllAreas;
+	/** Optional quest requirements (e.g. "Waterfall Quest" or "Another Slice of H.A.M., Giant Dwarf"); must be complete before task can be claimed. */
+	String requirements;
 
 	/**
 	 * Creates a task tile with no task type (icon lookup will fall back to display name).
@@ -38,7 +40,7 @@ public class TaskTile
 	 */
 	public static TaskTile of(String id, int tier, String displayName, int points, int row, int col)
 	{
-		return new TaskTile(id, tier, displayName, points, row, col, null, null, true);
+		return new TaskTile(id, tier, displayName, points, row, col, null, null, true, null);
 	}
 
 	/**
