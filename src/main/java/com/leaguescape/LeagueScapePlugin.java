@@ -80,9 +80,6 @@ public class LeagueScapePlugin extends Plugin
 	private com.leaguescape.overlay.TaskCompletionPopupOverlay taskCompletionPopupOverlay;
 
 	@Inject
-	private com.leaguescape.task.TaskCompletionListener taskCompletionListener;
-
-	@Inject
 	private com.leaguescape.overlay.LeagueScapeMapOverlay leagueScapeMapOverlay;
 
 	@Inject
@@ -161,7 +158,6 @@ public class LeagueScapePlugin extends Plugin
 		overlayManager.add(leagueScapeMapOverlay);
 		areaEditOverlay = areaEditOverlayProvider.get();
 		overlayManager.add(areaEditOverlay);
-		eventBus.register(taskCompletionListener);
 		eventBus.register(this);
 		// updateMapMouseListener() uses client (getWidget, isHidden) and must run on client thread; onGameTick will call it
 		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService, audioPlayer);
@@ -187,7 +183,6 @@ public class LeagueScapePlugin extends Plugin
 	{
 		log.info("LeagueScape stopped!");
 		stopAreaEditing();
-		eventBus.unregister(taskCompletionListener);
 		eventBus.unregister(this);
 		if (mapMouseListenerRegistered)
 		{
@@ -252,14 +247,6 @@ public class LeagueScapePlugin extends Plugin
 	com.leaguescape.overlay.TaskCompletionPopupOverlay provideTaskCompletionPopupOverlay(Client client)
 	{
 		return new com.leaguescape.overlay.TaskCompletionPopupOverlay(client);
-	}
-
-	@Provides
-	com.leaguescape.task.TaskCompletionListener provideTaskCompletionListener(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
-		com.leaguescape.task.TaskGridService taskGridService, com.leaguescape.overlay.TaskCompletionPopupOverlay taskCompletionPopupOverlay,
-		AudioPlayer audioPlayer, net.runelite.client.game.ItemManager itemManager)
-	{
-		return new com.leaguescape.task.TaskCompletionListener(client, areaGraphService, taskGridService, taskCompletionPopupOverlay, audioPlayer, itemManager);
 	}
 
 	@Provides

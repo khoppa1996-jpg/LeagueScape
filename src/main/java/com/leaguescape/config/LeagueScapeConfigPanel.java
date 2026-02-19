@@ -60,7 +60,7 @@ import java.awt.Rectangle;
 
 /**
  * LeagueScape config/setup panel: area list (edit, remove, restore), "Make hole" for subtracting
- * regions from areas, task system settings (task mode, difficulty, tier points, tasks file path),
+ * regions from areas, task system settings (task mode, tier points, tasks file path),
  * task list with import/export and custom task add/edit (display name, type, difficulty, f2p, areas).
  * Areas and tasks are persisted via ConfigManager and AreaGraphService/TaskGridService. Opening
  * the panel does not reload areas/tasks from file until the user triggers reload or save.
@@ -261,7 +261,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		makeHoleSectionHeader = makeHoleHeaderRef[0];
 
 		mainPanel.add(new JLabel(" "));
-		// Task system: task mode, difficulty multiplier and points per tier
+		// Task system: task mode and points per tier
 		JPanel taskSystemPanel = new JPanel();
 		taskSystemPanel.setLayout(new BoxLayout(taskSystemPanel, BoxLayout.Y_AXIS));
 		JPanel taskModeRow = new JPanel(new BorderLayout());
@@ -274,13 +274,6 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		});
 		taskModeRow.add(taskModeCombo, BorderLayout.EAST);
 		taskSystemPanel.add(taskModeRow);
-		JPanel difficultyRow = new JPanel(new BorderLayout());
-		difficultyRow.add(new JLabel("Task difficulty (0.5=Easy, 1=Normal, 1.5=Hard):"), BorderLayout.WEST);
-		JSpinner difficultySpinner = new JSpinner(new SpinnerNumberModel(config.taskDifficultyMultiplier(), 0.5, 2.0, 0.5));
-		difficultySpinner.setMaximumSize(new Dimension(80, difficultySpinner.getPreferredSize().height));
-		difficultySpinner.addChangeListener(e -> configManager.setConfiguration(CONFIG_GROUP, "taskDifficultyMultiplier", ((Number) difficultySpinner.getValue()).doubleValue()));
-		difficultyRow.add(difficultySpinner, BorderLayout.EAST);
-		taskSystemPanel.add(difficultyRow);
 		for (int tier = 1; tier <= 5; tier++)
 		{
 			final int t = tier;

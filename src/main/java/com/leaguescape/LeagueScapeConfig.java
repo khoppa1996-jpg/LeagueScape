@@ -302,22 +302,10 @@ public interface LeagueScapeConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "taskDifficultyMultiplier",
-		name = "Task difficulty",
-		description = "Overall multiplier for task difficulty (0.5 = Easy, 1.0 = Normal, 1.5 = Hard)",
-		position = 1,
-		section = taskSection
-	)
-	default double taskDifficultyMultiplier()
-	{
-		return 1.0;
-	}
-
-	@ConfigItem(
 		keyName = "taskTier1Points",
 		name = "Tier 1 points",
 		description = "Points awarded for claiming a tier 1 task (first ring)",
-		position = 2,
+		position = 1,
 		section = taskSection
 	)
 	default int taskTier1Points()
@@ -329,7 +317,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier2Points",
 		name = "Tier 2 points",
 		description = "Points awarded for claiming a tier 2 task",
-		position = 3,
+		position = 2,
 		section = taskSection
 	)
 	default int taskTier2Points()
@@ -341,7 +329,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier3Points",
 		name = "Tier 3 points",
 		description = "Points awarded for claiming a tier 3 task",
-		position = 4,
+		position = 3,
 		section = taskSection
 	)
 	default int taskTier3Points()
@@ -353,7 +341,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier4Points",
 		name = "Tier 4 points",
 		description = "Points awarded for claiming a tier 4 task",
-		position = 5,
+		position = 4,
 		section = taskSection
 	)
 	default int taskTier4Points()
@@ -365,7 +353,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "taskTier5Points",
 		name = "Tier 5 points",
 		description = "Points awarded for claiming a tier 5 task",
-		position = 6,
+		position = 5,
 		section = taskSection
 	)
 	default int taskTier5Points()
@@ -377,41 +365,11 @@ public interface LeagueScapeConfig extends Config
 		keyName = "tasksFilePath",
 		name = "Tasks file path",
 		description = "Optional path to a tasks.json file. If empty, the built-in default tasks are used. File format: defaultTasks array with displayName, taskType, difficulty (1–5); optional areas map for per-area overrides.",
-		position = 7,
+		position = 6,
 		section = taskSection
 	)
 	default String tasksFilePath()
 	{
 		return "";
-	}
-
-	@ConfigItem(
-		keyName = "areaCompletionRequired",
-		name = "Area completion required",
-		description = "Must complete all revealed tasks in current area scope before unlock buttons become enabled"
-	)
-	default boolean areaCompletionRequired()
-	{
-		return false;
-	}
-
-	@ConfigItem(
-		keyName = "strictLockLevel",
-		name = "Strict lock level",
-		description = "Basic = block walk/click only; Advanced = also filter menu entries for locked targets"
-	)
-	default boolean strictLockLevel()
-	{
-		return false;
-	}
-
-	@ConfigItem(
-		keyName = "sailingOceanNodes",
-		name = "Sailing / ocean nodes",
-		description = "Include ocean regions as unlock nodes (only if Sailing is in game)"
-	)
-	default boolean sailingOceanNodes()
-	{
-		return false;
 	}
 }

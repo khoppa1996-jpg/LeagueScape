@@ -577,78 +577,77 @@ public class TaskGridService
 				positionsByTier.get(t).add(nextOverfillPosition(effectiveMaxTier, overfillIndex++));
 		}
 
-		// Assign tasks to positions by tier: tier t uses difficulty min(t,5). Area-specific first, then filler.
-		// Each task appears at most once (no duplicates); extra slots get a placeholder.
-		List<TaskDefinition> assigned = new ArrayList<>(4 * effectiveMaxTier * (effectiveMaxTier + 1));
-		for (int tier = 1; tier <= effectiveMaxTier; tier++)
+		// Build ordered pool per difficulty (1–5): dedupe by taskKey, area-specific first then filler, shuffled. Used for whole-grid assignment.
+		List<List<TaskDefinition>> orderedPoolsByDifficulty = new ArrayList<>();
+		for (int d = 0; d <= MAX_TIER; d++)
+			orderedPoolsByDifficulty.add(new ArrayList<>());
+		for (int d = 1; d <= MAX_TIER; d++)
 		{
-			List<int[]> positions = positionsByTier.get(tier);
-			int difficultyIndex = Math.min(tier, MAX_TIER);
-			List<TaskDefinition> pool = byDifficulty.get(difficultyIndex);
-			if (pool.isEmpty())
-				pool = taskDefs.isEmpty() ? new ArrayList<>() : byDifficulty.get(1);
-			// Deduplicate pool by displayName so same task never appears twice
+			List<TaskDefinition> pool = new ArrayList<>(byDifficulty.get(d));
 			Set<String> seenKey = new HashSet<>();
-			List<TaskDefinition> poolDeduped = new ArrayList<>();
-			for (TaskDefinition t : pool)
-			{
-				if (seenKey.add(taskKey(t)))
-					poolDeduped.add(t);
-			}
-			pool = poolDeduped;
+			pool = pool.stream().filter(t -> seenKey.add(taskKey(t))).collect(Collectors.toList());
+			if (pool.isEmpty() && d > 1)
+				pool = new ArrayList<>(orderedPoolsByDifficulty.get(1));
 			if (pool.isEmpty())
 			{
 				TaskDefinition fallback = new TaskDefinition();
-				fallback.setDisplayName("Task " + tier);
+				fallback.setDisplayName("Task " + d);
 				fallback.setTaskType(null);
-				fallback.setDifficulty(tier);
+				fallback.setDifficulty(d);
 				pool = Collections.singletonList(fallback);
 			}
 			List<TaskDefinition> onceOnly = pool.stream().filter(t -> Boolean.TRUE.equals(t.getOnceOnly())).collect(Collectors.toList());
 			List<TaskDefinition> rest = pool.stream().filter(t -> !Boolean.TRUE.equals(t.getOnceOnly())).collect(Collectors.toList());
 			if (rest.isEmpty() && !onceOnly.isEmpty()) rest = new ArrayList<>(onceOnly);
-			// Preserve area prioritization: partition rest into area-specific (for this area) and filler, shuffle each, then area-specific first
-			List<TaskDefinition> areaSpecificRest = rest.stream()
-				.filter(t -> {
-					List<String> req = t.getRequiredAreaIds();
-					return !req.isEmpty() && req.contains(areaId);
-				})
+			List<TaskDefinition> areaSpecific = rest.stream()
+				.filter(t -> t.getRequiredAreaIds() != null && t.getRequiredAreaIds().contains(areaId))
 				.collect(Collectors.toList());
-			List<TaskDefinition> fillerRest = rest.stream()
-				.filter(t -> t.getRequiredAreaIds().isEmpty())
+			List<TaskDefinition> filler = rest.stream()
+				.filter(t -> t.getRequiredAreaIds() == null || t.getRequiredAreaIds().isEmpty())
 				.collect(Collectors.toList());
 			Collections.shuffle(onceOnly, rng);
-			Collections.shuffle(areaSpecificRest, rng);
-			Collections.shuffle(fillerRest, rng);
-			List<TaskDefinition> restOrdered = new ArrayList<>(areaSpecificRest.size() + fillerRest.size());
-			restOrdered.addAll(areaSpecificRest);
-			restOrdered.addAll(fillerRest);
-			if (restOrdered.isEmpty() && !rest.isEmpty()) restOrdered.addAll(rest);
-			int n = positions.size();
-			TaskDefinition tierPlaceholder = null;
-			for (int i = 0; i < n; i++)
+			Collections.shuffle(areaSpecific, rng);
+			Collections.shuffle(filler, rng);
+			List<TaskDefinition> ordered = new ArrayList<>(onceOnly.size() + areaSpecific.size() + filler.size());
+			ordered.addAll(onceOnly);
+			ordered.addAll(areaSpecific);
+			ordered.addAll(filler);
+			if (ordered.isEmpty() && !rest.isEmpty()) ordered.addAll(rest);
+			orderedPoolsByDifficulty.set(d, ordered);
+		}
+
+		// Assign tasks per position: concentric layout with transition rings and T4 corners. Each position gets difficulty from difficultyForCell;
+		// if that pool has no unused task, fill from next lower difficulty (tier 1 can fill any tier). Global deduplication.
+		Set<String> usedTaskKeys = new HashSet<>();
+		List<TaskDefinition> assigned = new ArrayList<>(4 * effectiveMaxTier * (effectiveMaxTier + 1));
+		for (int tier = 1; tier <= effectiveMaxTier; tier++)
+		{
+			List<int[]> positions = positionsByTier.get(tier);
+			for (int[] rc : positions)
 			{
-				if (i < onceOnly.size())
+				int r = rc[0], c = rc[1];
+				int difficulty = difficultyForCell(tier, r, c, effectiveMaxTier, rng);
+				TaskDefinition chosen = null;
+				for (int d = difficulty; d >= 1 && chosen == null; d--)
 				{
-					assigned.add(onceOnly.get(i));
-				}
-				else
-				{
-					int restIndex = i - onceOnly.size();
-					if (restIndex < restOrdered.size())
-						assigned.add(restOrdered.get(restIndex));
-					else
+					for (TaskDefinition t : orderedPoolsByDifficulty.get(d))
 					{
-						if (tierPlaceholder == null)
+						if (usedTaskKeys.add(taskKey(t)))
 						{
-							tierPlaceholder = new TaskDefinition();
-							tierPlaceholder.setDisplayName("—");
-							tierPlaceholder.setTaskType(null);
-							tierPlaceholder.setDifficulty(tier);
+							chosen = t;
+							break;
 						}
-						assigned.add(tierPlaceholder);
 					}
 				}
+				if (chosen == null)
+				{
+					TaskDefinition placeholder = new TaskDefinition();
+					placeholder.setDisplayName("—");
+					placeholder.setTaskType(null);
+					placeholder.setDifficulty(tier);
+					chosen = placeholder;
+				}
+				assigned.add(chosen);
 			}
 		}
 
@@ -750,6 +749,36 @@ public class TaskGridService
 	/** Columns per overfill row so overfill positions are deterministic and compact. */
 	private static final int OVERFILL_COLS = 50;
 
+	/** Width of transition zones (mix of two difficulties) on the 1–5 scale; centered transitions at 1.5, 2.5, 3.5, 4.5. */
+	private static final double TRANSITION_HALF_WIDTH = 0.35;
+
+	/**
+	 * Returns the difficulty (1–5) used to choose the task pool for a cell at ring {@code ring} with coords (r,c).
+	 * Layout: inner rings = 1; transition rings = random mix of two difficulties; tier-3 zone has tier-4 in corners; outer = mix 4&5.
+	 * Scales with total rings T (grid can be larger or smaller than 17x17).
+	 */
+	private int difficultyForCell(int ring, int r, int c, int totalRings, Random rng)
+	{
+		if (totalRings <= 1)
+			return 1;
+		double dCont = 1.0 + 4.0 * (ring - 1) / (totalRings - 1);
+		// Tier-3 ring: put tier 4 in corners (cells where both |r| and |c| equal the ring)
+		boolean isCorner = (Math.abs(r) == ring && Math.abs(c) == ring);
+		if (isCorner && dCont >= 2.5 && dCont <= 3.5)
+			return 4;
+		// Transition zones: randomly choose between the two adjacent difficulties
+		if (dCont >= 1.5 - TRANSITION_HALF_WIDTH && dCont <= 1.5 + TRANSITION_HALF_WIDTH)
+			return rng.nextBoolean() ? 1 : 2;
+		if (dCont >= 2.5 - TRANSITION_HALF_WIDTH && dCont <= 2.5 + TRANSITION_HALF_WIDTH)
+			return rng.nextBoolean() ? 2 : 3;
+		if (dCont >= 3.5 - TRANSITION_HALF_WIDTH && dCont <= 3.5 + TRANSITION_HALF_WIDTH)
+			return rng.nextBoolean() ? 3 : 4;
+		if (dCont >= 4.5 - TRANSITION_HALF_WIDTH && dCont <= 4.5 + TRANSITION_HALF_WIDTH)
+			return rng.nextBoolean() ? 4 : 5;
+		int d = (int) Math.round(dCont);
+		return Math.max(1, Math.min(MAX_TIER, d));
+	}
+
 	/**
 	 * Returns the (r,c) for the {@code index}-th overfill position, placed just beyond the base grid (row baseMaxTier+1 and beyond).
 	 * Used so tiers can have more slots than 8*t when there are many area-specific tasks.
@@ -811,7 +840,6 @@ public class TaskGridService
 
 	/**
 	 * Returns all task tiles in the given area that are currently revealed (neighbor of a claimed tile, not yet completed or claimed).
-	 * Used by task completion listeners to only consider revealed tasks for auto-completion.
 	 */
 	public List<TaskTile> getRevealedTiles(String areaId)
 	{

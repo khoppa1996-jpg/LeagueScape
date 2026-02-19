@@ -1213,6 +1213,16 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				@Override
 				public void windowClosed(java.awt.event.WindowEvent e) { openAreaDetailsDialog = null; }
 			});
+			dialog.addWindowFocusListener(new java.awt.event.WindowAdapter()
+			{
+				@Override
+				public void windowLostFocus(java.awt.event.WindowEvent e)
+				{
+					// Close when user clicks outside (e.g. back to game)
+					if (dialog.isDisplayable())
+						dialog.dispose();
+				}
+			});
 
 			JPanel content = new JPanel()
 			{
