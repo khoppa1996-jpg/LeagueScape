@@ -120,8 +120,17 @@ public class LeagueScapeConfigPanel extends PluginPanel
 
 	private static final String CONFIG_GROUP = "leaguescape";
 
+	/** Normalizes "Diary" / "Achievement diary" to "Achievement Diary" for display and save. */
+	private static String normalizeAchievementDiaryTaskType(String taskType)
+	{
+		if (taskType == null || taskType.isEmpty()) return taskType;
+		String t = taskType.trim();
+		if ("Diary".equalsIgnoreCase(t) || "Achievement diary".equalsIgnoreCase(t)) return "Achievement Diary";
+		return taskType;
+	}
+
 	private static final String[] TASK_TYPE_PRESETS = {
-		"Achievement Diary", "Activity", "Quest", "Other", "Equipment", "Collection Log", "Clue Scroll", "Combat",
+		"Achievement Diary", "Activity", "Quest", "Other", "Level", "Equipment", "Collection Log", "Clue Scroll", "Combat",
 		"Agility", "Cooking", "Crafting", "Farming", "Firemaking", "Fletching", "Fishing", "Herblore", "Hunter",
 		"Magic", "Mining", "Prayer", "Runecraft", "Slayer", "Smithing", "Sailing", "Thieving", "Woodcutting"
 	};
@@ -852,7 +861,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			final int index = i;
 			TaskDefinition t = custom.get(i);
 			String name = t.getDisplayName() != null ? t.getDisplayName() : "(no name)";
-			String type = t.getTaskType() != null ? t.getTaskType() : "";
+			String type = normalizeAchievementDiaryTaskType(t.getTaskType() != null ? t.getTaskType() : "");
 			int diff = t.getDifficulty();
 			List<String> areaIds = t.getRequiredAreaIds();
 			String areaSummary = areaIds.isEmpty() ? "any" : String.join(", ", areaIds);
@@ -965,7 +974,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		taskDisplayNameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, taskDisplayNameField.getPreferredSize().height));
 		taskEditPanel.add(taskDisplayNameField);
 		taskEditPanel.add(new JLabel("Task type (e.g. Combat, Mining):"));
-		taskTypeField = new JTextField(t.getTaskType() != null ? t.getTaskType() : "", 20);
+		taskTypeField = new JTextField(normalizeAchievementDiaryTaskType(t.getTaskType() != null ? t.getTaskType() : ""), 20);
 		taskTypeField.setMaximumSize(new Dimension(Integer.MAX_VALUE, taskTypeField.getPreferredSize().height));
 		taskEditPanel.add(taskTypeField);
 		taskEditPanel.add(new JLabel("Difficulty (1–5):"));
@@ -1031,7 +1040,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		}
 		TaskDefinition def = new TaskDefinition();
 		def.setDisplayName(displayName);
-		def.setTaskType(taskType.isEmpty() ? null : taskType);
+		def.setTaskType(taskType.isEmpty() ? null : normalizeAchievementDiaryTaskType(taskType));
 		def.setDifficulty(difficulty);
 		def.setF2p(taskF2pCheckBox.isSelected());
 		def.setAreaRequirement(taskAreaRequirementCombo != null && "any".equals(taskAreaRequirementCombo.getSelectedItem()) ? "any" : "all");
@@ -1302,7 +1311,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 						TaskDefinition t = generatedHolder[0].get(i);
 						previewModel.addRow(new Object[] {
 							t.getDisplayName() != null ? t.getDisplayName() : "",
-							t.getTaskType() != null ? t.getTaskType() : "",
+							normalizeAchievementDiaryTaskType(t.getTaskType() != null ? t.getTaskType() : ""),
 							t.getDifficulty()
 						});
 					}

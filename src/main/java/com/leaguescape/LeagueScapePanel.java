@@ -41,10 +41,11 @@ public class LeagueScapePanel extends PluginPanel
 	private final JPanel unlockPanel;
 	private final JPanel completionPanel;
 	private final net.runelite.client.audio.AudioPlayer audioPlayer;
+	private final net.runelite.api.Client client;
 
 	public LeagueScapePanel(LeagueScapePlugin plugin, LeagueScapeConfig config, ConfigManager configManager,
 		AreaGraphService areaGraphService, PointsService pointsService, AreaCompletionService areaCompletionService,
-		net.runelite.client.audio.AudioPlayer audioPlayer)
+		net.runelite.client.audio.AudioPlayer audioPlayer, net.runelite.api.Client client)
 	{
 		this.plugin = plugin;
 		this.config = config;
@@ -53,6 +54,7 @@ public class LeagueScapePanel extends PluginPanel
 		this.pointsService = pointsService;
 		this.areaCompletionService = areaCompletionService;
 		this.audioPlayer = audioPlayer;
+		this.client = client;
 		setLayout(new BorderLayout());
 		setBorder(new EmptyBorder(6, 6, 6, 6));
 
@@ -219,14 +221,14 @@ public class LeagueScapePanel extends PluginPanel
 	{
 		if (plugin.unlockArea(areaId, cost))
 		{
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED);
+			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
 			refreshPointsLabel();
 			refreshCurrentAreaLabel(areaId);
 			refreshUnlockButtons();
 		}
 		else
 		{
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.WRONG);
+			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.WRONG, client);
 		}
 	}
 

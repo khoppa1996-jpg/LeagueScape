@@ -1,5 +1,4 @@
-{
-  "defaultTasks": [
+[
   {
     "displayName": "Chop some Logs",
     "taskType": "Woodcutting",
@@ -22,7 +21,9 @@
     "displayName": "Chop some Maple Logs",
     "taskType": "Woodcutting",
     "difficulty": 2,
-    "f2p": true
+    "f2p": true,
+    "area": "corsair_cove, kebos_lowlands, shayzien, kourend_woodland, kingstown, camelot_seers, prifddinas, isle_of_souls, barbarian_waterfall, ardougne, aldarin, auburnvale",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Chop some Yew Logs",
@@ -52,7 +53,9 @@
     "displayName": "Burn some Maple Logs",
     "taskType": "Firemaking",
     "difficulty": 2,
-    "f2p": true
+    "f2p": true,
+    "area": "corsair_cove, kebos_lowlands, shayzien, kourend_woodland, kingstown, camelot_seers, prifddinas, isle_of_souls, barbarian_waterfall, ardougne, aldarin, auburnvale",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Burn some Yew Logs",
@@ -93,17 +96,23 @@
   {
     "displayName": "Chop some Magic Logs",
     "taskType": "Woodcutting",
-    "difficulty": 3
+    "difficulty": 3,
+    "area": "gnome_stronghold, lovakengj, kourend_woodland, arceuus, kingstown, hosidius, isafdar, corsair_cove, camelot_seers, deep_wilderness, western_varlamore, aldarin, auburnvale, tlati_rainforest, ardent_se, western_s",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Burn some Magic Logs",
     "taskType": "Woodcutting",
-    "difficulty": 3
+    "difficulty": 3,
+    "area": "gnome_stronghold, lovakengj, kourend_woodland, arceuus, kingstown, hosidius, isafdar, corsair_cove, camelot_seers, deep_wilderness, western_varlamore, aldarin, auburnvale, tlati_rainforest, ardent_se, western_s",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Fletch a Magic Longbow",
     "taskType": "Fletching",
-    "difficulty": 4
+    "difficulty": 4,
+    "area": "corsair_cove, kebos_lowlands, shayzien, kourend_woodland, kingstown, camelot_seers, prifddinas, isle_of_souls, barbarian_waterfall, ardougne, aldarin, auburnvale",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Catch some Shrimp",
@@ -144,7 +153,7 @@
   {
     "displayName": "Catch a Cave Eel",
     "taskType": "Fishing",
-    "difficulty": 1,
+    "difficulty": 2,
     "area": "lumbridge"
   },
   {
@@ -198,7 +207,9 @@
     "displayName": "Mine some Gold Ore",
     "taskType": "Mining",
     "difficulty": 2,
-    "f2p": true
+    "f2p": true,
+    "area": "sophanem, al_kharid, rimmington, shrouded_w, rellekka, lassar, falador, proudspire, gnome_stronghold, isle_of_souls, musa_point, fremennik_isles, aldarin, prifddinas, unquiet, eastern_varlamore, tlati_rainforest, deep_wilderness, ardougne",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Mine some Mithril Ore",
@@ -213,10 +224,12 @@
     "f2p": true
   },
   {
-    "displayName": "Mine some Runeite Ore",
+    "displayName": "Mine some Runite Ore",
     "taskType": "Mining",
     "difficulty": 4,
-    "f2p": true
+    "f2p": true,
+    "area": "fremennik_isles, unquiet, shrouded_w, fossil_island, northwestern_wilderness, northern_e, taverly, isafdar, isle_of_souls, deep_wilderness, falador, ardougne, corsair_cove, proudspire, musa_point, custodia_mountains, prifddinas, western_n",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Mine some Lovakite Ore",
@@ -264,7 +277,9 @@
     "displayName": "Smelt a Runite Bar",
     "taskType": "Smithing",
     "difficulty": 4,
-    "f2p": true
+    "f2p": true,
+    "area": "fremennik_isles, unquiet, shrouded_w, fossil_island, northwestern_wilderness, northern_e, taverly, isafdar, isle_of_souls, deep_wilderness, falador, ardougne, corsair_cove, proudspire, musa_point, custodia_mountains, prifddinas, western_n",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Smith a Bronze Platebody",
@@ -297,7 +312,7 @@
     "f2p": true
   },
   {
-    "displayName": "Smith a Runite Platebody",
+    "displayName": "Smith a Rune Platebody",
     "taskType": "Smithing",
     "difficulty": 5,
     "f2p": true
@@ -490,31 +505,35 @@
     "taskType": "Runecraft",
     "difficulty": 1,
     "f2p": true,
-    "area": "lumbridge",
-    "requirements": "Rune Mysteries"
+    "area": "lumbridge, draynor, varrock",
+    "requirements": "Rune Mysteries",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Craft an Air Rune",
     "taskType": "Runecraft",
     "difficulty": 1,
     "f2p": true,
-    "area": "falador",
-    "requirements": "Rune Mysteries"
+    "area": "falador, lumbridge, draynor, varrock",
+    "requirements": "Rune Mysteries",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Craft an Earth Rune",
     "taskType": "Runecraft",
     "difficulty": 1,
     "f2p": true,
-    "area": "varrock",
-    "requirements": "Rune Mysteries"
+    "area": "varrock, lumbridge, draynor",
+    "requirements": "Rune Mysteries",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Craft a Fire Rune",
     "taskType": "Runecraft",
     "difficulty": 1,
     "f2p": true,
-    "area": "al_kharid",
+    "area": "al_kharid, lumbridge, draynor, varrock",
+    "onceOnly": true,
     "requirements": "Rune Mysteries"
   },
   {
@@ -655,37 +674,51 @@
   {
     "displayName": "Defeat a Green Dragon",
     "taskType": "Combat",
-    "difficulty": 2
+    "difficulty": 2,
+    "area": "southeast_wilderness, northeast_wilderness, north_central_wilderness, southwestern_wilderness, northwestern_wilderness, corsair_cove",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Blue Dragon",
     "taskType": "Combat",
-    "difficulty": 2
+    "difficulty": 2,
+    "area": "corsair_cove, feldip_hills, taverly, isle_of_souls, proudspire, tlati_rainforest",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Red Dragon",
     "taskType": "Combat",
-    "difficulty": 2
+    "difficulty": 2,
+    "area": "karamja, musa_point, tlati_rainforest, hosidius, kourend_woodland, unquiet, corsair_cove",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Black Dragon",
     "taskType": "Combat",
-    "difficulty": 3
+    "difficulty": 3,
+    "area": "unquiet, corsair_cove, northwestern_wilderness, prifddinas, taverly, northeast_wilderness, southeast_wilderness",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Bronze Dragon",
     "taskType": "Combat",
-    "difficulty": 2
+    "difficulty": 2,
+    "area": "musa_point, karamja, kingstown",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat an Iron Dragon",
     "taskType": "Combat",
-    "difficulty": 2
+    "difficulty": 2,
+    "area": "musa_point, karamja, kingstown, isle_of_souls",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Steel Dragon",
     "taskType": "Combat",
-    "difficulty": 2
+    "difficulty": 2,
+    "area": "musa_point, karamja, kingstown",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Mithril Dragon",
@@ -977,13 +1010,6 @@
     "requirements": "Rune Mysteries"
   },
   {
-    "displayName": "Complete Rune Mysteries",
-    "taskType": "Quest",
-    "difficulty": 1,
-    "f2p": true,
-    "area": "lumbridge, draynor, varrock"
-  },
-  {
     "displayName": "Mine some Iron Ore in the Al Kharid Mine",
     "taskType": "Achievement Diary",
     "difficulty": 1,
@@ -1056,15 +1082,17 @@
     "displayName": "Catch an Essence or Eclectic impling in Puro-Puro",
     "taskType": "Achievement Diary",
     "difficulty": 2,
-    "area": "lumbridge",
-    "requirements": "Lost City"
+    "area": "lumbridge, draynor, port_sarim_mudskipper, entrana",
+    "requirements": "Lost City",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Craft a Lava Rune at the fire altar in Al Kharid",
     "taskType": "Achievement Diary",
     "difficulty": 1,
-    "area": "al_kharid",
-    "requirements": "Rune Mysteries"
+    "area": "al_kharid, lumbridge, draynor, varrock",
+    "requirements": "Rune Mysteries",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Cast Bones to Peaches in Al Kharid Palace",
@@ -1076,15 +1104,17 @@
     "displayName": "Squeeze Past the justting wall on your way to the Cosmic Altar",
     "taskType": "Achievement Diary",
     "difficulty": 2,
-    "area": "lumbridge",
-    "requirements": "Lost City"
+    "area": "lumbridge, draynor, port_sarim_mudskipper, entrana",
+    "requirements": "Lost City",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Craft 56 Cosmic Runes simultaneously from Essence without the use of Extracts",
     "taskType": "Achievement Diary",
     "difficulty": 2,
-    "area": "lumbridge",
-    "requirements": "Lost City"
+    "area": "lumbridge, draynor, port_sarim_mudskipper, entrana",
+    "requirements": "Lost City",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Travel from Lumbridge to Edgeville on a Waka Canoe",
@@ -1096,13 +1126,13 @@
     "displayName": "Take the Train from Dorgesh Kaan to Keldagrim",
     "taskType": "Achievement Diary",
     "difficulty": 2,
-    "area": "lumbridge, rellekka",
-    "requirements": "Another Slice of H.A.M., Giant Dwarf"
+    "area": "lumbridge, varrock, lassar, falador, rellekka",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Collect 100 Tears of Guthix in one visit",
     "taskType": "Achievement Diary",
-    "difficulty": 2,
+    "difficulty": 4,
     "area": "lumbridge",
     "requirements": "Tears of Guthix"
   },
@@ -1141,8 +1171,9 @@
     "displayName": "Steal from a Dorgesh Kaan rich chest",
     "taskType": "Achievement Diary",
     "difficulty": 3,
-    "area": "lumbridge",
-    "requirements": "Death to the Dorgeshuun"
+    "area": "lumbridge, varrock, lassar",
+    "requirements": "Death to the Dergeshuun",
+    "areaRequirement": "all"
   },
   {
     "displayName": "Grapple across a pylon on the Dorgesh Kaan Agility Course",
@@ -1226,8 +1257,819 @@
     "displayName": "Enter Zanaris through the Lumbridge Swamp Shed",
     "taskType": "Other",
     "difficulty": 3,
+    "area": "lumbridge, draynor, port_sarim_mudskipper, entrana",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete Rune Mysteries",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge, draynor, varrock",
+    "onceOnly": true,
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete Demon Slayer",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock, draynor",
+    "onceOnly": true,
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Defeat a Duck in the River Lum",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Chop a Yew log from the Yew Tree in the Lumbridge Graveyard",
+    "taskType": "Woodcutting",
+    "difficulty": 3,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Complete Goblin Diplomacy",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lassar, falador, draynor, varrock",
+    "onceOnly": true,
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete the Lost Tribe",
+    "taskType": "Quest",
+    "difficulty": 2,
+    "area": "lumbridge, varrock, lassar",
+    "onceOnly": true,
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete Death to the Dorgeshuun",
+    "taskType": "Quest",
+    "difficulty": 3,
+    "area": "lumbridge, varrock, lassar",
+    "requirements": "Lost Tribe",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete Another Slice of H.A.M.",
+    "taskType": "Quest",
+    "difficulty": 3,
+    "area": "lumbridge, varrock, lassar, falador",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete Land of the Goblins",
+    "taskType": "Quest",
+    "difficulty": 4,
+    "area": "lumbridge, lassar, falador, varrock, hemenster, draynor",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete Lost City",
+    "taskType": "Quest",
+    "difficulty": 3,
+    "area": "lumbridge, draynor, port_sarim_mudskipper, entrana",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Equip the Skillcape of Farming",
+    "taskType": "Farming",
+    "difficulty": 5,
+    "area": "draynor",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Defeat a Frost Dragon",
+    "taskType": "Combat",
+    "difficulty": 5,
+    "area": "northern_e"
+  },
+  {
+    "displayName": "Defeat a Lava Dragon",
+    "taskType": "Combat",
+    "difficulty": 3,
+    "area": "north_central_wilderness"
+  },
+  {
+    "displayName": "Defeat a Revenant Dragon",
+    "taskType": "Combat",
+    "difficulty": 3,
+    "area": "north_central_wilderness, south_central_wilderness",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Fletch a Yew Stock in Lumbridge",
+    "taskType": "Fletching",
+    "difficulty": 3,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Activate Protect Item in the Lumbridge Church",
+    "taskType": "Prayer",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Equip all Seven pieces of H.A.M. robes",
+    "taskType": "Equipment",
+    "difficulty": 2,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Create an Expeditious Bracelet",
+    "taskType": "Magic",
+    "difficulty": 2,
+    "area": "lumbridge, varrock, al_kharid",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Achieve your first Level 10",
+    "taskType": "Level",
+    "difficulty": 1,
+    "f2p": true,
     "area": "lumbridge",
-    "requirements": "Lost City"
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete Ernest the Chicken",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Pickpocket a Master Farmer",
+    "taskType": "Thieving",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Steal from the Seed Stall",
+    "taskType": "Thieving",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Complete Imp Catcher",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Defeat a Jail Guard",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "area": "draynor"
+  },
+  {
+    "displayName": "I'm being attacked by a tree!",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Receive a Slayer Task from Spria",
+    "taskType": "Slayer",
+    "difficulty": 2,
+    "area": "draynor, falador",
+    "requirements": "A Porcine of Interest",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete a Porcine of Interest",
+    "taskType": "Quest",
+    "difficulty": 2,
+    "area": "draynor, falador",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Slay a Sourhog",
+    "taskType": "Slayer",
+    "difficulty": 1,
+    "area": "draynor, falador",
+    "requirements": "A Porcine of Interest",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete Vampire Slayer",
+    "taskType": "Quest",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "draynor, varrock",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Chop a Potato Tree",
+    "taskType": "Woodcutting",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Fletch a Willow Stock in Draynor Square",
+    "taskType": "Fletching",
+    "difficulty": 2,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Play with a Toy Horsey",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "draynor"
+  },
+  {
+    "displayName": "Obtain a Forestry Kit",
+    "taskType": "Equipment",
+    "difficulty": 1,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Fox whistle",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Golden pheasant egg",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "area": "draynor, prifddinas, auburnvale, camelot_seers",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Lumberjack hat",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas, southern_morytania",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Lumberjack top",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas, southern_morytania",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Lumberjack legs",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas, southern_morytania",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Lumberjack Boots",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas, southern_morytania",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Equip the full Lumberjack Outfit",
+    "taskType": "Equipment",
+    "difficulty": 5,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas, southern_morytania",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Forestry hat",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Forestry top",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Forestry legs",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Forestry boots",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Twitcher's gloves",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Funky shaped log",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Log basket",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Log brace",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Clothes pouch blueprint",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Cape pouch",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Felling axe handle",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Pheasant hat",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Pheasant legs",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Pheasant boots",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Pheasant cape",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain the Petal garland",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain some Sturdy beehive parts",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "area": "draynor, auburnvale, camelot_seers, prifddinas",
+    "onceOnly": true,
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Obtain a Mark of Grace",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "area": "draynor, al_kharid, varrock, canifis, falador, camelot_seers, polnivneach_desert, rellekka, ardougne",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Equip a Blue Wizard robe and hat in the Wizards' Tower Basement",
+    "taskType": "Equipment",
+    "difficulty": 2,
+    "area": "draynor",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Complete Prince Ali Rescue",
+    "taskType": "Quest",
+    "difficulty": 2,
+    "area": "al_kharid, lumbridge, draynor",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Obtain Korvac's grog",
+    "taskType": "Collection Log",
+    "difficulty": 1,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Obtain a Smithing catalyst",
+    "taskType": "Collection Log",
+    "difficulty": 1,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Obtainan Ore pack",
+    "taskType": "Collection Log",
+    "difficulty": 1,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Obtain a Double ammo mould",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "al_kharid, hemenster, falador, lassar",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants, Dwarf Cannon",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Obtain a Colossal blade",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Obtain a Smithing tunic",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Obtain Smiths trousers",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Obtain Smiths boots",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Obtain Smiths gloves",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Complete one Giants' Foundry Commission",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Complete a Giants' Foundry Commission while wearing the full Smiths outfit",
+    "taskType": "Smithing",
+    "difficulty": 5,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Complete Sleeping Giants",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Beginner's wand",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain an Apprentice wand",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Teacher wand",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Master wand",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain an Infinity hat",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain an Infinity top",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain Infinity bottoms",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain Infinity boots",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain Infinity gloves",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Mage's book",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Cast Bones to Peaches while Wearing full Infinity robes, a Master wand, and a Mage's book",
+    "taskType": "Magic",
+    "difficulty": 5,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Mine some Gold Ore in the Al Kharid Mine",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Complete 10 Giants' Foundry Commissions",
+    "taskType": "Smithing",
+    "difficulty": 1,
+    "area": "al_kharid",
+    "onceOnly": true,
+    "requirements": "Sleeping Giants"
+  },
+  {
+    "displayName": "Complete 50 Giants' Foundry Commissions",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Pray at the Cithrade Abbey's altar to restore 40 Prayer Points",
+    "taskType": "Prayer",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "al_kharid",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Long Bone",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Curved Bone",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Shaman mask",
+    "taskType": "Collection Log",
+    "difficulty": 4,
+    "f2p": true,
+    "area": "corsair_cove",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Right skull half",
+    "taskType": "Collection Log",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Left skull half",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "f2p": true,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Top of sceptre",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a Bottom of sceptre",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain a new Collection log slot",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Obtain Scurrius' spine",
+    "taskType": "Collection Log",
+    "difficulty": 3,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Obtain the Scurry pet",
+    "taskType": "Collection Log",
+    "difficulty": 5,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete the Scurrius Novice Combat Achievement",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete the Sit Rat Combat Achievement",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete the Scurrius Champion Combat Achievement",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete the Perfect Scurrius Combat Achievement",
+    "taskType": "Combat",
+    "difficulty": 3,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete the Efficient Pest Control Combat Achievement",
+    "taskType": "Combat",
+    "difficulty": 3,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Ask Duke Horacio where to find money",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Defeat a Giant Frog in Lumbridge Swamp",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Burn some Rat Meat on a fire in Lumbridge",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Pickpocket a Farmer",
+    "taskType": "Thieving",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Eat a Cabbage",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Try wearing some Goblin mail",
+    "taskType": "Equipment",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Kick a Spider in the Lumbridge Basement",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Visit Death's Domain",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "onceOnly": true
   }
-  ]
-}
+]

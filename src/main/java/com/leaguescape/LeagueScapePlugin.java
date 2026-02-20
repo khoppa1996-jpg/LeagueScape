@@ -160,7 +160,7 @@ public class LeagueScapePlugin extends Plugin
 		overlayManager.add(areaEditOverlay);
 		eventBus.register(this);
 		// updateMapMouseListener() uses client (getWidget, isHidden) and must run on client thread; onGameTick will call it
-		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService, audioPlayer);
+		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService, audioPlayer, client);
 		navButton = NavigationButton.builder()
 			.tooltip("LeagueScape")
 			.icon(panel.getIcon())
@@ -287,9 +287,9 @@ public class LeagueScapePlugin extends Plugin
 		com.leaguescape.points.AreaCompletionService areaCompletionService,
 		com.leaguescape.task.TaskGridService taskGridService,
 		com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService,
-		AudioPlayer audioPlayer)
+		AudioPlayer audioPlayer, net.runelite.client.callback.ClientThread clientThread)
 	{
-		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService, osrsWikiApiService, audioPlayer);
+		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService, osrsWikiApiService, audioPlayer, clientThread);
 	}
 
 	@Provides

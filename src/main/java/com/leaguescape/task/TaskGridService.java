@@ -582,7 +582,7 @@ public class TaskGridService
 				positionsByTier.get(t).add(nextOverfillPosition(effectiveMaxTier, overfillIndex++));
 		}
 
-		// Build ordered pool per difficulty (1–5): dedupe by taskKey, area-specific first then filler, shuffled. Used for whole-grid assignment.
+		// Build ordered pool per difficulty (1–5): dedupe by taskKey, area-specific first then filler, shuffled. Only tasks from tasks.json (no synthetic tasks).
 		List<List<TaskDefinition>> orderedPoolsByDifficulty = new ArrayList<>();
 		for (int d = 0; d <= MAX_TIER; d++)
 			orderedPoolsByDifficulty.add(new ArrayList<>());
@@ -593,14 +593,7 @@ public class TaskGridService
 			pool = pool.stream().filter(t -> seenKey.add(taskKey(t))).collect(Collectors.toList());
 			if (pool.isEmpty() && d > 1)
 				pool = new ArrayList<>(orderedPoolsByDifficulty.get(1));
-			if (pool.isEmpty())
-			{
-				TaskDefinition fallback = new TaskDefinition();
-				fallback.setDisplayName("Task " + d);
-				fallback.setTaskType(null);
-				fallback.setDifficulty(d);
-				pool = Collections.singletonList(fallback);
-			}
+			// No synthetic "Task " + d; leave pool empty if no tasks from tasks.json for this difficulty
 			List<TaskDefinition> onceOnly = pool.stream().filter(t -> Boolean.TRUE.equals(t.getOnceOnly())).collect(Collectors.toList());
 			List<TaskDefinition> rest = pool.stream().filter(t -> !Boolean.TRUE.equals(t.getOnceOnly())).collect(Collectors.toList());
 			if (rest.isEmpty() && !onceOnly.isEmpty()) rest = new ArrayList<>(onceOnly);
@@ -621,8 +614,25 @@ public class TaskGridService
 			orderedPoolsByDifficulty.set(d, ordered);
 		}
 
-		// Assign tasks per position: concentric layout with transition rings and T4 corners. Each position gets difficulty from difficultyForCell;
-		// if that pool has no unused task, fill from next lower difficulty (tier 1 can fill any tier). Global deduplication.
+		// Fallback pool: area-specific first, then no-area tasks (from tasks.json only). Used so no tile is left blank.
+		List<TaskDefinition> areaFirst = taskDefs.stream()
+			.filter(t -> t.getRequiredAreaIds() != null && !t.getRequiredAreaIds().isEmpty() && t.getRequiredAreaIds().contains(areaId))
+			.collect(Collectors.toList());
+		List<TaskDefinition> noArea = taskDefs.stream()
+			.filter(t -> t.getRequiredAreaIds() == null || t.getRequiredAreaIds().isEmpty())
+			.collect(Collectors.toList());
+		List<TaskDefinition> fallbackPool = new ArrayList<>(areaFirst.size() + noArea.size());
+		Set<String> fallbackSeen = new HashSet<>();
+		for (TaskDefinition t : areaFirst)
+			if (fallbackSeen.add(taskKey(t))) fallbackPool.add(t);
+		for (TaskDefinition t : noArea)
+			if (fallbackSeen.add(taskKey(t))) fallbackPool.add(t);
+		Collections.shuffle(fallbackPool, rng);
+		if (fallbackPool.isEmpty())
+			fallbackPool = new ArrayList<>(taskDefs); // edge case: use any task
+		final int[] fallbackIndex = { 0 };
+
+		// Assign tasks per position: concentric layout. Only tasks from tasks.json; prioritize area then filler; never leave a tile blank.
 		Set<String> usedTaskKeys = new HashSet<>();
 		List<TaskDefinition> assigned = new ArrayList<>(4 * effectiveMaxTier * (effectiveMaxTier + 1));
 		for (int tier = 1; tier <= effectiveMaxTier; tier++)
@@ -631,7 +641,7 @@ public class TaskGridService
 			for (int[] rc : positions)
 			{
 				int r = rc[0], c = rc[1];
-				int difficulty = difficultyForCell(tier, r, c, effectiveMaxTier, rng);
+				int difficulty = difficultyForCell(areaId, tier, r, c, effectiveMaxTier, rng);
 				TaskDefinition chosen = null;
 				for (int d = difficulty; d >= 1 && chosen == null; d--)
 				{
@@ -644,6 +654,8 @@ public class TaskGridService
 						}
 					}
 				}
+				if (chosen == null && !fallbackPool.isEmpty())
+					chosen = fallbackPool.get(fallbackIndex[0]++ % fallbackPool.size());
 				if (chosen == null)
 				{
 					TaskDefinition placeholder = new TaskDefinition();
@@ -672,9 +684,10 @@ public class TaskGridService
 			{
 				int r = rc[0], c = rc[1];
 				String id = TaskTile.idFor(r, c);
-				int points = pointsForTier(tier);
 				Integer ai = positionToIndex.get(r + "," + c);
 				TaskDefinition def = (ai != null && ai < assigned.size()) ? assigned.get(ai) : null;
+				// Points follow the task's difficulty, not the cell tier, so filler tasks keep their original point value
+				int points = pointsForTier(def != null ? def.getDifficulty() : tier);
 				String displayName = def != null && def.getDisplayName() != null ? def.getDisplayName() : ("Task " + id);
 				String taskType = def != null ? def.getTaskType() : null;
 				List<String> requiredAreaIds = (def != null && !def.getRequiredAreaIds().isEmpty())
@@ -684,7 +697,102 @@ public class TaskGridService
 				out.add(new TaskTile(id, tier, displayName, points, r, c, taskType, requiredAreaIds, requireAllAreas, requirements));
 			}
 		}
+		// Enforce: no two mystery tiles may share a side or corner (at least one tile space between mystery tiles)
+		separateAdjacentMysteryTiles(out, areaId);
 		return out;
+	}
+
+	/** True if two grid positions (r,c) are adjacent (share a side or corner). */
+	private static boolean isAdjacent(int r1, int c1, int r2, int c2)
+	{
+		if (r1 == r2 && c1 == c2) return false;
+		return Math.abs(r1 - r2) <= 1 && Math.abs(c1 - c2) <= 1;
+	}
+
+	/**
+	 * Ensures no two mystery tiles are adjacent (share side or corner). When two mystery tiles are
+	 * adjacent, swaps one with a non-mystery tile from a position that has no mystery neighbors.
+	 */
+	private void separateAdjacentMysteryTiles(List<TaskTile> grid, String areaId)
+	{
+		if (grid.size() <= 1) return;
+		Set<String> unlocked = areaGraphService.getUnlockedAreaIds();
+		// Index 0 is center; indices 1..size-1 are task tiles with positions
+		java.util.Map<String, Integer> posToIndex = new HashMap<>();
+		for (int i = 1; i < grid.size(); i++)
+		{
+			TaskTile t = grid.get(i);
+			posToIndex.put(t.getRow() + "," + t.getCol(), i);
+		}
+		int maxIterations = grid.size() * 2; // avoid infinite loop
+		for (int iter = 0; iter < maxIterations; iter++)
+		{
+			Set<String> mysteryPositions = new HashSet<>();
+			for (int i = 1; i < grid.size(); i++)
+			{
+				TaskTile t = grid.get(i);
+				if (t.isMystery(unlocked, areaId))
+					mysteryPositions.add(t.getRow() + "," + t.getCol());
+			}
+			// Find two adjacent mystery positions
+			String mysteryA = null;
+			String mysteryB = null;
+			for (String posA : mysteryPositions)
+			{
+				String[] pa = posA.split(",", 2);
+				int r1 = Integer.parseInt(pa[0]);
+				int c1 = Integer.parseInt(pa[1]);
+				for (String posB : mysteryPositions)
+				{
+					if (posA.compareTo(posB) >= 0) continue;
+					String[] pb = posB.split(",", 2);
+					int r2 = Integer.parseInt(pb[0]);
+					int c2 = Integer.parseInt(pb[1]);
+					if (isAdjacent(r1, c1, r2, c2))
+					{
+						mysteryA = posA;
+						mysteryB = posB;
+						break;
+					}
+				}
+				if (mysteryA != null) break;
+			}
+			if (mysteryA == null) break; // no adjacent mystery pair
+			// Find a non-mystery position that has no mystery neighbor (so after swap it stays valid)
+			Integer idxSwap = null;
+			for (int i = 1; i < grid.size(); i++)
+			{
+				TaskTile t = grid.get(i);
+				String pos = t.getRow() + "," + t.getCol();
+				if (mysteryPositions.contains(pos)) continue; // must be non-mystery
+				boolean hasMysteryNeighbor = false;
+				for (int dr = -1; dr <= 1 && !hasMysteryNeighbor; dr++)
+					for (int dc = -1; dc <= 1 && !hasMysteryNeighbor; dc++)
+					{
+						if (dr == 0 && dc == 0) continue;
+						String neighbor = (t.getRow() + dr) + "," + (t.getCol() + dc);
+						if (mysteryPositions.contains(neighbor))
+							hasMysteryNeighbor = true;
+					}
+				if (!hasMysteryNeighbor)
+				{
+					idxSwap = i;
+					break;
+				}
+			}
+			if (idxSwap == null) break; // cannot fix (e.g. too many mystery tasks)
+			int idxA = posToIndex.get(mysteryA);
+			int idxB = idxSwap;
+			// Swap task content between tile at idxA and tile at idxB (keep positions)
+			TaskTile tileA = grid.get(idxA);
+			TaskTile tileB = grid.get(idxB);
+			TaskTile newA = new TaskTile(tileA.getId(), tileA.getTier(), tileB.getDisplayName(), tileB.getPoints(),
+				tileA.getRow(), tileA.getCol(), tileB.getTaskType(), tileB.getRequiredAreaIds(), tileB.isRequireAllAreas(), tileB.getRequirements());
+			TaskTile newB = new TaskTile(tileB.getId(), tileB.getTier(), tileA.getDisplayName(), tileA.getPoints(),
+				tileB.getRow(), tileB.getCol(), tileA.getTaskType(), tileA.getRequiredAreaIds(), tileA.isRequireAllAreas(), tileA.getRequirements());
+			grid.set(idxA, newA);
+			grid.set(idxB, newB);
+		}
 	}
 
 	/** Returns points awarded when a task in the given tier is claimed (from config tier 1–5 points). Tier 6+ uses tier 5 value. */
@@ -761,11 +869,16 @@ public class TaskGridService
 	/**
 	 * Returns the difficulty (1–5) used to choose the task pool for a cell at ring {@code ring} with coords (r,c).
 	 * Layout: inner rings = 1; transition rings = random mix of two difficulties; tier-3 zone has tier-4 in corners; outer = mix 4&5.
+	 * In the starting area, the first 3 rings (rings 1–3) are all difficulty 1 (2 extra rings of tier-1 tiles).
 	 * Scales with total rings T (grid can be larger or smaller than 17x17).
 	 */
-	private int difficultyForCell(int ring, int r, int c, int totalRings, Random rng)
+	private int difficultyForCell(String areaId, int ring, int r, int c, int totalRings, Random rng)
 	{
 		if (totalRings <= 1)
+			return 1;
+		// Starting area: 3 rings of difficulty-1 (existing 1 ring + 2 extra)
+		String start = config.startingArea();
+		if (start != null && start.equals(areaId) && ring <= 3)
 			return 1;
 		double dCont = 1.0 + 4.0 * (ring - 1) / (totalRings - 1);
 		// Tier-3 ring: put tier 4 in corners (cells where both |r| and |c| equal the ring)
