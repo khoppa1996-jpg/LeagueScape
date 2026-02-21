@@ -1784,11 +1784,14 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		BufferedImage checkmarkImg, BufferedImage padlockImg, BufferedImage tileBg, BufferedImage buttonRect,
 		BufferedImage taskIcon, Color textColor, Runnable onRefresh, JDialog parentDialog, Area area, boolean isMystery, int tileSize, int iconMargin)
 	{
+		boolean isCenter = (tile.getRow() == 0 && tile.getCol() == 0);
 		if (state == TaskState.CLAIMED)
 		{
-			return buildClaimedTaskCell(tileBg, checkmarkImg, tileSize);
+			return buildClaimedTaskCell(tileBg, checkmarkImg, padlockImg, tileSize, isCenter);
 		}
 		final BufferedImage tileBgFinal = tileBg;
+		final BufferedImage padlockFinal = padlockImg;
+		final boolean centerTile = isCenter;
 		JPanel cell = new JPanel()
 		{
 			@Override
@@ -1803,6 +1806,16 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					g.setColor(new Color(60, 55, 50));
 					g.fillRect(0, 0, getWidth(), getHeight());
 				}
+				// Center tile: always show padlock so the center is easy to find
+				if (centerTile && padlockFinal != null)
+				{
+					int w = getWidth();
+					int h = getHeight();
+					int size = Math.min(w, h) * 3 / 4;
+					int x = (w - size) / 2;
+					int y = (h - size) / 2;
+					g.drawImage(padlockFinal.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
+				}
 				super.paintComponent(g);
 			}
 		};
@@ -1810,7 +1823,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		cell.setOpaque(false);
 		cell.setPreferredSize(new Dimension(tileSize, tileSize));
 
-		if (taskIcon != null)
+		// Center tile shows only padlock (no task icon)
+		if (taskIcon != null && !centerTile)
 		{
 			final BufferedImage iconImage = taskIcon;
 			final int margin = iconMargin;
@@ -1875,11 +1889,13 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		return cell;
 	}
 
-	/** Claimed task: desaturated tile, single small checkmark in corner, not clickable. */
-	private JPanel buildClaimedTaskCell(BufferedImage tileBg, BufferedImage checkmarkImg, int tileSize)
+	/** Claimed task: desaturated tile, single small checkmark in corner (or on top of padlock for center tile), not clickable. */
+	private JPanel buildClaimedTaskCell(BufferedImage tileBg, BufferedImage checkmarkImg, BufferedImage padlockImg, int tileSize, boolean isCenter)
 	{
 		final BufferedImage bg = tileBg;
 		final BufferedImage checkmark = checkmarkImg != null ? ImageUtil.resizeImage(checkmarkImg, CLAIMED_CHECKMARK_SIZE, CLAIMED_CHECKMARK_SIZE) : null;
+		final BufferedImage padlock = padlockImg;
+		final boolean centerTile = isCenter;
 		JPanel cell = new JPanel()
 		{
 			@Override
@@ -1895,14 +1911,34 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					g.setColor(new Color(60, 55, 50));
 					g.fillRect(0, 0, getWidth(), getHeight());
 				}
+				// Center tile: draw padlock first, then checkmark on top
+				if (centerTile && padlock != null)
+				{
+					int w = getWidth();
+					int h = getHeight();
+					int size = Math.min(w, h) * 3 / 4;
+					int x = (w - size) / 2;
+					int y = (h - size) / 2;
+					g.drawImage(padlock.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
+				}
 				// Desaturate with semi-transparent gray overlay
 				g.setColor(new Color(120, 120, 120, 140));
 				g.fillRect(0, 0, getWidth(), getHeight());
 				if (checkmark != null)
 				{
-					int x = getWidth() - CLAIMED_CHECKMARK_SIZE - CLAIMED_CHECKMARK_INSET;
-					int y = CLAIMED_CHECKMARK_INSET;
-					g.drawImage(checkmark, x, y, null);
+					if (centerTile)
+					{
+						// Checkmark on top of padlock (centered)
+						int x = (getWidth() - CLAIMED_CHECKMARK_SIZE) / 2;
+						int y = (getHeight() - CLAIMED_CHECKMARK_SIZE) / 2;
+						g.drawImage(checkmark, x, y, null);
+					}
+					else
+					{
+						int x = getWidth() - CLAIMED_CHECKMARK_SIZE - CLAIMED_CHECKMARK_INSET;
+						int y = CLAIMED_CHECKMARK_INSET;
+						g.drawImage(checkmark, x, y, null);
+					}
 				}
 			}
 		};

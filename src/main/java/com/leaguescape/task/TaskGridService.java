@@ -8,8 +8,10 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.area.AreaGraphService;
@@ -129,6 +131,23 @@ public class TaskGridService
 		.registerTypeAdapter(TaskDefinition.class, TASK_DESERIALIZER)
 		.create();
 
+	private static final java.lang.reflect.Type LIST_TASK_DEFINITION = new TypeToken<List<TaskDefinition>>(){}.getType();
+
+	/** Parses JSON from the stream into TasksData. Accepts both root array {@code [ ... ]} and object {@code {"defaultTasks": [...]}. */
+	private static TasksData parseTasksDataFromStream(InputStream in) throws Exception
+	{
+		JsonElement root = new JsonParser().parse(new InputStreamReader(in, StandardCharsets.UTF_8));
+		if (root == null) return null;
+		if (root.isJsonArray())
+		{
+			List<TaskDefinition> list = GSON.fromJson(root, LIST_TASK_DEFINITION);
+			TasksData data = new TasksData();
+			data.setDefaultTasks(list != null ? list : new ArrayList<>());
+			return data;
+		}
+		return GSON.fromJson(root, TasksData.class);
+	}
+
 	private static final Gson GSON_SERIALIZE = new GsonBuilder()
 		.registerTypeAdapter(TaskDefinition.class, TASK_SERIALIZER)
 		.create();
@@ -191,7 +210,7 @@ public class TaskGridService
 					{
 						try (InputStream in = Files.newInputStream(path))
 						{
-							tasksData = GSON.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), TasksData.class);
+							tasksData = parseTasksDataFromStream(in);
 							if (tasksData != null && tasksData.getDefaultTasks() != null)
 							{
 								log.info("LeagueScape tasks loaded from {}", path);
@@ -210,7 +229,7 @@ public class TaskGridService
 			{
 				if (in != null)
 				{
-					tasksData = GSON.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), TasksData.class);
+					tasksData = parseTasksDataFromStream(in);
 					if (tasksData != null && tasksData.getDefaultTasks() != null)
 					{
 						log.debug("LeagueScape tasks loaded from built-in resource");
@@ -654,8 +673,35 @@ public class TaskGridService
 						}
 					}
 				}
+				// Fallback 1: tasks that match cell difficulty (never assign e.g. difficulty-4 to a tier-1 ring)
 				if (chosen == null && !fallbackPool.isEmpty())
-					chosen = fallbackPool.get(fallbackIndex[0]++ % fallbackPool.size());
+				{
+					for (int i = 0; i < fallbackPool.size(); i++)
+					{
+						TaskDefinition t = fallbackPool.get((fallbackIndex[0] + i) % fallbackPool.size());
+						if (t.getDifficulty() <= difficulty && usedTaskKeys.add(taskKey(t)))
+						{
+							chosen = t;
+							fallbackIndex[0] += i + 1;
+							break;
+						}
+					}
+				}
+				// Fallback 2: any remaining task (no-area tasks can be completed in almost any area)
+				if (chosen == null && !fallbackPool.isEmpty())
+				{
+					for (int i = 0; i < fallbackPool.size(); i++)
+					{
+						TaskDefinition t = fallbackPool.get((fallbackIndex[0] + i) % fallbackPool.size());
+						if (usedTaskKeys.add(taskKey(t)))
+						{
+							chosen = t;
+							fallbackIndex[0] += i + 1;
+							break;
+						}
+					}
+				}
+				// Placeholder only if there are no tasks at all
 				if (chosen == null)
 				{
 					TaskDefinition placeholder = new TaskDefinition();
@@ -694,7 +740,8 @@ public class TaskGridService
 					? new ArrayList<>(def.getRequiredAreaIds()) : null;
 				boolean requireAllAreas = def == null || !def.isAreaRequirementAny();
 				String requirements = (def != null && def.getRequirements() != null && !def.getRequirements().isEmpty()) ? def.getRequirements().trim() : null;
-				out.add(new TaskTile(id, tier, displayName, points, r, c, taskType, requiredAreaIds, requireAllAreas, requirements));
+				int displayTier = displayTierForCell(areaId, tier);
+				out.add(new TaskTile(id, displayTier, displayName, points, r, c, taskType, requiredAreaIds, requireAllAreas, requirements));
 			}
 		}
 		// Enforce: no two mystery tiles may share a side or corner (at least one tile space between mystery tiles)
@@ -852,12 +899,20 @@ public class TaskGridService
 		}
 		if (target <= 0)
 			return MAX_TIER;
+		int computed = MAX_GRID_TIERS;
 		for (int T = MAX_TIER; T <= MAX_GRID_TIERS; T++)
 		{
 			if (totalPointsForTiers(T) >= target)
-				return T;
+			{
+				computed = T;
+				break;
+			}
 		}
-		return MAX_GRID_TIERS;
+		// Starting area: ensure at least 9 rings so tier 4/5 tasks are visible (rings 9+)
+		String start = config.startingArea();
+		if (start != null && start.equals(areaId) && computed < STARTING_AREA_TIER4_FIRST_RING)
+			return STARTING_AREA_TIER4_FIRST_RING;
+		return computed;
 	}
 
 	/** Columns per overfill row so overfill positions are deterministic and compact. */
@@ -866,21 +921,44 @@ public class TaskGridService
 	/** Width of transition zones (mix of two difficulties) on the 1–5 scale; centered transitions at 1.5, 2.5, 3.5, 4.5. */
 	private static final double TRANSITION_HALF_WIDTH = 0.35;
 
+	/** In starting area, rings 4–8 use only difficulties 1–3; tier 4+ first appears at ring 9. */
+	private static final int STARTING_AREA_TIER4_FIRST_RING = 9;
+
 	/**
 	 * Returns the difficulty (1–5) used to choose the task pool for a cell at ring {@code ring} with coords (r,c).
 	 * Layout: inner rings = 1; transition rings = random mix of two difficulties; tier-3 zone has tier-4 in corners; outer = mix 4&5.
-	 * In the starting area, the first 3 rings (rings 1–3) are all difficulty 1 (2 extra rings of tier-1 tiles).
+	 * In the starting area: rings 1–3 are all difficulty 1; rings 4–8 are difficulties 1–3 only; rings 9+ are tier 4 and 5.
 	 * Scales with total rings T (grid can be larger or smaller than 17x17).
 	 */
 	private int difficultyForCell(String areaId, int ring, int r, int c, int totalRings, Random rng)
 	{
 		if (totalRings <= 1)
 			return 1;
-		// Starting area: 3 rings of difficulty-1 (existing 1 ring + 2 extra)
 		String start = config.startingArea();
-		if (start != null && start.equals(areaId) && ring <= 3)
+		boolean isStartingArea = start != null && start.equals(areaId);
+		// Starting area: first 3 rings all difficulty 1
+		if (isStartingArea && ring <= 3)
 			return 1;
-		double dCont = 1.0 + 4.0 * (ring - 1) / (totalRings - 1);
+		double dCont;
+		if (isStartingArea && ring >= 4)
+		{
+			// Fixed schedule: rings 4–8 = difficulties 1–3 only; rings 9+ = 4 and 5 (tier 4 never before ring 9)
+			if (ring < STARTING_AREA_TIER4_FIRST_RING)
+			{
+				// Rings 4,5,6,7,8 → dCont 1.0, 1.5, 2.0, 2.5, 3.0
+				dCont = 1.0 + 2.0 * (ring - 4) / 4.0;
+			}
+			else
+			{
+				// Rings 9+ → scale from 3.0 to 5.0 over remaining rings
+				int ringsFrom9 = Math.max(1, totalRings - (STARTING_AREA_TIER4_FIRST_RING - 1));
+				dCont = 3.0 + 2.0 * (ring - STARTING_AREA_TIER4_FIRST_RING) / ringsFrom9;
+			}
+		}
+		else
+		{
+			dCont = 1.0 + 4.0 * (ring - 1) / (totalRings - 1);
+		}
 		// Tier-3 ring: put tier 4 in corners (cells where both |r| and |c| equal the ring)
 		boolean isCorner = (Math.abs(r) == ring && Math.abs(c) == ring);
 		if (isCorner && dCont >= 2.5 && dCont <= 3.5)
@@ -896,6 +974,24 @@ public class TaskGridService
 			return rng.nextBoolean() ? 4 : 5;
 		int d = (int) Math.round(dCont);
 		return Math.max(1, Math.min(MAX_TIER, d));
+	}
+
+	/**
+	 * Returns the display tier (1-based) shown for a cell at the given ring. In the starting area, rings 1–3
+	 * all show as tier 1; ring 4 → 1, rings 5–6 → 2, rings 7–8 → 3, rings 9+ → 4 and 5.
+	 */
+	private int displayTierForCell(String areaId, int ring)
+	{
+		String start = config.startingArea();
+		if (start == null || !start.equals(areaId))
+			return ring;
+		if (ring <= 3)
+			return 1;
+		// Ring 4→1, 5–6→2, 7–8→3, 9–10→4, 11–12→5, ...
+		if (ring < STARTING_AREA_TIER4_FIRST_RING)
+			return (int) Math.ceil((ring - 2) / 2.0);  // 4→1, 5,6→2, 7,8→3
+		int logicalRing = ring - (STARTING_AREA_TIER4_FIRST_RING - 1);  // ring 9→1, 10→2, ...
+		return 3 + (int) Math.ceil(logicalRing / 2.0);   // 9,10→4, 11,12→5
 	}
 
 	/**

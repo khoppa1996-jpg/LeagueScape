@@ -186,7 +186,7 @@
     "f2p": true
   },
   {
-    "displayName": "Mine some Tim Ore",
+    "displayName": "Mine some Tin Ore",
     "taskType": "Mining",
     "difficulty": 1,
     "f2p": true
@@ -627,13 +627,17 @@
     "displayName": "Defeat a Hill Giant",
     "taskType": "Combat",
     "difficulty": 1,
-    "f2p": true
+    "f2p": true,
+    "area": "northwestern_wilderness, shayzien, kingstown, khazard_battlegrounds, yanille, gnome_stronghold, southeast_wilderness, edgeville, taverly, deep_wilderness, al_kharid, eastern_varlamore",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Scorpion",
     "taskType": "Combat",
     "difficulty": 1,
-    "f2p": true
+    "f2p": true,
+    "area": "al_kharid, ape_atoll, ardougne, karamja, musa_point, falador, lassar, ruins_of_unkah, edgeville, deep_wilderness, varrock, southwestern_wilderness, western_varlamore, eastern_varlamore",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Defeat a Bear",
@@ -831,7 +835,7 @@
     "area": "lumbridge"
   },
   {
-    "displayName": "Complete and Easy Clue in Lumbridge",
+    "displayName": "Complete an Easy Clue in Lumbridge",
     "taskType": "Clue Scroll",
     "difficulty": 1,
     "area": "lumbridge"
@@ -1120,7 +1124,9 @@
     "displayName": "Travel from Lumbridge to Edgeville on a Waka Canoe",
     "taskType": "Achievement Diary",
     "difficulty": 2,
-    "area": "lumbridge, edgeville"
+    "area": "lumbridge, grand_exchange",
+    "onceOnly": true,
+    "areaRequirement": "all"
   },
   {
     "displayName": "Take the Train from Dorgesh Kaan to Keldagrim",
@@ -2069,6 +2075,501 @@
     "displayName": "Visit Death's Domain",
     "taskType": "Other",
     "difficulty": 1,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Teleport to Emirs Arena using a Ring of Dueling",
+    "taskType": "Magic",
+    "difficulty": 2,
+    "f2p": false,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Defeat a Hill Giant and bury its bones",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Buy a Mithril Scimitar from Zeke",
+    "taskType": "Other",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Complete 10 laps of the Al Kharid Rooftop Agility Course",
+    "taskType": "Agility",
+    "difficulty": 1,
+    "area": "al_kharid"
+  },
+  {
+    "displayName": "Churn some Butter",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Complete a lap of the Varrock Agility Course",
+    "taskType": "Agility",
+    "difficulty": 2,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Complete 20 laps of the Varrock Agility Course",
+    "taskType": "Agility",
+    "difficulty": 3,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Steal a Cup of Tea",
+    "taskType": "Thieving",
+    "difficulty": 1,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Enter the Champions' Guild",
+    "taskType": "Other",
+    "difficulty": 3,
+    "f2p": true,
+    "area": "varrock",
+    "onceOnly": true,
+    "requirements": "32 Quest points"
+  },
+  {
+    "displayName": "Plant a bush in the Champions' Guild Bush patch",
+    "taskType": "Farming",
+    "difficulty": 2,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete Romeo and Juliet",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Complete Children of the Sun",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete Gertrude's Cat",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Enter the Cooks' Guild",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Equip the Skillcape of Cooking",
+    "taskType": "Cooking",
+    "difficulty": 5,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Purchase some Priest robes",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Defeat a Moss Giant in the Varrock Sewers",
+    "taskType": "Combat",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Browse Thessalia's store",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Have Aubury Teleport you to the Essence mine",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "varrock, lumbridge, draynor",
+    "onceOnly": true,
+    "requirements": "Rune Mysteries",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Mine some Iron in the south eash mining patch near Varrock",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Make a normal plank at the Sawmill",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Jump over the fence south of Varrock",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "varrock, lumbridge",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Chop down a dying tree in the Lumber Yard",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Spin a bowl on the pottery wheel and fire it in the oven at the Barb Village",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Speak to Haig Halen after obtaining at least 50 kudos",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Craft some Earth Runes from Essence",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "varrock, lumbridge, draynor",
+    "onceOnly": true,
+    "requirements": "Rune Mysteries",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Catch some trout in the River Lum at Barbarian Village",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Steal from the Tea stall in Varrock",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Have the Apothocary in Varrock make you a Strength potion",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Select a colour for your kitten",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "varrock",
+    "onceOnly": true,
+    "requirements": "Garden of Tranquility, Gertrude's Cat",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Use the Spirit Tree north of Varrock",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "grand_exchange, gnome_stronghold, khazard_battlegrounds",
+    "onceOnly": true,
+    "requirements": "Tree Gnome Village",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Perform the 4 emotes from the Stronghold of Security",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "f2p": true,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Enter the Tolna dungeon after completing A Soul's Bane",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "silvarea",
+    "onceOnly": true,
+    "requirements": "A Soul's Bane",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Teleport to the Digsite using a Digsite Pendant",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "silvarea, varrock",
+    "onceOnly": true,
+    "requirements": "The Dig Site",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete The Dig Site",
+    "taskType": "Quest",
+    "difficulty": 2,
+    "area": "silvarea, varrock",
+    "onceOnly": true,
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Complete A Soul's Bane",
+    "taskType": "Quest",
+    "difficulty": 1,
+    "area": "silvarea",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Make 20 Mahogany Planks in one go",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "varrock",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Pick a White Fruit",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "varrock",
+    "onceOnly": true,
+    "requirements": "Garden of Tranquility"
+  },
+  {
+    "displayName": "Use a balloon to travel to Varrock",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
+    "area": "varrock, entrana",
+    "onceOnly": true,
+    "requirements": "Enlightened Journey",
+    "areaRequirement": "all"
+  },
+  {
+    "displayName": "Obtain a Slayer Task from Vannaka",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
+    "area": "edgeville",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete an Easy Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 1,
+    "area": "grand_exchange"
+  },
+  {
+    "displayName": "Complete a Medium Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Add Compost to a Farming Patch",
+    "taskType": "Farming",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Equip some Steel Armour",
+    "taskType": "Equipment",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "grand_exchange"
+  },
+  {
+    "displayName": "Gain a Unique Item from a Beginner Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Gain a Unique Item from an Easy Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 1,
+    "area": "grand_exchange"
+  },
+  {
+    "displayName": "Gain a Unique Item from a Medium Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Gain a Unique Item from a Hard Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Gain a Unique Item from an Elite Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 4
+  },
+  {
+    "displayName": "Gain a Unique Item from a Master Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 5
+  },
+  {
+    "displayName": "Light a Torch",
+    "taskType": "Firemaking",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Make some Flour",
+    "taskType": "Cooking",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Open 28 Coin Pouches at once",
+    "taskType": "Thieving",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Plant some Seeds",
+    "taskType": "Farming",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Catch a Butterfly",
+    "taskType": "Hunter",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Protect your crops",
+    "taskType": "Farming",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Smith 150 Iron Arrowtips",
+    "taskType": "Smithing",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Snare a Bird",
+    "taskType": "Hunter",
+    "difficulty": 1
+  },
+  {
+    "displayName": "Equip a Willow Shield",
+    "taskType": "Equipment",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Reach 25 Combat Level",
+    "taskType": "Level",
+    "difficulty": 1,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Reach 50 Combat",
+    "taskType": "Level",
+    "difficulty": 2,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Reach 75 Combat",
+    "taskType": "Level",
+    "difficulty": 3,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Reach 100 Combat",
+    "taskType": "Level",
+    "difficulty": 4,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Reach 126 Combat",
+    "taskType": "Level",
+    "difficulty": 5,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Reach Total Level 100",
+    "taskType": "Level",
+    "difficulty": 1,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Reach Total Level 250",
+    "taskType": "Level",
+    "difficulty": 2,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Reach Total Level 500",
+    "taskType": "Level",
+    "difficulty": 3,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Complete a Hard Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Complete a Beginner Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Complete an Elite Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 4
+  },
+  {
+    "displayName": "Complete a Master Clue",
+    "taskType": "Clue Scroll",
+    "difficulty": 5
+  },
+  {
+    "displayName": "Fill 5 Collection Log slots",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fill 10 Collection Log Slots",
+    "taskType": "Collection Log",
+    "difficulty": 2,
+    "f2p": true,
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fill 20 Collection Log Slots",
+    "taskType": "Collection Log",
+    "difficulty": 2,
     "f2p": true,
     "onceOnly": true
   }
