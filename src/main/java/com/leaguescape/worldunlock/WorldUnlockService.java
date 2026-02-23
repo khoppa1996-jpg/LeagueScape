@@ -114,8 +114,9 @@ public class WorldUnlockService
 	}
 
 	/**
-	 * Returns the world unlock grid: center (0,0) = start tile (no prereqs, cost 0), then tiles by tier
-	 * in spiral rings, shuffled within tier by grid seed. Same spiral order as task grid.
+	 * Returns the world unlock grid: center (0,0) = start tile (no prereqs, cost 0), then tiles
+	 * distributed by tier in spiral rings (tier 1 near center, higher tiers outward). Within each
+	 * tier, tiles are shuffled for type diversity. All tiles are included.
 	 */
 	public List<WorldUnlockTilePlacement> getGrid()
 	{
@@ -123,7 +124,6 @@ public class WorldUnlockService
 		List<WorldUnlockTile> all = new ArrayList<>(tiles);
 		if (all.isEmpty()) return Collections.emptyList();
 
-		// Center tile: first with no prerequisites and cost 0 (e.g. Lumbridge)
 		WorldUnlockTile centerTile = null;
 		List<WorldUnlockTile> rest = new ArrayList<>();
 		for (WorldUnlockTile t : all)
@@ -138,29 +138,62 @@ public class WorldUnlockService
 		if (centerTile == null)
 		{
 			centerTile = all.get(0);
-			rest = all.size() > 1 ? all.subList(1, all.size()) : Collections.emptyList();
+			rest = all.size() > 1 ? new ArrayList<>(all.subList(1, all.size())) : new ArrayList<>();
 		}
 
 		int seed = getGridSeed();
 		Random rng = new Random(seed);
-		// Group by tier (1-5), sort tiers, shuffle within each tier
-		Map<Integer, List<WorldUnlockTile>> byTier = rest.stream()
-			.collect(Collectors.groupingBy(t -> Math.max(1, Math.min(5, t.getTier()))));
+
+		int maxTier = 5;
+		int ring1Slots = 8;
+		int ring2Slots = 16;
+		int earlySlots = ring1Slots + ring2Slots; // 24
+
+		// Early skill tiles: type=skill, tier=1, level band 1-10 (levelMax <= 10)
+		List<WorldUnlockTile> earlySkills = new ArrayList<>();
+		List<WorldUnlockTile> restByTier = new ArrayList<>();
+		for (WorldUnlockTile t : rest)
+		{
+			if (isSkillLevel1To10(t))
+				earlySkills.add(t);
+			else
+				restByTier.add(t);
+		}
+		Collections.shuffle(earlySkills, rng);
+
+		// Group rest by tier
+		List<List<WorldUnlockTile>> byTier = new ArrayList<>();
+		for (int t = 0; t <= maxTier; t++)
+			byTier.add(new ArrayList<>());
+		for (WorldUnlockTile t : restByTier)
+		{
+			int tier = Math.max(1, Math.min(maxTier, t.getTier()));
+			byTier.get(tier).add(t);
+		}
+		for (int t = 1; t <= maxTier; t++)
+			Collections.shuffle(byTier.get(t), rng);
+
+		// Build ordered list: first 24 slots = early skills (1-10), then rest by tier
+		List<WorldUnlockTile> restOrdered = new ArrayList<>();
+		for (int t = 1; t <= maxTier; t++)
+			restOrdered.addAll(byTier.get(t));
+
+		List<WorldUnlockTile> ordered = new ArrayList<>();
+		for (int i = 0; i < Math.min(earlySlots, earlySkills.size()); i++)
+			ordered.add(earlySkills.get(i));
+		int needFill = earlySlots - ordered.size();
+		for (int i = 0; i < needFill && i < restOrdered.size(); i++)
+			ordered.add(restOrdered.get(i));
+		for (int i = needFill; i < restOrdered.size(); i++)
+			ordered.add(restOrdered.get(i));
+
 		List<int[]> positions = new ArrayList<>();
 		positions.add(new int[]{ 0, 0 });
 		int ring = 1;
-		while (positions.size() < 1 + rest.size())
+		while (positions.size() < 1 + ordered.size())
 		{
 			positions.addAll(spiralOrderForRing(ring));
 			ring++;
-		}
-		// Ordered list: tier 1 first, then 2, ... 5, shuffled within tier (tiers outside 1-5 clamped into 1-5)
-		List<WorldUnlockTile> ordered = new ArrayList<>();
-		for (int t = 1; t <= 5; t++)
-		{
-			List<WorldUnlockTile> tierList = byTier.getOrDefault(t, Collections.emptyList());
-			Collections.shuffle(tierList, rng);
-			ordered.addAll(tierList);
 		}
 
 		List<WorldUnlockTilePlacement> grid = new ArrayList<>();
@@ -171,6 +204,18 @@ public class WorldUnlockService
 			grid.add(new WorldUnlockTilePlacement(ordered.get(i), rc[0], rc[1]));
 		}
 		return grid;
+	}
+
+	/** True if tile is a skill unlock, tier 1, with level band 1-10 (levelMax <= 10). */
+	private static boolean isSkillLevel1To10(WorldUnlockTile t)
+	{
+		if (!"skill".equals(t.getType()) || t.getTier() != 1)
+			return false;
+		TaskLink link = t.getTaskLink();
+		if (link == null) return false;
+		Integer levelMax = link.getLevelMax();
+		Integer levelMin = link.getLevelMin();
+		return levelMax != null && levelMax <= 10 && (levelMin == null || levelMin <= 10);
 	}
 
 	/** Spiral order for one ring (same as TaskGridService). Ring 1 = 8 cells, ring 2 = 16, etc. */
@@ -269,7 +314,7 @@ public class WorldUnlockService
 				}
 			}
 		}
-		if (!pointsService.spend(cost))
+		if (cost > 0 && !pointsService.spend(cost))
 		{
 			return false;
 		}

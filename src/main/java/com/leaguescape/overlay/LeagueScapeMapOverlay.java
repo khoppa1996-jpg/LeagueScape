@@ -1410,7 +1410,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				tasksBtn.addActionListener(e -> {
 					LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
 					dialog.dispose();
-					showTaskGridPopup(area);
+					openTaskGridForArea(area);
 				});
 				southPanel.add(tasksBtn);
 			}
@@ -1497,6 +1497,11 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Opens the task grid popup for the given area (e.g. from world map menu). Call from EDT or client thread. */
 	public void openTaskGridForArea(Area area)
 	{
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		{
+			plugin.openGlobalTaskList();
+			return;
+		}
 		showTaskGridPopup(area);
 	}
 

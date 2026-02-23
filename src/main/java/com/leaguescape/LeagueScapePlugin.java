@@ -326,9 +326,10 @@ public class LeagueScapePlugin extends Plugin
 	com.leaguescape.worldunlock.GlobalTaskListService provideGlobalTaskListService(ConfigManager configManager,
 		LeagueScapeConfig config,
 		com.leaguescape.points.PointsService pointsService,
-		com.leaguescape.worldunlock.WorldUnlockService worldUnlockService)
+		com.leaguescape.worldunlock.WorldUnlockService worldUnlockService,
+		com.leaguescape.task.TaskGridService taskGridService)
 	{
-		return new com.leaguescape.worldunlock.GlobalTaskListService(configManager, config, pointsService, worldUnlockService);
+		return new com.leaguescape.worldunlock.GlobalTaskListService(configManager, config, pointsService, worldUnlockService, taskGridService);
 	}
 
 	@Provides
@@ -526,11 +527,12 @@ public class LeagueScapePlugin extends Plugin
 			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
 			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "World Unlock", false);
+			dialog.setUndecorated(true);
 			com.leaguescape.worldunlock.WorldUnlockGridPanel panel = new com.leaguescape.worldunlock.WorldUnlockGridPanel(
 				worldUnlockService, pointsService,
 				dialog::dispose,
 				this::openGoalTrackingPanel,
-				client, audioPlayer);
+				client, audioPlayer, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
 			dialog.setLocationRelativeTo(client.getCanvas());
@@ -564,11 +566,11 @@ public class LeagueScapePlugin extends Plugin
 			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
 			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "Global tasks", false);
+			dialog.setUndecorated(true);
 			com.leaguescape.worldunlock.GlobalTaskListPanel panel = new com.leaguescape.worldunlock.GlobalTaskListPanel(
-				globalTaskListService, pointsService, dialog::dispose, client, audioPlayer);
+				globalTaskListService, pointsService, dialog::dispose, client, audioPlayer, clientThread, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
-			dialog.setSize(400, 380);
 			dialog.setLocationRelativeTo(client.getCanvas());
 			dialog.setVisible(true);
 		});

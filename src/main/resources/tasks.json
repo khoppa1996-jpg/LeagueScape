@@ -800,7 +800,7 @@
   },
   {
     "displayName": "Smith a Bronze Dagger on the Bronze Anvil",
-    "taskType": "Activity",
+    "taskType": "Smithing",
     "difficulty": 1,
     "f2p": true,
     "area": "lumbridge"
