@@ -1,0 +1,849 @@
+[
+  {
+    "name": "Druidic Ritual",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Lost City",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Witch's House",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Merlin's Crystal",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Heroes' Quest",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Scorpion Catcher",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Family Crest",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Fishing Contest",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Tribal Totem",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Monk's Friend",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Temple of Ikov",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Clock Tower",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Holy Grail",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Tree Gnome Village",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Fight Arena",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Hazeel Cult",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Sheep Herder",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Plague City",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Sea Slug",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Waterfall Quest",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Jungle Potion",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "The Grand Tree",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Underground Pass",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Observatory Quest",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Tourist Trap",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Watchtower",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Dwarf Cannon",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Murder Mystery",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "The Dig Site",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Gertrude's Cat",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Legends' Quest",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Death Plateau",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Eadgar's Ruse",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Big Chompy Bird Hunting",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Elemental Workshop I",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Nature Spirit",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Priest in Peril",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Regicide",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Tai Bwo Wannai Trio",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Troll Stronghold",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Shades of Mort'ton",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Fremennik Trials",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Horror from the Deep",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Throne of Miscellania",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Monkey Madness I",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Haunted Mine",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Troll Romance",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "In Search of the Myreque",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Creature of Fenkenstrain",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Roving Elves",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Ghosts Ahoy",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "One Small Favour",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Mountain Daughter",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Between a Rock...",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "The Feud",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Golem",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Desert Treasure I",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Icthlarin's Little Helper",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Tears of Guthix",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Lost Tribe",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Giant Dwarf",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Recruitment Drive",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Mourning's End Part I",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Forgettable Tale...",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Garden of Tranquillity",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "A Tail of Two Cats",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Wanted!",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Mourning's End Part II",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Rum Deal",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Shadow of the Storm",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Making History",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Ratcatchers",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Spirits of the Elid",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Devious Minds",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "The Hand in the Sand",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Enakhra's Lament",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Cabin Fever",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Fairytale I - Growing Pains",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Recipe for Disaster",
+    "difficulty": "Special"
+  },
+  {
+    "name": "In Aid of the Myreque",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "A Soul's Bane",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Rag and Bone Man I",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Swan Song",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Royal Trouble",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Death to the Dorgeshuun",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Fairytale II - Cure a Queen",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Lunar Diplomacy",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "The Eyes of Glouphrie",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Darkness of Hallowvale",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "The Slug Menace",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Elemental Workshop II",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "My Arm's Big Adventure",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Enlightened Journey",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Eagles' Peak",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Animal Magnetism",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Contact!",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Cold War",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Fremennik Isles",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "The Great Brain Robbery",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "What Lies Below",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Olaf's Quest",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Another Slice of H.A.M.",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Dream Mentor",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Grim Tales",
+    "difficulty": "Master"
+  },
+  {
+    "name": "King's Ransom",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Shilo Village",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Biohazard",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Tower of Life",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Rag and Bone Man II",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Land of the Goblins",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "While Guthix Sleeps",
+    "difficulty": "Grandmaster"
+  },
+  {
+    "name": "Zogre Flesh Eaters",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Monkey Madness II",
+    "difficulty": "Grandmaster"
+  },
+  {
+    "name": "Client of Kourend",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "The Queen of Thieves",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Bone Voyage",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Dragon Slayer II",
+    "difficulty": "Grandmaster"
+  },
+  {
+    "name": "The Depths of Despair",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Recipe for Disaster/Another Cook's Quest",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing the Goblin generals",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing the Mountain Dwarf",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing Evil Dave",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing Pirate Pete",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing the Lumbridge Guide",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing Sir Amik Varze",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing King Awowogei",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Recipe for Disaster/Freeing Skrach Uglogwee",
+    "difficulty": "Special"
+  },
+  {
+    "name": "A Taste of Hope",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Tale of the Righteous",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Making Friends with My Arm",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Recipe for Disaster/Defeating the Culinaromancer",
+    "difficulty": "Special"
+  },
+  {
+    "name": "Song of the Elves",
+    "difficulty": "Grandmaster"
+  },
+  {
+    "name": "The Ascent of Arceuus",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Forsaken Tower",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Fremennik Exiles",
+    "difficulty": "Master"
+  },
+  {
+    "name": "The Curse of Arrav",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Defender of Varrock",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Sins of the Father",
+    "difficulty": "Master"
+  },
+  {
+    "name": "A Kingdom Divided",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "A Porcine of Interest",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Getting Ahead",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "A Night at the Theatre",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Beneath Cursed Sands",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Temple of the Eye",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Path of Glouphrie",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Sleeping Giants",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Garden of Death",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Desert Treasure II - The Fallen Empire",
+    "difficulty": "Grandmaster"
+  },
+  {
+    "name": "Secrets of the North",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Children of the Sun",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Perilous Moons",
+    "difficulty": "Master"
+  },
+  {
+    "name": "The Ribbiting Tale of a Lily Pad Labour Dispute",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Twilight's Promise",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "At First Light",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "The Heart of Darkness",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Death on the Isle",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Meat and Greet",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Ethically Acquired Antiquities",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "The Final Dawn",
+    "difficulty": "Master"
+  },
+  {
+    "name": "Pandemonium",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Prying Times",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Current Affairs",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Troubled Tortugans",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Shadows of Custodia",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Scrambled!",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Learning the Ropes",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Below Ice Mountain",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "X Marks the Spot",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "The Corsair Curse",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Misthalin Mystery",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Rune Mysteries",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Dragon Slayer I",
+    "difficulty": "Experienced"
+  },
+  {
+    "name": "Pirate's Treasure",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Goblin Diplomacy",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "The Knight's Sword",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Witch's Potion",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Black Knights' Fortress",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Doric's Quest",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Prince Ali Rescue",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Imp Catcher",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Vampyre Slayer",
+    "difficulty": "Intermediate"
+  },
+  {
+    "name": "Ernest the Chicken",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "The Restless Ghost",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Sheep Shearer",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Shield of Arrav",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Demon Slayer",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Romeo & Juliet",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Cook's Assistant",
+    "difficulty": "Novice"
+  },
+  {
+    "name": "Alfred Grimhand's Barcrawl",
+    "difficulty": "Novice",
+    "length": "Medium"
+  },
+  {
+    "name": "Enter the Abyss",
+    "difficulty": "Intermediate",
+    "length": "Very Short"
+  },
+  {
+    "name": "The General's Shadow",
+    "difficulty": "Experienced",
+    "length": "Medium"
+  },
+  {
+    "name": "Barbarian Training",
+    "difficulty": "Experienced",
+    "length": "Medium"
+  },
+  {
+    "name": "Skippy and the Mogres",
+    "difficulty": "Novice",
+    "length": "Very Short"
+  },
+  {
+    "name": "Curse of the Empty Lord",
+    "difficulty": "Experienced",
+    "length": "Medium"
+  },
+  {
+    "name": "Lair of Tarn Razorlor",
+    "difficulty": "Experienced",
+    "length": "Medium"
+  },
+  {
+    "name": "Bear Your Soul",
+    "difficulty": "Intermediate",
+    "length": "Short"
+  },
+  {
+    "name": "The Enchanted Key",
+    "difficulty": "Intermediate",
+    "length": "Medium"
+  },
+  {
+    "name": "Mage Arena I",
+    "difficulty": "Experienced",
+    "length": "Short"
+  },
+  {
+    "name": "Family Pest",
+    "difficulty": "Intermediate",
+    "length": "Short"
+  },
+  {
+    "name": "Mage Arena II",
+    "difficulty": "Master",
+    "length": "Medium"
+  },
+  {
+    "name": "In Search of Knowledge",
+    "difficulty": "Experienced",
+    "length": "Medium"
+  },
+  {
+    "name": "Daddy's Home",
+    "difficulty": "Novice",
+    "length": "Short"
+  },
+  {
+    "name": "The Frozen Door",
+    "difficulty": "Master",
+    "length": "Short"
+  },
+  {
+    "name": "Hopespear's Will",
+    "difficulty": "Master",
+    "length": "Short"
+  },
+  {
+    "name": "Into the Tombs",
+    "difficulty": "Master",
+    "length": "Medium"
+  },
+  {
+    "name": "His Faithful Servants",
+    "difficulty": "Experienced",
+    "length": "Very Short"
+  },
+  {
+    "name": "Vale Totems",
+    "difficulty": "Novice",
+    "length": "Very Short"
+  }
+]

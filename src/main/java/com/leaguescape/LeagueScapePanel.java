@@ -38,6 +38,7 @@ public class LeagueScapePanel extends PluginPanel
 
 	private final JLabel currentAreaLabel;
 	private final JLabel pointsLabel;
+	private final JLabel unlockSectionLabel;
 	private final JPanel unlockPanel;
 	private final JPanel completionPanel;
 	private final net.runelite.client.audio.AudioPlayer audioPlayer;
@@ -75,19 +76,26 @@ public class LeagueScapePanel extends PluginPanel
 		content.add(new JLabel(" "));
 
 		boolean pointsToComplete = config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE;
-		if (pointsToComplete)
+		boolean worldUnlockMode = config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK;
+		if (pointsToComplete && !worldUnlockMode)
 		{
 			content.add(new JLabel("Complete areas (earn points in each):"));
 			completionPanel = new JPanel();
 			completionPanel.setLayout(new BoxLayout(completionPanel, BoxLayout.Y_AXIS));
 			content.add(new JScrollPane(completionPanel));
-			content.add(new JLabel("Next unlock (complete an area first):"));
+			unlockSectionLabel = new JLabel("Next unlock (complete an area first):");
+		}
+		else if (worldUnlockMode)
+		{
+			completionPanel = null;
+			unlockSectionLabel = new JLabel("Open World Unlock grid to spend points on tiles.");
 		}
 		else
 		{
 			completionPanel = null;
-			content.add(new JLabel("Next unlock (affordable):"));
+			unlockSectionLabel = new JLabel("Next unlock (affordable):");
 		}
+		content.add(unlockSectionLabel);
 
 		unlockPanel = new JPanel();
 		unlockPanel.setLayout(new BoxLayout(unlockPanel, BoxLayout.Y_AXIS));
@@ -97,7 +105,16 @@ public class LeagueScapePanel extends PluginPanel
 		content.add(new JLabel(" "));
 
 		JButton tasksBtn = new JButton("Tasks");
-		tasksBtn.addActionListener(e -> plugin.openTasksForCurrentArea());
+		tasksBtn.addActionListener(e -> {
+			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+			{
+				plugin.openGlobalTaskList();
+			}
+			else
+			{
+				plugin.openTasksForCurrentArea();
+			}
+		});
 		content.add(tasksBtn);
 
 		JButton rulesSetupBtn = new JButton("Rules & Setup");
@@ -165,21 +182,30 @@ public class LeagueScapePanel extends PluginPanel
 	private void refreshUnlockButtons()
 	{
 		unlockPanel.removeAll();
-		Set<String> completedIds = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
-			? areaCompletionService.getEffectiveCompletedAreaIds()
-			: null;
-		List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
-		for (Area a : unlockable)
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
-			int cost = areaGraphService.getCost(a.getId());
-			boolean canAfford = pointsService.getSpendable() >= cost;
-			JButton unlockBtn = new JButton(a.getDisplayName() + " (" + cost + " pts)");
-			unlockBtn.setEnabled(canAfford);
-			if (canAfford)
+			JButton worldUnlockBtn = new JButton("World Unlock");
+			worldUnlockBtn.addActionListener(e -> plugin.openWorldUnlockGrid());
+			unlockPanel.add(worldUnlockBtn);
+		}
+		else
+		{
+			Set<String> completedIds = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+				? areaCompletionService.getEffectiveCompletedAreaIds()
+				: null;
+			List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
+			for (Area a : unlockable)
 			{
-				unlockBtn.addActionListener(e -> unlockArea(a.getId(), cost));
+				int cost = areaGraphService.getCost(a.getId());
+				boolean canAfford = pointsService.getSpendable() >= cost;
+				JButton unlockBtn = new JButton(a.getDisplayName() + " (" + cost + " pts)");
+				unlockBtn.setEnabled(canAfford);
+				if (canAfford)
+				{
+					unlockBtn.addActionListener(e -> unlockArea(a.getId(), cost));
+				}
+				unlockPanel.add(unlockBtn);
 			}
-			unlockPanel.add(unlockBtn);
 		}
 		unlockPanel.revalidate();
 		unlockPanel.repaint();
@@ -209,10 +235,19 @@ public class LeagueScapePanel extends PluginPanel
 		completionPanel.repaint();
 	}
 
-	/** Refreshes points label and unlock buttons (and completion panel if in points-to-complete mode). Call when points or unlock state may have changed. */
+	/** Refreshes points label, section label, unlock buttons (and completion panel if in points-to-complete mode). Call when points or unlock state may have changed. */
 	public void refresh()
 	{
 		refreshPointsLabel();
+		if (unlockSectionLabel != null)
+		{
+			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+				unlockSectionLabel.setText("Open World Unlock grid to spend points on tiles.");
+			else if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+				unlockSectionLabel.setText("Next unlock (complete an area first):");
+			else
+				unlockSectionLabel.setText("Next unlock (affordable):");
+		}
 		refreshUnlockButtons();
 	}
 

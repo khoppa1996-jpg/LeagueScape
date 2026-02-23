@@ -297,6 +297,13 @@ public class TaskGridService
 		invalidateTasksCache();
 	}
 
+	/** All default tasks (base + custom). Used for grid, export, and World Unlock global task resolution. */
+	public List<TaskDefinition> getEffectiveDefaultTasks()
+	{
+		TasksData data = getEffectiveTasksData();
+		return data.getDefaultTasks() != null ? new ArrayList<>(data.getDefaultTasks()) : new ArrayList<>();
+	}
+
 	/** Effective task set: base defaultTasks + custom tasks, and base areas. Used for grid and export. */
 	private TasksData getEffectiveTasksData()
 	{
@@ -578,20 +585,13 @@ public class TaskGridService
 				.count();
 		}
 
-		// Build (row, col) positions grouped by tier; allow overfill so all area tasks fit (grid may extend on sides)
+		// Build (row, col) positions grouped by tier in spiral order from center (first tile below center, then clockwise).
+		// Spiral: ring 1 = (1,0), (1,1), (0,1), (-1,1), (-1,0), (-1,-1), (0,-1), (1,-1); ring 2 continues from (2,-1), etc.
 		List<List<int[]>> positionsByTier = new ArrayList<>();
 		for (int t = 0; t <= effectiveMaxTier; t++)
 			positionsByTier.add(new ArrayList<>());
-		for (int r = -effectiveMaxTier; r <= effectiveMaxTier; r++)
-		{
-			for (int c = -effectiveMaxTier; c <= effectiveMaxTier; c++)
-			{
-				int tier = Math.max(Math.abs(r), Math.abs(c));
-				if (tier > effectiveMaxTier) continue;
-				if (r == 0 && c == 0) continue;
-				positionsByTier.get(tier).add(new int[]{r, c});
-			}
-		}
+		for (int tier = 1; tier <= effectiveMaxTier; tier++)
+			positionsByTier.get(tier).addAll(spiralOrderForRing(tier));
 		// Overfill: ensure each tier has at least enough slots for its area-specific tasks
 		int overfillIndex = 0;
 		for (int t = 1; t <= effectiveMaxTier; t++)
@@ -651,7 +651,7 @@ public class TaskGridService
 			fallbackPool = new ArrayList<>(taskDefs); // edge case: use any task
 		final int[] fallbackIndex = { 0 };
 
-		// Assign tasks per position: concentric layout. Only tasks from tasks.json; prioritize area then filler; never leave a tile blank.
+		// Assign tasks per position: spiral from center (tier 1 first, then tier 2, etc.). Area prioritization and fallbacks unchanged; no blank tiles.
 		Set<String> usedTaskKeys = new HashSet<>();
 		List<TaskDefinition> assigned = new ArrayList<>(4 * effectiveMaxTier * (effectiveMaxTier + 1));
 		for (int tier = 1; tier <= effectiveMaxTier; tier++)
@@ -661,6 +661,11 @@ public class TaskGridService
 			{
 				int r = rc[0], c = rc[1];
 				int difficulty = difficultyForCell(areaId, tier, r, c, effectiveMaxTier, rng);
+				// Starting area: tier 4 and 5 tasks must not appear before ring 6
+				String start = config.startingArea();
+				boolean isStartingArea = start != null && start.equals(areaId);
+				int maxAllowedDifficulty = (isStartingArea && tier < 6) ? 3 : MAX_TIER;
+
 				TaskDefinition chosen = null;
 				for (int d = difficulty; d >= 1 && chosen == null; d--)
 				{
@@ -673,13 +678,13 @@ public class TaskGridService
 						}
 					}
 				}
-				// Fallback 1: tasks that match cell difficulty (never assign e.g. difficulty-4 to a tier-1 ring)
+				// Fallback 1: tasks that match cell difficulty and max allowed (no tier 4/5 in starting area rings 1–5)
 				if (chosen == null && !fallbackPool.isEmpty())
 				{
 					for (int i = 0; i < fallbackPool.size(); i++)
 					{
 						TaskDefinition t = fallbackPool.get((fallbackIndex[0] + i) % fallbackPool.size());
-						if (t.getDifficulty() <= difficulty && usedTaskKeys.add(taskKey(t)))
+						if (t.getDifficulty() <= difficulty && t.getDifficulty() <= maxAllowedDifficulty && usedTaskKeys.add(taskKey(t)))
 						{
 							chosen = t;
 							fallbackIndex[0] += i + 1;
@@ -687,13 +692,13 @@ public class TaskGridService
 						}
 					}
 				}
-				// Fallback 2: any remaining task (no-area tasks can be completed in almost any area)
+				// Fallback 2: any remaining task up to max allowed (no-area tasks; still respect tier 4/5 cap in starting area)
 				if (chosen == null && !fallbackPool.isEmpty())
 				{
 					for (int i = 0; i < fallbackPool.size(); i++)
 					{
 						TaskDefinition t = fallbackPool.get((fallbackIndex[0] + i) % fallbackPool.size());
-						if (usedTaskKeys.add(taskKey(t)))
+						if (t.getDifficulty() <= maxAllowedDifficulty && usedTaskKeys.add(taskKey(t)))
 						{
 							chosen = t;
 							fallbackIndex[0] += i + 1;
@@ -923,6 +928,28 @@ public class TaskGridService
 
 	/** In starting area, rings 4–8 use only difficulties 1–3; tier 4+ first appears at ring 9. */
 	private static final int STARTING_AREA_TIER4_FIRST_RING = 9;
+
+	/**
+	 * Returns positions for ring {@code tier} in spiral order from center. Center is (0,0); first tile is (1,0) below center,
+	 * then clockwise: (1,1), (0,1), (-1,1), (-1,0), (-1,-1), (0,-1), (1,-1); ring 2 continues from (2,-1), etc.
+	 */
+	private static List<int[]> spiralOrderForRing(int tier)
+	{
+		List<int[]> out = new ArrayList<>(8 * tier);
+		// Start at (tier, 1-tier). Bottom edge: row = tier, col from (1-tier) to tier
+		for (int c = 1 - tier; c <= tier; c++)
+			out.add(new int[]{ tier, c });
+		// Right edge: col = tier, row from (tier-1) down to -tier
+		for (int r = tier - 1; r >= -tier; r--)
+			out.add(new int[]{ r, tier });
+		// Top edge: row = -tier, col from (tier-1) down to -tier
+		for (int c = tier - 1; c >= -tier; c--)
+			out.add(new int[]{ -tier, c });
+		// Left edge: col = -tier, row from (-tier+1) to tier
+		for (int r = -tier + 1; r <= tier; r++)
+			out.add(new int[]{ r, -tier });
+		return out;
+	}
 
 	/**
 	 * Returns the difficulty (1–5) used to choose the task pool for a cell at ring {@code ring} with coords (r,c).

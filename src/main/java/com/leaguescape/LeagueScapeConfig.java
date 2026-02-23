@@ -241,7 +241,7 @@ public interface LeagueScapeConfig extends Config
 	@ConfigItem(
 		keyName = "unlockMode",
 		name = "Unlock mode",
-		description = "Point buy = spend points to unlock areas. Points to complete = earn points in each area to complete it, then spend points to unlock the next area.",
+		description = "Point buy = spend points to unlock areas. Points to complete = earn points in each area, then spend to unlock next. World Unlock = spend points on a grid of tiles (skills, quests, diaries, bosses, areas); tasks come from unlocked tiles.",
 		section = progressionSection
 	)
 	default UnlockMode unlockMode()
@@ -252,7 +252,8 @@ public interface LeagueScapeConfig extends Config
 	enum UnlockMode
 	{
 		POINT_BUY("Point buy"),
-		POINTS_TO_COMPLETE("Points to complete");
+		POINTS_TO_COMPLETE("Points to complete"),
+		WORLD_UNLOCK("World Unlock");
 
 		private final String label;
 

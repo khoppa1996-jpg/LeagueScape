@@ -1,0 +1,16 @@
+[
+  {
+    "id": "goal_lumbridge",
+    "displayName": "Unlock Lumbridge",
+    "description": "Unlock the Lumbridge area on the World Unlock grid.",
+    "conditionType": "world_unlock",
+    "worldUnlockId": "lumbridge"
+  },
+  {
+    "id": "goal_first_skill",
+    "displayName": "Unlock a skill tier",
+    "description": "Unlock any skill tier (e.g. Agility 1-10).",
+    "conditionType": "world_unlock",
+    "worldUnlockId": "agility_1_10"
+  }
+]

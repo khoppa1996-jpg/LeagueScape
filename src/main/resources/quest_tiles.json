@@ -1,0 +1,3107 @@
+﻿[
+    {
+        "id":  "druidic_ritual",
+        "displayName":  "Druidic Ritual",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Druidic Ritual",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "lost_city",
+        "displayName":  "Lost City",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Lost City",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "witchs_house",
+        "displayName":  "Witch\u0027s House",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Witch\u0027s House",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "merlins_crystal",
+        "displayName":  "Merlin\u0027s Crystal",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Merlin\u0027s Crystal",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "heroes_quest",
+        "displayName":  "Heroes\u0027 Quest",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Heroes\u0027 Quest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "scorpion_catcher",
+        "displayName":  "Scorpion Catcher",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Scorpion Catcher",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "family_crest",
+        "displayName":  "Family Crest",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Family Crest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "fishing_contest",
+        "displayName":  "Fishing Contest",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Fishing Contest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "tribal_totem",
+        "displayName":  "Tribal Totem",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Tribal Totem",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "monks_friend",
+        "displayName":  "Monk\u0027s Friend",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Monk\u0027s Friend",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "temple_of_ikov",
+        "displayName":  "Temple of Ikov",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Temple of Ikov",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "clock_tower",
+        "displayName":  "Clock Tower",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Clock Tower",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "holy_grail",
+        "displayName":  "Holy Grail",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Holy Grail",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "tree_gnome_village",
+        "displayName":  "Tree Gnome Village",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Tree Gnome Village",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "fight_arena",
+        "displayName":  "Fight Arena",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Fight Arena",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "hazeel_cult",
+        "displayName":  "Hazeel Cult",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Hazeel Cult",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "sheep_herder",
+        "displayName":  "Sheep Herder",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Sheep Herder",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "plague_city",
+        "displayName":  "Plague City",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Plague City",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "sea_slug",
+        "displayName":  "Sea Slug",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Sea Slug",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "waterfall_quest",
+        "displayName":  "Waterfall Quest",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Waterfall Quest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "jungle_potion",
+        "displayName":  "Jungle Potion",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Jungle Potion",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_grand_tree",
+        "displayName":  "The Grand Tree",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Grand Tree",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "underground_pass",
+        "displayName":  "Underground Pass",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Underground Pass",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "observatory_quest",
+        "displayName":  "Observatory Quest",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Observatory Quest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_tourist_trap",
+        "displayName":  "The Tourist Trap",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Tourist Trap",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "watchtower",
+        "displayName":  "Watchtower",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Watchtower",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "dwarf_cannon",
+        "displayName":  "Dwarf Cannon",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Dwarf Cannon",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "murder_mystery",
+        "displayName":  "Murder Mystery",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Murder Mystery",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_dig_site",
+        "displayName":  "The Dig Site",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Dig Site",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "gertrudes_cat",
+        "displayName":  "Gertrude\u0027s Cat",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Gertrude\u0027s Cat",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "legends_quest",
+        "displayName":  "Legends\u0027 Quest",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Legends\u0027 Quest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "death_plateau",
+        "displayName":  "Death Plateau",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Death Plateau",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "eadgars_ruse",
+        "displayName":  "Eadgar\u0027s Ruse",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Eadgar\u0027s Ruse",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "big_chompy_bird_hunting",
+        "displayName":  "Big Chompy Bird Hunting",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Big Chompy Bird Hunting",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "elemental_workshop_i",
+        "displayName":  "Elemental Workshop I",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Elemental Workshop I",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "nature_spirit",
+        "displayName":  "Nature Spirit",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Nature Spirit",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "priest_in_peril",
+        "displayName":  "Priest in Peril",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Priest in Peril",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "regicide",
+        "displayName":  "Regicide",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Regicide",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "tai_bwo_wannai_trio",
+        "displayName":  "Tai Bwo Wannai Trio",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Tai Bwo Wannai Trio",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "troll_stronghold",
+        "displayName":  "Troll Stronghold",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Troll Stronghold",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "shades_of_mortton",
+        "displayName":  "Shades of Mort\u0027ton",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Shades of Mort\u0027ton",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_fremennik_trials",
+        "displayName":  "The Fremennik Trials",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Fremennik Trials",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "horror_from_the_deep",
+        "displayName":  "Horror from the Deep",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Horror from the Deep",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "throne_of_miscellania",
+        "displayName":  "Throne of Miscellania",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Throne of Miscellania",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "monkey_madness_i",
+        "displayName":  "Monkey Madness I",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Monkey Madness I",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "haunted_mine",
+        "displayName":  "Haunted Mine",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Haunted Mine",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "troll_romance",
+        "displayName":  "Troll Romance",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Troll Romance",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "in_search_of_the_myreque",
+        "displayName":  "In Search of the Myreque",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "In Search of the Myreque",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "creature_of_fenkenstrain",
+        "displayName":  "Creature of Fenkenstrain",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Creature of Fenkenstrain",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "roving_elves",
+        "displayName":  "Roving Elves",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Roving Elves",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "ghosts_ahoy",
+        "displayName":  "Ghosts Ahoy",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Ghosts Ahoy",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "one_small_favour",
+        "displayName":  "One Small Favour",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "One Small Favour",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "mountain_daughter",
+        "displayName":  "Mountain Daughter",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Mountain Daughter",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "between_a_rock",
+        "displayName":  "Between a Rock...",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Between a Rock...",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_feud",
+        "displayName":  "The Feud",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Feud",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_golem",
+        "displayName":  "The Golem",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Golem",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "desert_treasure_i",
+        "displayName":  "Desert Treasure I",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Desert Treasure I",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "icthlarins_little_helper",
+        "displayName":  "Icthlarin\u0027s Little Helper",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Icthlarin\u0027s Little Helper",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "tears_of_guthix",
+        "displayName":  "Tears of Guthix",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Tears of Guthix",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_lost_tribe",
+        "displayName":  "The Lost Tribe",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Lost Tribe",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_giant_dwarf",
+        "displayName":  "The Giant Dwarf",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Giant Dwarf",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recruitment_drive",
+        "displayName":  "Recruitment Drive",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recruitment Drive",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "mournings_end_part_i",
+        "displayName":  "Mourning\u0027s End Part I",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Mourning\u0027s End Part I",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "forgettable_tale",
+        "displayName":  "Forgettable Tale...",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Forgettable Tale...",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "garden_of_tranquillity",
+        "displayName":  "Garden of Tranquillity",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Garden of Tranquillity",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "a_tail_of_two_cats",
+        "displayName":  "A Tail of Two Cats",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "A Tail of Two Cats",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "wanted!",
+        "displayName":  "Wanted!",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Wanted!",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "mournings_end_part_ii",
+        "displayName":  "Mourning\u0027s End Part II",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Mourning\u0027s End Part II",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "rum_deal",
+        "displayName":  "Rum Deal",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Rum Deal",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "shadow_of_the_storm",
+        "displayName":  "Shadow of the Storm",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Shadow of the Storm",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "making_history",
+        "displayName":  "Making History",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Making History",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "ratcatchers",
+        "displayName":  "Ratcatchers",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Ratcatchers",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "spirits_of_the_elid",
+        "displayName":  "Spirits of the Elid",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Spirits of the Elid",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "devious_minds",
+        "displayName":  "Devious Minds",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Devious Minds",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_hand_in_the_sand",
+        "displayName":  "The Hand in the Sand",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Hand in the Sand",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "enakhras_lament",
+        "displayName":  "Enakhra\u0027s Lament",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Enakhra\u0027s Lament",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "cabin_fever",
+        "displayName":  "Cabin Fever",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Cabin Fever",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "fairytale_i_growing_pains",
+        "displayName":  "Fairytale I - Growing Pains",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Fairytale I - Growing Pains",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster",
+        "displayName":  "Recipe for Disaster",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "in_aid_of_the_myreque",
+        "displayName":  "In Aid of the Myreque",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "In Aid of the Myreque",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "a_souls_bane",
+        "displayName":  "A Soul\u0027s Bane",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "A Soul\u0027s Bane",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "rag_and_bone_man_i",
+        "displayName":  "Rag and Bone Man I",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Rag and Bone Man I",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "swan_song",
+        "displayName":  "Swan Song",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Swan Song",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "royal_trouble",
+        "displayName":  "Royal Trouble",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Royal Trouble",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "death_to_the_dorgeshuun",
+        "displayName":  "Death to the Dorgeshuun",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Death to the Dorgeshuun",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "fairytale_ii_cure_a_queen",
+        "displayName":  "Fairytale II - Cure a Queen",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Fairytale II - Cure a Queen",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "lunar_diplomacy",
+        "displayName":  "Lunar Diplomacy",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Lunar Diplomacy",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_eyes_of_glouphrie",
+        "displayName":  "The Eyes of Glouphrie",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Eyes of Glouphrie",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "darkness_of_hallowvale",
+        "displayName":  "Darkness of Hallowvale",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Darkness of Hallowvale",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_slug_menace",
+        "displayName":  "The Slug Menace",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Slug Menace",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "elemental_workshop_ii",
+        "displayName":  "Elemental Workshop II",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Elemental Workshop II",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "my_arms_big_adventure",
+        "displayName":  "My Arm\u0027s Big Adventure",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "My Arm\u0027s Big Adventure",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "enlightened_journey",
+        "displayName":  "Enlightened Journey",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Enlightened Journey",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "eagles_peak",
+        "displayName":  "Eagles\u0027 Peak",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Eagles\u0027 Peak",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "animal_magnetism",
+        "displayName":  "Animal Magnetism",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Animal Magnetism",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "contact!",
+        "displayName":  "Contact!",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Contact!",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "cold_war",
+        "displayName":  "Cold War",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Cold War",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_fremennik_isles",
+        "displayName":  "The Fremennik Isles",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Fremennik Isles",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_great_brain_robbery",
+        "displayName":  "The Great Brain Robbery",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Great Brain Robbery",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "what_lies_below",
+        "displayName":  "What Lies Below",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "What Lies Below",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "olafs_quest",
+        "displayName":  "Olaf\u0027s Quest",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Olaf\u0027s Quest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "another_slice_of_ham",
+        "displayName":  "Another Slice of H.A.M.",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Another Slice of H.A.M.",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "dream_mentor",
+        "displayName":  "Dream Mentor",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Dream Mentor",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "grim_tales",
+        "displayName":  "Grim Tales",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Grim Tales",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "kings_ransom",
+        "displayName":  "King\u0027s Ransom",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "King\u0027s Ransom",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "shilo_village",
+        "displayName":  "Shilo Village",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Shilo Village",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "biohazard",
+        "displayName":  "Biohazard",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Biohazard",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "tower_of_life",
+        "displayName":  "Tower of Life",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Tower of Life",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "rag_and_bone_man_ii",
+        "displayName":  "Rag and Bone Man II",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Rag and Bone Man II",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "land_of_the_goblins",
+        "displayName":  "Land of the Goblins",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Land of the Goblins",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "while_guthix_sleeps",
+        "displayName":  "While Guthix Sleeps",
+        "tier":  5,
+        "type":  "quest",
+        "cost":  125,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "While Guthix Sleeps",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "zogre_flesh_eaters",
+        "displayName":  "Zogre Flesh Eaters",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Zogre Flesh Eaters",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "monkey_madness_ii",
+        "displayName":  "Monkey Madness II",
+        "tier":  5,
+        "type":  "quest",
+        "cost":  125,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Monkey Madness II",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "client_of_kourend",
+        "displayName":  "Client of Kourend",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Client of Kourend",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_queen_of_thieves",
+        "displayName":  "The Queen of Thieves",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Queen of Thieves",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "bone_voyage",
+        "displayName":  "Bone Voyage",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Bone Voyage",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "dragon_slayer_ii",
+        "displayName":  "Dragon Slayer II",
+        "tier":  5,
+        "type":  "quest",
+        "cost":  125,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Dragon Slayer II",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_depths_of_despair",
+        "displayName":  "The Depths of Despair",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Depths of Despair",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_another_cooks_quest",
+        "displayName":  "Recipe for Disaster/Another Cook\u0027s Quest",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Another Cook\u0027s Quest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_the_goblin_generals",
+        "displayName":  "Recipe for Disaster/Freeing the Goblin generals",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing the Goblin generals",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_the_mountain_dwarf",
+        "displayName":  "Recipe for Disaster/Freeing the Mountain Dwarf",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing the Mountain Dwarf",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_evil_dave",
+        "displayName":  "Recipe for Disaster/Freeing Evil Dave",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing Evil Dave",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_pirate_pete",
+        "displayName":  "Recipe for Disaster/Freeing Pirate Pete",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing Pirate Pete",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_the_lumbridge_guide",
+        "displayName":  "Recipe for Disaster/Freeing the Lumbridge Guide",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing the Lumbridge Guide",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_sir_amik_varze",
+        "displayName":  "Recipe for Disaster/Freeing Sir Amik Varze",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing Sir Amik Varze",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_king_awowogei",
+        "displayName":  "Recipe for Disaster/Freeing King Awowogei",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing King Awowogei",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_freeing_skrach_uglogwee",
+        "displayName":  "Recipe for Disaster/Freeing Skrach Uglogwee",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Freeing Skrach Uglogwee",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "a_taste_of_hope",
+        "displayName":  "A Taste of Hope",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "A Taste of Hope",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "tale_of_the_righteous",
+        "displayName":  "Tale of the Righteous",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Tale of the Righteous",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "making_friends_with_my_arm",
+        "displayName":  "Making Friends with My Arm",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Making Friends with My Arm",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "recipe_for_disaster_defeating_the_culinaromancer",
+        "displayName":  "Recipe for Disaster/Defeating the Culinaromancer",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Recipe for Disaster/Defeating the Culinaromancer",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "song_of_the_elves",
+        "displayName":  "Song of the Elves",
+        "tier":  5,
+        "type":  "quest",
+        "cost":  125,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Song of the Elves",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_ascent_of_arceuus",
+        "displayName":  "The Ascent of Arceuus",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Ascent of Arceuus",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_forsaken_tower",
+        "displayName":  "The Forsaken Tower",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Forsaken Tower",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_fremennik_exiles",
+        "displayName":  "The Fremennik Exiles",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Fremennik Exiles",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_curse_of_arrav",
+        "displayName":  "The Curse of Arrav",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Curse of Arrav",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "defender_of_varrock",
+        "displayName":  "Defender of Varrock",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Defender of Varrock",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "sins_of_the_father",
+        "displayName":  "Sins of the Father",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Sins of the Father",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "a_kingdom_divided",
+        "displayName":  "A Kingdom Divided",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "A Kingdom Divided",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "a_porcine_of_interest",
+        "displayName":  "A Porcine of Interest",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "A Porcine of Interest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "getting_ahead",
+        "displayName":  "Getting Ahead",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Getting Ahead",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "a_night_at_the_theatre",
+        "displayName":  "A Night at the Theatre",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "A Night at the Theatre",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "beneath_cursed_sands",
+        "displayName":  "Beneath Cursed Sands",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Beneath Cursed Sands",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "temple_of_the_eye",
+        "displayName":  "Temple of the Eye",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Temple of the Eye",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_path_of_glouphrie",
+        "displayName":  "The Path of Glouphrie",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Path of Glouphrie",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "sleeping_giants",
+        "displayName":  "Sleeping Giants",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Sleeping Giants",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_garden_of_death",
+        "displayName":  "The Garden of Death",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Garden of Death",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "desert_treasure_ii_the_fallen_empire",
+        "displayName":  "Desert Treasure II - The Fallen Empire",
+        "tier":  5,
+        "type":  "quest",
+        "cost":  125,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Desert Treasure II - The Fallen Empire",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "secrets_of_the_north",
+        "displayName":  "Secrets of the North",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Secrets of the North",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "children_of_the_sun",
+        "displayName":  "Children of the Sun",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Children of the Sun",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "perilous_moons",
+        "displayName":  "Perilous Moons",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Perilous Moons",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_ribbiting_tale_of_a_lily_pad_labour_dispute",
+        "displayName":  "The Ribbiting Tale of a Lily Pad Labour Dispute",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Ribbiting Tale of a Lily Pad Labour Dispute",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "twilights_promise",
+        "displayName":  "Twilight\u0027s Promise",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Twilight\u0027s Promise",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "at_first_light",
+        "displayName":  "At First Light",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "At First Light",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_heart_of_darkness",
+        "displayName":  "The Heart of Darkness",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Heart of Darkness",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "death_on_the_isle",
+        "displayName":  "Death on the Isle",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Death on the Isle",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "meat_and_greet",
+        "displayName":  "Meat and Greet",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Meat and Greet",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "ethically_acquired_antiquities",
+        "displayName":  "Ethically Acquired Antiquities",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Ethically Acquired Antiquities",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_final_dawn",
+        "displayName":  "The Final Dawn",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Final Dawn",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "pandemonium",
+        "displayName":  "Pandemonium",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Pandemonium",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "prying_times",
+        "displayName":  "Prying Times",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Prying Times",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "current_affairs",
+        "displayName":  "Current Affairs",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Current Affairs",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "troubled_tortugans",
+        "displayName":  "Troubled Tortugans",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Troubled Tortugans",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "shadows_of_custodia",
+        "displayName":  "Shadows of Custodia",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Shadows of Custodia",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "scrambled!",
+        "displayName":  "Scrambled!",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Scrambled!",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "learning_the_ropes",
+        "displayName":  "Learning the Ropes",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Learning the Ropes",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "below_ice_mountain",
+        "displayName":  "Below Ice Mountain",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Below Ice Mountain",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "x_marks_the_spot",
+        "displayName":  "X Marks the Spot",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "X Marks the Spot",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_corsair_curse",
+        "displayName":  "The Corsair Curse",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Corsair Curse",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "misthalin_mystery",
+        "displayName":  "Misthalin Mystery",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Misthalin Mystery",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "rune_mysteries",
+        "displayName":  "Rune Mysteries",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Rune Mysteries",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "dragon_slayer_i",
+        "displayName":  "Dragon Slayer I",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Dragon Slayer I",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "pirates_treasure",
+        "displayName":  "Pirate\u0027s Treasure",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Pirate\u0027s Treasure",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "goblin_diplomacy",
+        "displayName":  "Goblin Diplomacy",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Goblin Diplomacy",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_knights_sword",
+        "displayName":  "The Knight\u0027s Sword",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Knight\u0027s Sword",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "witchs_potion",
+        "displayName":  "Witch\u0027s Potion",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Witch\u0027s Potion",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "black_knights_fortress",
+        "displayName":  "Black Knights\u0027 Fortress",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Black Knights\u0027 Fortress",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "dorics_quest",
+        "displayName":  "Doric\u0027s Quest",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Doric\u0027s Quest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "prince_ali_rescue",
+        "displayName":  "Prince Ali Rescue",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Prince Ali Rescue",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "imp_catcher",
+        "displayName":  "Imp Catcher",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Imp Catcher",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "vampyre_slayer",
+        "displayName":  "Vampyre Slayer",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Vampyre Slayer",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "ernest_the_chicken",
+        "displayName":  "Ernest the Chicken",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Ernest the Chicken",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_restless_ghost",
+        "displayName":  "The Restless Ghost",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Restless Ghost",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "sheep_shearer",
+        "displayName":  "Sheep Shearer",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Sheep Shearer",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "shield_of_arrav",
+        "displayName":  "Shield of Arrav",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Shield of Arrav",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "demon_slayer",
+        "displayName":  "Demon Slayer",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Demon Slayer",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "romeo_and_juliet",
+        "displayName":  "Romeo \u0026 Juliet",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Romeo \u0026 Juliet",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "cooks_assistant",
+        "displayName":  "Cook\u0027s Assistant",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Cook\u0027s Assistant",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "alfred_grimhands_barcrawl",
+        "displayName":  "Alfred Grimhand\u0027s Barcrawl",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Alfred Grimhand\u0027s Barcrawl",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "enter_the_abyss",
+        "displayName":  "Enter the Abyss",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Enter the Abyss",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_generals_shadow",
+        "displayName":  "The General\u0027s Shadow",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The General\u0027s Shadow",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "barbarian_training",
+        "displayName":  "Barbarian Training",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Barbarian Training",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "skippy_and_the_mogres",
+        "displayName":  "Skippy and the Mogres",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Skippy and the Mogres",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "curse_of_the_empty_lord",
+        "displayName":  "Curse of the Empty Lord",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Curse of the Empty Lord",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "lair_of_tarn_razorlor",
+        "displayName":  "Lair of Tarn Razorlor",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Lair of Tarn Razorlor",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "bear_your_soul",
+        "displayName":  "Bear Your Soul",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Bear Your Soul",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_enchanted_key",
+        "displayName":  "The Enchanted Key",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Enchanted Key",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "mage_arena_i",
+        "displayName":  "Mage Arena I",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Mage Arena I",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "family_pest",
+        "displayName":  "Family Pest",
+        "tier":  2,
+        "type":  "quest",
+        "cost":  50,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Family Pest",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "mage_arena_ii",
+        "displayName":  "Mage Arena II",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Mage Arena II",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "in_search_of_knowledge",
+        "displayName":  "In Search of Knowledge",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "In Search of Knowledge",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "daddys_home",
+        "displayName":  "Daddy\u0027s Home",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Daddy\u0027s Home",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "the_frozen_door",
+        "displayName":  "The Frozen Door",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "The Frozen Door",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "hopespears_will",
+        "displayName":  "Hopespear\u0027s Will",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Hopespear\u0027s Will",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "into_the_tombs",
+        "displayName":  "Into the Tombs",
+        "tier":  4,
+        "type":  "quest",
+        "cost":  100,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Into the Tombs",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "his_faithful_servants",
+        "displayName":  "His Faithful Servants",
+        "tier":  3,
+        "type":  "quest",
+        "cost":  75,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "His Faithful Servants",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
+        "id":  "vale_totems",
+        "displayName":  "Vale Totems",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  25,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Vale Totems",
+                         "type":  "taskFilter"
+                     }
+    }
+]

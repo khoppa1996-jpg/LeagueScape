@@ -112,6 +112,15 @@ public class LeagueScapePlugin extends Plugin
 	@Inject
 	private com.leaguescape.wiki.WikiTaskGenerator wikiTaskGenerator;
 
+	@Inject
+	private com.leaguescape.worldunlock.WorldUnlockService worldUnlockService;
+
+	@Inject
+	private com.leaguescape.worldunlock.GlobalTaskListService globalTaskListService;
+
+	@Inject
+	private com.leaguescape.worldunlock.GoalTrackingService goalTrackingService;
+
 	private NavigationButton navButton;
 	private NavigationButton configNavButton;
 	private com.leaguescape.config.AreaEditOverlay areaEditOverlay;
@@ -153,6 +162,10 @@ public class LeagueScapePlugin extends Plugin
 			pointsService.setStartingPoints(config.startingPoints());
 		}
 		loadUnlockedAreas();
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		{
+			worldUnlockService.load();
+		}
 		overlayManager.add(lockedRegionOverlay);
 		overlayManager.add(taskCompletionPopupOverlay);
 		overlayManager.add(leagueScapeMapOverlay);
@@ -299,6 +312,32 @@ public class LeagueScapePlugin extends Plugin
 		return new com.leaguescape.config.AreaEditOverlay(client, areaGraphService, pluginProvider);
 	}
 
+	@Provides
+	@Singleton
+	com.leaguescape.worldunlock.WorldUnlockService provideWorldUnlockService(ConfigManager configManager,
+		com.leaguescape.points.PointsService pointsService,
+		com.leaguescape.task.TaskGridService taskGridService)
+	{
+		return new com.leaguescape.worldunlock.WorldUnlockService(configManager, pointsService, taskGridService);
+	}
+
+	@Provides
+	@Singleton
+	com.leaguescape.worldunlock.GlobalTaskListService provideGlobalTaskListService(ConfigManager configManager,
+		LeagueScapeConfig config,
+		com.leaguescape.points.PointsService pointsService,
+		com.leaguescape.worldunlock.WorldUnlockService worldUnlockService)
+	{
+		return new com.leaguescape.worldunlock.GlobalTaskListService(configManager, config, pointsService, worldUnlockService);
+	}
+
+	@Provides
+	@Singleton
+	com.leaguescape.worldunlock.GoalTrackingService provideGoalTrackingService()
+	{
+		return new com.leaguescape.worldunlock.GoalTrackingService();
+	}
+
 	private void loadUnlockedAreas()
 	{
 		String raw = configManager.getConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS);
@@ -348,6 +387,9 @@ public class LeagueScapePlugin extends Plugin
 			.map(com.leaguescape.data.Area::getId)
 			.collect(Collectors.toList());
 		taskGridServiceProvider.get().clearAllTaskProgress(areaIds);
+		worldUnlockService.clearUnlocked();
+		worldUnlockService.incrementGridSeed();
+		globalTaskListService.clearGlobalTaskProgress();
 		configManager.setConfiguration(STATE_GROUP, "pointsEarnedPerArea", "");
 		configManager.setConfiguration(STATE_GROUP, "completedAreas", "");
 		areaCompletionService.loadFromConfig();
@@ -473,6 +515,62 @@ public class LeagueScapePlugin extends Plugin
 			if (area == null) return;
 			if (!areaGraphService.getUnlockedAreaIds().contains(area.getId())) return;
 			leagueScapeMapOverlay.openTaskGridForArea(area);
+		});
+	}
+
+	/** Opens the World Unlock grid panel (World Unlock mode only). */
+	public void openWorldUnlockGrid()
+	{
+		javax.swing.SwingUtilities.invokeLater(() -> {
+			java.awt.Frame owner = null;
+			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
+			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
+			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "World Unlock", false);
+			com.leaguescape.worldunlock.WorldUnlockGridPanel panel = new com.leaguescape.worldunlock.WorldUnlockGridPanel(
+				worldUnlockService, pointsService,
+				dialog::dispose,
+				this::openGoalTrackingPanel,
+				client, audioPlayer);
+			dialog.setContentPane(panel);
+			dialog.pack();
+			dialog.setLocationRelativeTo(client.getCanvas());
+			dialog.setVisible(true);
+		});
+	}
+
+	/** Opens the Goal tracking panel (from World Unlock grid Goals button). */
+	public void openGoalTrackingPanel()
+	{
+		javax.swing.SwingUtilities.invokeLater(() -> {
+			java.awt.Frame owner = null;
+			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
+			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
+			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "Goals", false);
+			com.leaguescape.worldunlock.GoalTrackingPanel panel = new com.leaguescape.worldunlock.GoalTrackingPanel(
+				goalTrackingService, worldUnlockService, dialog::dispose, client, audioPlayer);
+			dialog.setContentPane(panel);
+			dialog.pack();
+			dialog.setSize(380, 300);
+			dialog.setLocationRelativeTo(client.getCanvas());
+			dialog.setVisible(true);
+		});
+	}
+
+	/** Opens the Global task list panel (World Unlock mode only). */
+	public void openGlobalTaskList()
+	{
+		javax.swing.SwingUtilities.invokeLater(() -> {
+			java.awt.Frame owner = null;
+			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
+			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
+			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "Global tasks", false);
+			com.leaguescape.worldunlock.GlobalTaskListPanel panel = new com.leaguescape.worldunlock.GlobalTaskListPanel(
+				globalTaskListService, pointsService, dialog::dispose, client, audioPlayer);
+			dialog.setContentPane(panel);
+			dialog.pack();
+			dialog.setSize(400, 380);
+			dialog.setLocationRelativeTo(client.getCanvas());
+			dialog.setVisible(true);
 		});
 	}
 

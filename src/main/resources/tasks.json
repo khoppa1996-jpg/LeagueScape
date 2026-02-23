@@ -2572,5 +2572,204 @@
     "difficulty": 2,
     "f2p": true,
     "onceOnly": true
+  },
+  {
+    "displayName": "Eat an Onion",
+    "taskType": "Cooking",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "grand_exchange"
+  },
+  {
+    "displayName": "Defeat a Dark Wizard",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Have Elsie tell you a story",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Kill a cow in one hit",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true
+  },
+  {
+    "displayName": "Pet a Stray Dog",
+    "taskType": "Other",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Enter the Varrock Training dummy house",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "f2p": true,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Stroke your cat",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "varrock"
+  },
+  {
+    "displayName": "Trade the Charter ship crewmate in Civitas Illa Fortis",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Drink from a bird bath",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Kill a Buffalo",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Give Oli some Stew",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Kill a Guard in Varlamore Underground",
+    "taskType": "Combat",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Pet Renu",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Milk a Buffalo",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Pet Xolo in Civitas Illa Fortis",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Pick some Sweetcorn",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Buy a Candle in Lumbridge",
+    "taskType": "Other",
+    "difficulty": 2,
+    "area": "lumbridge"
+  },
+  {
+    "displayName": "Cast a Blast Spell",
+    "taskType": "Magic",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Cast High level Alchemy",
+    "taskType": "Magic",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Chop some logs with a Rune Axe",
+    "taskType": "Woodcutting",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Chop some Rising Roots",
+    "taskType": "Woodcutting",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Complete the Flowering Bush event",
+    "taskType": "Woodcutting",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Complete the Pheasant Forestry Event",
+    "taskType": "Woodcutting",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Complete the Ritual Forestry Event",
+    "taskType": "Woodcutting",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Complete the Struggling Sapling event",
+    "taskType": "Woodcutting",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Eat some Purple Sweets",
+    "taskType": "Clue Scroll",
+    "difficulty": 3
+  },
+  {
+    "displayName": "Equip some Black armour",
+    "taskType": "Equipment",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Equip some Steel armour",
+    "taskType": "Equipment",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Dig in a hay stack for a needle",
+    "taskType": "Other",
+    "difficulty": 2
+  },
+  {
+    "displayName": "Make a Pineapple Pizza",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Mine some Ore With a Rune Pickaxe",
+    "taskType": "Mining",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Teleport Using Law Runes",
+    "taskType": "Magic",
+    "difficulty": 2,
+    "f2p": true
+  },
+  {
+    "displayName": "Pet the Museum Camp Dog",
+    "taskType": "Other",
+    "difficulty": 1,
+    "area": "fossil_island"
+  },
+  {
+    "displayName": "Pan for an Uncut Jade",
+    "taskType": "Fishing",
+    "difficulty": 1,
+    "area": "silvarea"
   }
 ]
