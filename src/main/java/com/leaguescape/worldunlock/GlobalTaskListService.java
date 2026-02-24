@@ -9,12 +9,13 @@ import com.leaguescape.task.TaskTile;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.regex.Pattern;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,12 +40,20 @@ public class GlobalTaskListService
 	private static final String KEY_GLOBAL_TASK_POSITIONS = "globalTaskProgress_positions";
 	private static final String KEY_GLOBAL_PSEUDO_CENTER = "globalTaskProgress_pseudoCenter";
 	private static final String KEY_GLOBAL_LAST_VIEWED = "globalTaskProgress_lastViewed";
+	/** Stores which grid positions have been claimed (for reveal); format "row,col||row,col". */
+	private static final String KEY_GLOBAL_CLAIMED_POSITIONS = "globalTaskProgress_claimedPositions";
 	private static final String ID_SEP = ",";
 	private static final String POS_ENTRY_SEP = "||";
+	/** Separator for list of claimed positions (must not be comma, since position is "row,col"). */
+	private static final String CLAIMED_POS_SEP = ";;";
 	private static final String POS_KV_SEP = "::";
 	/** Separator for multi-position keys: taskKey + COMPOSITE_SEP + pos (allows same task at multiple positions). */
 	private static final String COMPOSITE_SEP = "|||";
 	private static final int MAX_TIER = 5;
+	/** Minimum rings (matches Area Task grid); ensures tier 4/5 visibility. */
+	private static final int MIN_RINGS = 9;
+	/** Maximum rings for "infinite" expansion. */
+	private static final int MAX_RINGS = 100;
 
 	private final ConfigManager configManager;
 	private final LeagueScapeConfig config;
@@ -78,52 +87,162 @@ public class GlobalTaskListService
 	}
 
 	/**
-	 * Returns the flat list of global tasks: tasks from unlocked world-unlock tiles,
-	 * plus tasks with no area or "undefined" area (always available). Only includes tasks
-	 * that can be completed with currently unlocked skills, areas, quests, achievement diaries,
-	 * and bosses. Deduplicated by task key.
+	 * Returns the rollable task list for the Global Task panel.
+	 * Tasks are filtered by World Unlock panel state:
+	 * - Area tasks: require all areas (or any if areaRequirement=any) to be unlocked
+	 * - Skill tasks: require the matching skill tile to be unlocked (e.g. Woodcutting 1-10)
+	 * - Quest tasks: require a quest unlock that satisfies the task's requirements
+	 * - Diary tasks: require at least one achievement diary unlock
+	 * - Boss tasks: require at least one boss unlock
+	 * - No-area, no-type tasks: always allowed
 	 */
 	public List<TaskDefinition> getGlobalTasks()
 	{
 		UnlockedContent unlocked = buildUnlockedContent();
-
 		LinkedHashMap<String, TaskDefinition> byKey = new LinkedHashMap<>();
 
-		// 1. Tasks from unlocked world-unlock tiles
-		Set<String> unlockedIds = worldUnlockService.getUnlockedIds();
-		for (String unlockId : unlockedIds)
+		// 1. Add tasks from unlocked taskDisplayNames tiles (explicit task lists)
+		for (String unlockId : worldUnlockService.getUnlockedIds())
 		{
 			for (TaskDefinition t : worldUnlockService.getTasksForUnlock(unlockId))
 			{
-				if (!canTaskBeCompletedWithUnlocks(t, unlocked))
-					continue;
+				WorldUnlockTile tile = worldUnlockService.getTileById(unlockId);
+				if (tile == null || tile.getTaskLink() == null) continue;
+				String linkType = tile.getTaskLink().getType();
+				if (!"taskDisplayNames".equals(linkType)) continue;
 				String key = taskKey(t);
 				if (!key.isEmpty() && !byKey.containsKey(key))
 					byKey.put(key, t);
 			}
 		}
 
-		// 2. Tasks with no area or "undefined" area — include only if requirements are unlocked
+		// 2. Filter all tasks by unlock state (area, skill, quest, diary, boss)
 		for (TaskDefinition t : taskGridService.getEffectiveDefaultTasks())
 		{
-			List<String> areaIds = t.getRequiredAreaIds();
-			boolean noArea = areaIds == null || areaIds.isEmpty();
-			boolean undefinedArea = areaIds != null && areaIds.stream()
-				.anyMatch(a -> "undefined".equalsIgnoreCase(a));
-			if (noArea || undefinedArea)
-			{
-				if (!canTaskBeCompletedWithUnlocks(t, unlocked))
-					continue;
-				String key = taskKey(t);
-				if (!key.isEmpty() && !byKey.containsKey(key))
-					byKey.put(key, t);
-			}
+			String key = taskKey(t);
+			if (key.isEmpty() || byKey.containsKey(key)) continue;
+
+			if (canTaskAppearWithUnlocks(t, unlocked))
+				byKey.put(key, t);
 		}
 
+		log.debug("[GlobalTask] getGlobalTasks: unlocked={}, returning {} tasks", unlocked.summary(), byKey.size());
 		return new ArrayList<>(byKey.values());
 	}
 
-	/** Unlocked content derived from world-unlock tiles. */
+	/**
+	 * Returns the list of tasks available for assignment on the Global Task grid.
+	 * Based only on: no-area tasks + tasks allowed by current World Unlock state.
+	 * Used as the single pool for lazy assignment (strict one-use per task).
+	 */
+	public List<TaskDefinition> getAvailableTasksForGlobalGrid()
+	{
+		List<TaskDefinition> tasks = getGlobalTasks();
+		if (tasks.isEmpty())
+		{
+			List<TaskDefinition> noArea = taskGridService.getEffectiveDefaultTasks().stream()
+				.filter(t -> {
+					List<String> ids = t.getRequiredAreaIds();
+					return ids == null || ids.isEmpty()
+						|| (ids.stream().anyMatch(a -> "undefined".equalsIgnoreCase(a)));
+				})
+				.limit(500)
+				.collect(Collectors.toList());
+			if (!noArea.isEmpty()) tasks = noArea;
+			else
+			{
+				List<TaskDefinition> anyTasks = taskGridService.getEffectiveDefaultTasks().stream()
+					.limit(500)
+					.collect(Collectors.toList());
+				if (!anyTasks.isEmpty()) tasks = anyTasks;
+			}
+		}
+		return tasks;
+	}
+
+	/** Returns the four cardinal neighbor position strings "row,col" for the given position. */
+	private static List<String> getNeighborPositions(String pos)
+	{
+		int[] rc = parsePos(pos);
+		if (rc == null) return new ArrayList<>();
+		int r = rc[0], c = rc[1];
+		List<String> out = new ArrayList<>(4);
+		out.add((r + 1) + "," + c);
+		out.add((r - 1) + "," + c);
+		out.add(r + "," + (c + 1));
+		out.add(r + "," + (c - 1));
+		return out;
+	}
+
+	/**
+	 * True if this task can appear in the Global Task panel given current World Unlock state.
+	 * Mirrors the unlock-type gating from World Unlock tiles.
+	 */
+	private boolean canTaskAppearWithUnlocks(TaskDefinition task, UnlockedContent u)
+	{
+		// 1. Area: required areas must be unlocked
+		List<String> requiredAreas = task.getRequiredAreaIds();
+		if (requiredAreas != null && !requiredAreas.isEmpty())
+		{
+			boolean hasUndefined = requiredAreas.stream().anyMatch(a -> "undefined".equalsIgnoreCase(a));
+			if (hasUndefined) return true;  // undefined area = no gate
+			if (task.isAreaRequirementAny())
+			{
+				if (!requiredAreas.stream().anyMatch(a -> u.areas.contains(a)))
+					return false;
+			}
+			else
+			{
+				for (String areaId : requiredAreas)
+				{
+					if (!u.areas.contains(areaId))
+						return false;
+				}
+			}
+		}
+
+		// 2. Skill: if taskType matches a skill unlock tile, that skill must be unlocked
+		String taskType = task.getTaskType();
+		if (taskType != null && u.allSkillNames.contains(taskType) && !u.skills.contains(taskType))
+			return false;
+
+		// 3. Quest: if task has quest requirements or is Quest type, need quest unlock
+		if ("Quest".equalsIgnoreCase(taskType) || (task.getRequirements() != null && !task.getRequirements().trim().isEmpty()))
+		{
+			if (u.questRequirements.isEmpty())
+				return false;
+			if (task.getRequirements() != null && !task.getRequirements().trim().isEmpty())
+			{
+				for (String part : task.getRequirements().split(","))
+				{
+					String q = part.trim().toLowerCase();
+					if (q.isEmpty()) continue;
+					boolean satisfied = u.questRequirements.stream()
+						.anyMatch(unlocked -> unlocked.contains(q) || q.contains(unlocked));
+					if (!satisfied)
+						return false;
+				}
+			}
+		}
+
+		// 4. Achievement Diary: diary tasks need at least one diary unlock
+		if ("Achievement Diary".equalsIgnoreCase(taskType) || "Diary".equalsIgnoreCase(taskType))
+		{
+			if (u.diaryRequirements.isEmpty())
+				return false;
+		}
+
+		// 5. Boss: boss tasks need at least one boss unlock
+		if ("Boss".equalsIgnoreCase(taskType))
+		{
+			if (u.bossRequirements.isEmpty())
+				return false;
+		}
+
+		return true;
+	}
+
+	/** Unlocked content derived from World Unlock panel tiles. */
 	private static final class UnlockedContent
 	{
 		final Set<String> areas;
@@ -142,6 +261,13 @@ public class GlobalTaskListService
 			this.diaryRequirements = diaryRequirements;
 			this.bossRequirements = bossRequirements;
 			this.allSkillNames = allSkillNames;
+		}
+
+		String summary()
+		{
+			return "areas=" + areas.size() + ",skills=" + skills.size()
+				+ ",quests=" + questRequirements.size() + ",diaries=" + diaryRequirements.size()
+				+ ",bosses=" + bossRequirements.size();
 		}
 	}
 
@@ -191,255 +317,181 @@ public class GlobalTaskListService
 		return new UnlockedContent(areas, skills, questReqs, diaryReqs, bossReqs, allSkillNames);
 	}
 
-	/** True if the task can be completed with the currently unlocked content. */
-	private boolean canTaskBeCompletedWithUnlocks(TaskDefinition task, UnlockedContent u)
-	{
-		// Area: required areas must be unlocked (or task has no area requirement)
-		List<String> requiredAreas = task.getRequiredAreaIds();
-		if (requiredAreas != null && !requiredAreas.isEmpty())
-		{
-			for (String areaId : requiredAreas)
-			{
-				if ("undefined".equalsIgnoreCase(areaId))
-					continue;
-				if (!u.areas.contains(areaId))
-					return false;
-			}
-		}
-
-		// Skill: if task requires a skill (taskType matches a skill unlock), that skill must be unlocked
-		String taskType = task.getTaskType();
-		if (taskType != null && u.allSkillNames.contains(taskType) && !u.skills.contains(taskType))
-			return false;
-
-		// Quest: if task has requirements (quest names), each must be unlocked
-		String requirements = task.getRequirements();
-		if (requirements != null && !requirements.trim().isEmpty())
-		{
-			for (String part : requirements.split(","))
-			{
-				String q = part.trim().toLowerCase();
-				if (q.isEmpty()) continue;
-				boolean satisfied = u.questRequirements.stream()
-					.anyMatch(unlocked -> unlocked.contains(q) || q.contains(unlocked));
-				if (!satisfied)
-					return false;
-			}
-		}
-		else if ("Quest".equalsIgnoreCase(taskType) && u.questRequirements.isEmpty())
-		{
-			return false;
-		}
-
-		// Achievement Diary: if task is diary type, need at least one diary unlock
-		if ("Achievement Diary".equalsIgnoreCase(taskType) || "Diary".equalsIgnoreCase(taskType))
-		{
-			if (u.diaryRequirements.isEmpty())
-				return false;
-		}
-
-		// Boss: if task is boss type, need at least one boss unlock
-		if ("Boss".equalsIgnoreCase(taskType))
-		{
-			if (u.bossRequirements.isEmpty())
-				return false;
-		}
-
-		return true;
-	}
-
 	/**
-	 * Builds the spiral grid of TaskTile objects from the current global tasks.
-	 * Claimed and revealed tasks keep their persisted positions and do not move.
-	 * New tasks are placed deterministically by tier: lower tiers near the pseudo-center
-	 * (last claimed position or 0,0), higher tiers farther out. No reshuffling.
-	 * Center (0,0) is a special "Free" tile that must be claimed to reveal ring 1.
+	 * Builds the grid using lazy assignment: only assign a task to a cell when it is first revealed
+	 * (adjacent to a claimed cell). Center (0,0) is the anchor. Each task is used at most once (strict one-use).
+	 * Available tasks = no-area + unlocked World Unlock state only.
 	 */
 	public List<TaskTile> buildGlobalGrid(int reshuffleSeed)
 	{
+		worldUnlockService.load();
 		List<TaskTile> out = new ArrayList<>();
 		out.add(new TaskTile(TaskTile.idFor(0, 0), 0, "Free", 0, 0, 0, null, null, true, null));
 
-		List<TaskDefinition> tasks = getGlobalTasks();
-		if (tasks.isEmpty()) return out;
-
+		// 1. Available task pool: only no-area + unlocked World Unlock state
+		List<TaskDefinition> availableTasks = getAvailableTasksForGlobalGrid();
 		Map<String, TaskDefinition> taskByKey = new LinkedHashMap<>();
 		Set<String> seen = new HashSet<>();
-		for (TaskDefinition t : tasks)
+		for (TaskDefinition t : availableTasks)
 		{
 			String key = taskKey(t);
 			if (!key.isEmpty() && seen.add(key))
 				taskByKey.put(key, t);
 		}
+		log.debug("[GlobalTask] buildGlobalGrid: available pool size {}", taskByKey.size());
 
+		if (taskByKey.isEmpty())
+		{
+			log.warn("[GlobalTask] No tasks available; returning center only");
+			return out;
+		}
+
+		// 2. Load persisted state: position -> task assignments, claimed positions
 		Map<String, String> posMap = loadTaskPositions();
-
-		// Parse composite keys (taskKey|||pos) for multi-position support
-		Set<String> fixedKeys = new HashSet<>();
-		Set<String> occupiedPos = new HashSet<>(posMap.values());
-		for (Map.Entry<String, String> e : posMap.entrySet())
+		Set<String> claimedPositions = getClaimedPositions();
+		Map<String, TaskDefinition> allTasksByKeyFallback = new HashMap<>();
+		for (TaskDefinition t : taskGridService.getEffectiveDefaultTasks())
 		{
-			String taskKey = parseTaskKeyFromPositionKey(e.getKey());
-			if (taskByKey.containsKey(taskKey))
-				fixedKeys.add(taskKey);
+			String k = taskKey(t);
+			if (!k.isEmpty() && !allTasksByKeyFallback.containsKey(k))
+				allTasksByKeyFallback.put(k, t);
 		}
 
-		// Claimed positions (for computing adjacent slots for newly revealed)
-		Set<String> claimedPositions = new HashSet<>();
-		Set<String> claimedKeys = loadSet(KEY_GLOBAL_CLAIMED);
-		for (String key : claimedKeys)
-		{
-			for (String pos : getPositionsForTaskKey(posMap, key))
-				claimedPositions.add(pos);
-		}
-		if (isCenterClaimed())
-			claimedPositions.add("0,0");
-
-		// Positions adjacent to claimed (for newly revealed tasks)
-		Set<String> adjacentToClaimed = new HashSet<>();
+		// 3. Revealed positions = center + all positions adjacent to any claimed position
+		Set<String> revealedPositions = new HashSet<>();
+		revealedPositions.add("0,0");
 		for (String claimed : claimedPositions)
 		{
-			String[] parts = claimed.split(",");
-			if (parts.length != 2) continue;
-			try
-			{
-				int r = Integer.parseInt(parts[0].trim());
-				int c = Integer.parseInt(parts[1].trim());
-				int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-				for (int[] delta : d)
-					adjacentToClaimed.add((r + delta[0]) + "," + (c + delta[1]));
-			}
-			catch (NumberFormatException ignored) { }
+			revealedPositions.add(claimed);
+			revealedPositions.addAll(getNeighborPositions(claimed));
 		}
 
-		List<int[]> forNewlyRevealed = new ArrayList<>();
-		List<int[]> forLocked = new ArrayList<>();
-		String pseudoCenter = loadPseudoCenter();
-		int[] parsedCenter = parsePos(pseudoCenter);
-		final int[] center = (parsedCenter != null) ? parsedCenter : new int[]{ 0, 0 };
-
-		for (String p : adjacentToClaimed)
+		// 4. atPosition: already-assigned revealed cells (from posMap). toAssign: only revealed cells that have NO entry in posMap.
+		// If a position exists in posMap at all, never put it in toAssign — we never reassign.
+		Map<String, TaskDefinition> atPosition = new HashMap<>();
+		List<String> toAssign = new ArrayList<>();
+		for (String pos : revealedPositions)
 		{
-			if (!occupiedPos.contains(p))
+			if ("0,0".equals(pos)) continue;  // center has no task assignment
+			String normPos = normalizePos(pos);
+			boolean inPosMap = false;
+			for (Map.Entry<String, String> e : posMap.entrySet())
 			{
-				int[] rc = parsePos(p);
-				if (rc != null)
-					forNewlyRevealed.add(rc);
+				// Match by normalized value, or by position embedded in composite key (robust to any value format)
+				String entryPos = e.getValue();
+				boolean valueMatches = normPos.equals(normalizePos(entryPos));
+				if (!valueMatches && e.getKey() != null && e.getKey().contains(COMPOSITE_SEP))
+				{
+					String keyPos = e.getKey().substring(e.getKey().indexOf(COMPOSITE_SEP) + COMPOSITE_SEP.length()).trim();
+					valueMatches = normPos.equals(normalizePos(keyPos));
+				}
+				if (!valueMatches) continue;
+				inPosMap = true;  // position has an assignment in storage — never reassign
+				String tk = parseTaskKeyFromPositionKey(e.getKey());
+				if (!tk.isEmpty() && !isPositionLike(tk))
+				{
+					TaskDefinition def = allTasksByKeyFallback.get(tk);
+					if (def == null) def = taskByKey.get(tk);
+					if (def == null)
+					{
+						// Keep tile visible even when task key can't be resolved (e.g. key format change)
+						def = new TaskDefinition();
+						def.setDisplayName(tk);
+						def.setDifficulty(1);
+					}
+					atPosition.put(pos, def);
+				}
+				break;
 			}
+			if (!inPosMap)
+				toAssign.add(pos);
 		}
+
+		// 5. Task keys that must not be assigned again: already in posMap (placed) + claimed by user
+		Set<String> alreadyPlacedTaskKeys = new HashSet<>();
+		for (String k : posMap.keySet())
+		{
+			String tk = parseTaskKeyFromPositionKey(k);
+			if (!tk.isEmpty() && !isPositionLike(tk)) alreadyPlacedTaskKeys.add(tk);
+		}
+		Set<String> claimedTaskKeys = loadSet(KEY_GLOBAL_CLAIMED);
+		alreadyPlacedTaskKeys.addAll(claimedTaskKeys);
+
+		// 6. Available for new assignment = pool minus already placed minus claimed. Sort by difficulty (tier 1 first, then 2, etc.).
+		List<TaskDefinition> availableForNew = new ArrayList<>();
+		for (TaskDefinition t : taskByKey.values())
+		{
+			if (!alreadyPlacedTaskKeys.contains(taskKey(t)))
+				availableForNew.add(t);
+		}
+		// Match Area Task Grid: tier 1 closer to center, then tier 2, tier 3, etc. (spiral order + difficulty ordering)
+		availableForNew.sort((a, b) -> {
+			int da = Math.max(1, Math.min(MAX_TIER, a.getDifficulty()));
+			int db = Math.max(1, Math.min(MAX_TIER, b.getDifficulty()));
+			if (da != db) return Integer.compare(da, db);
+			return taskKey(a).compareTo(taskKey(b));
+		});
+		// Optional: shuffle within same difficulty for variety (use seed so reproducible)
+		Random rnd = new Random(reshuffleSeed);
+		int idx = 0;
+		while (idx < availableForNew.size())
+		{
+			int d = Math.max(1, Math.min(MAX_TIER, availableForNew.get(idx).getDifficulty()));
+			int j = idx + 1;
+			while (j < availableForNew.size() && Math.max(1, Math.min(MAX_TIER, availableForNew.get(j).getDifficulty())) == d)
+				j++;
+			if (j > idx + 1)
+				java.util.Collections.shuffle(availableForNew.subList(idx, j), rnd);
+			idx = j;
+		}
+
+		// 7. Sort toAssign by spiral order (center-first, then by ring), assign one task per position (strict one-use)
 		Comparator<int[]> byDistFromCenter = (a, b) -> {
-			int da = chebyshevDist(a[0], a[1], center[0], center[1]);
-			int db = chebyshevDist(b[0], b[1], center[0], center[1]);
+			int da = chebyshevDist(a[0], a[1], 0, 0);
+			int db = chebyshevDist(b[0], b[1], 0, 0);
 			if (da != db) return Integer.compare(da, db);
 			if (a[0] != b[0]) return Integer.compare(a[0], b[0]);
 			return Integer.compare(a[1], b[1]);
 		};
-		forNewlyRevealed.sort(byDistFromCenter);
+		List<int[]> toAssignRc = new ArrayList<>();
+		for (String pos : toAssign)
+		{
+			int[] rc = parsePos(pos);
+			if (rc != null) toAssignRc.add(rc);
+		}
+		toAssignRc.sort(byDistFromCenter);
 
-		// All spiral positions (unlimited size — keep adding rings until we have enough)
-		List<int[]> allSpiral = new ArrayList<>();
-		int ring = 1;
-		while (allSpiral.size() < taskByKey.size())
+		Map<String, String> toPersist = new HashMap<>(posMap);
+		for (int i = 0; i < toAssignRc.size() && i < availableForNew.size(); i++)
 		{
-			allSpiral.addAll(spiralOrderForRing(ring));
-			ring++;
-		}
-		for (int[] rc : allSpiral)
-		{
-			String p = rc[0] + "," + rc[1];
-			if (!occupiedPos.contains(p) && !adjacentToClaimed.contains(p))
-				forLocked.add(rc);
-		}
-		// Ensure enough locked slots for unfixed tasks (each gets one locked position; adjacent filled by cycling)
-		int unfixedCount = taskByKey.size() - fixedKeys.size();
-		int neededLocked = unfixedCount;
-		while (forLocked.size() < neededLocked)
-		{
-			allSpiral.addAll(spiralOrderForRing(ring));
-			ring++;
-			forLocked.clear();
-			for (int[] rc : allSpiral)
-			{
-				String p = rc[0] + "," + rc[1];
-				if (!occupiedPos.contains(p) && !adjacentToClaimed.contains(p))
-					forLocked.add(rc);
-			}
-			forLocked.sort(byDistFromCenter);
+			int[] rc = toAssignRc.get(i);
+			String pos = rc[0] + "," + rc[1];
+			TaskDefinition def = availableForNew.get(i);
+			atPosition.put(pos, def);
+			String key = taskKey(def);
+			toPersist.put(key + COMPOSITE_SEP + pos, pos);
 		}
 
-		// Unfixed tasks: sort by tier (ascending) for deterministic placement
-		List<TaskDefinition> unfixed = new ArrayList<>();
-		for (Map.Entry<String, TaskDefinition> e : taskByKey.entrySet())
-		{
-			if (!fixedKeys.contains(e.getKey()))
-				unfixed.add(e.getValue());
-		}
-		unfixed.sort((a, b) -> {
-			int ta = Math.max(1, Math.min(MAX_TIER, a.getDifficulty()));
-			int tb = Math.max(1, Math.min(MAX_TIER, b.getDifficulty()));
-			if (ta != tb) return Integer.compare(ta, tb);
-			return taskKey(a).compareTo(taskKey(b));
+		// 8. Output: center + all assigned revealed positions (sorted)
+		List<String> positionsToOutput = new ArrayList<>(atPosition.keySet());
+		positionsToOutput.sort((a, b) -> {
+			int[] ar = parsePos(a), br = parsePos(b);
+			if (ar == null || br == null) return 0;
+			return byDistFromCenter.compare(ar, br);
 		});
 
-		int newlyRevealedCount = Math.min(unfixed.size(), forNewlyRevealed.size());
-		List<TaskDefinition> newlyRevealed = unfixed.subList(0, newlyRevealedCount);
-		List<TaskDefinition> locked = unfixed.subList(newlyRevealedCount, unfixed.size());
-
-		// Build task -> position mapping (start with fixed from posMap)
-		Map<String, String> taskToPos = new HashMap<>();
-		for (Map.Entry<String, String> e : posMap.entrySet())
+		for (String posStr : positionsToOutput)
 		{
-			String taskKey = parseTaskKeyFromPositionKey(e.getKey());
-			if (fixedKeys.contains(taskKey) && taskByKey.containsKey(taskKey))
-				taskToPos.put(e.getKey(), e.getValue()); // keep composite key for multi-position
-		}
-
-		// Fill EVERY adjacent-to-claimed slot by cycling unfixed tasks (so no empty adjacent cells)
-		for (int i = 0; i < forNewlyRevealed.size() && !unfixed.isEmpty(); i++)
-		{
-			int[] rc = forNewlyRevealed.get(i);
-			TaskDefinition def = unfixed.get(i % unfixed.size());
-			taskToPos.put(taskKey(def) + COMPOSITE_SEP + rc[0] + "," + rc[1], rc[0] + "," + rc[1]);
-		}
-		int idx = 0;
-		for (TaskDefinition def : locked)
-		{
-			if (idx >= forLocked.size()) break;
-			int[] rc = forLocked.get(idx++);
-			taskToPos.put(taskKey(def) + COMPOSITE_SEP + rc[0] + "," + rc[1], rc[0] + "," + rc[1]);
-		}
-
-		// Build output: position -> task from taskToPos (supports multi-position via composite keys)
-		Map<String, TaskDefinition> atPosition = new HashMap<>();
-		for (Map.Entry<String, String> e : taskToPos.entrySet())
-		{
-			String pos = e.getValue();
-			String taskKey = parseTaskKeyFromPositionKey(e.getKey());
-			TaskDefinition def = taskByKey.get(taskKey);
-			if (def != null && pos != null)
-				atPosition.put(pos, def);
-		}
-
-		List<int[]> positionsToOutput = new ArrayList<>();
-		for (String posStr : atPosition.keySet())
-		{
+			if ("0,0".equals(posStr)) continue;  // center already in out
 			int[] rc = parsePos(posStr);
-			if (rc != null) positionsToOutput.add(rc);
-		}
-		positionsToOutput.sort(byDistFromCenter);
-
-		for (int[] rc : positionsToOutput)
-		{
-			String pos = rc[0] + "," + rc[1];
-			TaskDefinition def = atPosition.get(pos);
+			if (rc == null) continue;
+			TaskDefinition def = atPosition.get(posStr);
 			if (def == null) continue;
-
 			int r = rc[0], c = rc[1];
 			String id = TaskTile.idFor(r, c);
 			int difficulty = Math.max(1, Math.min(MAX_TIER, def.getDifficulty()));
 			int points = pointsForTier(difficulty);
 			String displayName = def.getDisplayName() != null ? def.getDisplayName() : id;
-
 			out.add(new TaskTile(id, difficulty, displayName, points, r, c,
 				def.getTaskType(),
 				def.getRequiredAreaIds().isEmpty() ? null : new ArrayList<>(def.getRequiredAreaIds()),
@@ -447,34 +499,9 @@ public class GlobalTaskListService
 				def.getRequirements()));
 		}
 
-		// Persist positions: use composite key (taskKey|||pos) so same task can appear at multiple positions.
-		// Remove stale positions for tasks in the current output, then write current positions.
-		Map<String, String> toPersist = new HashMap<>(posMap);
-		Set<String> outputTaskKeys = new HashSet<>();
-		for (TaskTile t : out)
-		{
-			if ("0,0".equals(t.getId())) continue;
-			outputTaskKeys.add(taskKeyFromName(t.getDisplayName()));
-		}
-		for (String taskKey : outputTaskKeys)
-		{
-			List<String> toRemove = new ArrayList<>();
-			for (String k : toPersist.keySet())
-			{
-				if (taskKey.equals(k) || k.startsWith(taskKey + COMPOSITE_SEP))
-					toRemove.add(k);
-			}
-			for (String k : toRemove) toPersist.remove(k);
-		}
-		for (TaskTile t : out)
-		{
-			if ("0,0".equals(t.getId())) continue;
-			String key = taskKeyFromName(t.getDisplayName());
-			String pos = t.getRow() + "," + t.getCol();
-			toPersist.put(key + COMPOSITE_SEP + pos, pos);
-		}
+		// 9. Persist: only add new assignments (never remove existing)
 		saveTaskPositions(toPersist);
-
+		log.debug("[GlobalTask] buildGlobalGrid output: {} tiles (revealed+assigned)", out.size());
 		return out;
 	}
 
@@ -515,19 +542,37 @@ public class GlobalTaskListService
 		return Math.max(Math.abs(r1 - r2), Math.abs(c1 - c2));
 	}
 
+	/** Keys must be composite "taskKey|||pos"; reject position-as-key entries (e.g. "1,0") that would show coords as task name. */
+	private static boolean isPositionLike(String keyOrPos)
+	{
+		if (keyOrPos == null) return true;
+		return keyOrPos.trim().matches("-?\\d+\\s*,\\s*-?\\d+");
+	}
+
+	/** Canonical position string "r,c" (no spaces) so load/store and comparisons match. */
+	private static String normalizePos(String pos)
+	{
+		int[] rc = parsePos(pos);
+		return rc != null ? (rc[0] + "," + rc[1]) : (pos != null ? pos.trim() : "");
+	}
+
 	private Map<String, String> loadTaskPositions()
 	{
 		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS);
 		Map<String, String> map = new HashMap<>();
 		if (raw == null || raw.isEmpty()) return map;
-		for (String entry : raw.split(Pattern.quote(POS_ENTRY_SEP)))
+		// Split by "||" but not when part of "|||" (composite key), so entries like "taskKey|||pos::pos" stay intact
+		Pattern entrySplit = Pattern.compile("\\|\\|(?!\\|)");
+		for (String entry : entrySplit.split(raw))
 		{
 			int lastSep = entry.lastIndexOf(POS_KV_SEP);
 			if (lastSep < 0) continue;
 			String key = entry.substring(0, lastSep).trim();
 			String pos = entry.substring(lastSep + POS_KV_SEP.length()).trim();
-			if (!key.isEmpty() && !pos.isEmpty())
-				map.put(key, pos);
+			// Ignore position-as-key entries (legacy/corrupt) so we don't show coordinates as task names
+			if (key.isEmpty() || pos.isEmpty() || !key.contains(COMPOSITE_SEP) || isPositionLike(key))
+				continue;
+			map.put(key, normalizePos(pos));
 		}
 		return map;
 	}
@@ -537,17 +582,21 @@ public class GlobalTaskListService
 		List<String> parts = new ArrayList<>();
 		for (Map.Entry<String, String> e : map.entrySet())
 		{
-			parts.add(e.getKey() + POS_KV_SEP + e.getValue());
+			String k = e.getKey();
+			// Only persist composite keys "taskKey|||pos"; skip position-as-key entries so they are dropped
+			if (k != null && k.contains(COMPOSITE_SEP) && !isPositionLike(k))
+				parts.add(k + POS_KV_SEP + e.getValue());
 		}
 		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS, String.join(POS_ENTRY_SEP, parts));
 	}
 
-	/** Extracts taskKey from a position map key (handles "taskKey" or "taskKey|||pos"). */
+	/** Extracts taskKey from a position map key (handles "taskKey" or "taskKey|||pos"). Normalized for lookup (trim + lowercase). */
 	private static String parseTaskKeyFromPositionKey(String positionKey)
 	{
 		if (positionKey == null) return "";
 		int i = positionKey.indexOf(COMPOSITE_SEP);
-		return i >= 0 ? positionKey.substring(0, i) : positionKey;
+		String raw = i >= 0 ? positionKey.substring(0, i) : positionKey;
+		return raw != null ? raw.trim().toLowerCase() : "";
 	}
 
 	/** Returns all positions stored for the given task key (supports multi-position and legacy single key). */
@@ -599,6 +648,7 @@ public class GlobalTaskListService
 	 */
 	public TaskState getGlobalState(String tileId, List<TaskTile> grid)
 	{
+		// Center (0,0) is always shown: CLAIMED if claimed, else COMPLETED_UNCLAIMED (click to claim)
 		boolean isCenter = "0,0".equals(tileId);
 		if (isCenter)
 		{
@@ -606,6 +656,7 @@ public class GlobalTaskListService
 			return TaskState.COMPLETED_UNCLAIMED;
 		}
 
+		// Find tile in grid
 		TaskTile tile = null;
 		for (TaskTile t : grid)
 		{
@@ -617,39 +668,67 @@ public class GlobalTaskListService
 		}
 		if (tile == null) return TaskState.LOCKED;
 
+		Set<String> claimedPositions = getClaimedPositions();
+		// CLAIMED only at the specific position the user claimed (not every tile with the same task)
+		if (claimedPositions.contains(tileId)) return TaskState.CLAIMED;
+		// Completed-but-unclaimed only when this task is done and not yet claimed (anywhere)
 		String key = taskKeyFromName(tile.getDisplayName());
-		if (isClaimed(key)) return TaskState.CLAIMED;
-		if (isCompleted(key)) return TaskState.COMPLETED_UNCLAIMED;
+		if (isCompleted(key) && !isClaimed(key)) return TaskState.COMPLETED_UNCLAIMED;
 
-		if (isRevealedGlobal(tile, grid)) return TaskState.REVEALED;
+		// Revealed if any cardinal neighbor position is claimed (same logic as Area Task grid)
+		if (isRevealedGlobal(tile, claimedPositions)) return TaskState.REVEALED;
 		return TaskState.LOCKED;
 	}
 
-	private boolean isRevealedGlobal(TaskTile tile, List<TaskTile> grid)
+	/**
+	 * Same reveal logic as Area Task grid (TaskGridService.isRevealed):
+	 * tile is revealed if any cardinal neighbor position is in the claimed set.
+	 * Uses position-based claiming (not task-key) so it works for infinite rings.
+	 */
+	private boolean isRevealedGlobal(TaskTile tile, Set<String> claimedPositions)
 	{
 		int row = tile.getRow(), col = tile.getCol();
 		int[][] deltas = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-		Map<String, TaskTile> posToTile = new HashMap<>();
-		for (TaskTile t : grid)
-			posToTile.put(t.getRow() + "," + t.getCol(), t);
-
 		for (int[] d : deltas)
 		{
 			int nr = row + d[0], nc = col + d[1];
-			TaskTile neighbor = posToTile.get(nr + "," + nc);
-			if (neighbor == null) continue;
-
-			if ("0,0".equals(neighbor.getId()))
-			{
-				if (isCenterClaimed()) return true;
-			}
-			else
-			{
-				String nKey = taskKeyFromName(neighbor.getDisplayName());
-				if (isClaimed(nKey)) return true;
-			}
+			String neighborId = TaskTile.idFor(nr, nc);
+			if (claimedPositions.contains(neighborId))
+				return true;
 		}
 		return false;
+	}
+
+	/** Returns claimed grid positions: center (if claimed) + explicitly stored claimed positions. */
+	private Set<String> getClaimedPositions()
+	{
+		Set<String> claimed = new HashSet<>();
+		if (isCenterClaimed())
+			claimed.add("0,0");
+		claimed.addAll(loadClaimedPositions());
+		return claimed;
+	}
+
+	/** Loads the set of grid positions (row,col) that have been claimed (for reveal logic). */
+	private Set<String> loadClaimedPositions()
+	{
+		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED_POSITIONS);
+		Set<String> set = new HashSet<>();
+		if (raw != null && !raw.isEmpty())
+		{
+			for (String pos : raw.split(Pattern.quote(CLAIMED_POS_SEP)))
+			{
+				String p = pos.trim();
+				if (!p.isEmpty()) set.add(p);
+			}
+		}
+		return set;
+	}
+
+	private void saveClaimedPositions(Set<String> positions)
+	{
+		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED_POSITIONS,
+			String.join(CLAIMED_POS_SEP, positions));
 	}
 
 	public boolean isCenterClaimed()
@@ -660,8 +739,24 @@ public class GlobalTaskListService
 
 	public void claimCenter()
 	{
+		// Persist center as claimed
 		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_CENTER_CLAIMED, "true");
+		Set<String> claimedPos = loadClaimedPositions();
+		claimedPos.add("0,0");
+		saveClaimedPositions(claimedPos);
 		savePseudoCenter("0,0");
+		// Auto-unlock the starter world tile (e.g. Lumbridge) so getGlobalTasks returns area tasks for adjacent slots
+		List<WorldUnlockTilePlacement> grid = worldUnlockService.getGrid();
+		if (!grid.isEmpty())
+		{
+			WorldUnlockTile starter = grid.get(0).getTile();
+			if (starter != null && starter.getCost() == 0
+				&& (starter.getPrerequisites() == null || starter.getPrerequisites().isEmpty()))
+			{
+				boolean unlocked = worldUnlockService.unlock(starter.getId(), starter.getCost());
+				log.debug("[GlobalTask] claimCenter: auto-unlocked starter {} = {}", starter.getId(), unlocked);
+			}
+		}
 	}
 
 	public boolean isCompleted(String taskKey)
@@ -688,13 +783,27 @@ public class GlobalTaskListService
 		return pointsForTier(difficulty);
 	}
 
+	/** Sentinel for unknown position (don't persist to claimed positions). */
+	private static final int UNKNOWN_POS = -999;
+
 	/**
 	 * Marks a task as claimed: persists and awards points by difficulty. Idempotent if already claimed.
+	 * Use {@link #claimTask(String, int, int)} when the tile position is known so adjacent tiles reveal.
 	 */
 	public void claimTask(String taskKey)
 	{
+		claimTask(taskKey, UNKNOWN_POS, UNKNOWN_POS);
+	}
+
+	/**
+	 * Marks a task as claimed at the given grid position. Persists the position so adjacent tiles reveal;
+	 * no tile/task repositioning occurs. Idempotent if already claimed.
+	 */
+	public void claimTask(String taskKey, int row, int col)
+	{
 		Set<String> claimed = loadSet(KEY_GLOBAL_CLAIMED);
-		if (claimed.contains(taskKey)) return;
+		if (claimed.contains(taskKey))
+			return;
 
 		TaskDefinition task = getGlobalTasks().stream()
 			.filter(t -> taskKey(t).equals(taskKey))
@@ -704,14 +813,27 @@ public class GlobalTaskListService
 
 		claimed.add(taskKey);
 		saveSet(KEY_GLOBAL_CLAIMED, claimed);
-		// Update pseudo-center for tier-based placement of newly revealed tasks
-		List<String> positions = getPositionsForTaskKey(loadTaskPositions(), taskKey);
-		if (!positions.isEmpty())
-			savePseudoCenter(positions.get(0));
+
+		// Persist claimed position only when known so getClaimedPositions() reveals adjacent tiles
+		boolean positionKnown = (row != UNKNOWN_POS || col != UNKNOWN_POS);
+		if (positionKnown)
+		{
+			String pos = row + "," + col;
+			Set<String> claimedPos = loadClaimedPositions();
+			claimedPos.add(pos);
+			saveClaimedPositions(claimedPos);
+			savePseudoCenter(pos);
+		}
+		else
+		{
+			List<String> positions = getPositionsForTaskKey(loadTaskPositions(), taskKey);
+			if (!positions.isEmpty())
+				savePseudoCenter(positions.get(0));
+		}
 		if (points > 0)
 		{
 			pointsService.addEarned(points);
-			log.debug("Global task {} claimed, +{} points", taskKey, points);
+			log.debug("Global task {} claimed at ({},{}), +{} points", taskKey, row, col, points);
 		}
 	}
 
@@ -756,6 +878,7 @@ public class GlobalTaskListService
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_COMPLETED);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_CENTER_CLAIMED);
+		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED_POSITIONS);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_PSEUDO_CENTER);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_LAST_VIEWED);

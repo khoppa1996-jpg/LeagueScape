@@ -114,9 +114,10 @@ public class WorldUnlockService
 	}
 
 	/**
-	 * Returns the world unlock grid: center (0,0) = start tile (no prereqs, cost 0), then tiles
-	 * distributed by tier in spiral rings (tier 1 near center, higher tiers outward). Within each
-	 * tier, tiles are shuffled for type diversity. All tiles are included.
+	 * Returns the world unlock grid: center (0,0) = start tile (no prereqs, cost 0).
+	 * Ring 1 (8 slots) and ring 2 (16 slots) are skill unlocks only (level 1-10, then 11-20 to fill).
+	 * From ring 3 onward, skills are always prioritized; areas, quests, achievement diaries, and
+	 * bosses are added slowly (interleaved so skills dominate).
 	 */
 	public List<WorldUnlockTilePlacement> getGrid()
 	{
@@ -144,48 +145,119 @@ public class WorldUnlockService
 		int seed = getGridSeed();
 		Random rng = new Random(seed);
 
-		int maxTier = 5;
 		int ring1Slots = 8;
 		int ring2Slots = 16;
-		int earlySlots = ring1Slots + ring2Slots; // 24
 
-		// Early skill tiles: type=skill, tier=1, level band 1-10 (levelMax <= 10)
-		List<WorldUnlockTile> earlySkills = new ArrayList<>();
-		List<WorldUnlockTile> restByTier = new ArrayList<>();
+		// Partition: skills by level band (0=1-10, 1=11-20, ...), and non-skills by type
+		List<List<WorldUnlockTile>> skillsByBand = new ArrayList<>();
+		for (int b = 0; b <= 9; b++)
+			skillsByBand.add(new ArrayList<>());
+		List<WorldUnlockTile> areas = new ArrayList<>();
+		List<WorldUnlockTile> quests = new ArrayList<>();
+		List<WorldUnlockTile> diaries = new ArrayList<>();
+		List<WorldUnlockTile> bosses = new ArrayList<>();
+		List<WorldUnlockTile> other = new ArrayList<>();
+
 		for (WorldUnlockTile t : rest)
 		{
-			if (isSkillLevel1To10(t))
-				earlySkills.add(t);
+			int band = getSkillLevelBand(t);
+			if (band >= 0)
+			{
+				skillsByBand.get(band).add(t);
+			}
 			else
-				restByTier.add(t);
+			{
+				String type = t.getType();
+				if ("area".equals(type)) areas.add(t);
+				else if ("quest".equals(type)) quests.add(t);
+				else if ("achievement_diary".equals(type)) diaries.add(t);
+				else if ("boss".equals(type)) bosses.add(t);
+				else other.add(t);
+			}
 		}
-		Collections.shuffle(earlySkills, rng);
 
-		// Group rest by tier
-		List<List<WorldUnlockTile>> byTier = new ArrayList<>();
-		for (int t = 0; t <= maxTier; t++)
-			byTier.add(new ArrayList<>());
-		for (WorldUnlockTile t : restByTier)
+		for (List<WorldUnlockTile> list : skillsByBand)
+			Collections.shuffle(list, rng);
+		Collections.shuffle(areas, rng);
+		Collections.shuffle(quests, rng);
+		Collections.shuffle(diaries, rng);
+		Collections.shuffle(bosses, rng);
+		Collections.shuffle(other, rng);
+
+		// Ring 1 (8): skill 1-10 only
+		List<WorldUnlockTile> ring1 = new ArrayList<>();
+		List<WorldUnlockTile> band0 = skillsByBand.get(0);
+		for (int i = 0; i < Math.min(ring1Slots, band0.size()); i++)
+			ring1.add(band0.get(i));
+		int ring1Used = ring1.size();
+
+		// Ring 2 (16): remaining skill 1-10, then skill 11-20 to fill
+		List<WorldUnlockTile> ring2 = new ArrayList<>();
+		for (int i = ring1Used; i < band0.size() && ring2.size() < ring2Slots; i++)
+			ring2.add(band0.get(i));
+		for (int b = 1; b <= 9 && ring2.size() < ring2Slots; b++)
 		{
-			int tier = Math.max(1, Math.min(maxTier, t.getTier()));
-			byTier.get(tier).add(t);
+			for (WorldUnlockTile t : skillsByBand.get(b))
+			{
+				if (ring2.size() >= ring2Slots) break;
+				ring2.add(t);
+			}
 		}
-		for (int t = 1; t <= maxTier; t++)
-			Collections.shuffle(byTier.get(t), rng);
 
-		// Build ordered list: first 24 slots = early skills (1-10), then rest by tier
+		// Remaining skills (all bands): those not used in ring 1 or 2
+		int fromBand0InRing2 = Math.min(band0.size() - ring1Used, ring2Slots);
+		int fromBand1InRing2 = Math.min(skillsByBand.get(1).size(), Math.max(0, ring2Slots - (band0.size() - ring1Used)));
+		List<WorldUnlockTile> remainingSkills = new ArrayList<>();
+		for (int i = ring1Used + fromBand0InRing2; i < band0.size(); i++)
+			remainingSkills.add(band0.get(i));
+		for (int b = 1; b <= 9; b++)
+		{
+			List<WorldUnlockTile> band = skillsByBand.get(b);
+			int usedInRing2 = (b == 1) ? fromBand1InRing2 : 0;
+			for (int i = usedInRing2; i < band.size(); i++)
+				remainingSkills.add(band.get(i));
+		}
+		remainingSkills.sort((a, b) -> {
+			int ta = a.getTier(), tb = b.getTier();
+			if (ta != tb) return Integer.compare(ta, tb);
+			return Integer.compare(getSkillLevelBand(a), getSkillLevelBand(b));
+		});
+
+		// Non-skills: round-robin for slow interleave (area, quest, diary, boss, ...)
+		List<WorldUnlockTile> nonSkillsRoundRobin = new ArrayList<>();
+		int maxNon = Math.max(Math.max(areas.size(), quests.size()), Math.max(diaries.size(), bosses.size()));
+		for (int i = 0; i < maxNon; i++)
+		{
+			if (i < areas.size()) nonSkillsRoundRobin.add(areas.get(i));
+			if (i < quests.size()) nonSkillsRoundRobin.add(quests.get(i));
+			if (i < diaries.size()) nonSkillsRoundRobin.add(diaries.get(i));
+			if (i < bosses.size()) nonSkillsRoundRobin.add(bosses.get(i));
+		}
+		nonSkillsRoundRobin.addAll(other);
+
+		// Ring 3+: prioritize skills; every SKILLS_PER_NON_SKILL skills add one non-skill
+		final int SKILLS_PER_NON_SKILL = 6;
 		List<WorldUnlockTile> restOrdered = new ArrayList<>();
-		for (int t = 1; t <= maxTier; t++)
-			restOrdered.addAll(byTier.get(t));
+		int skillIdx = 0;
+		int nonIdx = 0;
+		while (skillIdx < remainingSkills.size() || nonIdx < nonSkillsRoundRobin.size())
+		{
+			for (int k = 0; k < SKILLS_PER_NON_SKILL && skillIdx < remainingSkills.size(); k++)
+			{
+				restOrdered.add(remainingSkills.get(skillIdx++));
+			}
+			if (nonIdx < nonSkillsRoundRobin.size())
+			{
+				restOrdered.add(nonSkillsRoundRobin.get(nonIdx++));
+			}
+		}
+		while (skillIdx < remainingSkills.size())
+			restOrdered.add(remainingSkills.get(skillIdx++));
 
 		List<WorldUnlockTile> ordered = new ArrayList<>();
-		for (int i = 0; i < Math.min(earlySlots, earlySkills.size()); i++)
-			ordered.add(earlySkills.get(i));
-		int needFill = earlySlots - ordered.size();
-		for (int i = 0; i < needFill && i < restOrdered.size(); i++)
-			ordered.add(restOrdered.get(i));
-		for (int i = needFill; i < restOrdered.size(); i++)
-			ordered.add(restOrdered.get(i));
+		ordered.addAll(ring1);
+		ordered.addAll(ring2);
+		ordered.addAll(restOrdered);
 
 		List<int[]> positions = new ArrayList<>();
 		positions.add(new int[]{ 0, 0 });
@@ -206,16 +278,21 @@ public class WorldUnlockService
 		return grid;
 	}
 
+	/** Level band index for skill tiles: 0 = 1-10, 1 = 11-20, ..., 9 = 91-99. Returns -1 if not a skill tile. */
+	private static int getSkillLevelBand(WorldUnlockTile t)
+	{
+		if (!"skill".equals(t.getType())) return -1;
+		TaskLink link = t.getTaskLink();
+		if (link == null) return -1;
+		Integer levelMax = link.getLevelMax();
+		if (levelMax == null) return -1;
+		return (levelMax - 1) / 10;
+	}
+
 	/** True if tile is a skill unlock, tier 1, with level band 1-10 (levelMax <= 10). */
 	private static boolean isSkillLevel1To10(WorldUnlockTile t)
 	{
-		if (!"skill".equals(t.getType()) || t.getTier() != 1)
-			return false;
-		TaskLink link = t.getTaskLink();
-		if (link == null) return false;
-		Integer levelMax = link.getLevelMax();
-		Integer levelMin = link.getLevelMin();
-		return levelMax != null && levelMax <= 10 && (levelMin == null || levelMin <= 10);
+		return getSkillLevelBand(t) == 0 && t.getTier() == 1;
 	}
 
 	/** Spiral order for one ring (same as TaskGridService). Ring 1 = 8 cells, ring 2 = 16, etc. */

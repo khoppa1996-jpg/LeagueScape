@@ -42,6 +42,8 @@ import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.util.ImageUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Global task grid panel for World Unlock mode. Visually identical to the per-area Task Grid:
@@ -49,6 +51,7 @@ import net.runelite.client.util.ImageUtil;
  */
 public class GlobalTaskListPanel extends JPanel
 {
+	private static final Logger log = LoggerFactory.getLogger(GlobalTaskListPanel.class);
 	private static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);
 	private static final Color POPUP_TEXT = new Color(0xC4, 0xB8, 0x96);
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
@@ -117,8 +120,6 @@ public class GlobalTaskListPanel extends JPanel
 	private static final float ZOOM_STEP = 0.15f;
 
 	private int layoutSeed;
-	private int lastTaskCount = 0;
-	private boolean scrollFocusPending = true;
 
 	public GlobalTaskListPanel(GlobalTaskListService globalTaskListService, PointsService pointsService,
 		Runnable onClose, Client client, AudioPlayer audioPlayer, ClientThread clientThread, JDialog parentDialog)
@@ -248,27 +249,18 @@ public class GlobalTaskListPanel extends JPanel
 
 	public void refresh()
 	{
+		// Update points display
 		int spendable = pointsService.getEarnedTotal() - pointsService.getSpentTotal();
 		pointsLabel.setText("Points: " + spendable);
 
+		// Clear existing tiles before rebuilding
 		gridPanel.removeAll();
 
+		// Build grid from service (center + revealed adjacent + locked positions)
 		List<TaskTile> grid = globalTaskListService.buildGlobalGrid(layoutSeed);
 
-		if (grid.size() <= 1)
-		{
-			JLabel empty = new JLabel("No tasks yet. Unlock tiles on the World Unlock grid to add tasks.");
-			empty.setForeground(POPUP_TEXT);
-			GridBagConstraints gbc = new GridBagConstraints();
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gridPanel.add(empty, gbc);
-			gridPanel.revalidate();
-			gridPanel.repaint();
-			return;
-		}
-
-		int center = grid.stream()
+		// maxRing = grid extent for layout (gridx/gridy range 0..2*maxRing)
+		int maxRing = grid.stream()
 			.mapToInt(t -> Math.max(Math.abs(t.getRow()), Math.abs(t.getCol())))
 			.max().orElse(5);
 
@@ -281,11 +273,14 @@ public class GlobalTaskListPanel extends JPanel
 		int refSize = (combatScaled != null) ? Math.max(combatScaled.getWidth(), combatScaled.getHeight()) : iconMaxFit;
 
 		final List<TaskTile> gridFinal = grid;
+		int displayedCount = 0;
+		// Iterate all tiles in grid; skip LOCKED (not revealed)
 		for (TaskTile tile : grid)
 		{
 			TaskState state = globalTaskListService.getGlobalState(tile.getId(), gridFinal);
-			if (state == TaskState.LOCKED) continue;
+			if (state == TaskState.LOCKED) continue;  // Do not draw locked tiles
 
+			displayedCount++;
 			boolean isCenter = (tile.getRow() == 0 && tile.getCol() == 0);
 
 			BufferedImage taskIcon = null;
@@ -307,49 +302,40 @@ public class GlobalTaskListPanel extends JPanel
 					taskIcon = defaultTaskIcon != null ? scaleToFitAllowUpscale(defaultTaskIcon, iconMaxFit, iconMaxFit) : null;
 			}
 
-			int gx = tile.getCol() + center;
-			int gy = center - tile.getRow();
+			// Layout: gridx = col + maxRing, gridy = maxRing - row (matches World Unlock panel)
+			int gx = tile.getCol() + maxRing;
+			int gy = maxRing - tile.getRow();
 			GridBagConstraints gbc = new GridBagConstraints();
 			gbc.gridx = gx;
 			gbc.gridy = gy;
 			gbc.insets = new Insets(2, 2, 2, 2);
 
+			// Build cell (clickable, shows icon/state) and add to grid
 			JPanel cell = buildTaskCell(tile, state, taskIcon, tileSize, iconMargin, isCenter, gridFinal);
 			gridPanel.add(cell, gbc);
 		}
 
-		// Extend scrollable area beyond current tiles by at least one ring so the grid can grow
-		// (e.g. when a tile at ring 7 is claimed, ring 8 is visible by scrolling)
-		int minRow = grid.stream().mapToInt(TaskTile::getRow).min().orElse(0);
-		int maxRow = grid.stream().mapToInt(TaskTile::getRow).max().orElse(0);
-		int minCol = grid.stream().mapToInt(TaskTile::getCol).min().orElse(0);
-		int maxCol = grid.stream().mapToInt(TaskTile::getCol).max().orElse(0);
-		int pad = 2 * 2;
-		int extraRing = 2; // extra space in each direction so next ring is scrollable
-		int cols = (maxCol - minCol + 1) + 2 * extraRing;
-		int rows = (maxRow - minRow + 1) + 2 * extraRing;
-		int minScrollWidth = 400;
-		int minScrollHeight = 320;
-		gridPanel.setPreferredSize(new Dimension(
-			Math.max(cols * (tileSize + pad), minScrollWidth),
-			Math.max(rows * (tileSize + pad), minScrollHeight)));
+		log.debug("[GlobalTaskPanel] refresh: grid size={}, displayed tiles={}", grid.size(), displayedCount);
 
+		// Match World Unlock: no setPreferredSize — let GridBagLayout compute from components
+		// so tiles at outer extents are fully included in the scrollable area
 		gridPanel.revalidate();
 		gridPanel.repaint();
+		scrollPane.revalidate();
 
-		// Focus view on center (first time) or last viewed tile when panel is opened
-		if (scrollFocusPending && scrollPane != null)
+		// Always focus view on most recently viewed tile (or center if none)
+		if (scrollPane != null && displayedCount > 0)
 		{
-			scrollFocusPending = false;
 			int[] last = globalTaskListService.loadLastViewedPosition();
 			final int focusRow = (last != null && last.length >= 2) ? last[0] : 0;
 			final int focusCol = (last != null && last.length >= 2) ? last[1] : 0;
-			final int fcenter = center;
+			final int fmaxRing = maxRing;
 			final int ftileSize = tileSize;
-			final int fpad = pad;
+			final int fpad = 2 * 2;
 			SwingUtilities.invokeLater(() -> {
-				int gx = focusCol + fcenter;
-				int gy = fcenter - focusRow;
+				// Match World Unlock layout coords
+				int gx = focusCol + fmaxRing;
+				int gy = fmaxRing - focusRow;
 				int cellW = ftileSize + fpad;
 				int cellH = ftileSize + fpad;
 				int px = gx * cellW;
@@ -361,6 +347,7 @@ public class GlobalTaskListPanel extends JPanel
 				java.awt.Dimension viewSize = gridPanel.getPreferredSize();
 				int maxX = Math.max(0, viewSize.width - vw);
 				int maxY = Math.max(0, viewSize.height - vh);
+				// Center the view on the tile; clamp so outer extents remain visible
 				int vpx = Math.max(0, Math.min(px - vw / 2 + cellW / 2, maxX));
 				int vpy = Math.max(0, Math.min(py - vh / 2 + cellH / 2, maxY));
 				vp.setViewPosition(new Point(vpx, vpy));
@@ -449,6 +436,7 @@ public class GlobalTaskListPanel extends JPanel
 			cell.add(overlay, BorderLayout.SOUTH);
 		}
 
+		// Click handler: center=claim, completed=claim, revealed=show details popup
 		cell.addMouseListener(new MouseAdapter()
 		{
 			@Override
@@ -459,8 +447,8 @@ public class GlobalTaskListPanel extends JPanel
 				if (isCenter)
 				{
 					playSound(LeagueScapeSounds.TASK_COMPLETE);
-					globalTaskListService.claimCenter();
-					SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);
+					globalTaskListService.claimCenter();  // Unlocks starter + marks center claimed
+					SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);  // Refresh to show adjacent tiles
 					return;
 				}
 
@@ -468,11 +456,12 @@ public class GlobalTaskListPanel extends JPanel
 				{
 					String key = GlobalTaskListService.taskKeyFromName(tile.getDisplayName());
 					playSound(LeagueScapeSounds.TASK_COMPLETE);
-					globalTaskListService.claimTask(key);
+					globalTaskListService.claimTask(key, tile.getRow(), tile.getCol());
 					SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);
 					return;
 				}
 
+				// REVEALED: show detail popup (click opens details panel)
 				playSound(LeagueScapeSounds.BUTTON_PRESS);
 				showTaskDetailPopup(tile, state);
 			}
@@ -591,9 +580,10 @@ public class GlobalTaskListPanel extends JPanel
 			revealLabel.setForeground(POPUP_TEXT);
 			body.add(revealLabel);
 			JButton claimBtn = newRectangleButton("Claim", buttonRect, POPUP_TEXT);
+			int claimRow = tile.getRow(), claimCol = tile.getCol();
 			claimBtn.addActionListener(e -> {
 				playSound(LeagueScapeSounds.TASK_COMPLETE);
-				globalTaskListService.claimTask(taskKey);
+				globalTaskListService.claimTask(taskKey, claimRow, claimCol);
 				detail.dispose();
 				SwingUtilities.invokeLater(this::refresh);
 			});
@@ -605,10 +595,11 @@ public class GlobalTaskListPanel extends JPanel
 			revealLabel.setForeground(POPUP_TEXT);
 			body.add(revealLabel);
 			JButton claimBtn = newRectangleButton("Claim", buttonRect, POPUP_TEXT);
+			int claimRow = tile.getRow(), claimCol = tile.getCol();
 			claimBtn.addActionListener(e -> {
 				playSound(LeagueScapeSounds.TASK_COMPLETE);
 				globalTaskListService.setCompleted(taskKey);
-				globalTaskListService.claimTask(taskKey);
+				globalTaskListService.claimTask(taskKey, claimRow, claimCol);
 				detail.dispose();
 				SwingUtilities.invokeLater(this::refresh);
 			});
