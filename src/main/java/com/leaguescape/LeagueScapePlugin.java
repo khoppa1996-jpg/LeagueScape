@@ -122,7 +122,6 @@ public class LeagueScapePlugin extends Plugin
 	private com.leaguescape.worldunlock.GoalTrackingService goalTrackingService;
 
 	private NavigationButton navButton;
-	private NavigationButton configNavButton;
 	private com.leaguescape.config.AreaEditOverlay areaEditOverlay;
 	private boolean mapMouseListenerRegistered;
 
@@ -181,14 +180,6 @@ public class LeagueScapePlugin extends Plugin
 			.panel(panel)
 			.build();
 		clientToolbar.addNavigation(navButton);
-		com.leaguescape.config.LeagueScapeConfigPanel configPanel = new com.leaguescape.config.LeagueScapeConfigPanel(this, areaGraphService, taskGridServiceProvider.get(), configManager, config, osrsWikiApiService, wikiTaskGenerator);
-		configNavButton = NavigationButton.builder()
-			.tooltip("LeagueScape Area Config")
-			.icon(configPanel.getIcon())
-			.priority(71)
-			.panel(configPanel)
-			.build();
-		clientToolbar.addNavigation(configNavButton);
 	}
 
 	@Override
@@ -211,11 +202,6 @@ public class LeagueScapePlugin extends Plugin
 			areaEditOverlay = null;
 		}
 		eventBus.unregister(lockEnforcer);
-		if (configNavButton != null)
-		{
-			clientToolbar.removeNavigation(configNavButton);
-			configNavButton = null;
-		}
 		if (navButton != null)
 		{
 			clientToolbar.removeNavigation(navButton);
@@ -316,9 +302,10 @@ public class LeagueScapePlugin extends Plugin
 	@Singleton
 	com.leaguescape.worldunlock.WorldUnlockService provideWorldUnlockService(ConfigManager configManager,
 		com.leaguescape.points.PointsService pointsService,
-		com.leaguescape.task.TaskGridService taskGridService)
+		com.leaguescape.task.TaskGridService taskGridService,
+		com.leaguescape.area.AreaGraphService areaGraphService)
 	{
-		return new com.leaguescape.worldunlock.WorldUnlockService(configManager, pointsService, taskGridService);
+		return new com.leaguescape.worldunlock.WorldUnlockService(configManager, pointsService, taskGridService, areaGraphService);
 	}
 
 	@Provides
@@ -362,6 +349,39 @@ public class LeagueScapePlugin extends Plugin
 	{
 		String joined = String.join(",", areaGraphService.getUnlockedAreaIds());
 		configManager.setConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS, joined);
+	}
+
+	/**
+	 * Opens the LeagueScape Rules and Setup popup (moveable, resizable) with tabs: Rules, Game Mode,
+	 * Area Configuration, Controls. Call from the main panel's "Rules & Setup" button.
+	 */
+	public void openSetupDialog()
+	{
+		SwingUtilities.invokeLater(() -> {
+			java.awt.Frame owner = null;
+			if (client.getCanvas() != null)
+			{
+				java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
+				if (w instanceof java.awt.Frame)
+					owner = (java.awt.Frame) w;
+			}
+			com.leaguescape.config.LeagueScapeSetupFrame frame = new com.leaguescape.config.LeagueScapeSetupFrame(
+				owner, this, areaGraphService, taskGridServiceProvider.get(), configManager, config,
+				pointsService, areaCompletionService, osrsWikiApiService, wikiTaskGenerator, client, audioPlayer);
+			// Default size: height = 1/3 of RuneLite window (at least 400), width 520–700
+			if (owner != null)
+			{
+				int ownerHeight = owner.getHeight();
+				int ownerWidth = owner.getWidth();
+				if (ownerHeight > 0 && ownerWidth > 0)
+				{
+					int h = Math.max(400, ownerHeight / 3);
+					int w = Math.max(520, Math.min(ownerWidth, 700));
+					frame.setSize(w, h);
+				}
+			}
+			frame.setVisible(true);
+		});
 	}
 
 	/**

@@ -4,7 +4,7 @@
         "displayName":  "Druidic Ritual",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -19,7 +19,7 @@
         "displayName":  "Lost City",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -34,7 +34,7 @@
         "displayName":  "Witch\u0027s House",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -49,7 +49,7 @@
         "displayName":  "Merlin\u0027s Crystal",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -79,7 +79,7 @@
         "displayName":  "Scorpion Catcher",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -109,7 +109,7 @@
         "displayName":  "Fishing Contest",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -124,7 +124,7 @@
         "displayName":  "Tribal Totem",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -139,7 +139,7 @@
         "displayName":  "Monk\u0027s Friend",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -154,7 +154,7 @@
         "displayName":  "Temple of Ikov",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -169,7 +169,7 @@
         "displayName":  "Clock Tower",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -184,7 +184,7 @@
         "displayName":  "Holy Grail",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -199,7 +199,7 @@
         "displayName":  "Tree Gnome Village",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -214,7 +214,7 @@
         "displayName":  "Fight Arena",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -229,7 +229,7 @@
         "displayName":  "Hazeel Cult",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -244,7 +244,7 @@
         "displayName":  "Sheep Herder",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -259,7 +259,7 @@
         "displayName":  "Plague City",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -274,7 +274,7 @@
         "displayName":  "Sea Slug",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -289,7 +289,7 @@
         "displayName":  "Waterfall Quest",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -304,7 +304,7 @@
         "displayName":  "Jungle Potion",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -319,7 +319,7 @@
         "displayName":  "The Grand Tree",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -349,7 +349,7 @@
         "displayName":  "Observatory Quest",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -364,7 +364,7 @@
         "displayName":  "The Tourist Trap",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -379,7 +379,7 @@
         "displayName":  "Watchtower",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -394,7 +394,7 @@
         "displayName":  "Dwarf Cannon",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -409,7 +409,7 @@
         "displayName":  "Murder Mystery",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -424,7 +424,7 @@
         "displayName":  "The Dig Site",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -439,7 +439,7 @@
         "displayName":  "Gertrude\u0027s Cat",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -469,7 +469,7 @@
         "displayName":  "Death Plateau",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -484,7 +484,7 @@
         "displayName":  "Eadgar\u0027s Ruse",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -499,7 +499,7 @@
         "displayName":  "Big Chompy Bird Hunting",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -514,7 +514,7 @@
         "displayName":  "Elemental Workshop I",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -529,7 +529,7 @@
         "displayName":  "Nature Spirit",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -544,7 +544,7 @@
         "displayName":  "Priest in Peril",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -574,7 +574,7 @@
         "displayName":  "Tai Bwo Wannai Trio",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -589,7 +589,7 @@
         "displayName":  "Troll Stronghold",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -604,7 +604,7 @@
         "displayName":  "Shades of Mort\u0027ton",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -619,7 +619,7 @@
         "displayName":  "The Fremennik Trials",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -634,7 +634,7 @@
         "displayName":  "Horror from the Deep",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -694,7 +694,7 @@
         "displayName":  "Troll Romance",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -709,7 +709,7 @@
         "displayName":  "In Search of the Myreque",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -724,7 +724,7 @@
         "displayName":  "Creature of Fenkenstrain",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -754,7 +754,7 @@
         "displayName":  "Ghosts Ahoy",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -784,7 +784,7 @@
         "displayName":  "Mountain Daughter",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -814,7 +814,7 @@
         "displayName":  "The Feud",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -829,7 +829,7 @@
         "displayName":  "The Golem",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -859,7 +859,7 @@
         "displayName":  "Icthlarin\u0027s Little Helper",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -874,7 +874,7 @@
         "displayName":  "Tears of Guthix",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -889,7 +889,7 @@
         "displayName":  "The Lost Tribe",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -904,7 +904,7 @@
         "displayName":  "The Giant Dwarf",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -919,7 +919,7 @@
         "displayName":  "Recruitment Drive",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -949,7 +949,7 @@
         "displayName":  "Forgettable Tale...",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -964,7 +964,7 @@
         "displayName":  "Garden of Tranquillity",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -979,7 +979,7 @@
         "displayName":  "A Tail of Two Cats",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -994,7 +994,7 @@
         "displayName":  "Wanted!",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1039,7 +1039,7 @@
         "displayName":  "Shadow of the Storm",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1054,7 +1054,7 @@
         "displayName":  "Making History",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1069,7 +1069,7 @@
         "displayName":  "Ratcatchers",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1084,7 +1084,7 @@
         "displayName":  "Spirits of the Elid",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1114,7 +1114,7 @@
         "displayName":  "The Hand in the Sand",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1159,7 +1159,7 @@
         "displayName":  "Fairytale I - Growing Pains",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1189,7 +1189,7 @@
         "displayName":  "In Aid of the Myreque",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1204,7 +1204,7 @@
         "displayName":  "A Soul\u0027s Bane",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1219,7 +1219,7 @@
         "displayName":  "Rag and Bone Man I",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -1264,7 +1264,7 @@
         "displayName":  "Death to the Dorgeshuun",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1309,7 +1309,7 @@
         "displayName":  "The Eyes of Glouphrie",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1339,7 +1339,7 @@
         "displayName":  "The Slug Menace",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1354,7 +1354,7 @@
         "displayName":  "Elemental Workshop II",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1384,7 +1384,7 @@
         "displayName":  "Enlightened Journey",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1399,7 +1399,7 @@
         "displayName":  "Eagles\u0027 Peak",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -1414,7 +1414,7 @@
         "displayName":  "Animal Magnetism",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1444,7 +1444,7 @@
         "displayName":  "Cold War",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1489,7 +1489,7 @@
         "displayName":  "What Lies Below",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1504,7 +1504,7 @@
         "displayName":  "Olaf\u0027s Quest",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1519,7 +1519,7 @@
         "displayName":  "Another Slice of H.A.M.",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1579,7 +1579,7 @@
         "displayName":  "Shilo Village",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1594,7 +1594,7 @@
         "displayName":  "Biohazard",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -1609,7 +1609,7 @@
         "displayName":  "Tower of Life",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -1654,7 +1654,7 @@
         "displayName":  "While Guthix Sleeps",
         "tier":  5,
         "type":  "quest",
-        "cost":  125,
+        "cost":  115,
         "prerequisites":  [
 
                           ],
@@ -1669,7 +1669,7 @@
         "displayName":  "Zogre Flesh Eaters",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1684,7 +1684,7 @@
         "displayName":  "Monkey Madness II",
         "tier":  5,
         "type":  "quest",
-        "cost":  125,
+        "cost":  115,
         "prerequisites":  [
 
                           ],
@@ -1699,7 +1699,7 @@
         "displayName":  "Client of Kourend",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -1714,7 +1714,7 @@
         "displayName":  "The Queen of Thieves",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1729,7 +1729,7 @@
         "displayName":  "Bone Voyage",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1744,7 +1744,7 @@
         "displayName":  "Dragon Slayer II",
         "tier":  5,
         "type":  "quest",
-        "cost":  125,
+        "cost":  115,
         "prerequisites":  [
 
                           ],
@@ -1759,7 +1759,7 @@
         "displayName":  "The Depths of Despair",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1924,7 +1924,7 @@
         "displayName":  "Tale of the Righteous",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1969,7 +1969,7 @@
         "displayName":  "Song of the Elves",
         "tier":  5,
         "type":  "quest",
-        "cost":  125,
+        "cost":  115,
         "prerequisites":  [
 
                           ],
@@ -1984,7 +1984,7 @@
         "displayName":  "The Ascent of Arceuus",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -1999,7 +1999,7 @@
         "displayName":  "The Forsaken Tower",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2089,7 +2089,7 @@
         "displayName":  "A Porcine of Interest",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2104,7 +2104,7 @@
         "displayName":  "Getting Ahead",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2149,7 +2149,7 @@
         "displayName":  "Temple of the Eye",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2179,7 +2179,7 @@
         "displayName":  "Sleeping Giants",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2194,7 +2194,7 @@
         "displayName":  "The Garden of Death",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2209,7 +2209,7 @@
         "displayName":  "Desert Treasure II - The Fallen Empire",
         "tier":  5,
         "type":  "quest",
-        "cost":  125,
+        "cost":  115,
         "prerequisites":  [
 
                           ],
@@ -2239,7 +2239,7 @@
         "displayName":  "Children of the Sun",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2269,7 +2269,7 @@
         "displayName":  "The Ribbiting Tale of a Lily Pad Labour Dispute",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2284,7 +2284,7 @@
         "displayName":  "Twilight\u0027s Promise",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2299,7 +2299,7 @@
         "displayName":  "At First Light",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2329,7 +2329,7 @@
         "displayName":  "Death on the Isle",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2359,7 +2359,7 @@
         "displayName":  "Ethically Acquired Antiquities",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2389,7 +2389,7 @@
         "displayName":  "Pandemonium",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2404,7 +2404,7 @@
         "displayName":  "Prying Times",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2419,7 +2419,7 @@
         "displayName":  "Current Affairs",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2464,7 +2464,7 @@
         "displayName":  "Scrambled!",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2479,7 +2479,7 @@
         "displayName":  "Learning the Ropes",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2494,7 +2494,7 @@
         "displayName":  "Below Ice Mountain",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2509,7 +2509,7 @@
         "displayName":  "X Marks the Spot",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2524,7 +2524,7 @@
         "displayName":  "The Corsair Curse",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2539,7 +2539,7 @@
         "displayName":  "Misthalin Mystery",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2554,7 +2554,7 @@
         "displayName":  "Rune Mysteries",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2584,7 +2584,7 @@
         "displayName":  "Pirate\u0027s Treasure",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2599,7 +2599,7 @@
         "displayName":  "Goblin Diplomacy",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2614,7 +2614,7 @@
         "displayName":  "The Knight\u0027s Sword",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2629,7 +2629,7 @@
         "displayName":  "Witch\u0027s Potion",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2644,7 +2644,7 @@
         "displayName":  "Black Knights\u0027 Fortress",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2659,7 +2659,7 @@
         "displayName":  "Doric\u0027s Quest",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2674,7 +2674,7 @@
         "displayName":  "Prince Ali Rescue",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2689,7 +2689,7 @@
         "displayName":  "Imp Catcher",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2704,7 +2704,7 @@
         "displayName":  "Vampyre Slayer",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2719,7 +2719,7 @@
         "displayName":  "Ernest the Chicken",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2734,7 +2734,7 @@
         "displayName":  "The Restless Ghost",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2749,7 +2749,7 @@
         "displayName":  "Sheep Shearer",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2764,7 +2764,7 @@
         "displayName":  "Shield of Arrav",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2779,7 +2779,7 @@
         "displayName":  "Demon Slayer",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2794,7 +2794,7 @@
         "displayName":  "Romeo \u0026 Juliet",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2809,7 +2809,7 @@
         "displayName":  "Cook\u0027s Assistant",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2820,11 +2820,26 @@
                      }
     },
     {
+        "id":  "ides_of_milk",
+        "displayName":  "Ides of Milk",
+        "tier":  1,
+        "type":  "quest",
+        "cost":  15,
+        "prerequisites":  [
+
+                          ],
+        "taskLink":  {
+                         "taskType":  "Quest",
+                         "requirementsContains":  "Ides of Milk",
+                         "type":  "taskFilter"
+                     }
+    },
+    {
         "id":  "alfred_grimhands_barcrawl",
         "displayName":  "Alfred Grimhand\u0027s Barcrawl",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2839,7 +2854,7 @@
         "displayName":  "Enter the Abyss",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2884,7 +2899,7 @@
         "displayName":  "Skippy and the Mogres",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -2929,7 +2944,7 @@
         "displayName":  "Bear Your Soul",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2944,7 +2959,7 @@
         "displayName":  "The Enchanted Key",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -2974,7 +2989,7 @@
         "displayName":  "Family Pest",
         "tier":  2,
         "type":  "quest",
-        "cost":  50,
+        "cost":  35,
         "prerequisites":  [
 
                           ],
@@ -3019,7 +3034,7 @@
         "displayName":  "Daddy\u0027s Home",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],
@@ -3094,7 +3109,7 @@
         "displayName":  "Vale Totems",
         "tier":  1,
         "type":  "quest",
-        "cost":  25,
+        "cost":  15,
         "prerequisites":  [
 
                           ],

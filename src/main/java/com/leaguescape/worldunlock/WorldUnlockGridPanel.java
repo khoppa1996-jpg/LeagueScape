@@ -59,6 +59,22 @@ public class WorldUnlockGridPanel extends JPanel
 	private static final int CLAIMED_CHECKMARK_INSET = 4;
 
 	private static final String TASK_ICONS_RESOURCE_PREFIX = "/com/taskIcons/";
+	private static final String BOSS_ICONS_RESOURCE_PREFIX = "/com/bossicons/";
+	/** Boss unlock tile id -> boss icon filename (e.g. game_icon_barrowschests.png) where id does not match filename. */
+	private static final Map<String, String> BOSS_ICON_OVERRIDES = new HashMap<>();
+	static
+	{
+		BOSS_ICON_OVERRIDES.put("barrows", "game_icon_barrowschests.png");
+		BOSS_ICON_OVERRIDES.put("dagannoth_kings", "game_icon_dagannothrex.png");
+		BOSS_ICON_OVERRIDES.put("calvarion_vetion", "game_icon_calvarion.png");
+		BOSS_ICON_OVERRIDES.put("spindel_venenatis", "game_icon_venenatis.png");
+		BOSS_ICON_OVERRIDES.put("artio_callisto", "game_icon_callisto.png");
+		BOSS_ICON_OVERRIDES.put("crystalline_hunllef", "game_icon_thegauntlet.png");
+		BOSS_ICON_OVERRIDES.put("corrupted_hunllef", "game_icon_thecorruptedgauntlet.png");
+		BOSS_ICON_OVERRIDES.put("the_mimic", "game_icon_mimic.png");
+		BOSS_ICON_OVERRIDES.put("tombs_of_amascut", "game_icon_tombsofamascutexpertmode.png");
+		BOSS_ICON_OVERRIDES.put("the_nightmare", "game_icon_nightmare.png");
+	}
 	private static final Map<String, String> SKILL_ICON_MAP = new HashMap<>();
 	static
 	{
@@ -306,7 +322,9 @@ public class WorldUnlockGridPanel extends JPanel
 				raw = loadFromTaskIcons("Achievement_Diaries.png");
 				break;
 			case "boss":
-				raw = loadFromTaskIcons("Combat_icon_(detail).png");
+				raw = loadBossIcon(tile.getId());
+				if (raw == null)
+					raw = loadFromTaskIcons("Combat_icon_(detail).png");
 				break;
 			case "area":
 				raw = createLetterIcon("A", iconMaxFit);
@@ -338,6 +356,25 @@ public class WorldUnlockGridPanel extends JPanel
 	{
 		String path = TASK_ICONS_RESOURCE_PREFIX + filename;
 		return iconCache.computeIfAbsent(path, p -> ImageUtil.loadImageResource(LeagueScapePlugin.class, p));
+	}
+
+	/** Loads boss tile icon from com/bossicons/; returns null if not found. */
+	private static BufferedImage loadBossIcon(String bossTileId)
+	{
+		if (bossTileId == null || bossTileId.isEmpty()) return null;
+		String filename = BOSS_ICON_OVERRIDES.get(bossTileId);
+		if (filename == null)
+			filename = "game_icon_" + bossTileId.replace("_", "") + ".png";
+		String path = BOSS_ICONS_RESOURCE_PREFIX + filename;
+		BufferedImage img = iconCache.get(path);
+		if (img != null) return img;
+		try
+		{
+			img = ImageUtil.loadImageResource(LeagueScapePlugin.class, path);
+			if (img != null) iconCache.put(path, img);
+		}
+		catch (Exception ignored) { }
+		return img;
 	}
 
 	/** Generates a simple letter icon (e.g. "A" for area tiles). */

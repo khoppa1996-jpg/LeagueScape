@@ -47,7 +47,9 @@ public class GlobalTaskListService
 	/** Separator for list of claimed positions (must not be comma, since position is "row,col"). */
 	private static final String CLAIMED_POS_SEP = ";;";
 	private static final String POS_KV_SEP = "::";
-	/** Separator for multi-position keys: taskKey + COMPOSITE_SEP + pos (allows same task at multiple positions). */
+	/** Separator for grid state entries: pos + GRID_STATE_SEP + taskKey (single source of truth: position -> task). */
+	private static final String GRID_STATE_SEP = "##";
+	/** Legacy separator (taskKey|||pos); still parsed on load for backward compatibility. */
 	private static final String COMPOSITE_SEP = "|||";
 	private static final int MAX_TIER = 5;
 	/** Minimum rings (matches Area Task grid); ensures tier 4/5 visibility. */
@@ -324,9 +326,17 @@ public class GlobalTaskListService
 	 */
 	public List<TaskTile> buildGlobalGrid(int reshuffleSeed)
 	{
-		worldUnlockService.load();
 		List<TaskTile> out = new ArrayList<>();
 		out.add(new TaskTile(TaskTile.idFor(0, 0), 0, "Free", 0, 0, 0, null, null, true, null));
+		try
+		{
+			worldUnlockService.load();
+		}
+		catch (Exception e)
+		{
+			log.warn("[GlobalTask] load failed, returning center only", e);
+			return out;
+		}
 
 		// 1. Available task pool: only no-area + unlocked World Unlock state
 		List<TaskDefinition> availableTasks = getAvailableTasksForGlobalGrid();
@@ -346,8 +356,10 @@ public class GlobalTaskListService
 			return out;
 		}
 
-		// 2. Load persisted state: position -> task assignments, claimed positions
-		Map<String, String> posMap = loadTaskPositions();
+		try
+		{
+		// 2. Single grid state: position -> task key. Only add when a position is first revealed; never overwrite.
+		Map<String, String> gridState = new HashMap<>(loadGridState());
 		Set<String> claimedPositions = getClaimedPositions();
 		Map<String, TaskDefinition> allTasksByKeyFallback = new HashMap<>();
 		for (TaskDefinition t : taskGridService.getEffectiveDefaultTasks())
@@ -357,81 +369,48 @@ public class GlobalTaskListService
 				allTasksByKeyFallback.put(k, t);
 		}
 
-		// 3. Revealed positions = center + all positions adjacent to any claimed position
+		// 3. Revealed = center + claimed + neighbors of claimed
 		Set<String> revealedPositions = new HashSet<>();
 		revealedPositions.add("0,0");
 		for (String claimed : claimedPositions)
 		{
-			revealedPositions.add(claimed);
+			revealedPositions.add(normalizePos(claimed));
 			revealedPositions.addAll(getNeighborPositions(claimed));
 		}
 
-		// 4. atPosition: already-assigned revealed cells (from posMap). toAssign: only revealed cells that have NO entry in posMap.
-		// If a position exists in posMap at all, never put it in toAssign — we never reassign.
+		// 4. For each revealed position: if in gridState use it (resolve to def or placeholder). Else add to toAssign (first time revealed).
 		Map<String, TaskDefinition> atPosition = new HashMap<>();
 		List<String> toAssign = new ArrayList<>();
 		for (String pos : revealedPositions)
 		{
-			if ("0,0".equals(pos)) continue;  // center has no task assignment
+			if ("0,0".equals(pos)) continue;
 			String normPos = normalizePos(pos);
-			boolean inPosMap = false;
-			for (Map.Entry<String, String> e : posMap.entrySet())
+			String taskKeyAtPos = gridState.get(normPos);
+			if (taskKeyAtPos != null)
 			{
-				// Match by normalized value, or by position embedded in composite key (robust to any value format)
-				String entryPos = e.getValue();
-				boolean valueMatches = normPos.equals(normalizePos(entryPos));
-				if (!valueMatches && e.getKey() != null && e.getKey().contains(COMPOSITE_SEP))
-				{
-					String keyPos = e.getKey().substring(e.getKey().indexOf(COMPOSITE_SEP) + COMPOSITE_SEP.length()).trim();
-					valueMatches = normPos.equals(normalizePos(keyPos));
-				}
-				if (!valueMatches) continue;
-				inPosMap = true;  // position has an assignment in storage — never reassign
-				String tk = parseTaskKeyFromPositionKey(e.getKey());
-				if (!tk.isEmpty() && !isPositionLike(tk))
-				{
-					TaskDefinition def = allTasksByKeyFallback.get(tk);
-					if (def == null) def = taskByKey.get(tk);
-					if (def == null)
-					{
-						// Keep tile visible even when task key can't be resolved (e.g. key format change)
-						def = new TaskDefinition();
-						def.setDisplayName(tk);
-						def.setDifficulty(1);
-					}
-					atPosition.put(pos, def);
-				}
-				break;
+				TaskDefinition def = allTasksByKeyFallback.get(taskKeyAtPos);
+				if (def == null) def = taskByKey.get(taskKeyAtPos);
+				atPosition.put(pos, def != null ? def : placeholderTile());
 			}
-			if (!inPosMap)
+			else
 				toAssign.add(pos);
 		}
 
-		// 5. Task keys that must not be assigned again: already in posMap (placed) + claimed by user
-		Set<String> alreadyPlacedTaskKeys = new HashSet<>();
-		for (String k : posMap.keySet())
-		{
-			String tk = parseTaskKeyFromPositionKey(k);
-			if (!tk.isEmpty() && !isPositionLike(tk)) alreadyPlacedTaskKeys.add(tk);
-		}
-		Set<String> claimedTaskKeys = loadSet(KEY_GLOBAL_CLAIMED);
-		alreadyPlacedTaskKeys.addAll(claimedTaskKeys);
-
-		// 6. Available for new assignment = pool minus already placed minus claimed. Sort by difficulty (tier 1 first, then 2, etc.).
+		// 5. Available for new assignment = pool minus (task keys already in grid state) minus (claimed). One-use: when we add to grid we remove from pool.
+		Set<String> usedTaskKeys = new HashSet<>(gridState.values());
+		usedTaskKeys.addAll(loadSet(KEY_GLOBAL_CLAIMED));
 		List<TaskDefinition> availableForNew = new ArrayList<>();
 		for (TaskDefinition t : taskByKey.values())
 		{
-			if (!alreadyPlacedTaskKeys.contains(taskKey(t)))
+			if (!usedTaskKeys.contains(taskKey(t)))
 				availableForNew.add(t);
 		}
-		// Match Area Task Grid: tier 1 closer to center, then tier 2, tier 3, etc. (spiral order + difficulty ordering)
 		availableForNew.sort((a, b) -> {
 			int da = Math.max(1, Math.min(MAX_TIER, a.getDifficulty()));
 			int db = Math.max(1, Math.min(MAX_TIER, b.getDifficulty()));
 			if (da != db) return Integer.compare(da, db);
 			return taskKey(a).compareTo(taskKey(b));
 		});
-		// Optional: shuffle within same difficulty for variety (use seed so reproducible)
 		Random rnd = new Random(reshuffleSeed);
 		int idx = 0;
 		while (idx < availableForNew.size())
@@ -445,7 +424,7 @@ public class GlobalTaskListService
 			idx = j;
 		}
 
-		// 7. Sort toAssign by spiral order (center-first, then by ring), assign one task per position (strict one-use)
+		// 6. Assign only to toAssign (newly revealed, not in grid state). Add to grid state and remove from available (one-use).
 		Comparator<int[]> byDistFromCenter = (a, b) -> {
 			int da = chebyshevDist(a[0], a[1], 0, 0);
 			int db = chebyshevDist(b[0], b[1], 0, 0);
@@ -461,18 +440,25 @@ public class GlobalTaskListService
 		}
 		toAssignRc.sort(byDistFromCenter);
 
-		Map<String, String> toPersist = new HashMap<>(posMap);
 		for (int i = 0; i < toAssignRc.size() && i < availableForNew.size(); i++)
 		{
 			int[] rc = toAssignRc.get(i);
 			String pos = rc[0] + "," + rc[1];
 			TaskDefinition def = availableForNew.get(i);
+			if (def == null) def = placeholderTile();
+			String tk = taskKey(def);
+			if (!"unknown".equals(tk))
+			{
+				gridState.put(pos, tk);
+				usedTaskKeys.add(tk);
+			}
 			atPosition.put(pos, def);
-			String key = taskKey(def);
-			toPersist.put(key + COMPOSITE_SEP + pos, pos);
 		}
 
-		// 8. Output: center + all assigned revealed positions (sorted)
+		// 7. Persist single grid state
+		saveGridState(gridState);
+
+		// 8. Output: center + all revealed positions with task (from atPosition)
 		List<String> positionsToOutput = new ArrayList<>(atPosition.keySet());
 		positionsToOutput.sort((a, b) -> {
 			int[] ar = parsePos(a), br = parsePos(b);
@@ -482,11 +468,11 @@ public class GlobalTaskListService
 
 		for (String posStr : positionsToOutput)
 		{
-			if ("0,0".equals(posStr)) continue;  // center already in out
+			if ("0,0".equals(posStr)) continue;
 			int[] rc = parsePos(posStr);
 			if (rc == null) continue;
 			TaskDefinition def = atPosition.get(posStr);
-			if (def == null) continue;
+			if (def == null) def = placeholderTile();
 			int r = rc[0], c = rc[1];
 			String id = TaskTile.idFor(r, c);
 			int difficulty = Math.max(1, Math.min(MAX_TIER, def.getDifficulty()));
@@ -499,9 +485,15 @@ public class GlobalTaskListService
 				def.getRequirements()));
 		}
 
-		// 9. Persist: only add new assignments (never remove existing)
-		saveTaskPositions(toPersist);
 		log.debug("[GlobalTask] buildGlobalGrid output: {} tiles (revealed+assigned)", out.size());
+		}
+		catch (Exception e)
+		{
+			log.warn("[GlobalTask] buildGlobalGrid failed, returning center + placeholder", e);
+			TaskDefinition ph = placeholderTile();
+			out.add(new TaskTile(TaskTile.idFor(1, 0), 1, ph.getDisplayName(), pointsForTier(1), 1, 0,
+				ph.getTaskType(), null, true, null));
+		}
 		return out;
 	}
 
@@ -549,6 +541,15 @@ public class GlobalTaskListService
 		return keyOrPos.trim().matches("-?\\d+\\s*,\\s*-?\\d+");
 	}
 
+	/** Tier 1 task with no area; used when a stored assignment cannot be resolved or on error. Never reassign. */
+	private static TaskDefinition placeholderTile()
+	{
+		TaskDefinition p = new TaskDefinition();
+		p.setDisplayName("Unknown");
+		p.setDifficulty(1);
+		return p;
+	}
+
 	/** Canonical position string "r,c" (no spaces) so load/store and comparisons match. */
 	private static String normalizePos(String pos)
 	{
@@ -556,61 +557,68 @@ public class GlobalTaskListService
 		return rc != null ? (rc[0] + "," + rc[1]) : (pos != null ? pos.trim() : "");
 	}
 
-	private Map<String, String> loadTaskPositions()
+	/**
+	 * Loads the single grid state: normalized position -> task key.
+	 * Add to this map only when a position is first revealed (adjacent claimed); never overwrite.
+	 * Supports new format "pos##taskKey" and legacy "taskKey|||pos::pos".
+	 */
+	private Map<String, String> loadGridState()
 	{
 		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS);
-		Map<String, String> map = new HashMap<>();
-		if (raw == null || raw.isEmpty()) return map;
-		// Split by "||" but not when part of "|||" (composite key), so entries like "taskKey|||pos::pos" stay intact
+		Map<String, String> gridState = new HashMap<>();
+		if (raw == null || raw.isEmpty()) return gridState;
 		Pattern entrySplit = Pattern.compile("\\|\\|(?!\\|)");
 		for (String entry : entrySplit.split(raw))
 		{
+			entry = entry.trim();
+			if (entry.isEmpty()) continue;
+			// New format: pos##taskKey (position is key in map)
+			if (entry.contains(GRID_STATE_SEP))
+			{
+				int i = entry.indexOf(GRID_STATE_SEP);
+				String pos = entry.substring(0, i).trim();
+				String taskKey = entry.substring(i + GRID_STATE_SEP.length()).trim().toLowerCase();
+				if (!pos.isEmpty() && !taskKey.isEmpty() && !isPositionLike(taskKey))
+					gridState.put(normalizePos(pos), taskKey);
+				continue;
+			}
+			// Legacy: taskKey|||pos::pos
 			int lastSep = entry.lastIndexOf(POS_KV_SEP);
 			if (lastSep < 0) continue;
 			String key = entry.substring(0, lastSep).trim();
-			String pos = entry.substring(lastSep + POS_KV_SEP.length()).trim();
-			// Ignore position-as-key entries (legacy/corrupt) so we don't show coordinates as task names
-			if (key.isEmpty() || pos.isEmpty() || !key.contains(COMPOSITE_SEP) || isPositionLike(key))
-				continue;
-			map.put(key, normalizePos(pos));
+			String posVal = entry.substring(lastSep + POS_KV_SEP.length()).trim();
+			if (!key.contains(COMPOSITE_SEP) || isPositionLike(key) || posVal.isEmpty()) continue;
+			String tk = key.substring(0, key.indexOf(COMPOSITE_SEP)).trim().toLowerCase();
+			if (!tk.isEmpty() && !isPositionLike(tk))
+				gridState.put(normalizePos(posVal), tk);
 		}
-		return map;
+		return gridState;
 	}
 
-	private void saveTaskPositions(Map<String, String> map)
+	/** Saves grid state: one entry per position as "pos##taskKey". */
+	private void saveGridState(Map<String, String> gridState)
 	{
 		List<String> parts = new ArrayList<>();
-		for (Map.Entry<String, String> e : map.entrySet())
+		for (Map.Entry<String, String> e : gridState.entrySet())
 		{
-			String k = e.getKey();
-			// Only persist composite keys "taskKey|||pos"; skip position-as-key entries so they are dropped
-			if (k != null && k.contains(COMPOSITE_SEP) && !isPositionLike(k))
-				parts.add(k + POS_KV_SEP + e.getValue());
+			String pos = e.getKey();
+			String taskKey = e.getValue();
+			if (pos != null && !pos.isEmpty() && taskKey != null && !taskKey.isEmpty() && !isPositionLike(taskKey))
+				parts.add(pos + GRID_STATE_SEP + taskKey);
 		}
 		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS, String.join(POS_ENTRY_SEP, parts));
 	}
 
-	/** Extracts taskKey from a position map key (handles "taskKey" or "taskKey|||pos"). Normalized for lookup (trim + lowercase). */
-	private static String parseTaskKeyFromPositionKey(String positionKey)
-	{
-		if (positionKey == null) return "";
-		int i = positionKey.indexOf(COMPOSITE_SEP);
-		String raw = i >= 0 ? positionKey.substring(0, i) : positionKey;
-		return raw != null ? raw.trim().toLowerCase() : "";
-	}
-
-	/** Returns all positions stored for the given task key (supports multi-position and legacy single key). */
-	private static List<String> getPositionsForTaskKey(Map<String, String> posMap, String taskKey)
+	/** Returns all positions in grid state that have the given task key. */
+	private static List<String> getPositionsForTaskKey(Map<String, String> gridState, String taskKey)
 	{
 		List<String> out = new ArrayList<>();
-		if (taskKey == null || posMap == null) return out;
-		String single = posMap.get(taskKey);
-		if (single != null) out.add(single);
-		String prefix = taskKey + COMPOSITE_SEP;
-		for (Map.Entry<String, String> e : posMap.entrySet())
+		if (taskKey == null || gridState == null) return out;
+		String normKey = taskKey.trim().toLowerCase();
+		for (Map.Entry<String, String> e : gridState.entrySet())
 		{
-			if (e.getKey() != null && e.getKey().startsWith(prefix))
-				out.add(e.getValue());
+			if (normKey.equals(e.getValue()))
+				out.add(e.getKey());
 		}
 		return out;
 	}
@@ -826,7 +834,7 @@ public class GlobalTaskListService
 		}
 		else
 		{
-			List<String> positions = getPositionsForTaskKey(loadTaskPositions(), taskKey);
+			List<String> positions = getPositionsForTaskKey(loadGridState(), taskKey);
 			if (!positions.isEmpty())
 				savePseudoCenter(positions.get(0));
 		}

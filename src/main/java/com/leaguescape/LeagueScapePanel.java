@@ -118,7 +118,7 @@ public class LeagueScapePanel extends PluginPanel
 		content.add(tasksBtn);
 
 		JButton rulesSetupBtn = new JButton("Rules & Setup");
-		rulesSetupBtn.addActionListener(e -> { /* TODO: open config / setup */ });
+		rulesSetupBtn.addActionListener(e -> plugin.openSetupDialog());
 		content.add(rulesSetupBtn);
 
 		content.add(new JLabel(" "));

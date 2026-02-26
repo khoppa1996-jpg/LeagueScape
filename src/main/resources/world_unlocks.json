@@ -15,7 +15,7 @@
       "id": "draynor",
       "displayName": "Draynor",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -24,7 +24,7 @@
       "id": "al_kharid",
       "displayName": "Al Kharid",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -33,7 +33,7 @@
       "id": "varrock",
       "displayName": "Varrock",
       "tier": 2,
-      "cost": 75,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -42,7 +42,7 @@
       "id": "southeast_wilderness",
       "displayName": "Southeast Wilderness",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -51,7 +51,7 @@
       "id": "ape_atoll",
       "displayName": "Ape Atoll",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["gnome_stronghold"],
       "taskLink": { "type": "area" }
     },
@@ -60,7 +60,7 @@
       "id": "fossil_island",
       "displayName": "Fossil Island",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["silvarea"],
       "taskLink": { "type": "area" }
     },
@@ -69,7 +69,7 @@
       "id": "fremennik_isles",
       "displayName": "Fremennik Isles",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["rellekka"],
       "taskLink": { "type": "area" }
     },
@@ -78,7 +78,7 @@
       "id": "deep_wilderness",
       "displayName": "Deep Wilderness",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -87,7 +87,7 @@
       "id": "northeast_wilderness",
       "displayName": "Northeast Wilderness",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -96,7 +96,7 @@
       "id": "north_central_wilderness",
       "displayName": "North Central Wilderness",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -105,7 +105,7 @@
       "id": "northwestern_wilderness",
       "displayName": "Northwest Wilderness",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -114,7 +114,7 @@
       "id": "southwestern_wilderness",
       "displayName": "Southwest Wilderness",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -123,7 +123,7 @@
       "id": "south_central_wilderness",
       "displayName": "South Central Wilderness",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -132,7 +132,7 @@
       "id": "silvarea",
       "displayName": "Silvarea",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["varrock"],
       "taskLink": { "type": "area" }
     },
@@ -141,7 +141,7 @@
       "id": "canifis",
       "displayName": "Canifis",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["silvarea"],
       "taskLink": { "type": "area" }
     },
@@ -150,7 +150,7 @@
       "id": "haunted_wood",
       "displayName": "Haunted Wood",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["canifis"],
       "taskLink": { "type": "area" }
     },
@@ -159,7 +159,7 @@
       "id": "port_phasmatys",
       "displayName": "Port Phasmatys",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["canifis"],
       "taskLink": { "type": "area" }
     },
@@ -168,7 +168,7 @@
       "id": "slepe",
       "displayName": "Slepe",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["canifis"],
       "taskLink": { "type": "area" }
     },
@@ -177,7 +177,7 @@
       "id": "myreditch",
       "displayName": "Myreditch",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["canifis"],
       "taskLink": { "type": "area" }
     },
@@ -186,7 +186,7 @@
       "id": "darkmeyer",
       "displayName": "Darkmeyer",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["myreditch"],
       "taskLink": { "type": "area" }
     },
@@ -195,7 +195,7 @@
       "id": "southern_morytania",
       "displayName": "Southern Morytania",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["canifis"],
       "taskLink": { "type": "area" }
     },
@@ -204,7 +204,7 @@
       "id": "mort_myre_swamp",
       "displayName": "Mort Myre Swamp",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["canifis"],
       "taskLink": { "type": "area" }
     },
@@ -213,7 +213,7 @@
       "id": "grand_exchange",
       "displayName": "Grand Exchange",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -222,7 +222,7 @@
       "id": "edgeville",
       "displayName": "Edgeville",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -231,7 +231,7 @@
       "id": "desert",
       "displayName": "Kharidian Desert",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -240,7 +240,7 @@
       "id": "uzer_desert",
       "displayName": "Uzer Desert",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -249,7 +249,7 @@
       "id": "nardah_desert",
       "displayName": "Nardah Desert",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -258,7 +258,7 @@
       "id": "necropolis",
       "displayName": "Necropolis",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -267,7 +267,7 @@
       "id": "sophanem",
       "displayName": "Sophanem",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -276,7 +276,7 @@
       "id": "polnivneach_desert",
       "displayName": "Polnivneach Desert",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -285,7 +285,7 @@
       "id": "jaldraocht",
       "displayName": "Jaldraocht",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -294,7 +294,7 @@
       "id": "ruins_of_unkah",
       "displayName": "Ruins Of Unkah",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -303,7 +303,7 @@
       "id": "lassar",
       "displayName": "Lassar",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -312,7 +312,7 @@
       "id": "falador",
       "displayName": "Falador",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -321,7 +321,7 @@
       "id": "port_sarim_mudskipper",
       "displayName": "Port Sarim",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -330,7 +330,7 @@
       "id": "entrana",
       "displayName": "Entrana",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -339,7 +339,7 @@
       "id": "pest_control",
       "displayName": "Pest Control",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -348,7 +348,7 @@
       "id": "musa_point",
       "displayName": "Musa Point",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -357,7 +357,7 @@
       "id": "karamja",
       "displayName": "Karamja",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["musa_point"],
       "taskLink": { "type": "area" }
     },
@@ -366,7 +366,7 @@
       "id": "taverly",
       "displayName": "Taverly",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -375,7 +375,7 @@
       "id": "burthorpe",
       "displayName": "Burthorpe",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -384,7 +384,7 @@
       "id": "trollheim",
       "displayName": "Trollheim",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["burthorpe"],
       "taskLink": { "type": "area" }
     },
@@ -393,7 +393,7 @@
       "id": "troll_country",
       "displayName": "Troll Country",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["trollheim"],
       "taskLink": { "type": "area" }
     },
@@ -402,7 +402,7 @@
       "id": "weiss",
       "displayName": "Weiss",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["rellekka"],
       "taskLink": { "type": "area" }
     },
@@ -411,7 +411,7 @@
       "id": "rellekka",
       "displayName": "Rellekka",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -420,7 +420,7 @@
       "id": "camelot_seers",
       "displayName": "Camelot \u0026 Seers Village",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -429,7 +429,7 @@
       "id": "hemenster",
       "displayName": "Hemenster",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -438,7 +438,7 @@
       "id": "barbarian_waterfall",
       "displayName": "Barbarian Outpost \u0026 Baxtorian Falls",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -447,7 +447,7 @@
       "id": "gnome_stronghold",
       "displayName": "Gnome Stronghold",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -456,7 +456,7 @@
       "id": "piscatoris",
       "displayName": "Piscatoris",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["gnome_stronghold"],
       "taskLink": { "type": "area" }
     },
@@ -465,7 +465,7 @@
       "id": "ardougne",
       "displayName": "Ardougne",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -474,7 +474,7 @@
       "id": "khazard_battlegrounds",
       "displayName": "Khazard Battlegrounds",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -483,7 +483,7 @@
       "id": "yanille",
       "displayName": "Yanille",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -492,7 +492,7 @@
       "id": "feldip_hills",
       "displayName": "Feldip Hills",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -501,7 +501,7 @@
       "id": "corsair_cove",
       "displayName": "Corsair Cove",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["rimmington"],
       "taskLink": { "type": "area" }
     },
@@ -510,7 +510,7 @@
       "id": "rimmington",
       "displayName": "Rimmington",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -519,7 +519,7 @@
       "id": "isafdar",
       "displayName": "Isafdar",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardougne"],
       "taskLink": { "type": "area" }
     },
@@ -528,7 +528,7 @@
       "id": "prifddinas",
       "displayName": "Prifddinas",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["isafdar"],
       "taskLink": { "type": "area" }
     },
@@ -537,7 +537,7 @@
       "id": "isle_of_souls",
       "displayName": "Isle of Souls",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["edgeville"],
       "taskLink": { "type": "area" }
     },
@@ -546,7 +546,7 @@
       "id": "port_piscarilius",
       "displayName": "Port Piscarilius",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -555,7 +555,7 @@
       "id": "arceuus",
       "displayName": "Arceuus",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -564,7 +564,7 @@
       "id": "northern_kourend",
       "displayName": "Northern Kourend",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -573,7 +573,7 @@
       "id": "lovakengj",
       "displayName": "Lovakengj",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -582,7 +582,7 @@
       "id": "kingstown",
       "displayName": "Kingstown",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -591,7 +591,7 @@
       "id": "hosidius",
       "displayName": "Hosidius",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -600,7 +600,7 @@
       "id": "kourend_woodland",
       "displayName": "Kourend Woodland",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -609,7 +609,7 @@
       "id": "shayzien",
       "displayName": "Shayzien",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -618,7 +618,7 @@
       "id": "kebos_lowlands",
       "displayName": "Kebos Lowlands",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -627,7 +627,7 @@
       "id": "kebos_swamp",
       "displayName": "Kebos Swamp",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -636,7 +636,7 @@
       "id": "custodia_mountains",
       "displayName": "Custodia Mountains",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -645,7 +645,7 @@
       "id": "auburnvale",
       "displayName": "Auburnvale",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["eastern_varlamore"],
       "taskLink": { "type": "area" }
     },
@@ -654,7 +654,7 @@
       "id": "tlati_rainforest",
       "displayName": "Tlati Rainforest",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["eastern_varlamore"],
       "taskLink": { "type": "area" }
     },
@@ -663,7 +663,7 @@
       "id": "proudspire",
       "displayName": "Proudspire",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["eastern_varlamore"],
       "taskLink": { "type": "area" }
     },
@@ -672,7 +672,7 @@
       "id": "western_varlamore",
       "displayName": "Western Varlamore",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["eastern_varlamore"],
       "taskLink": { "type": "area" }
     },
@@ -681,7 +681,7 @@
       "id": "eastern_varlamore",
       "displayName": "Eastern Varlamore",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["varrock"],
       "taskLink": { "type": "area" }
     },
@@ -690,7 +690,7 @@
       "id": "aldarin",
       "displayName": "Aldarin",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["eastern_varlamore"],
       "taskLink": { "type": "area" }
     },
@@ -699,7 +699,7 @@
       "id": "ardent_ne",
       "displayName": "Ardent Ocean NE",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "area" }
     },
@@ -708,7 +708,7 @@
       "id": "ardent_nw",
       "displayName": "Ardent Ocean NW",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -717,7 +717,7 @@
       "id": "ardent_se",
       "displayName": "Ardent Ocean SE",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -726,7 +726,7 @@
       "id": "ardent_sw",
       "displayName": "Ardent Ocean SW",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -735,7 +735,7 @@
       "id": "unquiet",
       "displayName": "Unquiet Ocean",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -744,7 +744,7 @@
       "id": "shrouded_e",
       "displayName": "Shrouded Ocean E",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -753,7 +753,7 @@
       "id": "shrouded_w",
       "displayName": "Shrouded Ocean W",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -762,7 +762,7 @@
       "id": "sunset",
       "displayName": "Sunset Ocean",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -771,7 +771,7 @@
       "id": "western_s",
       "displayName": "Western Ocean S",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -780,7 +780,7 @@
       "id": "western_n",
       "displayName": "Western Ocean N",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -789,7 +789,7 @@
       "id": "northern_w",
       "displayName": "Northern Ocean W",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -798,7 +798,7 @@
       "id": "northern_e",
       "displayName": "Northern Ocean E",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["ardent_ne"],
       "taskLink": { "type": "area" }
     },
@@ -807,7 +807,7 @@
       "id": "mos_le_harmless",
       "displayName": "Mos Le'Harmless",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -816,7 +816,7 @@
       "id": "catherby",
       "displayName": "Catherby",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["lumbridge"],
       "taskLink": { "type": "area" }
     },
@@ -825,7 +825,7 @@
       "id": "agility_1_10",
       "displayName": "Agility 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Agility", "levelMin": 1, "levelMax": 10 }
     },
@@ -834,7 +834,7 @@
       "id": "agility_11_20",
       "displayName": "Agility 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["agility_1_10"],
       "taskLink": { "type": "skill", "skillName": "Agility", "levelMin": 11, "levelMax": 20 }
     },
@@ -843,7 +843,7 @@
       "id": "agility_21_30",
       "displayName": "Agility 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["agility_11_20"],
       "taskLink": { "type": "skill", "skillName": "Agility", "levelMin": 21, "levelMax": 30 }
     },
@@ -852,7 +852,7 @@
       "id": "agility_31_40",
       "displayName": "Agility 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["agility_21_30"],
       "taskLink": { "type": "skill", "skillName": "Agility", "levelMin": 31, "levelMax": 40 }
     },
@@ -861,7 +861,7 @@
       "id": "agility_41_50",
       "displayName": "Agility 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["agility_31_40"],
       "taskLink": { "type": "skill", "skillName": "Agility", "levelMin": 41, "levelMax": 50 }
     },
@@ -870,7 +870,7 @@
       "id": "agility_51_60",
       "displayName": "Agility 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["agility_41_50"],
       "taskLink": { "type": "skill", "skillName": "Agility", "levelMin": 51, "levelMax": 60 }
     },
@@ -915,7 +915,7 @@
       "id": "mining_1_10",
       "displayName": "Mining 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Mining", "levelMin": 1, "levelMax": 10 }
     },
@@ -924,7 +924,7 @@
       "id": "mining_11_20",
       "displayName": "Mining 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["mining_1_10"],
       "taskLink": { "type": "skill", "skillName": "Mining", "levelMin": 11, "levelMax": 20 }
     },
@@ -933,7 +933,7 @@
       "id": "mining_21_30",
       "displayName": "Mining 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["mining_11_20"],
       "taskLink": { "type": "skill", "skillName": "Mining", "levelMin": 21, "levelMax": 30 }
     },
@@ -942,7 +942,7 @@
       "id": "mining_31_40",
       "displayName": "Mining 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["mining_21_30"],
       "taskLink": { "type": "skill", "skillName": "Mining", "levelMin": 31, "levelMax": 40 }
     },
@@ -951,7 +951,7 @@
       "id": "mining_41_50",
       "displayName": "Mining 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["mining_31_40"],
       "taskLink": { "type": "skill", "skillName": "Mining", "levelMin": 41, "levelMax": 50 }
     },
@@ -960,7 +960,7 @@
       "id": "mining_51_60",
       "displayName": "Mining 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["mining_41_50"],
       "taskLink": { "type": "skill", "skillName": "Mining", "levelMin": 51, "levelMax": 60 }
     },
@@ -1005,7 +1005,7 @@
       "id": "woodcutting_1_10",
       "displayName": "Woodcutting 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Woodcutting", "levelMin": 1, "levelMax": 10 }
     },
@@ -1014,7 +1014,7 @@
       "id": "woodcutting_11_20",
       "displayName": "Woodcutting 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["woodcutting_1_10"],
       "taskLink": { "type": "skill", "skillName": "Woodcutting", "levelMin": 11, "levelMax": 20 }
     },
@@ -1023,7 +1023,7 @@
       "id": "woodcutting_21_30",
       "displayName": "Woodcutting 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["woodcutting_11_20"],
       "taskLink": { "type": "skill", "skillName": "Woodcutting", "levelMin": 21, "levelMax": 30 }
     },
@@ -1032,7 +1032,7 @@
       "id": "woodcutting_31_40",
       "displayName": "Woodcutting 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["woodcutting_21_30"],
       "taskLink": { "type": "skill", "skillName": "Woodcutting", "levelMin": 31, "levelMax": 40 }
     },
@@ -1041,7 +1041,7 @@
       "id": "woodcutting_41_50",
       "displayName": "Woodcutting 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["woodcutting_31_40"],
       "taskLink": { "type": "skill", "skillName": "Woodcutting", "levelMin": 41, "levelMax": 50 }
     },
@@ -1050,7 +1050,7 @@
       "id": "woodcutting_51_60",
       "displayName": "Woodcutting 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["woodcutting_41_50"],
       "taskLink": { "type": "skill", "skillName": "Woodcutting", "levelMin": 51, "levelMax": 60 }
     },
@@ -1095,7 +1095,7 @@
       "id": "cooking_1_10",
       "displayName": "Cooking 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Cooking", "levelMin": 1, "levelMax": 10 }
     },
@@ -1104,7 +1104,7 @@
       "id": "cooking_11_20",
       "displayName": "Cooking 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["cooking_1_10"],
       "taskLink": { "type": "skill", "skillName": "Cooking", "levelMin": 11, "levelMax": 20 }
     },
@@ -1113,7 +1113,7 @@
       "id": "cooking_21_30",
       "displayName": "Cooking 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["cooking_11_20"],
       "taskLink": { "type": "skill", "skillName": "Cooking", "levelMin": 21, "levelMax": 30 }
     },
@@ -1122,7 +1122,7 @@
       "id": "cooking_31_40",
       "displayName": "Cooking 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["cooking_21_30"],
       "taskLink": { "type": "skill", "skillName": "Cooking", "levelMin": 31, "levelMax": 40 }
     },
@@ -1131,7 +1131,7 @@
       "id": "cooking_41_50",
       "displayName": "Cooking 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["cooking_31_40"],
       "taskLink": { "type": "skill", "skillName": "Cooking", "levelMin": 41, "levelMax": 50 }
     },
@@ -1140,7 +1140,7 @@
       "id": "cooking_51_60",
       "displayName": "Cooking 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["cooking_41_50"],
       "taskLink": { "type": "skill", "skillName": "Cooking", "levelMin": 51, "levelMax": 60 }
     },
@@ -1185,7 +1185,7 @@
       "id": "crafting_1_10",
       "displayName": "Crafting 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Crafting", "levelMin": 1, "levelMax": 10 }
     },
@@ -1194,7 +1194,7 @@
       "id": "crafting_11_20",
       "displayName": "Crafting 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["crafting_1_10"],
       "taskLink": { "type": "skill", "skillName": "Crafting", "levelMin": 11, "levelMax": 20 }
     },
@@ -1203,7 +1203,7 @@
       "id": "crafting_21_30",
       "displayName": "Crafting 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["crafting_11_20"],
       "taskLink": { "type": "skill", "skillName": "Crafting", "levelMin": 21, "levelMax": 30 }
     },
@@ -1212,7 +1212,7 @@
       "id": "crafting_31_40",
       "displayName": "Crafting 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["crafting_21_30"],
       "taskLink": { "type": "skill", "skillName": "Crafting", "levelMin": 31, "levelMax": 40 }
     },
@@ -1221,7 +1221,7 @@
       "id": "crafting_41_50",
       "displayName": "Crafting 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["crafting_31_40"],
       "taskLink": { "type": "skill", "skillName": "Crafting", "levelMin": 41, "levelMax": 50 }
     },
@@ -1230,7 +1230,7 @@
       "id": "crafting_51_60",
       "displayName": "Crafting 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["crafting_41_50"],
       "taskLink": { "type": "skill", "skillName": "Crafting", "levelMin": 51, "levelMax": 60 }
     },
@@ -1275,7 +1275,7 @@
       "id": "farming_1_10",
       "displayName": "Farming 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Farming", "levelMin": 1, "levelMax": 10 }
     },
@@ -1284,7 +1284,7 @@
       "id": "farming_11_20",
       "displayName": "Farming 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["farming_1_10"],
       "taskLink": { "type": "skill", "skillName": "Farming", "levelMin": 11, "levelMax": 20 }
     },
@@ -1293,7 +1293,7 @@
       "id": "farming_21_30",
       "displayName": "Farming 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["farming_11_20"],
       "taskLink": { "type": "skill", "skillName": "Farming", "levelMin": 21, "levelMax": 30 }
     },
@@ -1302,7 +1302,7 @@
       "id": "farming_31_40",
       "displayName": "Farming 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["farming_21_30"],
       "taskLink": { "type": "skill", "skillName": "Farming", "levelMin": 31, "levelMax": 40 }
     },
@@ -1311,7 +1311,7 @@
       "id": "farming_41_50",
       "displayName": "Farming 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["farming_31_40"],
       "taskLink": { "type": "skill", "skillName": "Farming", "levelMin": 41, "levelMax": 50 }
     },
@@ -1320,7 +1320,7 @@
       "id": "farming_51_60",
       "displayName": "Farming 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["farming_41_50"],
       "taskLink": { "type": "skill", "skillName": "Farming", "levelMin": 51, "levelMax": 60 }
     },
@@ -1365,7 +1365,7 @@
       "id": "firemaking_1_10",
       "displayName": "Firemaking 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Firemaking", "levelMin": 1, "levelMax": 10 }
     },
@@ -1374,7 +1374,7 @@
       "id": "firemaking_11_20",
       "displayName": "Firemaking 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["firemaking_1_10"],
       "taskLink": { "type": "skill", "skillName": "Firemaking", "levelMin": 11, "levelMax": 20 }
     },
@@ -1383,7 +1383,7 @@
       "id": "firemaking_21_30",
       "displayName": "Firemaking 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["firemaking_11_20"],
       "taskLink": { "type": "skill", "skillName": "Firemaking", "levelMin": 21, "levelMax": 30 }
     },
@@ -1392,7 +1392,7 @@
       "id": "firemaking_31_40",
       "displayName": "Firemaking 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["firemaking_21_30"],
       "taskLink": { "type": "skill", "skillName": "Firemaking", "levelMin": 31, "levelMax": 40 }
     },
@@ -1401,7 +1401,7 @@
       "id": "firemaking_41_50",
       "displayName": "Firemaking 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["firemaking_31_40"],
       "taskLink": { "type": "skill", "skillName": "Firemaking", "levelMin": 41, "levelMax": 50 }
     },
@@ -1410,7 +1410,7 @@
       "id": "firemaking_51_60",
       "displayName": "Firemaking 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["firemaking_41_50"],
       "taskLink": { "type": "skill", "skillName": "Firemaking", "levelMin": 51, "levelMax": 60 }
     },
@@ -1455,7 +1455,7 @@
       "id": "fletching_1_10",
       "displayName": "Fletching 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Fletching", "levelMin": 1, "levelMax": 10 }
     },
@@ -1464,7 +1464,7 @@
       "id": "fletching_11_20",
       "displayName": "Fletching 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["fletching_1_10"],
       "taskLink": { "type": "skill", "skillName": "Fletching", "levelMin": 11, "levelMax": 20 }
     },
@@ -1473,7 +1473,7 @@
       "id": "fletching_21_30",
       "displayName": "Fletching 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["fletching_11_20"],
       "taskLink": { "type": "skill", "skillName": "Fletching", "levelMin": 21, "levelMax": 30 }
     },
@@ -1482,7 +1482,7 @@
       "id": "fletching_31_40",
       "displayName": "Fletching 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["fletching_21_30"],
       "taskLink": { "type": "skill", "skillName": "Fletching", "levelMin": 31, "levelMax": 40 }
     },
@@ -1491,7 +1491,7 @@
       "id": "fletching_41_50",
       "displayName": "Fletching 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["fletching_31_40"],
       "taskLink": { "type": "skill", "skillName": "Fletching", "levelMin": 41, "levelMax": 50 }
     },
@@ -1500,7 +1500,7 @@
       "id": "fletching_51_60",
       "displayName": "Fletching 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["fletching_41_50"],
       "taskLink": { "type": "skill", "skillName": "Fletching", "levelMin": 51, "levelMax": 60 }
     },
@@ -1545,7 +1545,7 @@
       "id": "fishing_1_10",
       "displayName": "Fishing 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Fishing", "levelMin": 1, "levelMax": 10 }
     },
@@ -1554,7 +1554,7 @@
       "id": "fishing_11_20",
       "displayName": "Fishing 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["fishing_1_10"],
       "taskLink": { "type": "skill", "skillName": "Fishing", "levelMin": 11, "levelMax": 20 }
     },
@@ -1563,7 +1563,7 @@
       "id": "fishing_21_30",
       "displayName": "Fishing 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["fishing_11_20"],
       "taskLink": { "type": "skill", "skillName": "Fishing", "levelMin": 21, "levelMax": 30 }
     },
@@ -1572,7 +1572,7 @@
       "id": "fishing_31_40",
       "displayName": "Fishing 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["fishing_21_30"],
       "taskLink": { "type": "skill", "skillName": "Fishing", "levelMin": 31, "levelMax": 40 }
     },
@@ -1581,7 +1581,7 @@
       "id": "fishing_41_50",
       "displayName": "Fishing 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["fishing_31_40"],
       "taskLink": { "type": "skill", "skillName": "Fishing", "levelMin": 41, "levelMax": 50 }
     },
@@ -1590,7 +1590,7 @@
       "id": "fishing_51_60",
       "displayName": "Fishing 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["fishing_41_50"],
       "taskLink": { "type": "skill", "skillName": "Fishing", "levelMin": 51, "levelMax": 60 }
     },
@@ -1635,8 +1635,8 @@
       "id": "herblore_1_10",
       "displayName": "Herblore 1-10",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["taverly"],
       "taskLink": { "type": "skill", "skillName": "Herblore", "levelMin": 1, "levelMax": 10 }
     },
     {
@@ -1644,7 +1644,7 @@
       "id": "herblore_11_20",
       "displayName": "Herblore 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["herblore_1_10"],
       "taskLink": { "type": "skill", "skillName": "Herblore", "levelMin": 11, "levelMax": 20 }
     },
@@ -1653,7 +1653,7 @@
       "id": "herblore_21_30",
       "displayName": "Herblore 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["herblore_11_20"],
       "taskLink": { "type": "skill", "skillName": "Herblore", "levelMin": 21, "levelMax": 30 }
     },
@@ -1662,7 +1662,7 @@
       "id": "herblore_31_40",
       "displayName": "Herblore 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["herblore_21_30"],
       "taskLink": { "type": "skill", "skillName": "Herblore", "levelMin": 31, "levelMax": 40 }
     },
@@ -1671,7 +1671,7 @@
       "id": "herblore_41_50",
       "displayName": "Herblore 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["herblore_31_40"],
       "taskLink": { "type": "skill", "skillName": "Herblore", "levelMin": 41, "levelMax": 50 }
     },
@@ -1680,7 +1680,7 @@
       "id": "herblore_51_60",
       "displayName": "Herblore 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["herblore_41_50"],
       "taskLink": { "type": "skill", "skillName": "Herblore", "levelMin": 51, "levelMax": 60 }
     },
@@ -1725,7 +1725,7 @@
       "id": "hunter_1_10",
       "displayName": "Hunter 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Hunter", "levelMin": 1, "levelMax": 10 }
     },
@@ -1734,7 +1734,7 @@
       "id": "hunter_11_20",
       "displayName": "Hunter 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["hunter_1_10"],
       "taskLink": { "type": "skill", "skillName": "Hunter", "levelMin": 11, "levelMax": 20 }
     },
@@ -1743,7 +1743,7 @@
       "id": "hunter_21_30",
       "displayName": "Hunter 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["hunter_11_20"],
       "taskLink": { "type": "skill", "skillName": "Hunter", "levelMin": 21, "levelMax": 30 }
     },
@@ -1752,7 +1752,7 @@
       "id": "hunter_31_40",
       "displayName": "Hunter 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["hunter_21_30"],
       "taskLink": { "type": "skill", "skillName": "Hunter", "levelMin": 31, "levelMax": 40 }
     },
@@ -1761,7 +1761,7 @@
       "id": "hunter_41_50",
       "displayName": "Hunter 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["hunter_31_40"],
       "taskLink": { "type": "skill", "skillName": "Hunter", "levelMin": 41, "levelMax": 50 }
     },
@@ -1770,7 +1770,7 @@
       "id": "hunter_51_60",
       "displayName": "Hunter 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["hunter_41_50"],
       "taskLink": { "type": "skill", "skillName": "Hunter", "levelMin": 51, "levelMax": 60 }
     },
@@ -1815,7 +1815,7 @@
       "id": "magic_1_10",
       "displayName": "Magic 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Magic", "levelMin": 1, "levelMax": 10 }
     },
@@ -1824,7 +1824,7 @@
       "id": "magic_11_20",
       "displayName": "Magic 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["magic_1_10"],
       "taskLink": { "type": "skill", "skillName": "Magic", "levelMin": 11, "levelMax": 20 }
     },
@@ -1833,7 +1833,7 @@
       "id": "magic_21_30",
       "displayName": "Magic 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["magic_11_20"],
       "taskLink": { "type": "skill", "skillName": "Magic", "levelMin": 21, "levelMax": 30 }
     },
@@ -1842,7 +1842,7 @@
       "id": "magic_31_40",
       "displayName": "Magic 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["magic_21_30"],
       "taskLink": { "type": "skill", "skillName": "Magic", "levelMin": 31, "levelMax": 40 }
     },
@@ -1851,7 +1851,7 @@
       "id": "magic_41_50",
       "displayName": "Magic 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["magic_31_40"],
       "taskLink": { "type": "skill", "skillName": "Magic", "levelMin": 41, "levelMax": 50 }
     },
@@ -1860,7 +1860,7 @@
       "id": "magic_51_60",
       "displayName": "Magic 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["magic_41_50"],
       "taskLink": { "type": "skill", "skillName": "Magic", "levelMin": 51, "levelMax": 60 }
     },
@@ -1905,7 +1905,7 @@
       "id": "prayer_1_10",
       "displayName": "Prayer 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Prayer", "levelMin": 1, "levelMax": 10 }
     },
@@ -1914,7 +1914,7 @@
       "id": "prayer_11_20",
       "displayName": "Prayer 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["prayer_1_10"],
       "taskLink": { "type": "skill", "skillName": "Prayer", "levelMin": 11, "levelMax": 20 }
     },
@@ -1923,7 +1923,7 @@
       "id": "prayer_21_30",
       "displayName": "Prayer 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["prayer_11_20"],
       "taskLink": { "type": "skill", "skillName": "Prayer", "levelMin": 21, "levelMax": 30 }
     },
@@ -1932,7 +1932,7 @@
       "id": "prayer_31_40",
       "displayName": "Prayer 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["prayer_21_30"],
       "taskLink": { "type": "skill", "skillName": "Prayer", "levelMin": 31, "levelMax": 40 }
     },
@@ -1941,7 +1941,7 @@
       "id": "prayer_41_50",
       "displayName": "Prayer 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["prayer_31_40"],
       "taskLink": { "type": "skill", "skillName": "Prayer", "levelMin": 41, "levelMax": 50 }
     },
@@ -1950,7 +1950,7 @@
       "id": "prayer_51_60",
       "displayName": "Prayer 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["prayer_41_50"],
       "taskLink": { "type": "skill", "skillName": "Prayer", "levelMin": 51, "levelMax": 60 }
     },
@@ -1995,8 +1995,8 @@
       "id": "runecraft_1_10",
       "displayName": "Runecraft 1-10",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["Rune Mysteries"],
       "taskLink": { "type": "skill", "skillName": "Runecraft", "levelMin": 1, "levelMax": 10 }
     },
     {
@@ -2004,7 +2004,7 @@
       "id": "runecraft_11_20",
       "displayName": "Runecraft 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["runecraft_1_10"],
       "taskLink": { "type": "skill", "skillName": "Runecraft", "levelMin": 11, "levelMax": 20 }
     },
@@ -2013,7 +2013,7 @@
       "id": "runecraft_21_30",
       "displayName": "Runecraft 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["runecraft_11_20"],
       "taskLink": { "type": "skill", "skillName": "Runecraft", "levelMin": 21, "levelMax": 30 }
     },
@@ -2022,7 +2022,7 @@
       "id": "runecraft_31_40",
       "displayName": "Runecraft 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["runecraft_21_30"],
       "taskLink": { "type": "skill", "skillName": "Runecraft", "levelMin": 31, "levelMax": 40 }
     },
@@ -2031,7 +2031,7 @@
       "id": "runecraft_41_50",
       "displayName": "Runecraft 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["runecraft_31_40"],
       "taskLink": { "type": "skill", "skillName": "Runecraft", "levelMin": 41, "levelMax": 50 }
     },
@@ -2040,7 +2040,7 @@
       "id": "runecraft_51_60",
       "displayName": "Runecraft 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["runecraft_41_50"],
       "taskLink": { "type": "skill", "skillName": "Runecraft", "levelMin": 51, "levelMax": 60 }
     },
@@ -2085,7 +2085,7 @@
       "id": "slayer_1_10",
       "displayName": "Slayer 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Slayer", "levelMin": 1, "levelMax": 10 }
     },
@@ -2094,7 +2094,7 @@
       "id": "slayer_11_20",
       "displayName": "Slayer 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["slayer_1_10"],
       "taskLink": { "type": "skill", "skillName": "Slayer", "levelMin": 11, "levelMax": 20 }
     },
@@ -2103,7 +2103,7 @@
       "id": "slayer_21_30",
       "displayName": "Slayer 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["slayer_11_20"],
       "taskLink": { "type": "skill", "skillName": "Slayer", "levelMin": 21, "levelMax": 30 }
     },
@@ -2112,7 +2112,7 @@
       "id": "slayer_31_40",
       "displayName": "Slayer 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["slayer_21_30"],
       "taskLink": { "type": "skill", "skillName": "Slayer", "levelMin": 31, "levelMax": 40 }
     },
@@ -2121,7 +2121,7 @@
       "id": "slayer_41_50",
       "displayName": "Slayer 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["slayer_31_40"],
       "taskLink": { "type": "skill", "skillName": "Slayer", "levelMin": 41, "levelMax": 50 }
     },
@@ -2130,7 +2130,7 @@
       "id": "slayer_51_60",
       "displayName": "Slayer 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["slayer_41_50"],
       "taskLink": { "type": "skill", "skillName": "Slayer", "levelMin": 51, "levelMax": 60 }
     },
@@ -2175,7 +2175,7 @@
       "id": "smithing_1_10",
       "displayName": "Smithing 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Smithing", "levelMin": 1, "levelMax": 10 }
     },
@@ -2184,7 +2184,7 @@
       "id": "smithing_11_20",
       "displayName": "Smithing 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["smithing_1_10"],
       "taskLink": { "type": "skill", "skillName": "Smithing", "levelMin": 11, "levelMax": 20 }
     },
@@ -2193,7 +2193,7 @@
       "id": "smithing_21_30",
       "displayName": "Smithing 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["smithing_11_20"],
       "taskLink": { "type": "skill", "skillName": "Smithing", "levelMin": 21, "levelMax": 30 }
     },
@@ -2202,7 +2202,7 @@
       "id": "smithing_31_40",
       "displayName": "Smithing 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["smithing_21_30"],
       "taskLink": { "type": "skill", "skillName": "Smithing", "levelMin": 31, "levelMax": 40 }
     },
@@ -2211,7 +2211,7 @@
       "id": "smithing_41_50",
       "displayName": "Smithing 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["smithing_31_40"],
       "taskLink": { "type": "skill", "skillName": "Smithing", "levelMin": 41, "levelMax": 50 }
     },
@@ -2220,7 +2220,7 @@
       "id": "smithing_51_60",
       "displayName": "Smithing 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["smithing_41_50"],
       "taskLink": { "type": "skill", "skillName": "Smithing", "levelMin": 51, "levelMax": 60 }
     },
@@ -2265,8 +2265,8 @@
       "id": "sailing_1_10",
       "displayName": "Sailing 1-10",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["port_sarim_mudskipper"],
       "taskLink": { "type": "skill", "skillName": "Sailing", "levelMin": 1, "levelMax": 10 }
     },
     {
@@ -2274,7 +2274,7 @@
       "id": "sailing_11_20",
       "displayName": "Sailing 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["sailing_1_10"],
       "taskLink": { "type": "skill", "skillName": "Sailing", "levelMin": 11, "levelMax": 20 }
     },
@@ -2283,7 +2283,7 @@
       "id": "sailing_21_30",
       "displayName": "Sailing 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["sailing_11_20"],
       "taskLink": { "type": "skill", "skillName": "Sailing", "levelMin": 21, "levelMax": 30 }
     },
@@ -2292,7 +2292,7 @@
       "id": "sailing_31_40",
       "displayName": "Sailing 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["sailing_21_30"],
       "taskLink": { "type": "skill", "skillName": "Sailing", "levelMin": 31, "levelMax": 40 }
     },
@@ -2301,7 +2301,7 @@
       "id": "sailing_41_50",
       "displayName": "Sailing 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["sailing_31_40"],
       "taskLink": { "type": "skill", "skillName": "Sailing", "levelMin": 41, "levelMax": 50 }
     },
@@ -2310,7 +2310,7 @@
       "id": "sailing_51_60",
       "displayName": "Sailing 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["sailing_41_50"],
       "taskLink": { "type": "skill", "skillName": "Sailing", "levelMin": 51, "levelMax": 60 }
     },
@@ -2355,7 +2355,7 @@
       "id": "thieving_1_10",
       "displayName": "Thieving 1-10",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "skill", "skillName": "Thieving", "levelMin": 1, "levelMax": 10 }
     },
@@ -2364,7 +2364,7 @@
       "id": "thieving_11_20",
       "displayName": "Thieving 11-20",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["thieving_1_10"],
       "taskLink": { "type": "skill", "skillName": "Thieving", "levelMin": 11, "levelMax": 20 }
     },
@@ -2373,7 +2373,7 @@
       "id": "thieving_21_30",
       "displayName": "Thieving 21-30",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["thieving_11_20"],
       "taskLink": { "type": "skill", "skillName": "Thieving", "levelMin": 21, "levelMax": 30 }
     },
@@ -2382,7 +2382,7 @@
       "id": "thieving_31_40",
       "displayName": "Thieving 31-40",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": ["thieving_21_30"],
       "taskLink": { "type": "skill", "skillName": "Thieving", "levelMin": 31, "levelMax": 40 }
     },
@@ -2391,7 +2391,7 @@
       "id": "thieving_41_50",
       "displayName": "Thieving 41-50",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["thieving_31_40"],
       "taskLink": { "type": "skill", "skillName": "Thieving", "levelMin": 41, "levelMax": 50 }
     },
@@ -2400,7 +2400,7 @@
       "id": "thieving_51_60",
       "displayName": "Thieving 51-60",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": ["thieving_41_50"],
       "taskLink": { "type": "skill", "skillName": "Thieving", "levelMin": 51, "levelMax": 60 }
     },
@@ -2445,8 +2445,8 @@
       "id": "druidic_ritual",
       "displayName": "Druidic Ritual",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["taverly"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Druidic Ritual" }
     },
     {
@@ -2454,7 +2454,7 @@
       "id": "lost_city",
       "displayName": "Lost City",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Lost City" }
     },
@@ -2463,8 +2463,8 @@
       "id": "witchs_house",
       "displayName": "Witch's House",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["taverly"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Witch's House" }
     },
     {
@@ -2472,7 +2472,7 @@
       "id": "merlins_crystal",
       "displayName": "Merlin's Crystal",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Merlin's Crystal" }
     },
@@ -2490,7 +2490,7 @@
       "id": "scorpion_catcher",
       "displayName": "Scorpion Catcher",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Scorpion Catcher" }
     },
@@ -2508,7 +2508,7 @@
       "id": "fishing_contest",
       "displayName": "Fishing Contest",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Fishing Contest" }
     },
@@ -2517,7 +2517,7 @@
       "id": "tribal_totem",
       "displayName": "Tribal Totem",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tribal Totem" }
     },
@@ -2526,8 +2526,8 @@
       "id": "monks_friend",
       "displayName": "Monk's Friend",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["ardougne"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Monk's Friend" }
     },
     {
@@ -2535,8 +2535,8 @@
       "id": "temple_of_ikov",
       "displayName": "Temple of Ikov",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["ardougne"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Temple of Ikov" }
     },
     {
@@ -2544,8 +2544,8 @@
       "id": "clock_tower",
       "displayName": "Clock Tower",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["ardougne"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Clock Tower" }
     },
     {
@@ -2553,7 +2553,7 @@
       "id": "holy_grail",
       "displayName": "Holy Grail",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Holy Grail" }
     },
@@ -2562,8 +2562,8 @@
       "id": "tree_gnome_village",
       "displayName": "Tree Gnome Village",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["khazard_battlegrounds"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tree Gnome Village" }
     },
     {
@@ -2571,8 +2571,8 @@
       "id": "fight_arena",
       "displayName": "Fight Arena",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["khazard_battlegrounds"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Fight Arena" }
     },
     {
@@ -2580,8 +2580,8 @@
       "id": "hazeel_cult",
       "displayName": "Hazeel Cult",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["ardougne"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Hazeel Cult" }
     },
     {
@@ -2589,8 +2589,8 @@
       "id": "sheep_herder",
       "displayName": "Sheep Herder",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["ardougne, hemenster"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Sheep Herder" }
     },
     {
@@ -2598,8 +2598,8 @@
       "id": "plague_city",
       "displayName": "Plague City",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["ardougne, hemenster"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Plague City" }
     },
     {
@@ -2607,8 +2607,8 @@
       "id": "sea_slug",
       "displayName": "Sea Slug",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["ardougne"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Sea Slug" }
     },
     {
@@ -2616,8 +2616,8 @@
       "id": "waterfall_quest",
       "displayName": "Waterfall Quest",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["barbarian_waterfall"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Waterfall Quest" }
     },
     {
@@ -2625,8 +2625,8 @@
       "id": "jungle_potion",
       "displayName": "Jungle Potion",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["karamja"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Jungle Potion" }
     },
     {
@@ -2634,8 +2634,8 @@
       "id": "the_grand_tree",
       "displayName": "The Grand Tree",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["gnome_stronghold"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Grand Tree" }
     },
     {
@@ -2644,7 +2644,7 @@
       "displayName": "Underground Pass",
       "tier": 3,
       "cost": 75,
-      "prerequisites": [],
+      "prerequisites": ["isafdar"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Underground Pass" }
     },
     {
@@ -2652,8 +2652,8 @@
       "id": "observatory_quest",
       "displayName": "Observatory Quest",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["yanille"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Observatory Quest" }
     },
     {
@@ -2661,8 +2661,8 @@
       "id": "the_tourist_trap",
       "displayName": "The Tourist Trap",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["kharidian_desert"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Tourist Trap" }
     },
     {
@@ -2670,7 +2670,7 @@
       "id": "watchtower",
       "displayName": "Watchtower",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Watchtower" }
     },
@@ -2679,8 +2679,8 @@
       "id": "dwarf_cannon",
       "displayName": "Dwarf Cannon",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["hemenster"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Dwarf Cannon" }
     },
     {
@@ -2688,8 +2688,8 @@
       "id": "murder_mystery",
       "displayName": "Murder Mystery",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["camelot_seers"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Murder Mystery" }
     },
     {
@@ -2697,8 +2697,8 @@
       "id": "the_dig_site",
       "displayName": "The Dig Site",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["silvarea"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Dig Site" }
     },
     {
@@ -2706,8 +2706,8 @@
       "id": "gertrudes_cat",
       "displayName": "Gertrude's Cat",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["varrock"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Gertrude's Cat" }
     },
     {
@@ -2724,8 +2724,8 @@
       "id": "death_plateau",
       "displayName": "Death Plateau",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["burthorpe, trollheim"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Death Plateau" }
     },
     {
@@ -2733,8 +2733,8 @@
       "id": "eadgars_ruse",
       "displayName": "Eadgar's Ruse",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["burthorpe, trollheim, taverly, ardougne"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Eadgar's Ruse" }
     },
     {
@@ -2742,8 +2742,8 @@
       "id": "big_chompy_bird_hunting",
       "displayName": "Big Chompy Bird Hunting",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["feldip_hills"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Big Chompy Bird Hunting" }
     },
     {
@@ -2751,8 +2751,8 @@
       "id": "elemental_workshop_i",
       "displayName": "Elemental Workshop I",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["camelot_seers"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Elemental Workshop I" }
     },
     {
@@ -2760,8 +2760,8 @@
       "id": "nature_spirit",
       "displayName": "Nature Spirit",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["mort_myre_swamp"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Nature Spirit" }
     },
     {
@@ -2769,8 +2769,8 @@
       "id": "priest_in_peril",
       "displayName": "Priest in Peril",
       "tier": 1,
-      "cost": 25,
-      "prerequisites": [],
+      "cost": 15,
+      "prerequisites": ["silvarea"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Priest in Peril" }
     },
     {
@@ -2779,7 +2779,7 @@
       "displayName": "Regicide",
       "tier": 3,
       "cost": 75,
-      "prerequisites": [],
+      "prerequisites": ["underground_pass"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Regicide" }
     },
     {
@@ -2787,8 +2787,8 @@
       "id": "tai_bwo_wannai_trio",
       "displayName": "Tai Bwo Wannai Trio",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["karamja"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tai Bwo Wannai Trio" }
     },
     {
@@ -2796,8 +2796,8 @@
       "id": "troll_stronghold",
       "displayName": "Troll Stronghold",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["death_plateau"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Troll Stronghold" }
     },
     {
@@ -2805,8 +2805,8 @@
       "id": "shades_of_mortton",
       "displayName": "Shades of Mort'ton",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["southern_morytania"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Shades of Mort'ton" }
     },
     {
@@ -2814,8 +2814,8 @@
       "id": "the_fremennik_trials",
       "displayName": "The Fremennik Trials",
       "tier": 2,
-      "cost": 50,
-      "prerequisites": [],
+      "cost": 35,
+      "prerequisites": ["rellekka, camelot_seers"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Fremennik Trials" }
     },
     {
@@ -2823,7 +2823,7 @@
       "id": "horror_from_the_deep",
       "displayName": "Horror from the Deep",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Horror from the Deep" }
     },
@@ -2833,7 +2833,7 @@
       "displayName": "Throne of Miscellania",
       "tier": 3,
       "cost": 75,
-      "prerequisites": [],
+      "prerequisites": ["fremennik_isles"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Throne of Miscellania" }
     },
     {
@@ -2842,7 +2842,7 @@
       "displayName": "Monkey Madness I",
       "tier": 4,
       "cost": 100,
-      "prerequisites": [],
+      "prerequisites": ["ape_atoll"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Monkey Madness I" }
     },
     {
@@ -2851,7 +2851,7 @@
       "displayName": "Haunted Mine",
       "tier": 3,
       "cost": 75,
-      "prerequisites": [],
+      "prerequisites": ["southern_morytania"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Haunted Mine" }
     },
     {
@@ -2859,7 +2859,7 @@
       "id": "troll_romance",
       "displayName": "Troll Romance",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Troll Romance" }
     },
@@ -2868,7 +2868,7 @@
       "id": "in_search_of_the_myreque",
       "displayName": "In Search of the Myreque",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "In Search of the Myreque" }
     },
@@ -2877,7 +2877,7 @@
       "id": "creature_of_fenkenstrain",
       "displayName": "Creature of Fenkenstrain",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Creature of Fenkenstrain" }
     },
@@ -2895,7 +2895,7 @@
       "id": "ghosts_ahoy",
       "displayName": "Ghosts Ahoy",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Ghosts Ahoy" }
     },
@@ -2913,7 +2913,7 @@
       "id": "mountain_daughter",
       "displayName": "Mountain Daughter",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Mountain Daughter" }
     },
@@ -2931,7 +2931,7 @@
       "id": "the_feud",
       "displayName": "The Feud",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Feud" }
     },
@@ -2940,7 +2940,7 @@
       "id": "the_golem",
       "displayName": "The Golem",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Golem" }
     },
@@ -2958,7 +2958,7 @@
       "id": "icthlarins_little_helper",
       "displayName": "Icthlarin's Little Helper",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Icthlarin's Little Helper" }
     },
@@ -2967,7 +2967,7 @@
       "id": "tears_of_guthix",
       "displayName": "Tears of Guthix",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tears of Guthix" }
     },
@@ -2976,7 +2976,7 @@
       "id": "the_lost_tribe",
       "displayName": "The Lost Tribe",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Lost Tribe" }
     },
@@ -2985,7 +2985,7 @@
       "id": "the_giant_dwarf",
       "displayName": "The Giant Dwarf",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Giant Dwarf" }
     },
@@ -2994,7 +2994,7 @@
       "id": "recruitment_drive",
       "displayName": "Recruitment Drive",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recruitment Drive" }
     },
@@ -3012,7 +3012,7 @@
       "id": "forgettable_tale",
       "displayName": "Forgettable Tale...",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Forgettable Tale..." }
     },
@@ -3021,7 +3021,7 @@
       "id": "garden_of_tranquillity",
       "displayName": "Garden of Tranquillity",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Garden of Tranquillity" }
     },
@@ -3030,7 +3030,7 @@
       "id": "a_tail_of_two_cats",
       "displayName": "A Tail of Two Cats",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "A Tail of Two Cats" }
     },
@@ -3039,7 +3039,7 @@
       "id": "wanted!",
       "displayName": "Wanted!",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Wanted!" }
     },
@@ -3066,7 +3066,7 @@
       "id": "shadow_of_the_storm",
       "displayName": "Shadow of the Storm",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Shadow of the Storm" }
     },
@@ -3075,7 +3075,7 @@
       "id": "making_history",
       "displayName": "Making History",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Making History" }
     },
@@ -3084,7 +3084,7 @@
       "id": "ratcatchers",
       "displayName": "Ratcatchers",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Ratcatchers" }
     },
@@ -3093,7 +3093,7 @@
       "id": "spirits_of_the_elid",
       "displayName": "Spirits of the Elid",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Spirits of the Elid" }
     },
@@ -3111,7 +3111,7 @@
       "id": "the_hand_in_the_sand",
       "displayName": "The Hand in the Sand",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Hand in the Sand" }
     },
@@ -3138,7 +3138,7 @@
       "id": "fairytale_i_growing_pains",
       "displayName": "Fairytale I - Growing Pains",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Fairytale I - Growing Pains" }
     },
@@ -3156,7 +3156,7 @@
       "id": "in_aid_of_the_myreque",
       "displayName": "In Aid of the Myreque",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "In Aid of the Myreque" }
     },
@@ -3165,7 +3165,7 @@
       "id": "a_souls_bane",
       "displayName": "A Soul's Bane",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "A Soul's Bane" }
     },
@@ -3174,7 +3174,7 @@
       "id": "rag_and_bone_man_i",
       "displayName": "Rag and Bone Man I",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Rag and Bone Man I" }
     },
@@ -3201,7 +3201,7 @@
       "id": "death_to_the_dorgeshuun",
       "displayName": "Death to the Dorgeshuun",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Death to the Dorgeshuun" }
     },
@@ -3228,7 +3228,7 @@
       "id": "the_eyes_of_glouphrie",
       "displayName": "The Eyes of Glouphrie",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Eyes of Glouphrie" }
     },
@@ -3246,7 +3246,7 @@
       "id": "the_slug_menace",
       "displayName": "The Slug Menace",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Slug Menace" }
     },
@@ -3255,7 +3255,7 @@
       "id": "elemental_workshop_ii",
       "displayName": "Elemental Workshop II",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Elemental Workshop II" }
     },
@@ -3273,7 +3273,7 @@
       "id": "enlightened_journey",
       "displayName": "Enlightened Journey",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Enlightened Journey" }
     },
@@ -3282,7 +3282,7 @@
       "id": "eagles_peak",
       "displayName": "Eagles' Peak",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Eagles' Peak" }
     },
@@ -3291,7 +3291,7 @@
       "id": "animal_magnetism",
       "displayName": "Animal Magnetism",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Animal Magnetism" }
     },
@@ -3309,7 +3309,7 @@
       "id": "cold_war",
       "displayName": "Cold War",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Cold War" }
     },
@@ -3336,7 +3336,7 @@
       "id": "what_lies_below",
       "displayName": "What Lies Below",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "What Lies Below" }
     },
@@ -3345,7 +3345,7 @@
       "id": "olafs_quest",
       "displayName": "Olaf's Quest",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Olaf's Quest" }
     },
@@ -3354,7 +3354,7 @@
       "id": "another_slice_of_ham",
       "displayName": "Another Slice of H.A.M.",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Another Slice of H.A.M." }
     },
@@ -3390,7 +3390,7 @@
       "id": "shilo_village",
       "displayName": "Shilo Village",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Shilo Village" }
     },
@@ -3399,7 +3399,7 @@
       "id": "biohazard",
       "displayName": "Biohazard",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Biohazard" }
     },
@@ -3408,7 +3408,7 @@
       "id": "tower_of_life",
       "displayName": "Tower of Life",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tower of Life" }
     },
@@ -3444,7 +3444,7 @@
       "id": "zogre_flesh_eaters",
       "displayName": "Zogre Flesh Eaters",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Zogre Flesh Eaters" }
     },
@@ -3462,7 +3462,7 @@
       "id": "client_of_kourend",
       "displayName": "Client of Kourend",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Client of Kourend" }
     },
@@ -3471,7 +3471,7 @@
       "id": "the_queen_of_thieves",
       "displayName": "The Queen of Thieves",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Queen of Thieves" }
     },
@@ -3480,7 +3480,7 @@
       "id": "bone_voyage",
       "displayName": "Bone Voyage",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Bone Voyage" }
     },
@@ -3498,7 +3498,7 @@
       "id": "the_depths_of_despair",
       "displayName": "The Depths of Despair",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Depths of Despair" }
     },
@@ -3597,7 +3597,7 @@
       "id": "tale_of_the_righteous",
       "displayName": "Tale of the Righteous",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tale of the Righteous" }
     },
@@ -3633,7 +3633,7 @@
       "id": "the_ascent_of_arceuus",
       "displayName": "The Ascent of Arceuus",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Ascent of Arceuus" }
     },
@@ -3642,7 +3642,7 @@
       "id": "the_forsaken_tower",
       "displayName": "The Forsaken Tower",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Forsaken Tower" }
     },
@@ -3696,7 +3696,7 @@
       "id": "a_porcine_of_interest",
       "displayName": "A Porcine of Interest",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "A Porcine of Interest" }
     },
@@ -3705,7 +3705,7 @@
       "id": "getting_ahead",
       "displayName": "Getting Ahead",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Getting Ahead" }
     },
@@ -3732,7 +3732,7 @@
       "id": "temple_of_the_eye",
       "displayName": "Temple of the Eye",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Temple of the Eye" }
     },
@@ -3750,7 +3750,7 @@
       "id": "sleeping_giants",
       "displayName": "Sleeping Giants",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Sleeping Giants" }
     },
@@ -3759,7 +3759,7 @@
       "id": "the_garden_of_death",
       "displayName": "The Garden of Death",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Garden of Death" }
     },
@@ -3786,7 +3786,7 @@
       "id": "children_of_the_sun",
       "displayName": "Children of the Sun",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Children of the Sun" }
     },
@@ -3804,7 +3804,7 @@
       "id": "the_ribbiting_tale_of_a_lily_pad_labour_dispute",
       "displayName": "The Ribbiting Tale of a Lily Pad Labour Dispute",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Ribbiting Tale of a Lily Pad Labour Dispute" }
     },
@@ -3813,7 +3813,7 @@
       "id": "twilights_promise",
       "displayName": "Twilight's Promise",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Twilight's Promise" }
     },
@@ -3822,7 +3822,7 @@
       "id": "at_first_light",
       "displayName": "At First Light",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "At First Light" }
     },
@@ -3840,7 +3840,7 @@
       "id": "death_on_the_isle",
       "displayName": "Death on the Isle",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Death on the Isle" }
     },
@@ -3858,7 +3858,7 @@
       "id": "ethically_acquired_antiquities",
       "displayName": "Ethically Acquired Antiquities",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Ethically Acquired Antiquities" }
     },
@@ -3876,7 +3876,7 @@
       "id": "pandemonium",
       "displayName": "Pandemonium",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Pandemonium" }
     },
@@ -3885,7 +3885,7 @@
       "id": "prying_times",
       "displayName": "Prying Times",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Prying Times" }
     },
@@ -3894,7 +3894,7 @@
       "id": "current_affairs",
       "displayName": "Current Affairs",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Current Affairs" }
     },
@@ -3921,7 +3921,7 @@
       "id": "scrambled!",
       "displayName": "Scrambled!",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Scrambled!" }
     },
@@ -3930,7 +3930,7 @@
       "id": "learning_the_ropes",
       "displayName": "Learning the Ropes",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Learning the Ropes" }
     },
@@ -3939,7 +3939,7 @@
       "id": "below_ice_mountain",
       "displayName": "Below Ice Mountain",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Below Ice Mountain" }
     },
@@ -3948,7 +3948,7 @@
       "id": "x_marks_the_spot",
       "displayName": "X Marks the Spot",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "X Marks the Spot" }
     },
@@ -3957,7 +3957,7 @@
       "id": "the_corsair_curse",
       "displayName": "The Corsair Curse",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Corsair Curse" }
     },
@@ -3966,7 +3966,7 @@
       "id": "misthalin_mystery",
       "displayName": "Misthalin Mystery",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Misthalin Mystery" }
     },
@@ -3975,7 +3975,7 @@
       "id": "rune_mysteries",
       "displayName": "Rune Mysteries",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Rune Mysteries" }
     },
@@ -3993,7 +3993,7 @@
       "id": "pirates_treasure",
       "displayName": "Pirate's Treasure",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Pirate's Treasure" }
     },
@@ -4002,7 +4002,7 @@
       "id": "goblin_diplomacy",
       "displayName": "Goblin Diplomacy",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Goblin Diplomacy" }
     },
@@ -4011,7 +4011,7 @@
       "id": "the_knights_sword",
       "displayName": "The Knight's Sword",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Knight's Sword" }
     },
@@ -4020,7 +4020,7 @@
       "id": "witchs_potion",
       "displayName": "Witch's Potion",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Witch's Potion" }
     },
@@ -4029,7 +4029,7 @@
       "id": "black_knights_fortress",
       "displayName": "Black Knights' Fortress",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Black Knights' Fortress" }
     },
@@ -4038,7 +4038,7 @@
       "id": "dorics_quest",
       "displayName": "Doric's Quest",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Doric's Quest" }
     },
@@ -4047,7 +4047,7 @@
       "id": "prince_ali_rescue",
       "displayName": "Prince Ali Rescue",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Prince Ali Rescue" }
     },
@@ -4056,7 +4056,7 @@
       "id": "imp_catcher",
       "displayName": "Imp Catcher",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Imp Catcher" }
     },
@@ -4065,7 +4065,7 @@
       "id": "vampyre_slayer",
       "displayName": "Vampyre Slayer",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Vampyre Slayer" }
     },
@@ -4074,7 +4074,7 @@
       "id": "ernest_the_chicken",
       "displayName": "Ernest the Chicken",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Ernest the Chicken" }
     },
@@ -4083,7 +4083,7 @@
       "id": "the_restless_ghost",
       "displayName": "The Restless Ghost",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Restless Ghost" }
     },
@@ -4092,7 +4092,7 @@
       "id": "sheep_shearer",
       "displayName": "Sheep Shearer",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Sheep Shearer" }
     },
@@ -4101,7 +4101,7 @@
       "id": "shield_of_arrav",
       "displayName": "Shield of Arrav",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Shield of Arrav" }
     },
@@ -4110,7 +4110,7 @@
       "id": "demon_slayer",
       "displayName": "Demon Slayer",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Demon Slayer" }
     },
@@ -4119,7 +4119,7 @@
       "id": "romeo_and_juliet",
       "displayName": "Romeo & Juliet",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Romeo & Juliet" }
     },
@@ -4128,7 +4128,7 @@
       "id": "cooks_assistant",
       "displayName": "Cook's Assistant",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Cook's Assistant" }
     },
@@ -4137,7 +4137,7 @@
       "id": "alfred_grimhands_barcrawl",
       "displayName": "Alfred Grimhand's Barcrawl",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Alfred Grimhand's Barcrawl" }
     },
@@ -4146,7 +4146,7 @@
       "id": "enter_the_abyss",
       "displayName": "Enter the Abyss",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Enter the Abyss" }
     },
@@ -4173,7 +4173,7 @@
       "id": "skippy_and_the_mogres",
       "displayName": "Skippy and the Mogres",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Skippy and the Mogres" }
     },
@@ -4200,7 +4200,7 @@
       "id": "bear_your_soul",
       "displayName": "Bear Your Soul",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Bear Your Soul" }
     },
@@ -4209,7 +4209,7 @@
       "id": "the_enchanted_key",
       "displayName": "The Enchanted Key",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Enchanted Key" }
     },
@@ -4227,7 +4227,7 @@
       "id": "family_pest",
       "displayName": "Family Pest",
       "tier": 2,
-      "cost": 50,
+      "cost": 35,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Family Pest" }
     },
@@ -4254,7 +4254,7 @@
       "id": "daddys_home",
       "displayName": "Daddy's Home",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Daddy's Home" }
     },
@@ -4299,117 +4299,99 @@
       "id": "vale_totems",
       "displayName": "Vale Totems",
       "tier": 1,
-      "cost": 25,
+      "cost": 15,
       "prerequisites": [],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Vale Totems" }
     },
-    { "type": "boss", "id": "barrows", "displayName": "Barrows", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Barrows" } },
-    { "type": "boss", "id": "gemstone_crab", "displayName": "Gemstone Crab", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Gemstone Crab" } },
-    { "type": "boss", "id": "scurrius", "displayName": "Scurrius", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Scurrius" } },
-    { "type": "boss", "id": "giant_mole", "displayName": "Giant Mole", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Giant Mole" } },
-    { "type": "boss", "id": "deranged_archaeologist", "displayName": "Deranged Archaeologist", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Deranged Archaeologist" } },
-    { "type": "boss", "id": "dagannoth_kings", "displayName": "Dagannoth Kings", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Dagannoth Kings" } },
-    { "type": "boss", "id": "sarachnis", "displayName": "Sarachnis", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Sarachnis" } },
-    { "type": "boss", "id": "moons_of_peril", "displayName": "Moons of Peril", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Moons of Peril" } },
-    { "type": "boss", "id": "kalphite_queen", "displayName": "Kalphite Queen", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Kalphite Queen" } },
-    { "type": "boss", "id": "kreearra", "displayName": "Kree'arra", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Kree'arra" } },
-    { "type": "boss", "id": "commander_zilyana", "displayName": "Commander Zilyana", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Commander Zilyana" } },
-    { "type": "boss", "id": "general_graardor", "displayName": "General Graardor", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "General Graardor" } },
-    { "type": "boss", "id": "kril_tsutsaroth", "displayName": "K'ril Tsutsaroth", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "K'ril Tsutsaroth" } },
-    { "type": "boss", "id": "the_hueycoatl", "displayName": "The Hueycoatl", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Hueycoatl" } },
-    { "type": "boss", "id": "corporeal_beast", "displayName": "Corporeal Beast", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Corporeal Beast" } },
-    { "type": "boss", "id": "nex", "displayName": "Nex", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Nex" } },
-    { "type": "boss", "id": "chaos_fanatic", "displayName": "Chaos Fanatic", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Chaos Fanatic" } },
-    { "type": "boss", "id": "crazy_archaeologist", "displayName": "Crazy archaeologist", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Crazy archaeologist" } },
-    { "type": "boss", "id": "scorpia", "displayName": "Scorpia", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Scorpia" } },
-    { "type": "boss", "id": "king_black_dragon", "displayName": "King Black Dragon", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "King Black Dragon" } },
-    { "type": "boss", "id": "chaos_elemental", "displayName": "Chaos Elemental", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Chaos Elemental" } },
-    { "type": "boss", "id": "revenant_maledictus", "displayName": "Revenant maledictus", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Revenant maledictus" } },
-    { "type": "boss", "id": "calvarion_vetion", "displayName": "Calvar'ion & Vet'ion", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Calvar'ion" } },
-    { "type": "boss", "id": "spindel_venenatis", "displayName": "Spindel & Venenatis", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Venenatis" } },
-    { "type": "boss", "id": "artio_callisto", "displayName": "Artio & Callisto", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Callisto" } },
-    { "type": "boss", "id": "obor", "displayName": "Obor", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Obor" } },
-    { "type": "boss", "id": "bryophyta", "displayName": "Bryophyta", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Bryophyta" } },
-    { "type": "boss", "id": "amoxliatl", "displayName": "Amoxliatl", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Amoxliatl" } },
-    { "type": "boss", "id": "royal_titans", "displayName": "Royal Titans", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Royal Titans" } },
-    { "type": "boss", "id": "doom_of_mokhaiotl", "displayName": "Doom of Mokhaiotl", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Doom of Mokhaiotl" } },
-    { "type": "boss", "id": "zulrah", "displayName": "Zulrah", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Zulrah" } },
-    { "type": "boss", "id": "vorkath", "displayName": "Vorkath", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Vorkath" } },
-    { "type": "boss", "id": "phantom_muspah", "displayName": "Phantom Muspah", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Phantom Muspah" } },
-    { "type": "boss", "id": "the_nightmare", "displayName": "The Nightmare & Phosani's Nightmare", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Nightmare" } },
-    { "type": "boss", "id": "yama", "displayName": "Yama", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Yama" } },
-    { "type": "boss", "id": "duke_sucellus", "displayName": "Duke Sucellus", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Duke Sucellus" } },
-    { "type": "boss", "id": "the_leviathan", "displayName": "The Leviathan", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Leviathan" } },
-    { "type": "boss", "id": "the_whisperer", "displayName": "The Whisperer", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Whisperer" } },
-    { "type": "boss", "id": "vardorvis", "displayName": "Vardorvis", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Vardorvis" } },
-    { "type": "boss", "id": "the_mimic", "displayName": "The Mimic", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Mimic" } },
-    { "type": "boss", "id": "hespori", "displayName": "Hespori", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Hespori" } },
-    { "type": "boss", "id": "skotizo", "displayName": "Skotizo", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Skotizo" } },
-    { "type": "boss", "id": "shellbane_gryphon", "displayName": "Shellbane gryphon", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Shellbane gryphon" } },
-    { "type": "boss", "id": "grotesque_guardians", "displayName": "Grotesque Guardians", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Grotesque Guardians" } },
-    { "type": "boss", "id": "abyssal_sire", "displayName": "Abyssal Sire", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Abyssal Sire" } },
-    { "type": "boss", "id": "kraken", "displayName": "Kraken", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Kraken" } },
-    { "type": "boss", "id": "cerberus", "displayName": "Cerberus", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Cerberus" } },
-    { "type": "boss", "id": "araxxor", "displayName": "Araxxor", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Araxxor" } },
-    { "type": "boss", "id": "thermonuclear_smoke_devil", "displayName": "Thermonuclear smoke devil", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Thermonuclear smoke devil" } },
-    { "type": "boss", "id": "alchemical_hydra", "displayName": "Alchemical Hydra", "tier": 5, "cost": 71255, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Alchemical Hydra" } },
-    { "type": "boss", "id": "crystalline_hunllef", "displayName": "Crystalline Hunllef", "tier": 4, "cost": 100, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Crystalline Hunllef" } },
-    { "type": "boss", "id": "corrupted_hunllef", "displayName": "Corrupted Hunllef", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Corrupted Hunllef" } },
-    { "type": "boss", "id": "tztok_jad", "displayName": "TzTok-Jad", "tier": 2, "cost": 50, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "TzTok-Jad" } },
-    { "type": "boss", "id": "tzkal_zuk", "displayName": "TzKal-Zuk", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "TzKal-Zuk" } },
-    { "type": "boss", "id": "sol_heredit", "displayName": "Sol Heredit", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Sol Heredit" } },
-    { "type": "boss", "id": "tempoross", "displayName": "Tempoross", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Tempoross" } },
-    { "type": "boss", "id": "wintertodt", "displayName": "Wintertodt", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Wintertodt" } },
-    { "type": "boss", "id": "zalcano", "displayName": "Zalcano", "tier": 3, "cost": 75, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Zalcano" } },
-    { "type": "boss", "id": "chambers_of_xeric", "displayName": "Chambers of Xeric", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Chambers of Xeric" } },
-    { "type": "boss", "id": "theatre_of_blood", "displayName": "Theatre of Blood", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Theatre of Blood" } },
-    { "type": "boss", "id": "tombs_of_amascut", "displayName": "Tombs of Amascut", "tier": 5, "cost": 125, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Tombs of Amascut" } },
-    { "type": "achievement_diary", "id": "lumbridge_draynor_easy", "displayName": "Lumbridge & Draynor (Easy)", "tier": 1, "cost": 25, "prerequisites": ["lumbridge", "draynor"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Lumbridge", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "lumbridge_draynor_medium", "displayName": "Lumbridge & Draynor (Medium)", "tier": 2, "cost": 50, "prerequisites": ["lumbridge_draynor_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Lumbridge", "difficulty": 2 } },
+    { "type": "boss", "id": "brutus", "displayName": "Brutus", "tier": 1, "cost": 15, "prerequisites": ["Ides of Milk"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Brutus" } },
+    { "type": "boss", "id": "barrows", "displayName": "Barrows", "tier": 1, "cost": 15, "prerequisites": ["Priest in Peril"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Barrows" } },
+    { "type": "boss", "id": "gemstone_crab", "displayName": "Gemstone Crab", "tier": 1, "cost": 15, "prerequisites": ["Children of the Sun"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Gemstone Crab" } },
+    { "type": "boss", "id": "scurrius", "displayName": "Scurrius", "tier": 1, "cost": 15, "prerequisites": ["varrock"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Scurrius" } },
+    { "type": "boss", "id": "calvarion_vetion", "displayName": "Calvar'ion & Vet'ion", "tier": 2, "cost": 35, "prerequisites": ["wilderness_medium"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Calvar'ion" } },
+    { "type": "boss", "id": "spindel_venenatis", "displayName": "Spindel & Venenatis", "tier": 3, "cost": 75, "prerequisites": ["wilderness_medium"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Venenatis" } },
+    { "type": "boss", "id": "artio_callisto", "displayName": "Artio & Callisto", "tier": 3, "cost": 75, "prerequisites": ["wilderness_medium"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Callisto" } },
+    { "type": "boss", "id": "obor", "displayName": "Obor", "tier": 1, "cost": 15, "prerequisites": ["edgeville"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Obor" } },
+    { "type": "boss", "id": "bryophyta", "displayName": "Bryophyta", "tier": 1, "cost": 15, "prerequisites": ["varrock"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Bryophyta" } },
+    { "type": "boss", "id": "amoxliatl", "displayName": "Amoxliatl", "tier": 2, "cost": 35, "prerequisites": ["Heart of Darkness"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Amoxliatl" } },
+    { "type": "boss", "id": "royal_titans", "displayName": "Royal Titans", "tier": 2, "cost": 35, "prerequisites": ["port_sarim_mudskipper"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Royal Titans" } },
+    { "type": "boss", "id": "doom_of_mokhaiotl", "displayName": "Doom of Mokhaiotl", "tier": 5, "cost": 125, "prerequisites": ["Final Dawn"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Doom of Mokhaiotl" } },
+    { "type": "boss", "id": "zulrah", "displayName": "Zulrah", "tier": 3, "cost": 75, "prerequisites": ["isafdar"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Zulrah" } },
+    { "type": "boss", "id": "vorkath", "displayName": "Vorkath", "tier": 3, "cost": 75, "prerequisites": ["Dragon Slayer II"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Vorkath" } },
+    { "type": "boss", "id": "phantom_muspah", "displayName": "Phantom Muspah", "tier": 4, "cost": 100, "prerequisites": ["Secrets of the North"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Phantom Muspah" } },
+    { "type": "boss", "id": "the_nightmare", "displayName": "The Nightmare & Phosani's Nightmare", "tier": 5, "cost": 125, "prerequisites": ["slepe"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Nightmare" } },
+    { "type": "boss", "id": "yama", "displayName": "Yama", "tier": 5, "cost": 125, "prerequisites": ["shayzien"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Yama" } },
+    { "type": "boss", "id": "duke_sucellus", "displayName": "Duke Sucellus", "tier": 4, "cost": 100, "prerequisites": ["Desert Treasure II - The Fallen Empire"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Duke Sucellus" } },
+    { "type": "boss", "id": "the_leviathan", "displayName": "The Leviathan", "tier": 4, "cost": 100, "prerequisites": ["Desert Treasure II - The Fallen Empire"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Leviathan" } },
+    { "type": "boss", "id": "the_whisperer", "displayName": "The Whisperer", "tier": 4, "cost": 100, "prerequisites": ["Desert Treasure II - The Fallen Empire"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Whisperer" } },
+    { "type": "boss", "id": "vardorvis", "displayName": "Vardorvis", "tier": 4, "cost": 100, "prerequisites": ["Desert Treasure II - The Fallen Empire"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Vardorvis" } },
+    { "type": "boss", "id": "the_mimic", "displayName": "The Mimic", "tier": 1, "cost": 15, "prerequisites": ["kingstown"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "The Mimic" } },
+    { "type": "boss", "id": "hespori", "displayName": "Hespori", "tier": 2, "cost": 35, "prerequisites": ["kebos_lowlands"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Hespori" } },
+    { "type": "boss", "id": "skotizo", "displayName": "Skotizo", "tier": 2, "cost": 35, "prerequisites": ["kingstown"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Skotizo" } },
+    { "type": "boss", "id": "shellbane_gryphon", "displayName": "Shellbane gryphon", "tier": 2, "cost": 35, "prerequisites": ["Troubled Tortugans"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Shellbane gryphon" } },
+    { "type": "boss", "id": "grotesque_guardians", "displayName": "Grotesque Guardians", "tier": 3, "cost": 75, "prerequisites": ["canifis"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Grotesque Guardians" } },
+    { "type": "boss", "id": "abyssal_sire", "displayName": "Abyssal Sire", "tier": 4, "cost": 100, "prerequisites": ["Enter the Abyss"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Abyssal Sire" } },
+    { "type": "boss", "id": "kraken", "displayName": "Kraken", "tier": 4, "cost": 100, "prerequisites": ["slayer_81_90"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Kraken" } },
+    { "type": "boss", "id": "cerberus", "displayName": "Cerberus", "tier": 5, "cost": 125, "prerequisites": ["slayer_91_100"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Cerberus" } },
+    { "type": "boss", "id": "araxxor", "displayName": "Araxxor", "tier": 5, "cost": 125, "prerequisites": ["slayer_91_100"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Araxxor" } },
+    { "type": "boss", "id": "thermonuclear_smoke_devil", "displayName": "Thermonuclear smoke devil", "tier": 5, "cost": 125, "prerequisites": ["slayer_91_100"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Thermonuclear smoke devil" } },
+    { "type": "boss", "id": "alchemical_hydra", "displayName": "Alchemical Hydra", "tier": 5, "cost": 71255, "prerequisites": ["slayer_91_100"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Alchemical Hydra" } },
+    { "type": "boss", "id": "crystalline_hunllef", "displayName": "Crystalline Hunllef", "tier": 4, "cost": 100, "prerequisites": ["Song of the Elves"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Crystalline Hunllef" } },
+    { "type": "boss", "id": "corrupted_hunllef", "displayName": "Corrupted Hunllef", "tier": 5, "cost": 125, "prerequisites": ["Song of the Elves"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Corrupted Hunllef" } },
+    { "type": "boss", "id": "tztok_jad", "displayName": "TzTok-Jad", "tier": 2, "cost": 35, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "TzTok-Jad" } },
+    { "type": "boss", "id": "tzkal_zuk", "displayName": "TzKal-Zuk", "tier": 5, "cost": 125, "prerequisites": ["Fire cape"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "TzKal-Zuk" } },
+    { "type": "boss", "id": "sol_heredit", "displayName": "Sol Heredit", "tier": 5, "cost": 125, "prerequisites": ["Children of the Sun"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Sol Heredit" } },
+    { "type": "boss", "id": "tempoross", "displayName": "Tempoross", "tier": 1, "cost": 15, "prerequisites": ["ruins_of_unkah"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Tempoross" } },
+    { "type": "boss", "id": "wintertodt", "displayName": "Wintertodt", "tier": 1, "cost": 15, "prerequisites": ["northern_kourend"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Wintertodt" } },
+    { "type": "boss", "id": "zalcano", "displayName": "Zalcano", "tier": 3, "cost": 75, "prerequisites": ["Song of the Elves"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Zalcano" } },
+    { "type": "boss", "id": "chambers_of_xeric", "displayName": "Chambers of Xeric", "tier": 5, "cost": 125, "prerequisites": ["kebos_swamp"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Chambers of Xeric" } },
+    { "type": "boss", "id": "theatre_of_blood", "displayName": "Theatre of Blood", "tier": 5, "cost": 125, "prerequisites": ["myreditch"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Theatre of Blood" } },
+    { "type": "boss", "id": "tombs_of_amascut", "displayName": "Tombs of Amascut", "tier": 5, "cost": 125, "prerequisites": ["necropolis"], "taskLink": { "type": "taskFilter", "taskType": "Boss", "requirementsContains": "Tombs of Amascut" } },
+    { "type": "achievement_diary", "id": "lumbridge_draynor_easy", "displayName": "Lumbridge & Draynor (Easy)", "tier": 1, "cost": 15, "prerequisites": ["lumbridge", "draynor"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Lumbridge", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "lumbridge_draynor_medium", "displayName": "Lumbridge & Draynor (Medium)", "tier": 2, "cost": 35, "prerequisites": ["lumbridge_draynor_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Lumbridge", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "lumbridge_draynor_hard", "displayName": "Lumbridge & Draynor (Hard)", "tier": 3, "cost": 75, "prerequisites": ["lumbridge_draynor_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Lumbridge", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "lumbridge_draynor_elite", "displayName": "Lumbridge & Draynor (Elite)", "tier": 4, "cost": 100, "prerequisites": ["lumbridge_draynor_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Lumbridge", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "varrock_easy", "displayName": "Varrock (Easy)", "tier": 1, "cost": 25, "prerequisites": ["varrock"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Varrock", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "varrock_medium", "displayName": "Varrock (Medium)", "tier": 2, "cost": 50, "prerequisites": ["varrock_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Varrock", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "varrock_easy", "displayName": "Varrock (Easy)", "tier": 1, "cost": 15, "prerequisites": ["varrock"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Varrock", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "varrock_medium", "displayName": "Varrock (Medium)", "tier": 2, "cost": 35, "prerequisites": ["varrock_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Varrock", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "varrock_hard", "displayName": "Varrock (Hard)", "tier": 3, "cost": 75, "prerequisites": ["varrock_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Varrock", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "varrock_elite", "displayName": "Varrock (Elite)", "tier": 4, "cost": 100, "prerequisites": ["varrock_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Varrock", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "desert_easy", "displayName": "Desert (Easy)", "tier": 1, "cost": 25, "prerequisites": ["al_kharid"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Al Kharid", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "desert_medium", "displayName": "Desert (Medium)", "tier": 2, "cost": 50, "prerequisites": ["desert_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Al Kharid", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "desert_easy", "displayName": "Desert (Easy)", "tier": 1, "cost": 15, "prerequisites": ["al_kharid"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Al Kharid", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "desert_medium", "displayName": "Desert (Medium)", "tier": 2, "cost": 35, "prerequisites": ["desert_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Al Kharid", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "desert_hard", "displayName": "Desert (Hard)", "tier": 3, "cost": 75, "prerequisites": ["desert_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Al Kharid", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "desert_elite", "displayName": "Desert (Elite)", "tier": 4, "cost": 100, "prerequisites": ["desert_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Al Kharid", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "falador_easy", "displayName": "Falador (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Falador", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "falador_medium", "displayName": "Falador (Medium)", "tier": 2, "cost": 50, "prerequisites": ["falador_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Falador", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "falador_easy", "displayName": "Falador (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Falador", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "falador_medium", "displayName": "Falador (Medium)", "tier": 2, "cost": 35, "prerequisites": ["falador_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Falador", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "falador_hard", "displayName": "Falador (Hard)", "tier": 3, "cost": 75, "prerequisites": ["falador_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Falador", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "falador_elite", "displayName": "Falador (Elite)", "tier": 4, "cost": 100, "prerequisites": ["falador_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Falador", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "fremennik_easy", "displayName": "Fremennik (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Fremennik", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "fremennik_medium", "displayName": "Fremennik (Medium)", "tier": 2, "cost": 50, "prerequisites": ["fremennik_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Fremennik", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "fremennik_easy", "displayName": "Fremennik (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Fremennik", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "fremennik_medium", "displayName": "Fremennik (Medium)", "tier": 2, "cost": 35, "prerequisites": ["fremennik_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Fremennik", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "fremennik_hard", "displayName": "Fremennik (Hard)", "tier": 3, "cost": 75, "prerequisites": ["fremennik_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Fremennik", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "fremennik_elite", "displayName": "Fremennik (Elite)", "tier": 4, "cost": 100, "prerequisites": ["fremennik_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Fremennik", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "kandarin_easy", "displayName": "Kandarin (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kandarin", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "kandarin_medium", "displayName": "Kandarin (Medium)", "tier": 2, "cost": 50, "prerequisites": ["kandarin_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kandarin", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "kandarin_easy", "displayName": "Kandarin (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kandarin", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "kandarin_medium", "displayName": "Kandarin (Medium)", "tier": 2, "cost": 35, "prerequisites": ["kandarin_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kandarin", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "kandarin_hard", "displayName": "Kandarin (Hard)", "tier": 3, "cost": 75, "prerequisites": ["kandarin_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kandarin", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "kandarin_elite", "displayName": "Kandarin (Elite)", "tier": 4, "cost": 100, "prerequisites": ["kandarin_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kandarin", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "karamja_easy", "displayName": "Karamja (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Karamja", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "karamja_medium", "displayName": "Karamja (Medium)", "tier": 2, "cost": 50, "prerequisites": ["karamja_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Karamja", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "karamja_easy", "displayName": "Karamja (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Karamja", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "karamja_medium", "displayName": "Karamja (Medium)", "tier": 2, "cost": 35, "prerequisites": ["karamja_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Karamja", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "karamja_hard", "displayName": "Karamja (Hard)", "tier": 3, "cost": 75, "prerequisites": ["karamja_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Karamja", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "karamja_elite", "displayName": "Karamja (Elite)", "tier": 4, "cost": 100, "prerequisites": ["karamja_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Karamja", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "kourend_kebos_easy", "displayName": "Kourend & Kebos (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kourend", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "kourend_kebos_medium", "displayName": "Kourend & Kebos (Medium)", "tier": 2, "cost": 50, "prerequisites": ["kourend_kebos_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kourend", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "kourend_kebos_easy", "displayName": "Kourend & Kebos (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kourend", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "kourend_kebos_medium", "displayName": "Kourend & Kebos (Medium)", "tier": 2, "cost": 35, "prerequisites": ["kourend_kebos_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kourend", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "kourend_kebos_hard", "displayName": "Kourend & Kebos (Hard)", "tier": 3, "cost": 75, "prerequisites": ["kourend_kebos_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kourend", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "kourend_kebos_elite", "displayName": "Kourend & Kebos (Elite)", "tier": 4, "cost": 100, "prerequisites": ["kourend_kebos_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Kourend", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "morytania_easy", "displayName": "Morytania (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Morytania", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "morytania_medium", "displayName": "Morytania (Medium)", "tier": 2, "cost": 50, "prerequisites": ["morytania_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Morytania", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "morytania_easy", "displayName": "Morytania (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Morytania", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "morytania_medium", "displayName": "Morytania (Medium)", "tier": 2, "cost": 35, "prerequisites": ["morytania_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Morytania", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "morytania_hard", "displayName": "Morytania (Hard)", "tier": 3, "cost": 75, "prerequisites": ["morytania_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Morytania", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "morytania_elite", "displayName": "Morytania (Elite)", "tier": 4, "cost": 100, "prerequisites": ["morytania_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Morytania", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "western_provinces_easy", "displayName": "Western Provinces (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Western", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "western_provinces_medium", "displayName": "Western Provinces (Medium)", "tier": 2, "cost": 50, "prerequisites": ["western_provinces_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Western", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "western_provinces_easy", "displayName": "Western Provinces (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Western", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "western_provinces_medium", "displayName": "Western Provinces (Medium)", "tier": 2, "cost": 35, "prerequisites": ["western_provinces_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Western", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "western_provinces_hard", "displayName": "Western Provinces (Hard)", "tier": 3, "cost": 75, "prerequisites": ["western_provinces_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Western", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "western_provinces_elite", "displayName": "Western Provinces (Elite)", "tier": 4, "cost": 100, "prerequisites": ["western_provinces_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Western", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "wilderness_easy", "displayName": "Wilderness (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Wilderness", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "wilderness_medium", "displayName": "Wilderness (Medium)", "tier": 2, "cost": 50, "prerequisites": ["wilderness_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Wilderness", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "wilderness_easy", "displayName": "Wilderness (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Wilderness", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "wilderness_medium", "displayName": "Wilderness (Medium)", "tier": 2, "cost": 35, "prerequisites": ["wilderness_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Wilderness", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "wilderness_hard", "displayName": "Wilderness (Hard)", "tier": 3, "cost": 75, "prerequisites": ["wilderness_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Wilderness", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "wilderness_elite", "displayName": "Wilderness (Elite)", "tier": 4, "cost": 100, "prerequisites": ["wilderness_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Wilderness", "difficulty": 4 } },
-    { "type": "achievement_diary", "id": "ardougne_easy", "displayName": "Ardougne (Easy)", "tier": 1, "cost": 25, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Ardougne", "difficulty": 1 } },
-    { "type": "achievement_diary", "id": "ardougne_medium", "displayName": "Ardougne (Medium)", "tier": 2, "cost": 50, "prerequisites": ["ardougne_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Ardougne", "difficulty": 2 } },
+    { "type": "achievement_diary", "id": "ardougne_easy", "displayName": "Ardougne (Easy)", "tier": 1, "cost": 15, "prerequisites": [], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Ardougne", "difficulty": 1 } },
+    { "type": "achievement_diary", "id": "ardougne_medium", "displayName": "Ardougne (Medium)", "tier": 2, "cost": 35, "prerequisites": ["ardougne_easy"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Ardougne", "difficulty": 2 } },
     { "type": "achievement_diary", "id": "ardougne_hard", "displayName": "Ardougne (Hard)", "tier": 3, "cost": 75, "prerequisites": ["ardougne_medium"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Ardougne", "difficulty": 3 } },
     { "type": "achievement_diary", "id": "ardougne_elite", "displayName": "Ardougne (Elite)", "tier": 4, "cost": 100, "prerequisites": ["ardougne_hard"], "taskLink": { "type": "taskFilter", "taskType": "Achievement Diary", "requirementsContains": "Ardougne", "difficulty": 4 } }
   ]
