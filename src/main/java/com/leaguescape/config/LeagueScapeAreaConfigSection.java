@@ -41,23 +41,9 @@ import net.runelite.client.config.ConfigManager;
  */
 public class LeagueScapeAreaConfigSection extends JPanel
 {
-	private static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);
-	private static final Color POPUP_TEXT = new Color(0xC4, 0xB8, 0x96);
-	private static final String CONFIG_GROUP = "leaguescape";
-
-	private static class ScrollableWidthPanel extends JPanel implements Scrollable
-	{
-		@Override
-		public boolean getScrollableTracksViewportWidth() { return true; }
-		@Override
-		public boolean getScrollableTracksViewportHeight() { return false; }
-		@Override
-		public Dimension getPreferredScrollableViewportSize() { return getPreferredSize(); }
-		@Override
-		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) { return 10; }
-		@Override
-		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) { return visibleRect.height; }
-	}
+	private static final Color POPUP_BG = com.leaguescape.util.LeagueScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = com.leaguescape.util.LeagueScapeColors.POPUP_TEXT;
+	private static final String CONFIG_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.CONFIG_GROUP;
 
 	private static final Comparator<Area> AREA_DISPLAY_ORDER = Comparator
 		.comparing((Area a) -> a.getDisplayName() != null ? a.getDisplayName() : a.getId(), String.CASE_INSENSITIVE_ORDER)
@@ -112,7 +98,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		setOpaque(sectionOpaque);
 		setBorder(new EmptyBorder(8, 8, 8, 8));
 
-		mainPanel = new ScrollableWidthPanel();
+		mainPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		mainPanel.setBackground(sectionBg);
 		mainPanel.setOpaque(sectionOpaque);
@@ -139,7 +125,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		mainPanel.add(topButtons);
 		mainPanel.add(new JLabel(" "));
 
-		listPanel = new ScrollableWidthPanel();
+		listPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 		listPanel.setBackground(sectionBg);
 		listPanel.setOpaque(sectionOpaque);
@@ -151,7 +137,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		mainPanel.add(createCollapsibleSection("Areas", listScroll, true, null));
 
 		mainPanel.add(new JLabel(" "));
-		removedPanel = new ScrollableWidthPanel();
+		removedPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
 		removedPanel.setLayout(new BoxLayout(removedPanel, BoxLayout.Y_AXIS));
 		removedPanel.setBackground(sectionBg);
 		removedPanel.setOpaque(sectionOpaque);
@@ -241,32 +227,14 @@ public class LeagueScapeAreaConfigSection extends JPanel
 
 	private JPanel createCollapsibleSection(String title, java.awt.Component content, boolean expandedByDefault, JToggleButton[] headerOut)
 	{
-		JPanel wrapper = new JPanel(new BorderLayout());
-		wrapper.setAlignmentX(LEFT_ALIGNMENT);
+		JPanel wrapper = com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection(title, content, expandedByDefault, headerOut);
 		wrapper.setBackground(sectionBg);
 		wrapper.setOpaque(sectionOpaque);
-		JToggleButton header = new JToggleButton(expandedByDefault ? "▼ " + title : "▶ " + title, expandedByDefault);
-		header.setForeground(POPUP_TEXT);
-		header.setBackground(sectionBg);
-		header.setFocusPainted(false);
-		header.setBorderPainted(false);
-		header.setContentAreaFilled(false);
-		header.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-		content.setVisible(expandedByDefault);
-		final String titleFinal = title;
-		header.addActionListener(e -> {
-			boolean on = header.isSelected();
-			content.setVisible(on);
-			header.setText(on ? "▼ " + titleFinal : "▶ " + titleFinal);
-			wrapper.revalidate();
-			for (Container p = wrapper.getParent(); p != null; p = p.getParent())
-				p.revalidate();
-			wrapper.repaint();
-		});
-		wrapper.add(header, BorderLayout.NORTH);
-		wrapper.add(content, BorderLayout.CENTER);
-		if (headerOut != null && headerOut.length > 0)
-			headerOut[0] = header;
+		if (headerOut != null && headerOut.length > 0 && headerOut[0] != null)
+		{
+			headerOut[0].setForeground(POPUP_TEXT);
+			headerOut[0].setBackground(sectionBg);
+		}
 		return wrapper;
 	}
 
@@ -765,25 +733,17 @@ public class LeagueScapeAreaConfigSection extends JPanel
 
 	private void exportAreaJson()
 	{
-		JFileChooser chooser = new JFileChooser();
-		chooser.setDialogTitle("Export Area JSON");
-		chooser.setSelectedFile(new File("areas.json"));
-		chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON files", "json"));
-		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		File file = com.leaguescape.util.LeagueScapeSwingUtil.showJsonSaveDialog(this, com.leaguescape.util.ResourcePaths.DEFAULT_AREAS_FILENAME);
+		if (file == null) return;
+		try
 		{
-			File file = chooser.getSelectedFile();
-			if (!file.getName().toLowerCase().endsWith(".json"))
-				file = new File(file.getParent(), file.getName() + ".json");
-			try
-			{
-				String json = areaGraphService.exportAreasToJson();
-				Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
-				JOptionPane.showMessageDialog(this, "Exported " + areaGraphService.getAreas().size() + " areas to " + file.getName(), "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-			}
-			catch (Exception ex)
-			{
-				JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
-			}
+			String json = areaGraphService.exportAreasToJson();
+			Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
+			JOptionPane.showMessageDialog(this, "Exported " + areaGraphService.getAreas().size() + " areas to " + file.getName(), "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+		}
+		catch (Exception ex)
+		{
+			JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

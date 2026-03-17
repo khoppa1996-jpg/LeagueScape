@@ -1,0 +1,29 @@
+{
+  "kingdomMapping": {
+    "Asgarnia": ["falador", "taverley", "port_sarim_mudskipper", "rimmington", "trollheim", "troll_country", "burthorpe", "pest_control", "entrana"],
+    "Misthalin": ["lumbridge", "draynor", "varrock", "edgeville", "grand_exchange", "silvarea"],
+    "Morytania": ["canifis", "port_phasmatys", "southern_morytania", "mort_myre_swamp", "slepe", "darkmeyer", "myreditch", "haunted_wood"],
+    "Karamja": ["karamja", "musa_point"],
+    "Desert": ["al_kharid", "desert", "uzer_desert", "nardah_desert", "necropolis", "sophanem", "polnivneach_desert", "jaldraocht", "ruins_of_unkah"],
+    "Fremennik Provinces": ["rellekka", "fremennik_isles", "weiss"],
+    "Kandarin": ["camelot_seers", "hemenster", "barbarian_waterfall", "gnome_stronghold", "piscatoris", "ardougne", "catherby", "yanille", "khazard_battlegrounds", "feldip_hills", "corsair_cove", "isle_of_souls"],
+    "Kourend": ["northern_kourend", "lovakengj", "kingstown", "hosidius", "arceuus", "port_piscarilius", "kourend_woodland", "shayzien", "kebos_lowlands", "kebos_swamp"],
+    "Tirannwn": ["isafdar", "prifddinas"],
+    "Varlamore": ["western_varlamore", "eastern_varlamore", "custodia_mountains", "tlati_rainforest", "auburnvale", "proudspire", "aldarin"],
+    "Wilderness": ["southeast_wilderness", "northeast_wilderness", "north_central_wilderness", "northwestern_wilderness", "southwestern_wilderness", "south_central_wilderness", "deep_wilderness"]
+  },
+  "achievementDiaryAreaMapping": {
+    "Lumbridge&Draynor": ["lumbridge", "draynor", "al_kharid"],
+    "Varrock": ["varrock", "edgeville", "grand_exchange", "silvarea"],
+    "Morytania": ["canifis", "port_phasmatys", "southern_morytania", "mort_myre_swamp", "slepe", "darkmeyer", "myreditch", "haunted_wood"],
+    "FremennikProvince": ["rellekka", "fremennik_isles", "weiss", "troll_country"],
+    "Falador": ["falador", "taverley", "port_sarim_mudskipper", "rimmington", "burthorpe", "entrana", "lassar"],
+    "Karamja": ["karamja", "musa_point"],
+    "Desert": ["desert", "nardah_desert", "polnivneach_desert", "sophanem", "uzer_desert", "jaldraocht", "necropolis", "ruins_of_unkah"],
+    "Ardougne": ["ardougne", "yanille", "khazard_battlegrounds"],
+    "Kandarin": ["hemenster", "catherby", "camelot_seers", "barbarian_waterfall"],
+    "WesternProvinces": ["gnome_stronghold", "ape_atoll", "isafdar", "prifddinas", "feldip_hills", "corsair_cove", "piscatoris"],
+    "Kourend&Kebos": ["northern_kourend", "lovakengj", "kingstown", "hosidius", "arceuus", "port_piscarilius", "kourend_woodland", "shayzien", "kebos_lowlands", "kebos_swamp"],
+    "Wilderness": ["southeast_wilderness", "northeast_wilderness", "north_central_wilderness", "northwestern_wilderness", "southwestern_wilderness", "south_central_wilderness", "deep_wilderness"]
+  }
+}

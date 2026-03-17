@@ -67,58 +67,7 @@ import java.awt.Rectangle;
  */
 public class LeagueScapeConfigPanel extends PluginPanel
 {
-	/** Panel that stays within scroll viewport width (no horizontal scroll). */
-	private static class ScrollableWidthPanel extends JPanel implements Scrollable
-	{
-		@Override
-		public boolean getScrollableTracksViewportWidth() { return true; }
-		@Override
-		public boolean getScrollableTracksViewportHeight() { return false; }
-		@Override
-		public Dimension getPreferredScrollableViewportSize() { return getPreferredSize(); }
-		@Override
-		public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) { return 10; }
-		@Override
-		public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) { return visibleRect.height; }
-	}
-
-	private static JPanel newScrollableTrackWidthPanel()
-	{
-		return new ScrollableWidthPanel();
-	}
-
-	/** Builds a collapsible section: header (title + ▼/▶) and content panel. If headerOut is non-null, stores the header for external expand/collapse. */
-	private JPanel createCollapsibleSection(String title, JPanel content, boolean expandedByDefault, JToggleButton[] headerOut)
-	{
-		JPanel wrapper = new JPanel(new BorderLayout());
-		wrapper.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
-		JToggleButton header = new JToggleButton(expandedByDefault ? "▼ " + title : "▶ " + title, expandedByDefault);
-		header.setFocusPainted(false);
-		header.setBorderPainted(false);
-		header.setContentAreaFilled(false);
-		header.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-		content.setVisible(expandedByDefault);
-		final String titleFinal = title;
-		header.addActionListener(e -> {
-			boolean on = header.isSelected();
-			content.setVisible(on);
-			header.setText(on ? "▼ " + titleFinal : "▶ " + titleFinal);
-			wrapper.revalidate();
-			// Propagate revalidation up so the scroll pane view recalculates and the section returns to full height when expanded
-			for (Container p = wrapper.getParent(); p != null; p = p.getParent())
-			{
-				p.revalidate();
-			}
-			wrapper.repaint();
-		});
-		wrapper.add(header, BorderLayout.NORTH);
-		wrapper.add(content, BorderLayout.CENTER);
-		if (headerOut != null && headerOut.length > 0)
-			headerOut[0] = header;
-		return wrapper;
-	}
-
-	private static final String CONFIG_GROUP = "leaguescape";
+	private static final String CONFIG_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.CONFIG_GROUP;
 
 	/** Normalizes "Diary" / "Achievement diary" to "Achievement Diary" for display and save. */
 	private static String normalizeAchievementDiaryTaskType(String taskType)
@@ -220,31 +169,31 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		add(topSection, BorderLayout.NORTH);
 
 		// Scrollable content: collapsible sections for area list, removed list, edit form.
-		mainPanel = new ScrollableWidthPanel();
+		mainPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 
-		listPanel = newScrollableTrackWidthPanel();
+		listPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
 		listPanel.setLayout(new BoxLayout(listPanel, BoxLayout.Y_AXIS));
 		JScrollPane listScroll = new JScrollPane(listPanel);
 		listScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		JPanel areasContent = new JPanel(new BorderLayout());
 		areasContent.add(listScroll, BorderLayout.CENTER);
-		mainPanel.add(createCollapsibleSection("Areas", areasContent, true, null));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Areas", areasContent, true, null));
 
 		mainPanel.add(new JLabel(" "));
-		removedPanel = newScrollableTrackWidthPanel();
+		removedPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
 		removedPanel.setLayout(new BoxLayout(removedPanel, BoxLayout.Y_AXIS));
 		JScrollPane removedScroll = new JScrollPane(removedPanel);
 		removedScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		JPanel removedContent = new JPanel(new BorderLayout());
 		removedContent.add(removedScroll, BorderLayout.CENTER);
-		mainPanel.add(createCollapsibleSection("Removed areas (Restore to add back)", removedContent, false, null));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Removed areas (Restore to add back)", removedContent, false, null));
 
 		editPanel = new JPanel();
 		editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
 		editPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
 		JToggleButton[] editHeaderRef = new JToggleButton[1];
-		mainPanel.add(createCollapsibleSection("Edit area", editPanel, false, editHeaderRef));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Edit area", editPanel, false, editHeaderRef));
 		editSectionHeader = editHeaderRef[0];
 
 		// Make hole section: stacked rows like Task system so nothing is clipped in narrow sidebar
@@ -266,7 +215,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		makeHoleBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
 		makeHoleSectionPanel.add(makeHoleBtn);
 		JToggleButton[] makeHoleHeaderRef = new JToggleButton[1];
-		mainPanel.add(createCollapsibleSection("Make hole", makeHoleSectionPanel, false, makeHoleHeaderRef));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Make hole", makeHoleSectionPanel, false, makeHoleHeaderRef));
 		makeHoleSectionHeader = makeHoleHeaderRef[0];
 
 		mainPanel.add(new JLabel(" "));
@@ -296,7 +245,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			taskSystemPanel.add(tierRow);
 		}
 		taskSystemPanel.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
-		mainPanel.add(createCollapsibleSection("Task system", taskSystemPanel, true, null));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Task system", taskSystemPanel, true, null));
 
 		mainPanel.add(new JLabel(" "));
 		JPanel tasksTop = new JPanel();
@@ -316,7 +265,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 			refreshTaskList();
 		});
 		tasksTop.add(clearTasksOverrideBtn);
-		taskListPanel = newScrollableTrackWidthPanel();
+		taskListPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
 		taskListPanel.setLayout(new BoxLayout(taskListPanel, BoxLayout.Y_AXIS));
 		JScrollPane taskListScroll = new JScrollPane(taskListPanel);
 		taskListScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -335,8 +284,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		taskEditPanel.setLayout(new BoxLayout(taskEditPanel, BoxLayout.Y_AXIS));
 		taskEditPanel.setBorder(new EmptyBorder(10, 0, 0, 0));
 		JToggleButton[] taskEditHeaderRef = new JToggleButton[1];
-		mainPanel.add(createCollapsibleSection("Tasks", tasksContent, true, null));
-		mainPanel.add(createCollapsibleSection("Edit task", taskEditPanel, false, taskEditHeaderRef));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Tasks", tasksContent, true, null));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Edit task", taskEditPanel, false, taskEditHeaderRef));
 		taskEditSectionHeader = taskEditHeaderRef[0];
 
 		JPanel helperPanel = new JPanel(new BorderLayout());
@@ -344,7 +293,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		openHelperBtn.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
 		openHelperBtn.addActionListener(e -> openTaskCreatorHelperDialog());
 		helperPanel.add(openHelperBtn, BorderLayout.NORTH);
-		mainPanel.add(createCollapsibleSection("Task Creator Helper", helperPanel, false, null));
+		mainPanel.add(com.leaguescape.util.LeagueScapeSwingUtil.createCollapsibleSection("Task Creator Helper", helperPanel, false, null));
 
 		JScrollPane scrollPane = new JScrollPane(mainPanel);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -818,34 +767,23 @@ public class LeagueScapeConfigPanel extends PluginPanel
 
 	private void exportAreaJson()
 	{
-		JFileChooser chooser = new JFileChooser();
-		chooser.setDialogTitle("Export Area JSON");
-		chooser.setSelectedFile(new File("areas.json"));
-		chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON files", "json"));
-
-		if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+		File file = com.leaguescape.util.LeagueScapeSwingUtil.showJsonSaveDialog(this, com.leaguescape.util.ResourcePaths.DEFAULT_AREAS_FILENAME);
+		if (file == null) return;
+		try
 		{
-			File file = chooser.getSelectedFile();
-			if (!file.getName().toLowerCase().endsWith(".json"))
-			{
-				file = new File(file.getParent(), file.getName() + ".json");
-			}
-			try
-			{
-				String json = areaGraphService.exportAreasToJson();
-				Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
-				javax.swing.JOptionPane.showMessageDialog(this,
-					"Exported " + areaGraphService.getAreas().size() + " areas to " + file.getName(),
-					"Export Complete",
-					javax.swing.JOptionPane.INFORMATION_MESSAGE);
-			}
-			catch (Exception ex)
-			{
-				javax.swing.JOptionPane.showMessageDialog(this,
-					"Export failed: " + ex.getMessage(),
-					"Export Error",
-					javax.swing.JOptionPane.ERROR_MESSAGE);
-			}
+			String json = areaGraphService.exportAreasToJson();
+			Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
+			javax.swing.JOptionPane.showMessageDialog(this,
+				"Exported " + areaGraphService.getAreas().size() + " areas to " + file.getName(),
+				"Export Complete",
+				javax.swing.JOptionPane.INFORMATION_MESSAGE);
+		}
+		catch (Exception ex)
+		{
+			javax.swing.JOptionPane.showMessageDialog(this,
+				"Export failed: " + ex.getMessage(),
+				"Export Error",
+				javax.swing.JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -917,14 +855,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 
 	private void exportTaskJson()
 	{
-		JFileChooser chooser = new JFileChooser();
-		chooser.setDialogTitle("Export Task JSON");
-		chooser.setSelectedFile(new File("tasks.json"));
-		chooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("JSON files", "json"));
-		if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
-		File file = chooser.getSelectedFile();
-		if (!file.getName().toLowerCase().endsWith(".json"))
-			file = new File(file.getParent(), file.getName() + ".json");
+		File file = com.leaguescape.util.LeagueScapeSwingUtil.showJsonSaveDialog(this, com.leaguescape.util.ResourcePaths.DEFAULT_TASKS_FILENAME);
+		if (file == null) return;
 		try
 		{
 			String json = taskGridService.exportTasksToJson();
@@ -1345,6 +1277,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		dialog.pack();
 		dialog.setSize(Math.min(600, dialog.getWidth()), Math.min(500, dialog.getHeight()));
 		dialog.setLocationRelativeTo(this);
+		LeagueScapePlugin.registerEscapeToClose(dialog);
 		dialog.setVisible(true);
 	}
 

@@ -23,7 +23,7 @@ import net.runelite.client.config.ConfigManager;
 @Singleton
 public class AreaCompletionService
 {
-	private static final String CONFIG_GROUP = "leaguescapeState";
+	private static final String CONFIG_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_POINTS_PER_AREA = "pointsEarnedPerArea";
 	private static final String KEY_COMPLETED_AREAS = "completedAreas";
 
@@ -77,15 +77,7 @@ public class AreaCompletionService
 		}
 
 		completedAreaIds.clear();
-		String completedRaw = configManager.getConfiguration(CONFIG_GROUP, KEY_COMPLETED_AREAS);
-		if (completedRaw != null && !completedRaw.isEmpty())
-		{
-			for (String id : completedRaw.split(","))
-			{
-				String tid = id.trim();
-				if (!tid.isEmpty()) completedAreaIds.add(tid);
-			}
-		}
+		completedAreaIds.addAll(com.leaguescape.util.ConfigParsing.parseCommaSeparatedSet(configManager.getConfiguration(CONFIG_GROUP, KEY_COMPLETED_AREAS)));
 		// Recompute completed from points (in case area pointsToComplete threshold changed in config)
 		for (String areaId : pointsEarnedInArea.keySet())
 		{

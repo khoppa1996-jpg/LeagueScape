@@ -1,5 +1,6 @@
 package com.leaguescape;
 
+import com.leaguescape.util.LeagueScapeConfigConstants;
 import java.awt.Color;
 import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
@@ -13,7 +14,7 @@ import net.runelite.client.config.ConfigSection;
  * F2P/Members, difficulty multiplier, points per tier, tasks file path). Used by the plugin and
  * config panel; values are persisted by RuneLite's config system.
  */
-@ConfigGroup("leaguescape")
+@ConfigGroup(LeagueScapeConfigConstants.CONFIG_GROUP)
 public interface LeagueScapeConfig extends Config
 {
 	@ConfigSection(
@@ -45,9 +46,16 @@ public interface LeagueScapeConfig extends Config
 	String taskSection = "taskSection";
 
 	@ConfigSection(
-		name = "Resetting progress",
-		description = "Reset all LeagueScape progress (points, area unlocks, task completions). Use the Reset Progress button on the LeagueScape sidebar panel (LeagueScape icon in the sidebar).",
+		name = "World Unlock",
+		description = "Tile cost multipliers when unlock mode is World Unlock. Cost = tier × tier points × multiplier.",
 		position = 4
+	)
+	String worldUnlockSection = "worldUnlockSection";
+
+	@ConfigSection(
+		name = "Resetting progress",
+		description = "Reset all LeagueScape progress (points, area unlocks, task completions). Use the Reset Progress button in the Rules & Setup panel.",
+		position = 5
 	)
 	String resetSection = "resetSection";
 
@@ -65,12 +73,24 @@ public interface LeagueScapeConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+		keyName = "strictLockEnforcement",
+		name = "Strict lock enforcement",
+		description = "When ON: block all interactions through the overlay (clicking locked areas does nothing). When OFF: overlay is still shown but you can interact through it (all interactions allowed).",
+		position = 1,
+		section = overlaySection
+	)
+	default boolean strictLockEnforcement()
+	{
+		return true;
+	}
+
 	@Alpha
 	@ConfigItem(
 		keyName = "lockedOverlayColor",
 		name = "Locked overlay color",
 		description = "Color of the locked area overlay",
-		position = 1,
+		position = 2,
 		section = overlaySection
 	)
 	default Color lockedOverlayColor()
@@ -82,7 +102,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "renderPolygonBoundaries",
 		name = "Draw area boundary lines",
 		description = "Draw corner-to-corner lines between locked and unlocked areas (hidden when both neighbors unlocked)",
-		position = 2,
+		position = 3,
 		section = overlaySection
 	)
 	default boolean renderPolygonBoundaries()
@@ -94,7 +114,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "renderRegionBorders",
 		name = "Draw chunk borders",
 		description = "Draw 64x64 chunk boundary lines (like region-locker)",
-		position = 3,
+		position = 4,
 		section = overlaySection
 	)
 	default boolean renderRegionBorders()
@@ -106,7 +126,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "regionBorderWidth",
 		name = "Chunk/boundary line width",
 		description = "Width of the chunk borders and area boundary lines",
-		position = 4,
+		position = 5,
 		section = overlaySection
 	)
 	default int regionBorderWidth()
@@ -119,7 +139,7 @@ public interface LeagueScapeConfig extends Config
 		keyName = "regionBorderColor",
 		name = "Chunk/boundary line color",
 		description = "Color of the chunk borders and area boundary lines",
-		position = 5,
+		position = 6,
 		section = overlaySection
 	)
 	default Color regionBorderColor()
@@ -360,6 +380,68 @@ public interface LeagueScapeConfig extends Config
 	default int taskTier5Points()
 	{
 		return 5;
+	}
+
+	// World Unlock tile cost multipliers (cost = tier points × multiplier when unlock mode is World Unlock)
+
+	@ConfigItem(
+		keyName = "worldUnlockSkillMultiplier",
+		name = "Skill unlock multiplier",
+		description = "Multiplier for skill unlock tile cost when in World Unlock mode. Cost = tier × tier points × this multiplier.",
+		position = 0,
+		section = worldUnlockSection
+	)
+	default int worldUnlockSkillMultiplier()
+	{
+		return 3;
+	}
+
+	@ConfigItem(
+		keyName = "worldUnlockAreaMultiplier",
+		name = "Area unlock multiplier",
+		description = "Multiplier for area unlock tile cost when in World Unlock mode. Cost = tier × tier points × this multiplier.",
+		position = 1,
+		section = worldUnlockSection
+	)
+	default int worldUnlockAreaMultiplier()
+	{
+		return 7;
+	}
+
+	@ConfigItem(
+		keyName = "worldUnlockBossMultiplier",
+		name = "Boss unlock multiplier",
+		description = "Multiplier for boss unlock tile cost when in World Unlock mode. Cost = tier × tier points × this multiplier.",
+		position = 2,
+		section = worldUnlockSection
+	)
+	default int worldUnlockBossMultiplier()
+	{
+		return 4;
+	}
+
+	@ConfigItem(
+		keyName = "worldUnlockQuestMultiplier",
+		name = "Quest unlock multiplier",
+		description = "Multiplier for quest unlock tile cost when in World Unlock mode. Cost = tier × tier points × this multiplier.",
+		position = 3,
+		section = worldUnlockSection
+	)
+	default int worldUnlockQuestMultiplier()
+	{
+		return 5;
+	}
+
+	@ConfigItem(
+		keyName = "worldUnlockAchievementDiaryMultiplier",
+		name = "Achievement diary unlock multiplier",
+		description = "Multiplier for achievement diary unlock tile cost when in World Unlock mode. Cost = tier × tier points × this multiplier.",
+		position = 4,
+		section = worldUnlockSection
+	)
+	default int worldUnlockAchievementDiaryMultiplier()
+	{
+		return 3;
 	}
 
 	@ConfigItem(

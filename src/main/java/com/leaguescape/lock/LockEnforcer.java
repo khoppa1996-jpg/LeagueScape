@@ -68,12 +68,12 @@ public class LockEnforcer
 
 	/**
 	 * If the overlay is active and the click was on a locked tile, remove all world-targeting
-	 * menu entries so the user cannot choose any of them.
+	 * menu entries so the user cannot choose any of them. Skipped when strict lock enforcement is off.
 	 */
 	@Subscribe
 	public void onMenuOpened(MenuOpened event)
 	{
-		if (!config.renderLockedOverlay()) return;
+		if (!config.renderLockedOverlay() || !config.strictLockEnforcement()) return;
 		if (client.getLocalPlayer() == null) return;
 
 		WorldPoint clickedTile = getClickedTileWorldPoint();
@@ -102,12 +102,12 @@ public class LockEnforcer
 
 	/**
 	 * If the overlay is active and the click was on a locked tile, consume the event so
-	 * the game never receives the action (no path, no interact).
+	 * the game never receives the action (no path, no interact). Skipped when strict lock enforcement is off.
 	 */
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		if (!config.renderLockedOverlay()) return;
+		if (!config.renderLockedOverlay() || !config.strictLockEnforcement()) return;
 		if (client.getLocalPlayer() == null) return;
 
 		String option = Text.removeFormattingTags(event.getMenuOption());

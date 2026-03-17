@@ -2,10 +2,9 @@ package com.leaguescape.worldunlock;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.leaguescape.util.ResourceJsonLoader;
+import com.leaguescape.util.ResourcePaths;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 public class GoalTrackingService
 {
 	private static final Logger log = LoggerFactory.getLogger(GoalTrackingService.class);
-	private static final String GOALS_RESOURCE = "/goals.json";
 
 	private final List<Goal> goals = new ArrayList<>();
 	private boolean loaded = false;
@@ -33,22 +31,9 @@ public class GoalTrackingService
 		goals.clear();
 		Gson gson = new Gson();
 		Type listType = new TypeToken<List<Goal>>(){}.getType();
-		try (InputStream in = getClass().getResourceAsStream(GOALS_RESOURCE))
-		{
-			if (in == null)
-			{
-				log.warn("Goals resource not found: {}", GOALS_RESOURCE);
-				loaded = true;
-				return;
-			}
-			List<Goal> parsed = gson.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), listType);
-			if (parsed != null)
-				goals.addAll(parsed);
-		}
-		catch (Exception e)
-		{
-			log.error("Failed to load goals.json", e);
-		}
+		List<Goal> parsed = ResourceJsonLoader.load(getClass(), ResourcePaths.GOALS_JSON, listType, gson, log);
+		if (parsed != null)
+			goals.addAll(parsed);
 		loaded = true;
 	}
 

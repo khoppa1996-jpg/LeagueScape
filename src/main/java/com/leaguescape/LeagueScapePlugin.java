@@ -7,8 +7,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.function.Consumer;
+import java.awt.event.KeyEvent;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import net.runelite.api.Client;
 import org.slf4j.Logger;
@@ -18,6 +21,7 @@ import net.runelite.api.MenuAction;
 import net.runelite.api.Tile;
 import net.runelite.api.WorldView;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.gameval.InterfaceID;
@@ -49,8 +53,16 @@ public class LeagueScapePlugin extends Plugin
 {
 	private static final Logger log = LoggerFactory.getLogger(LeagueScapePlugin.class);
 	/** Config group for persisted state (unlocked areas, task progress, etc.). */
-	private static final String STATE_GROUP = "leaguescapeState";
+	private static final String STATE_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.STATE_GROUP;
+
+	/** Registers Escape key to close the given window (dispose). Call after creating a JDialog/JFrame. */
+	public static void registerEscapeToClose(java.awt.Window window)
+	{
+		com.leaguescape.util.LeagueScapeSwingUtil.registerEscapeToClose(window);
+	}
 	private static final String KEY_UNLOCKED_AREAS = "unlockedAreas";
+	/** Comma-separated list of usernames for which the Rules & Setup panel has been shown (first-time open). */
+	private static final String KEY_SETUP_OPENED_ACCOUNTS = "setupOpenedAccounts";
 
 	@Inject
 	private ClientToolbar clientToolbar;
@@ -81,6 +93,9 @@ public class LeagueScapePlugin extends Plugin
 
 	@Inject
 	private com.leaguescape.overlay.LeagueScapeMapOverlay leagueScapeMapOverlay;
+
+	@Inject
+	private com.leaguescape.overlay.LeagueScapeMinimapButtonOverlay leagueScapeMinimapButtonOverlay;
 
 	@Inject
 	private Provider<com.leaguescape.config.AreaEditOverlay> areaEditOverlayProvider;
@@ -131,18 +146,7 @@ public class LeagueScapePlugin extends Plugin
 	private static final String MOVE_CORNER_OPTION = "Move";
 	private static final String SET_CORNER_OPTION = "Set new corner";
 	private static final String CANCEL_MOVE_OPTION = "Cancel move";
-	/** Area being edited (null = not editing). */
-	private String editingAreaId = null;
-	/** Completed polygons (each has >= 3 corners). Current polygon is editingCorners. */
-	private final List<List<int[]>> editingPolygons = new ArrayList<>();
-	/** Corners for the current polygon being edited. */
-	private final List<int[]> editingCorners = new ArrayList<>();
-	/** Index of corner being moved (-1 = not in move mode). */
-	private int moveCornerIndex = -1;
-	/** Holes for the area being edited (subtracted from polygons). Set when loading area or by "Fill using others' corners". */
-	private List<List<int[]>> editingHoles = null;
-	/** Neighbors for the area being edited. Set when loading area; updated from config panel or map "Add neighbors" dialog. */
-	private List<String> editingNeighbors = null;
+	private final com.leaguescape.config.AreaEditState areaEditState = new com.leaguescape.config.AreaEditState();
 	/** Called when corners change (from plugin thread). */
 	private Consumer<List<int[]>> cornerUpdateCallback;
 	/** Called when neighbors change (e.g. from map "Add neighbors" dialog). */
@@ -168,6 +172,8 @@ public class LeagueScapePlugin extends Plugin
 		overlayManager.add(lockedRegionOverlay);
 		overlayManager.add(taskCompletionPopupOverlay);
 		overlayManager.add(leagueScapeMapOverlay);
+		overlayManager.add(leagueScapeMinimapButtonOverlay);
+		mouseManager.registerMouseListener(leagueScapeMinimapButtonOverlay);
 		areaEditOverlay = areaEditOverlayProvider.get();
 		overlayManager.add(areaEditOverlay);
 		eventBus.register(this);
@@ -180,6 +186,25 @@ public class LeagueScapePlugin extends Plugin
 			.panel(panel)
 			.build();
 		clientToolbar.addNavigation(navButton);
+		// Open Rules & Setup panel for this account if first time (by username)
+		clientThread.invokeLater(this::tryOpenSetupForFirstTime);
+	}
+
+	/**
+	 * If the current account (by username) has never been shown the Rules & Setup panel, open it centered on the game client and mark as shown.
+	 */
+	private void tryOpenSetupForFirstTime()
+	{
+		String username = client.getUsername();
+		if (username == null || username.isEmpty())
+			return;
+		String raw = configManager.getConfiguration(STATE_GROUP, KEY_SETUP_OPENED_ACCOUNTS);
+		java.util.Set<String> seen = com.leaguescape.util.ConfigParsing.parseCommaSeparatedSet(raw);
+		if (seen.contains(username))
+			return;
+		seen.add(username);
+		configManager.setConfiguration(STATE_GROUP, KEY_SETUP_OPENED_ACCOUNTS, com.leaguescape.util.ConfigParsing.joinComma(seen));
+		openSetupDialog();
 	}
 
 	@Override
@@ -196,6 +221,8 @@ public class LeagueScapePlugin extends Plugin
 		overlayManager.remove(lockedRegionOverlay);
 		overlayManager.remove(taskCompletionPopupOverlay);
 		overlayManager.remove(leagueScapeMapOverlay);
+		overlayManager.remove(leagueScapeMinimapButtonOverlay);
+		mouseManager.unregisterMouseListener(leagueScapeMinimapButtonOverlay);
 		if (areaEditOverlay != null)
 		{
 			overlayManager.remove(areaEditOverlay);
@@ -285,10 +312,11 @@ public class LeagueScapePlugin extends Plugin
 		LeagueScapeConfig config, com.leaguescape.points.PointsService pointsService,
 		com.leaguescape.points.AreaCompletionService areaCompletionService,
 		com.leaguescape.task.TaskGridService taskGridService,
+		com.leaguescape.worldunlock.WorldUnlockService worldUnlockService,
 		com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService,
 		AudioPlayer audioPlayer, net.runelite.client.callback.ClientThread clientThread)
 	{
-		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService, osrsWikiApiService, audioPlayer, clientThread);
+		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService, worldUnlockService, osrsWikiApiService, audioPlayer, clientThread);
 	}
 
 	@Provides
@@ -301,11 +329,12 @@ public class LeagueScapePlugin extends Plugin
 	@Provides
 	@Singleton
 	com.leaguescape.worldunlock.WorldUnlockService provideWorldUnlockService(ConfigManager configManager,
+		LeagueScapeConfig config,
 		com.leaguescape.points.PointsService pointsService,
 		com.leaguescape.task.TaskGridService taskGridService,
 		com.leaguescape.area.AreaGraphService areaGraphService)
 	{
-		return new com.leaguescape.worldunlock.WorldUnlockService(configManager, pointsService, taskGridService, areaGraphService);
+		return new com.leaguescape.worldunlock.WorldUnlockService(configManager, config, pointsService, taskGridService, areaGraphService);
 	}
 
 	@Provides
@@ -336,11 +365,20 @@ public class LeagueScapePlugin extends Plugin
 		}
 		else
 		{
-			String start = config.startingArea();
-			if (start != null && !start.isEmpty())
+			// In World Unlock mode, starter stays locked until unlocked on the World Unlock grid
+			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
 			{
-				areaGraphService.setUnlockedAreaIds(java.util.Collections.singleton(start));
+				areaGraphService.setUnlockedAreaIds(Collections.emptySet());
 				persistUnlockedAreas();
+			}
+			else
+			{
+				String start = config.startingArea();
+				if (start != null && !start.isEmpty())
+				{
+					areaGraphService.setUnlockedAreaIds(java.util.Collections.singleton(start));
+					persistUnlockedAreas();
+				}
 			}
 		}
 	}
@@ -379,9 +417,26 @@ public class LeagueScapePlugin extends Plugin
 					int w = Math.max(520, Math.min(ownerWidth, 700));
 					frame.setSize(w, h);
 				}
+				frame.setLocationRelativeTo(owner);
 			}
+			registerEscapeToClose(frame);
 			frame.setVisible(true);
 		});
+	}
+
+	/**
+	 * Returns true if the player has any progress (unlocked areas, points earned/spent, or world unlock state).
+	 * Used to decide whether to show confirmation before updating starting rules or resetting.
+	 */
+	public boolean hasProgress()
+	{
+		if (pointsService.getEarnedTotal() > 0 || pointsService.getSpentTotal() > 0)
+			return true;
+		if (areaGraphService.getUnlockedAreaIds().size() > 0)
+			return true;
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK && worldUnlockService.getUnlockedIds().size() > 0)
+			return true;
+		return false;
 	}
 
 	/**
@@ -392,17 +447,25 @@ public class LeagueScapePlugin extends Plugin
 	public void resetProgress()
 	{
 		pointsService.setStartingPoints(0);
-		// Clear unlocks then set only the starting area as unlocked (so player is not locked out)
-		String start = config.startingArea();
-		if (start != null && !start.isEmpty())
-		{
-			areaGraphService.setUnlockedAreaIds(Collections.singleton(start));
-			persistUnlockedAreas();
-		}
-		else
+		// Clear unlocks. In World Unlock mode, starter stays locked until unlocked on the grid.
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
 			configManager.setConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS, "");
 			areaGraphService.setUnlockedAreaIds(Collections.emptySet());
+		}
+		else
+		{
+			String start = config.startingArea();
+			if (start != null && !start.isEmpty())
+			{
+				areaGraphService.setUnlockedAreaIds(Collections.singleton(start));
+				persistUnlockedAreas();
+			}
+			else
+			{
+				configManager.setConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS, "");
+				areaGraphService.setUnlockedAreaIds(Collections.emptySet());
+			}
 		}
 		List<String> areaIds = areaGraphService.getAreas().stream()
 			.map(com.leaguescape.data.Area::getId)
@@ -428,6 +491,13 @@ public class LeagueScapePlugin extends Plugin
 	}
 
 	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		if (event.getGameState() == net.runelite.api.GameState.LOGGED_IN)
+			clientThread.invokeLater(this::tryOpenSetupForFirstTime);
+	}
+
+	@Subscribe
 	public void onGameTick(GameTick event)
 	{
 		updateMapMouseListener();
@@ -437,7 +507,7 @@ public class LeagueScapePlugin extends Plugin
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
 		// Area config: Shift+right-click on tile to add/move polygon corners when editing an area
-		if (editingAreaId != null)
+		if (areaEditState.isEditingArea())
 		{
 			MenuAction action = event.getMenuEntry().getType();
 			if (action == MenuAction.WALK || action == MenuAction.SET_HEADING)
@@ -453,7 +523,7 @@ public class LeagueScapePlugin extends Plugin
 						WorldPoint wp = tileToWorldPoint(client, tile, wv);
 						if (wp != null && client.isKeyPressed(KeyCode.KC_SHIFT))
 						{
-							if (moveCornerIndex >= 0)
+							if (areaEditState.getMoveCornerIndex() >= 0)
 							{
 								client.createMenuEntry(-1)
 									.setOption(SET_CORNER_OPTION)
@@ -464,7 +534,7 @@ public class LeagueScapePlugin extends Plugin
 									.setOption(CANCEL_MOVE_OPTION)
 									.setTarget(ADD_CORNER_TARGET)
 									.setType(MenuAction.RUNELITE)
-									.onClick(e -> { moveCornerIndex = -1; notifyCornersUpdated(); });
+									.onClick(e -> { areaEditState.setMoveCornerIndex(-1); notifyCornersUpdated(); });
 							}
 							else
 							{
@@ -476,7 +546,7 @@ public class LeagueScapePlugin extends Plugin
 										.setOption(MOVE_CORNER_OPTION)
 										.setTarget(ADD_CORNER_TARGET)
 										.setType(MenuAction.RUNELITE)
-										.onClick(e -> { moveCornerIndex = cornerIdx; notifyCornersUpdated(); });
+										.onClick(e -> { areaEditState.setMoveCornerIndex(cornerIdx); notifyCornersUpdated(); });
 								}
 								else
 								{
@@ -514,6 +584,7 @@ public class LeagueScapePlugin extends Plugin
 				.setType(MenuAction.RUNELITE)
 				.onClick(e -> openTaskPopupForCurrentArea());
 		}
+
 	}
 
 	private boolean isWidgetInMapHierarchy(Widget w, Widget mapContainer)
@@ -551,11 +622,14 @@ public class LeagueScapePlugin extends Plugin
 			com.leaguescape.worldunlock.WorldUnlockGridPanel panel = new com.leaguescape.worldunlock.WorldUnlockGridPanel(
 				worldUnlockService, pointsService,
 				dialog::dispose,
-				this::openGoalTrackingPanel,
+				this::openGlobalTaskList,
+				this::openSetupDialog,
+				this::addUnlockedAreaId,
 				client, audioPlayer, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
 			dialog.setLocationRelativeTo(client.getCanvas());
+			registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
 	}
@@ -574,6 +648,7 @@ public class LeagueScapePlugin extends Plugin
 			dialog.pack();
 			dialog.setSize(380, 300);
 			dialog.setLocationRelativeTo(client.getCanvas());
+			registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
 	}
@@ -588,10 +663,11 @@ public class LeagueScapePlugin extends Plugin
 			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "Global tasks", false);
 			dialog.setUndecorated(true);
 			com.leaguescape.worldunlock.GlobalTaskListPanel panel = new com.leaguescape.worldunlock.GlobalTaskListPanel(
-				globalTaskListService, pointsService, dialog::dispose, client, audioPlayer, clientThread, dialog);
+				globalTaskListService, pointsService, dialog::dispose, this::openSetupDialog, client, audioPlayer, clientThread, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
 			dialog.setLocationRelativeTo(client.getCanvas());
+			registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
 	}
@@ -631,55 +707,31 @@ public class LeagueScapePlugin extends Plugin
 		return true;
 	}
 
+	/** Adds an area to the unlocked set and persists. Used after unlocking a World Unlock tile for an area so the map overlay stays in sync. */
+	public void addUnlockedAreaId(String areaId)
+	{
+		areaGraphService.addUnlocked(areaId);
+		persistUnlockedAreas();
+	}
+
 	// --- Area config editing API (used by LeagueScapeConfigPanel, AreaEditOverlay, LeagueScapeMapOverlay) ---
 
 	public void startEditing(String areaId, List<int[]> initialCorners)
 	{
-		editingAreaId = areaId;
-		editingPolygons.clear();
-		editingCorners.clear();
-		com.leaguescape.data.Area a = areaGraphService.getArea(areaId);
-		editingHoles = (a != null && a.getHoles() != null) ? new ArrayList<>(a.getHoles()) : new ArrayList<>();
-		editingNeighbors = (a != null && a.getNeighbors() != null) ? new ArrayList<>(a.getNeighbors()) : new ArrayList<>();
-		if (initialCorners != null && !initialCorners.isEmpty())
-		{
-			editingCorners.addAll(initialCorners);
-		}
+		areaEditState.startEditing(areaId, initialCorners, areaGraphService.getArea(areaId));
 		notifyCornersUpdated();
 	}
 
 	/** Start editing an area with multiple polygons (e.g. when loading existing area). */
 	public void startEditingWithPolygons(String areaId, List<List<int[]>> polygons)
 	{
-		editingAreaId = areaId;
-		editingPolygons.clear();
-		editingCorners.clear();
-		com.leaguescape.data.Area a = areaGraphService.getArea(areaId);
-		editingHoles = (a != null && a.getHoles() != null) ? new ArrayList<>(a.getHoles()) : new ArrayList<>();
-		editingNeighbors = (a != null && a.getNeighbors() != null) ? new ArrayList<>(a.getNeighbors()) : new ArrayList<>();
-		if (polygons != null && !polygons.isEmpty())
-		{
-			for (int i = 0; i < polygons.size() - 1; i++)
-			{
-				List<int[]> poly = polygons.get(i);
-				if (poly != null && poly.size() >= 3)
-					editingPolygons.add(new ArrayList<>(poly));
-			}
-			List<int[]> last = polygons.get(polygons.size() - 1);
-			if (last != null)
-				editingCorners.addAll(last);
-		}
+		areaEditState.startEditingWithPolygons(areaId, polygons, areaGraphService.getArea(areaId));
 		notifyCornersUpdated();
 	}
 
 	public void stopAreaEditing()
 	{
-		editingAreaId = null;
-		editingPolygons.clear();
-		editingCorners.clear();
-		editingHoles = null;
-		editingNeighbors = null;
-		moveCornerIndex = -1;
+		areaEditState.stopEditing();
 		cornerUpdateCallback = null;
 		neighborUpdateCallback = null;
 	}
@@ -697,31 +749,25 @@ public class LeagueScapePlugin extends Plugin
 
 	public List<int[]> getEditingCorners()
 	{
-		return Collections.unmodifiableList(new ArrayList<>(editingCorners));
+		return areaEditState.getEditingCorners();
 	}
 
 	/** Completed polygons (each with >= 3 corners). Current polygon is from getEditingCorners(). */
 	public List<List<int[]>> getEditingPolygons()
 	{
-		return Collections.unmodifiableList(new ArrayList<>(editingPolygons));
+		return areaEditState.getEditingPolygons();
 	}
 
 	/** All polygons for save: editingPolygons + current polygon if it has >= 3 corners. */
 	public List<List<int[]>> getAllEditingPolygons()
 	{
-		List<List<int[]>> all = new ArrayList<>(editingPolygons);
-		if (editingCorners.size() >= 3)
-			all.add(new ArrayList<>(editingCorners));
-		return all;
+		return areaEditState.getAllEditingPolygons();
 	}
 
 	/** Start a new polygon (commits current if >= 3 corners). Use in Add New Area or Edit Area on map. */
 	public void startNewPolygon()
 	{
-		if (editingCorners.size() >= 3)
-			editingPolygons.add(new ArrayList<>(editingCorners));
-		editingCorners.clear();
-		moveCornerIndex = -1;
+		areaEditState.startNewPolygon();
 		notifyCornersUpdated();
 		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Started new polygon.", null);
 	}
@@ -733,102 +779,83 @@ public class LeagueScapePlugin extends Plugin
 	 */
 	public List<int[]> removeEditingPolygonAt(int index)
 	{
-		if (index < 0) return null;
-		if (index < editingPolygons.size())
-		{
-			List<int[]> removed = new ArrayList<>(editingPolygons.get(index));
-			editingPolygons.remove(index);
-			notifyCornersUpdated();
-			return removed;
-		}
-		if (index == editingPolygons.size() && editingCorners.size() >= 3)
-		{
-			List<int[]> removed = new ArrayList<>(editingCorners);
-			editingCorners.clear();
-			moveCornerIndex = -1;
-			notifyCornersUpdated();
-			return removed;
-		}
-		return null;
+		List<int[]> removed = areaEditState.removeEditingPolygonAt(index);
+		if (removed != null) notifyCornersUpdated();
+		return removed;
 	}
 
 	/** Remove corner at index (for map right-click menu). */
 	public void removeCorner(int index)
 	{
-		if (index < 0 || index >= editingCorners.size()) return;
-		editingCorners.remove(index);
-		if (moveCornerIndex == index) moveCornerIndex = -1;
-		else if (moveCornerIndex > index) moveCornerIndex--;
+		areaEditState.removeCorner(index);
 		notifyCornersUpdated();
 	}
 
 	/** Set corner position (for map move-corner). */
 	public void setCornerPosition(int index, net.runelite.api.coords.WorldPoint wp)
 	{
-		if (wp == null || index < 0 || index >= editingCorners.size()) return;
-		editingCorners.set(index, new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+		areaEditState.setCornerPosition(index, wp);
 		notifyCornersUpdated();
 	}
 
 	public boolean isEditingArea()
 	{
-		return editingAreaId != null;
+		return areaEditState.isEditingArea();
 	}
 
 	public boolean isAddNewAreaMode()
 	{
-		return editingAreaId != null && editingAreaId.startsWith("new_");
+		return areaEditState.isAddNewAreaMode();
 	}
 
 	public void addCornerFromWorldPoint(WorldPoint wp)
 	{
-		if (editingAreaId == null || wp == null) return;
-		editingCorners.add(new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+		areaEditState.addCornerFromWorldPoint(wp);
 		notifyCornersUpdated();
 		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Added corner: " + wp.getX() + ", " + wp.getY(), null);
 	}
 
 	public String getEditingAreaId()
 	{
-		return editingAreaId;
+		return areaEditState.getEditingAreaId();
 	}
 
 	public int getMoveCornerIndex()
 	{
-		return moveCornerIndex;
+		return areaEditState.getMoveCornerIndex();
 	}
 
 	/** Used by area-edit menu (Shift+right-click corner -> Move). */
 	public void setMoveCornerIndex(int index)
 	{
-		this.moveCornerIndex = index;
+		areaEditState.setMoveCornerIndex(index);
 		notifyCornersUpdated();
 	}
 
 	/** Holes for the area being edited (from area load or "Fill using others' corners"). */
 	public List<List<int[]>> getEditingHoles()
 	{
-		return editingHoles == null ? null : Collections.unmodifiableList(new ArrayList<>(editingHoles));
+		return areaEditState.getEditingHoles();
 	}
 
 	/** Set holes (e.g. after "Fill using others' corners"). */
 	public void setEditingHoles(List<List<int[]>> holes)
 	{
-		this.editingHoles = (holes != null) ? new ArrayList<>(holes) : new ArrayList<>();
+		areaEditState.setEditingHoles(holes);
 	}
 
 	/** Neighbors for the area being edited (from load or "Add neighbors" on map). */
 	public List<String> getEditingNeighbors()
 	{
-		return editingNeighbors == null ? null : Collections.unmodifiableList(new ArrayList<>(editingNeighbors));
+		return areaEditState.getEditingNeighbors();
 	}
 
 	public void setEditingNeighbors(List<String> neighbors)
 	{
-		this.editingNeighbors = (neighbors != null) ? new ArrayList<>(neighbors) : new ArrayList<>();
+		areaEditState.setEditingNeighbors(neighbors);
 		if (neighborUpdateCallback != null)
 		{
-			List<String> copy = new ArrayList<>(this.editingNeighbors);
+			List<String> copy = new ArrayList<>(areaEditState.getEditingNeighbors());
 			SwingUtilities.invokeLater(() -> neighborUpdateCallback.accept(copy));
 		}
 	}
@@ -841,10 +868,7 @@ public class LeagueScapePlugin extends Plugin
 	/** Replace the current polygon being edited (e.g. after paint-bucket fill). */
 	public void setEditingCorners(List<int[]> corners)
 	{
-		editingCorners.clear();
-		if (corners != null)
-			editingCorners.addAll(corners);
-		moveCornerIndex = -1;
+		areaEditState.setEditingCorners(corners);
 		notifyCornersUpdated();
 	}
 
@@ -852,44 +876,39 @@ public class LeagueScapePlugin extends Plugin
 	{
 		if (cornerUpdateCallback != null)
 		{
-			List<int[]> copy = new ArrayList<>(editingCorners);
+			List<int[]> copy = new ArrayList<>(areaEditState.getEditingCorners());
 			SwingUtilities.invokeLater(() -> cornerUpdateCallback.accept(copy));
 		}
 	}
 
 	private void addCornerAtSelectedTile()
 	{
-		if (editingAreaId == null) return;
+		if (!areaEditState.isEditingArea()) return;
 		WorldPoint wp = getSelectedWorldPoint();
 		if (wp == null) return;
-		editingCorners.add(new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+		areaEditState.addCornerFromWorldPoint(wp);
 		notifyCornersUpdated();
 		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Added corner: " + wp.getX() + ", " + wp.getY(), null);
 	}
 
 	private void setCornerAtSelectedTile()
 	{
-		if (editingAreaId == null || moveCornerIndex < 0) return;
+		if (!areaEditState.isEditingArea() || areaEditState.getMoveCornerIndex() < 0) return;
 		WorldPoint wp = getSelectedWorldPoint();
 		if (wp == null) return;
-		if (moveCornerIndex < editingCorners.size())
+		int moveCornerIndex = areaEditState.getMoveCornerIndex();
+		if (moveCornerIndex < areaEditState.getEditingCorners().size())
 		{
-			editingCorners.set(moveCornerIndex, new int[]{ wp.getX(), wp.getY(), wp.getPlane() });
+			areaEditState.setCornerPosition(moveCornerIndex, wp);
 			notifyCornersUpdated();
 			client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Moved corner #" + moveCornerIndex + " to " + wp.getX() + ", " + wp.getY(), null);
 		}
-		moveCornerIndex = -1;
+		areaEditState.setMoveCornerIndex(-1);
 	}
 
 	private int findCornerAt(int x, int y, int plane)
 	{
-		for (int i = 0; i < editingCorners.size(); i++)
-		{
-			int[] c = editingCorners.get(i);
-			if (c.length >= 3 && c[0] == x && c[1] == y && c[2] == plane)
-				return i;
-		}
-		return -1;
+		return areaEditState.findCornerAt(x, y, plane);
 	}
 
 	private WorldPoint getSelectedWorldPoint()

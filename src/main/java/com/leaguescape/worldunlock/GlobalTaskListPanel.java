@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -52,11 +53,9 @@ import org.slf4j.LoggerFactory;
 public class GlobalTaskListPanel extends JPanel
 {
 	private static final Logger log = LoggerFactory.getLogger(GlobalTaskListPanel.class);
-	private static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);
-	private static final Color POPUP_TEXT = new Color(0xC4, 0xB8, 0x96);
+	private static final Color POPUP_BG = com.leaguescape.util.LeagueScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = com.leaguescape.util.LeagueScapeColors.POPUP_TEXT;
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
-	private static final Color PRESSED_INSET_SHADOW = new Color(0, 0, 0, 70);
-	private static final int PRESSED_INSET = 2;
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int BASE_TILE_SIZE = 72;
 	private static final int TASK_TILE_ICON_MARGIN = 12;
@@ -64,6 +63,21 @@ public class GlobalTaskListPanel extends JPanel
 	private static final int CLAIMED_CHECKMARK_INSET = 4;
 
 	private static final String TASK_ICONS_RESOURCE_PREFIX = "/com/taskIcons/";
+	private static final String BOSS_ICONS_RESOURCE_PREFIX = "/com/bossicons/";
+	private static final Map<String, String> BOSS_ICON_OVERRIDES = new HashMap<>();
+	static
+	{
+		BOSS_ICON_OVERRIDES.put("barrows", "game_icon_barrowschests.png");
+		BOSS_ICON_OVERRIDES.put("dagannoth_kings", "game_icon_dagannothrex.png");
+		BOSS_ICON_OVERRIDES.put("calvarion_vetion", "game_icon_calvarion.png");
+		BOSS_ICON_OVERRIDES.put("spindel_venenatis", "game_icon_venenatis.png");
+		BOSS_ICON_OVERRIDES.put("artio_callisto", "game_icon_callisto.png");
+		BOSS_ICON_OVERRIDES.put("crystalline_hunllef", "game_icon_thegauntlet.png");
+		BOSS_ICON_OVERRIDES.put("corrupted_hunllef", "game_icon_thecorruptedgauntlet.png");
+		BOSS_ICON_OVERRIDES.put("the_mimic", "game_icon_mimic.png");
+		BOSS_ICON_OVERRIDES.put("tombs_of_amascut", "game_icon_tombsofamascutexpertmode.png");
+		BOSS_ICON_OVERRIDES.put("the_nightmare", "game_icon_nightmare.png");
+	}
 	private static final Map<String, String> TASK_TYPE_LOCAL_ICON = new HashMap<>();
 	static
 	{
@@ -103,6 +117,7 @@ public class GlobalTaskListPanel extends JPanel
 	private final AudioPlayer audioPlayer;
 	private final ClientThread clientThread;
 	private final JDialog parentDialog;
+	private final Runnable onOpenRulesSetup;
 
 	private BufferedImage padlockImg;
 	private BufferedImage checkmarkImg;
@@ -115,18 +130,19 @@ public class GlobalTaskListPanel extends JPanel
 	private JPanel gridPanel;
 	private JScrollPane scrollPane;
 	private float zoom = 1.0f;
-	private static final float ZOOM_MIN = 0.5f;
+	private static final float ZOOM_MIN = 0.1f;
 	private static final float ZOOM_MAX = 2.0f;
-	private static final float ZOOM_STEP = 0.15f;
+	private static final float ZOOM_STEP = 0.1f;
 
 	private int layoutSeed;
 
 	public GlobalTaskListPanel(GlobalTaskListService globalTaskListService, PointsService pointsService,
-		Runnable onClose, Client client, AudioPlayer audioPlayer, ClientThread clientThread, JDialog parentDialog)
+		Runnable onClose, Runnable onOpenRulesSetup, Client client, AudioPlayer audioPlayer, ClientThread clientThread, JDialog parentDialog)
 	{
 		this.globalTaskListService = globalTaskListService;
 		this.pointsService = pointsService;
 		this.onClose = onClose;
+		this.onOpenRulesSetup = onOpenRulesSetup;
 		this.client = client;
 		this.audioPlayer = audioPlayer;
 		this.clientThread = clientThread;
@@ -153,9 +169,13 @@ public class GlobalTaskListPanel extends JPanel
 		header.setBorder(new EmptyBorder(0, 0, 8, 0));
 		JPanel titleRow = new JPanel(new BorderLayout(4, 0));
 		titleRow.setOpaque(false);
+		pointsLabel = new JLabel();
+		pointsLabel.setForeground(POPUP_TEXT);
+		titleRow.add(pointsLabel, BorderLayout.WEST);
 		JLabel titleLabel = new JLabel("Global Tasks");
 		titleLabel.setForeground(POPUP_TEXT);
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 16f));
+		titleLabel.setHorizontalAlignment(JLabel.CENTER);
 		titleRow.add(titleLabel, BorderLayout.CENTER);
 		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 		closeBtn.addActionListener(e -> {
@@ -164,9 +184,6 @@ public class GlobalTaskListPanel extends JPanel
 		});
 		titleRow.add(closeBtn, BorderLayout.EAST);
 		header.add(titleRow, BorderLayout.NORTH);
-		pointsLabel = new JLabel();
-		pointsLabel.setForeground(POPUP_TEXT);
-		header.add(pointsLabel, BorderLayout.SOUTH);
 		add(header, BorderLayout.NORTH);
 
 		gridPanel = new JPanel();
@@ -223,12 +240,23 @@ public class GlobalTaskListPanel extends JPanel
 		JPanel southPanel = new JPanel(new BorderLayout(8, 0));
 		southPanel.setOpaque(false);
 		southPanel.setBorder(new EmptyBorder(0, 0, 8, 0));
+		JPanel westButtons = new JPanel(new FlowLayout(FlowLayout.LEADING, 4, 0));
+		westButtons.setOpaque(false);
+		JButton rulesSetupBtn = newRectangleButton("Rules & Setup", buttonRect, POPUP_TEXT);
+		rulesSetupBtn.addActionListener(e -> {
+			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			if (onOpenRulesSetup != null) onOpenRulesSetup.run();
+		});
+		westButtons.add(rulesSetupBtn);
+		southPanel.add(westButtons, BorderLayout.WEST);
 		JPanel zoomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING, 4, 0));
 		zoomPanel.setOpaque(false);
-		JButton zoomOutBtn = newRectangleButton("\u2212", buttonRect, POPUP_TEXT);
+		JButton zoomOutBtn = newRectangleButton("\u2212", tileBg, POPUP_TEXT);
+		zoomOutBtn.setPreferredSize(new Dimension(28, 28));
 		zoomOutBtn.setToolTipText("Zoom out");
 		zoomOutBtn.addActionListener(e -> { zoom = Math.max(ZOOM_MIN, zoom - ZOOM_STEP); SwingUtilities.invokeLater(this::refresh); });
-		JButton zoomInBtn = newRectangleButton("+", buttonRect, POPUP_TEXT);
+		JButton zoomInBtn = newRectangleButton("+", tileBg, POPUP_TEXT);
+		zoomInBtn.setPreferredSize(new Dimension(28, 28));
 		zoomInBtn.setToolTipText("Zoom in");
 		zoomInBtn.addActionListener(e -> { zoom = Math.min(ZOOM_MAX, zoom + ZOOM_STEP); SwingUtilities.invokeLater(this::refresh); });
 		zoomPanel.add(zoomOutBtn);
@@ -268,7 +296,7 @@ public class GlobalTaskListPanel extends JPanel
 		int iconMargin = Math.max(1, (tileSize * TASK_TILE_ICON_MARGIN) / BASE_TILE_SIZE);
 		int iconMaxFit = Math.max(1, tileSize - 2 * iconMargin);
 
-		BufferedImage combatRaw = loadRawLocalIcon("Combat", null);
+		BufferedImage combatRaw = loadRawLocalIcon("Combat", null, null);
 		BufferedImage combatScaled = combatRaw != null ? scaleToFitAllowUpscale(combatRaw, iconMaxFit, iconMaxFit) : null;
 		int refSize = (combatScaled != null) ? Math.max(combatScaled.getWidth(), combatScaled.getHeight()) : iconMaxFit;
 
@@ -287,10 +315,12 @@ public class GlobalTaskListPanel extends JPanel
 			if (!isCenter)
 			{
 				String cacheKey = tile.getTaskType() != null ? ("type:" + tile.getTaskType()) : tile.getDisplayName();
+				if ("killCount".equalsIgnoreCase(tile.getTaskType()) && tile.getBossId() != null && !tile.getBossId().isEmpty())
+					cacheKey = "killCount:" + tile.getBossId();
 				BufferedImage raw = rawTaskIconCache.get(cacheKey);
 				if (raw == null)
 				{
-					raw = loadRawLocalIcon(tile.getTaskType(), tile.getDisplayName());
+					raw = loadRawLocalIcon(tile.getTaskType(), tile.getDisplayName(), tile.getBossId());
 					if (raw == null) raw = defaultTaskIcon;
 					if (raw != null) rawTaskIconCache.put(cacheKey, raw);
 				}
@@ -436,7 +466,7 @@ public class GlobalTaskListPanel extends JPanel
 			cell.add(overlay, BorderLayout.SOUTH);
 		}
 
-		// Click handler: center=claim, completed=claim, revealed=show details popup
+		// Click handler: center=claim, completed=claim, revealed=show details popup. Claiming allowed only after starter area unlocked on World Unlock grid.
 		cell.addMouseListener(new MouseAdapter()
 		{
 			@Override
@@ -446,6 +476,12 @@ public class GlobalTaskListPanel extends JPanel
 
 				if (isCenter)
 				{
+					if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
+					{
+						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+						JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
+						return;
+					}
 					playSound(LeagueScapeSounds.TASK_COMPLETE);
 					globalTaskListService.claimCenter();  // Unlocks starter + marks center claimed
 					SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);  // Refresh to show adjacent tiles
@@ -454,6 +490,12 @@ public class GlobalTaskListPanel extends JPanel
 
 				if (state == TaskState.COMPLETED_UNCLAIMED)
 				{
+					if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
+					{
+						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+						JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
+						return;
+					}
 					String key = GlobalTaskListService.taskKeyFromName(tile.getDisplayName());
 					playSound(LeagueScapeSounds.TASK_COMPLETE);
 					globalTaskListService.claimTask(key, tile.getRow(), tile.getCol());
@@ -538,6 +580,7 @@ public class GlobalTaskListPanel extends JPanel
 		String windowTitle = tile.getDisplayName();
 		JDialog detail = new JDialog(frameOwner, windowTitle, false);
 		detail.setUndecorated(true);
+		LeagueScapePlugin.registerEscapeToClose(detail);
 
 		JPanel content = new JPanel(new BorderLayout(8, 8));
 		content.setBackground(POPUP_BG);
@@ -630,22 +673,36 @@ public class GlobalTaskListPanel extends JPanel
 
 	// --- Icon helpers (same as LeagueScapeMapOverlay) ---
 
-	private static BufferedImage loadRawLocalIcon(String taskType, String displayName)
+	private static BufferedImage loadRawLocalIcon(String taskType, String displayName, String bossId)
 	{
-		String path = getLocalIconPath(taskType, displayName);
+		String path = getLocalIconPath(taskType, displayName, bossId);
 		if (path == null) return null;
 		return rawTaskIconCache.computeIfAbsent(path, p -> ImageUtil.loadImageResource(LeagueScapePlugin.class, p));
 	}
 
-	private static String getLocalIconPath(String taskType, String displayName)
+	private static String getLocalIconPath(String taskType, String displayName, String bossId)
 	{
 		if (isCollectionLogTask(taskType, displayName))
 			return TASK_ICONS_RESOURCE_PREFIX + "Collection_log_detail.png";
 		if (isClueTask(taskType, displayName))
 			return TASK_ICONS_RESOURCE_PREFIX + "Clue_scroll_v1.png";
+		if ("killCount".equalsIgnoreCase(taskType) && bossId != null && !bossId.isEmpty())
+		{
+			String bossPath = getBossIconPath(bossId);
+			if (bossPath != null) return bossPath;
+		}
 		if (taskType != null && TASK_TYPE_LOCAL_ICON.containsKey(taskType))
 			return TASK_ICONS_RESOURCE_PREFIX + TASK_TYPE_LOCAL_ICON.get(taskType);
 		return null;
+	}
+
+	/** Boss icon path from com/bossicons/ (same logic as WorldUnlockGridPanel). */
+	private static String getBossIconPath(String bossTileId)
+	{
+		String filename = BOSS_ICON_OVERRIDES.get(bossTileId);
+		if (filename == null)
+			filename = "game_icon_" + bossTileId.replace("_", "") + ".png";
+		return BOSS_ICONS_RESOURCE_PREFIX + filename;
 	}
 
 	private static boolean isCollectionLogTask(String taskType, String displayName)
@@ -720,66 +777,13 @@ public class GlobalTaskListPanel extends JPanel
 
 	private static JButton newRectangleButton(String text, BufferedImage buttonRect, Color textColor)
 	{
-		BufferedImage img = buttonRect;
-		JButton b = new JButton(text)
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				if (img != null)
-				{
-					g.drawImage(img.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-					g.setColor(getForeground());
-					g.setFont(getFont());
-					java.awt.FontMetrics fm = g.getFontMetrics();
-					String t = getText();
-					int x = (getWidth() - fm.stringWidth(t)) / 2;
-					int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-					g.drawString(t, x, y);
-				}
-				else super.paintComponent(g);
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setForeground(textColor);
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(img == null);
-		b.setOpaque(img == null);
+		JButton b = com.leaguescape.util.LeagueScapeSwingUtil.newRectangleButton(text, buttonRect, textColor);
 		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
 		return b;
 	}
 
 	private static JButton newPopupButtonWithIcon(BufferedImage iconImg, Color fallbackTextColor)
 	{
-		JButton b = new JButton()
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				super.paintComponent(g);
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(false);
-		b.setMargin(new Insets(0, 0, 0, 0));
-		if (iconImg != null)
-			b.setIcon(new ImageIcon(ImageUtil.resizeImage(iconImg, 24, 24)));
-		else
-		{
-			b.setText("X");
-			b.setForeground(fallbackTextColor);
-		}
-		return b;
+		return com.leaguescape.util.LeagueScapeSwingUtil.newPopupButtonWithIcon(iconImg, fallbackTextColor);
 	}
 }

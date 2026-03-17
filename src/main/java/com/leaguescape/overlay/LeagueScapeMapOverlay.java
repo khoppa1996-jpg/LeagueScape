@@ -11,7 +11,11 @@ import com.leaguescape.task.TaskState;
 import com.leaguescape.task.TaskTile;
 import com.leaguescape.task.TaskGridService;
 import com.leaguescape.wiki.OsrsWikiApiService;
+import com.leaguescape.worldunlock.WorldUnlockService;
+import com.leaguescape.worldunlock.WorldUnlockTile;
 import com.leaguescape.LeagueScapeSounds;
+import com.leaguescape.util.LeagueScapeColors;
+import com.leaguescape.util.LeagueScapeSwingUtil;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -64,7 +68,7 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 /**
  * World-map overlay for LeagueScape. Draws area polygons (locked/unlocked/unlockable) when the
  * world map is open; hover highlights an area with a white border; right-click opens an area
- * details popup (description, status, Unlock button, Tasks button). Tasks button opens the task
+ * details popup (description, status, Unlock or World Unlocks button per mode, Tasks button). Tasks button opens the task
  * grid popup for that area (tiles, claim/complete, icons from task type or Wiki). Also handles
  * polygon editing on the map (corner markers, move corner, add corner) when the plugin is in edit
  * mode. Renders on the map layer; does not draw on the game scene (use LockedRegionOverlay for
@@ -91,6 +95,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	private final AreaCompletionService areaCompletionService;
 	private final LeagueScapePlugin plugin;
 	private final TaskGridService taskGridService;
+	private final WorldUnlockService worldUnlockService;
 	private final OsrsWikiApiService wikiApi;
 	private final net.runelite.client.audio.AudioPlayer audioPlayer;
 	private final ClientThread clientThread;
@@ -108,7 +113,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 	public LeagueScapeMapOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfig config,
 		PointsService pointsService, AreaCompletionService areaCompletionService, LeagueScapePlugin plugin,
-		TaskGridService taskGridService, OsrsWikiApiService wikiApi,
+		TaskGridService taskGridService, WorldUnlockService worldUnlockService, OsrsWikiApiService wikiApi,
 		net.runelite.client.audio.AudioPlayer audioPlayer, ClientThread clientThread)
 	{
 		this.client = client;
@@ -118,6 +123,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		this.areaCompletionService = areaCompletionService;
 		this.plugin = plugin;
 		this.taskGridService = taskGridService;
+		this.worldUnlockService = worldUnlockService;
 		this.wikiApi = wikiApi;
 		this.audioPlayer = audioPlayer;
 		this.clientThread = clientThread;
@@ -997,11 +1003,9 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			"Fill using others' corners: boundary updated (" + mainPolygon.size() + " corners, " + holes.size() + " hole(s)). Save (Done editing) to apply.", null);
 	}
 
-	private static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);
-	private static final Color POPUP_TEXT = new Color(0xC4, 0xB8, 0x96);
+	private static final Color POPUP_BG = LeagueScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = LeagueScapeColors.POPUP_TEXT;
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
-	private static final Color PRESSED_INSET_SHADOW = new Color(0, 0, 0, 70);
-	private static final int PRESSED_INSET = 2;
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int TASK_ICON_SIZE = 28;
 	/** Margin on all sides of the task tile; icon is scaled to fill the rest (same size for all). */
@@ -1182,39 +1186,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Button with empty_button_rectangle background and pressed shadow. Use for Tasks, Back to area, Complete, Claim. */
 	private static JButton newRectangleButton(String text, BufferedImage buttonRect, Color textColor)
 	{
-		BufferedImage img = buttonRect;
-		JButton b = new JButton(text)
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				if (img != null)
-				{
-					g.drawImage(img.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-					g.setColor(getForeground());
-					g.setFont(getFont());
-					java.awt.FontMetrics fm = g.getFontMetrics();
-					String t = getText();
-					int x = (getWidth() - fm.stringWidth(t)) / 2;
-					int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-					g.drawString(t, x, y);
-				}
-				else
-				{
-					super.paintComponent(g);
-				}
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setForeground(textColor);
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(img == null);
-		b.setOpaque(img == null);
+		JButton b = LeagueScapeSwingUtil.newRectangleButton(text, buttonRect, textColor);
 		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
 		return b;
 	}
@@ -1230,8 +1202,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				super.paintComponent(g);
 				if (getModel().isPressed())
 				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
+					g.setColor(LeagueScapeSwingUtil.PRESSED_INSET_SHADOW);
+					g.fillRect(LeagueScapeSwingUtil.PRESSED_INSET, LeagueScapeSwingUtil.PRESSED_INSET, getWidth() - 2 * LeagueScapeSwingUtil.PRESSED_INSET, getHeight() - 2 * LeagueScapeSwingUtil.PRESSED_INSET);
 				}
 			}
 		};
@@ -1242,31 +1214,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Icon-only button (e.g. close) with pressed inset shadow. */
 	private static JButton newPopupButtonWithIcon(BufferedImage iconImg, Color fallbackTextColor)
 	{
-		JButton b = new JButton()
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				super.paintComponent(g);
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(false);
-		b.setMargin(new Insets(0, 0, 0, 0));
-		if (iconImg != null)
-			b.setIcon(new javax.swing.ImageIcon(ImageUtil.resizeImage(iconImg, 24, 24)));
-		else
-		{
-			b.setText("X");
-			b.setForeground(fallbackTextColor);
-		}
-		return b;
+		return LeagueScapeSwingUtil.newPopupButtonWithIcon(iconImg, fallbackTextColor);
 	}
 
 	/** Points display string: spendable total in point-buy mode, or "Points in [area]: X / Y" in points-to-complete mode. */
@@ -1287,12 +1235,40 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	{
 		if (area == null) return;
 		String displayName = area.getDisplayName() != null ? area.getDisplayName() : area.getId();
-		int cost = area.getUnlockCost();
-		Set<String> completedIds = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
-			? areaCompletionService.getEffectiveCompletedAreaIds()
-			: null;
-		List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
-		boolean canUnlock = unlockable.contains(area) && pointsService.getSpendable() >= cost;
+		final int cost;
+		final String costLabelText;
+		final boolean canUnlock;
+		final boolean worldUnlockArea;
+		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		{
+			WorldUnlockTile tile = worldUnlockService.getTileById(area.getId());
+			worldUnlockArea = (tile != null && "area".equals(tile.getType()));
+			if (worldUnlockArea)
+			{
+				cost = worldUnlockService.getTileCost(tile);
+				costLabelText = "T" + tile.getTier() + " area unlock cost: " + cost + " points";
+				canUnlock = worldUnlockService.isUnlockable(tile) && pointsService.getSpendable() >= cost;
+			}
+			else
+			{
+				cost = 0;
+				costLabelText = "Not in World Unlock grid.";
+				canUnlock = false;
+			}
+		}
+		else
+		{
+			worldUnlockArea = false;
+			cost = area.getUnlockCost();
+			Set<String> completedIds = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+				? areaCompletionService.getEffectiveCompletedAreaIds()
+				: null;
+			List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
+			canUnlock = unlockable.contains(area) && pointsService.getSpendable() >= cost;
+			costLabelText = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+				? "Points to unlock: " + cost
+				: "Unlock cost: " + cost + " point" + (cost != 1 ? "s" : "");
+		}
 		AreaStatus status = areaCompletionService.getAreaStatus(area.getId());
 
 		BufferedImage interfaceBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "interface_template.png");
@@ -1307,6 +1283,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 			JDialog dialog = new JDialog(owner, "Area: " + displayName, false);
 			dialog.setUndecorated(true);
+			LeagueScapePlugin.registerEscapeToClose(dialog);
 			openAreaDetailsDialog = dialog;
 			dialog.addWindowListener(new java.awt.event.WindowAdapter()
 			{
@@ -1388,10 +1365,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				statusRow.add(new JLabel(new javax.swing.ImageIcon(ImageUtil.resizeImage(checkmarkImg, 16, 16))));
 			}
 			center.add(statusRow);
-			String costLabel = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
-				? "Points to unlock: " + cost
-				: "Unlock cost: " + cost + " point" + (cost != 1 ? "s" : "");
-			JLabel costLbl = new JLabel(costLabel);
+			JLabel costLbl = new JLabel(costLabelText);
 			costLbl.setForeground(POPUP_TEXT);
 			center.add(costLbl);
 			JLabel pointsLbl = new JLabel(getPointsDisplayText(area));
@@ -1415,8 +1389,19 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				southPanel.add(tasksBtn);
 			}
 
-			// Unlock button only when area is still locked (styled with empty_button_rectangle + pressed shadow)
-			if (!areaUnlocked)
+			// In World Unlock mode: show World Unlocks button (no Unlock button in area popup)
+			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+			{
+				JButton worldUnlocksBtn = newRectangleButton("World Unlocks", buttonRect, POPUP_TEXT);
+				worldUnlocksBtn.addActionListener(e -> {
+					LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+					dialog.dispose();
+					plugin.openWorldUnlockGrid();
+				});
+				southPanel.add(worldUnlocksBtn);
+			}
+			// Unlock button only when area is still locked and NOT in World Unlock mode
+			else if (!areaUnlocked)
 			{
 				JButton unlockBtn = new JButton("Unlock")
 				{
@@ -1440,8 +1425,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 						}
 						if (getModel().isPressed())
 						{
-							g.setColor(PRESSED_INSET_SHADOW);
-							g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
+							g.setColor(LeagueScapeSwingUtil.PRESSED_INSET_SHADOW);
+							g.fillRect(LeagueScapeSwingUtil.PRESSED_INSET, LeagueScapeSwingUtil.PRESSED_INSET, getWidth() - 2 * LeagueScapeSwingUtil.PRESSED_INSET, getHeight() - 2 * LeagueScapeSwingUtil.PRESSED_INSET);
 						}
 					}
 				};
@@ -1452,7 +1437,20 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				unlockBtn.setOpaque(buttonRect == null);
 				unlockBtn.setPreferredSize(new Dimension(160, 28));
 				unlockBtn.addActionListener(e -> {
-					if (canUnlock && plugin.unlockArea(area.getId(), cost))
+					boolean unlocked = false;
+					if (worldUnlockArea)
+					{
+						if (canUnlock && worldUnlockService.unlock(area.getId(), cost))
+						{
+							plugin.addUnlockedAreaId(area.getId());
+							unlocked = true;
+						}
+					}
+					else if (canUnlock && plugin.unlockArea(area.getId(), cost))
+					{
+						unlocked = true;
+					}
+					if (unlocked)
 					{
 						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
 						dialog.dispose();
@@ -1547,6 +1545,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 			JDialog dialog = new JDialog(owner, displayName + " tasks", false);
 			dialog.setUndecorated(true);
+			LeagueScapePlugin.registerEscapeToClose(dialog);
 			openTaskGridDialog = dialog;
 			dialog.addWindowListener(new java.awt.event.WindowAdapter()
 			{
@@ -1578,27 +1577,37 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				new javax.swing.border.EmptyBorder(10, 12, 10, 12)));
 			content.setOpaque(true);
 
-			// Header: title "[area name] tasks" + points + close button
+			// Header: Points (left), title "[area name] tasks" (center), buttons (right) on one line
 			JPanel header = new JPanel(new java.awt.BorderLayout(4, 0));
 			header.setOpaque(false);
 			header.setBorder(new javax.swing.border.EmptyBorder(0, 0, 8, 0));
 			JPanel titleRow = new JPanel(new java.awt.BorderLayout(4, 0));
 			titleRow.setOpaque(false);
+			final JLabel[] pointsLabelHolder = new JLabel[1];
+			pointsLabelHolder[0] = new JLabel(getPointsDisplayText(area));
+			pointsLabelHolder[0].setForeground(POPUP_TEXT);
+			titleRow.add(pointsLabelHolder[0], java.awt.BorderLayout.WEST);
 			JLabel titleLabel = new JLabel(displayName + " tasks");
 			titleLabel.setForeground(POPUP_TEXT);
 			titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 16f));
+			titleLabel.setHorizontalAlignment(JLabel.CENTER);
 			titleRow.add(titleLabel, java.awt.BorderLayout.CENTER);
+			JPanel eastTitleButtons = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.TRAILING, 4, 0));
+			eastTitleButtons.setOpaque(false);
+			JButton rulesSetupBtn = newRectangleButton("Rules & Setup", buttonRect, POPUP_TEXT);
+			rulesSetupBtn.addActionListener(e -> {
+				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				plugin.openSetupDialog();
+			});
+			eastTitleButtons.add(rulesSetupBtn);
 			JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 			closeBtn.addActionListener(e -> {
 				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
 			});
-			titleRow.add(closeBtn, java.awt.BorderLayout.EAST);
+			eastTitleButtons.add(closeBtn);
+			titleRow.add(eastTitleButtons, java.awt.BorderLayout.EAST);
 			header.add(titleRow, java.awt.BorderLayout.NORTH);
-			final JLabel[] pointsLabelHolder = new JLabel[1];
-			pointsLabelHolder[0] = new JLabel(getPointsDisplayText(area));
-			pointsLabelHolder[0].setForeground(POPUP_TEXT);
-			header.add(pointsLabelHolder[0], java.awt.BorderLayout.SOUTH);
 			content.add(header, java.awt.BorderLayout.NORTH);
 
 			// Grid panel: only non-locked tiles, inside scroll pane with vertical + horizontal scroll bars
@@ -1750,14 +1759,16 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				dialog.dispose();
 				showAreaDetailsPopup(area);
 			});
-			// Zoom out / Zoom in buttons, right-aligned
-			JButton zoomOutBtn = newRectangleButton("−", buttonRect, POPUP_TEXT);
+			// Zoom out / Zoom in buttons, right-aligned (square style)
+			JButton zoomOutBtn = newRectangleButton("−", tileSquare, POPUP_TEXT);
+			zoomOutBtn.setPreferredSize(new Dimension(28, 28));
 			zoomOutBtn.setToolTipText("Zoom out");
 			zoomOutBtn.addActionListener(e -> {
 				zoomHolder[0] = Math.max(ZOOM_MIN, zoomHolder[0] - ZOOM_STEP);
 				SwingUtilities.invokeLater(refreshHolder[0]);
 			});
-			JButton zoomInBtn = newRectangleButton("+", buttonRect, POPUP_TEXT);
+			JButton zoomInBtn = newRectangleButton("+", tileSquare, POPUP_TEXT);
+			zoomInBtn.setPreferredSize(new Dimension(28, 28));
 			zoomInBtn.setToolTipText("Zoom in");
 			zoomInBtn.addActionListener(e -> {
 				zoomHolder[0] = Math.min(ZOOM_MAX, zoomHolder[0] + ZOOM_STEP);
@@ -1970,6 +1981,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		String windowTitle = isMystery ? "Mystery tile" : tile.getDisplayName();
 		JDialog detail = new JDialog(frameOwner, windowTitle, false);
 		detail.setUndecorated(true);
+		LeagueScapePlugin.registerEscapeToClose(detail);
 
 		JPanel content = new JPanel(new java.awt.BorderLayout(8, 8));
 		content.setBackground(POPUP_BG);
@@ -2189,6 +2201,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 			JDialog dialog = new JDialog(owner, "Neighbors for " + displayName, false);
 			dialog.setUndecorated(true);
+			LeagueScapePlugin.registerEscapeToClose(dialog);
 
 			JPanel content = new JPanel();
 			content.setLayout(new java.awt.BorderLayout(8, 8));

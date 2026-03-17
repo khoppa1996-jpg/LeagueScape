@@ -11,7 +11,7 @@ import net.runelite.client.config.ConfigManager;
  */
 public class PointsService
 {
-	private static final String CONFIG_GROUP = "leaguescapeState";
+	private static final String CONFIG_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_EARNED = "pointsEarnedTotal";
 	private static final String KEY_SPENT = "pointsSpentTotal";
 

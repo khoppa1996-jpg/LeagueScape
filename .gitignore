@@ -7,3 +7,10 @@ build
 nbactions.xml
 nb-configuration.xml
 nbproject/
+scripts/
+sync_quest_prereqs.py
+boss_tasks.json
+collection_log_items.json
+tasks_for_review.json
+achievement_diary_tasks.json
+collection_log_tasks.json

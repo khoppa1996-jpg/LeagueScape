@@ -13,7 +13,8 @@ public class WorldUnlockTile
 	private String id;
 	private String displayName;
 	private int tier;
-	private int cost;
+	/** Optional; when absent, cost is computed as tier points × type multiplier in World Unlock mode. */
+	private Integer cost;
 	private List<String> prerequisites;
 	private TaskLink taskLink;
 }

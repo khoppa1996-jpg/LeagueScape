@@ -12,10 +12,10 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import com.leaguescape.data.Area;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.leaguescape.util.LeagueScapeConfigConstants;
+import com.leaguescape.util.ResourceJsonLoader;
+import com.leaguescape.util.ResourcePaths;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,8 +39,7 @@ import net.runelite.client.config.ConfigManager;
 @Singleton
 public class AreaGraphService
 {
-	private static final String AREAS_RESOURCE = "areas.json";
-	private static final String CONFIG_GROUP = "leaguescapeConfig";
+	private static final String CONFIG_GROUP = LeagueScapeConfigConstants.CONFIG_GROUP_CUSTOM_AREAS;
 	private static final String KEY_CUSTOM_AREAS = "customAreas";
 	private static final String KEY_REMOVED_AREAS = "removedAreas";
 
@@ -175,23 +174,9 @@ public class AreaGraphService
 	/** Loads areas from built-in resource areas.json (classpath root). Returns empty list if missing or parse error. */
 	private List<Area> loadBuiltInAreas()
 	{
-		try (InputStream is = getClass().getResourceAsStream("/" + AREAS_RESOURCE))
-		{
-			if (is == null)
-			{
-				log.warn("areas.json not found in resources");
-				return new ArrayList<>();
-			}
-			List<Area> list = GSON.fromJson(
-				new InputStreamReader(is, StandardCharsets.UTF_8),
-				new TypeToken<List<Area>>() { }.getType());
-			return list != null ? list : new ArrayList<>();
-		}
-		catch (Exception e)
-		{
-			log.error("Failed to load areas.json", e);
-			return new ArrayList<>();
-		}
+		java.lang.reflect.Type type = new TypeToken<List<Area>>() { }.getType();
+		List<Area> list = ResourceJsonLoader.load(getClass(), ResourcePaths.AREAS_JSON, type, GSON, log);
+		return list != null ? list : new ArrayList<>();
 	}
 
 	/** Loads custom areas from config (KEY_CUSTOM_AREAS JSON). Returns empty list if unset or invalid. */

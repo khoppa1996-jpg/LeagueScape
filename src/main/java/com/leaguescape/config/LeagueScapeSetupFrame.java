@@ -3,6 +3,8 @@ package com.leaguescape.config;
 import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.LeagueScapeSounds;
+import com.leaguescape.util.LeagueScapeColors;
+import com.leaguescape.util.LeagueScapeSwingUtil;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.points.AreaCompletionService;
 import com.leaguescape.points.PointsService;
@@ -24,6 +26,7 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -41,11 +44,9 @@ import net.runelite.client.util.ImageUtil;
  */
 public class LeagueScapeSetupFrame extends JDialog
 {
-	private static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);
-	private static final Color POPUP_TEXT = new Color(0xC4, 0xB8, 0x96);
+	private static final Color POPUP_BG = LeagueScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = LeagueScapeColors.POPUP_TEXT;
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
-	private static final Color PRESSED_INSET_SHADOW = new Color(0, 0, 0, 70);
-	private static final int PRESSED_INSET = 2;
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int TAB_STRIP_WIDTH = 140;
 	private static final int MIN_WIDTH = 520;
@@ -186,7 +187,7 @@ public class LeagueScapeSetupFrame extends JDialog
 
 	private JButton newTabButton(String label, Runnable onSelect, List<JButton> allTabs)
 	{
-		JButton b = newRectangleButton(label, buttonRect, POPUP_TEXT);
+		JButton b = LeagueScapeSwingUtil.newRectangleButton(label, buttonRect, POPUP_TEXT);
 		b.setPreferredSize(TAB_BUTTON_SIZE);
 		b.setMinimumSize(TAB_BUTTON_SIZE);
 		b.setMaximumSize(new Dimension(TAB_STRIP_WIDTH - 12, 28));
@@ -212,10 +213,35 @@ public class LeagueScapeSetupFrame extends JDialog
 		}
 	}
 
+	private static final int OVERLAY_BUTTON_PREVIEW_SIZE = 32;
+
 	private JPanel buildRulesTab()
 	{
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setOpaque(false);
+
+		// Overlay button preview + description
+		JPanel buttonPreviewPanel = new JPanel(new BorderLayout(12, 0));
+		buttonPreviewPanel.setOpaque(false);
+		buttonPreviewPanel.setBorder(new EmptyBorder(12, 12, 8, 12));
+		BufferedImage taskIcon = ImageUtil.loadImageResource(LeagueScapePlugin.class, "task_icon.png");
+		if (taskIcon != null)
+		{
+			Image scaled = taskIcon.getScaledInstance(OVERLAY_BUTTON_PREVIEW_SIZE, OVERLAY_BUTTON_PREVIEW_SIZE, Image.SCALE_SMOOTH);
+			JLabel iconLabel = new JLabel(new javax.swing.ImageIcon(scaled));
+			iconLabel.setOpaque(false);
+			buttonPreviewPanel.add(iconLabel, BorderLayout.WEST);
+		}
+		JLabel buttonDesc = new JLabel("<html><b>LeagueScape overlay button</b><br>"
+			+ "Shown under the minimap, left of the world map orb.<br>"
+			+ "• <b>Left-click:</b> Open Tasks (area task grid in Point buy / Points-to-complete; global task list in World Unlock mode).<br>"
+			+ "• <b>Right-click:</b> Menu — <b>Tasks</b>, <b>World Unlocks</b> (only in World Unlock mode), <b>Rules &amp; Setup</b> (this window).</html>");
+		buttonDesc.setForeground(POPUP_TEXT);
+		buttonDesc.setFont(buttonDesc.getFont().deriveFont(13f));
+		buttonDesc.setOpaque(false);
+		buttonPreviewPanel.add(buttonDesc, BorderLayout.CENTER);
+		panel.add(buttonPreviewPanel, BorderLayout.NORTH);
+
 		String rulesText = getRulesText();
 		javax.swing.JTextArea text = new javax.swing.JTextArea(rulesText);
 		text.setEditable(false);
@@ -224,7 +250,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		text.setForeground(POPUP_TEXT);
 		text.setOpaque(false);
 		text.setCaretColor(POPUP_TEXT);
-		text.setBorder(new EmptyBorder(12, 12, 12, 12));
+		text.setBorder(new EmptyBorder(0, 12, 12, 12));
 		text.setFont(text.getFont().deriveFont(13f));
 		JScrollPane scroll = new JScrollPane(text);
 		scroll.setBorder(null);
@@ -236,18 +262,26 @@ public class LeagueScapeSetupFrame extends JDialog
 
 	private static String getRulesText()
 	{
-		return "LeagueScape is an area-based progression plugin for Old School RuneScape. "
-			+ "You start in a chosen area with a set number of points. Areas are connected by neighbors; "
-			+ "you unlock new areas by spending points (Point buy), or by earning points in each area and then spending to unlock the next (Points to complete), "
-			+ "or by spending points on a World Unlock grid of tiles (skills, quests, bosses, areas).\n\n"
-			+ "Tasks: Each area has a task grid. Complete tasks to earn points. In Point buy and Points-to-complete modes, use the Tasks button on the LeagueScape panel to open the task grid for your current area. "
-			+ "In World Unlock mode, open the World Unlock grid and spend points on tiles; tasks come from unlocked tiles.\n\n"
-			+ "Configuration (this popup):\n"
-			+ "• Rules (this tab): Overview and how to use the setup.\n"
-			+ "• Game Mode: Choose unlock mode, task tier point scale, starter area, starting points, and reset progress. You can also manage the task list and task file path here.\n"
-			+ "• Area Configuration: Import/export area JSON files, add or edit areas (including polygon corners and holes), set area neighbors, and restore removed areas. "
-			+ "Use the game viewport or world map to add/move/remove polygon corners when editing an area (see Controls tab).\n"
-			+ "• Controls: Lists all custom keybinds and actions for area editing and map interactions.";
+		return "How to play LeagueScape\n"
+			+ "LeagueScape is an area-based progression plugin for Old School RuneScape. You start in a chosen starter area with a set number of points. "
+			+ "Complete tasks to earn points. Use points and area completion (depending on mode) to unlock new areas or tiles. "
+			+ "Areas are connected by neighbors; progression is defined in Game Mode and Area Configuration.\n\n"
+			+ "The LeagueScape overlay button (see above) is the quickest way to open Tasks or the right-click menu. You can also use the LeagueScape sidebar panel: "
+			+ "the Tasks button opens the same task view as left-clicking the overlay button; in World Unlock mode use the panel or right-click menu to open the World Unlock grid.\n\n"
+			+ "Unlocking tiles (World Unlock mode only)\n"
+			+ "In World Unlock mode, open the World Unlocks grid via the overlay button right-click menu (World Unlocks) or the sidebar. "
+			+ "The grid shows tiles for skills, quests, bosses, and areas. Spend points on a tile to unlock it; unlocked tiles may require meeting in-game conditions (e.g. quest completed). "
+			+ "Once a tile is unlocked, its tasks become available in the global task list. Unlock tiles in any order that your points and requirements allow.\n\n"
+			+ "Claiming tasks (all modes)\n"
+			+ "• Point buy & Points to complete: Open the task grid for your current area (overlay left-click or sidebar Tasks). Click a task tile to claim it — you earn points when you complete the task in-game. "
+			+ "Only tasks for areas you have unlocked (or the starter area) are available. In Points to complete, you must earn enough points in an area to \"complete\" it before you can unlock neighboring areas.\n"
+			+ "• World Unlock: Open the global task list (overlay left-click or sidebar Tasks). Tasks are grouped by the tile they came from (e.g. a boss or skill). Click a task to claim it; complete it in-game to earn points, then spend points on more tiles or claim more tasks.\n\n"
+			+ "You can also open a specific area's task grid from the world map: right-click an area and choose the option to view its details or task grid (in Point buy / Points to complete, this shows that area's tasks).\n\n"
+			+ "Configuration (this popup)\n"
+			+ "• Rules (this tab): How to play, overlay button, unlocking tiles, and claiming tasks.\n"
+			+ "• Game Mode: Choose unlock mode (Point buy, Points to complete, World Unlock), task tier point scale, starter area, starting points, and reset progress. Manage the task list and task file path here.\n"
+			+ "• Area Configuration: Import/export area JSON files, add or edit areas (polygon corners and holes), set area neighbors, restore removed areas. Use the game viewport or world map to add/move/remove polygon corners when editing (see Controls tab).\n"
+			+ "• Controls: Keybinds and actions for area editing and map interactions.";
 	}
 
 	private JPanel buildGameModeTab(LeagueScapePlugin plugin, ConfigManager configManager, LeagueScapeConfig config,
@@ -289,12 +323,15 @@ public class LeagueScapeSetupFrame extends JDialog
 			+ "• Shift + Right-click on an existing corner: Choose \"Move\" to enter move mode; then click another tile and choose \"Set new corner\" to move the corner there, or \"Cancel move\" to cancel.\n\n"
 			+ "Area editing – World map (when editing an area):\n"
 			+ "• Right-click: Move corner, Remove corner, Fill using others' corners, Begin new polygon, Add neighbors, Done editing, Cancel editing.\n\n"
-			+ "Other: Open the world map and right click an area to see its details and unlock/tasks. Use the LeagueScape sidebar panel for Tasks and World Unlock.";
+			+ "LeagueScape UI: The overlay button (under the minimap, left of the world map orb) — left-click for Tasks, right-click for Tasks, World Unlocks (World Unlock mode), and Rules & Setup. "
+			+ "You can also use the LeagueScape sidebar panel for Tasks and (in World Unlock mode) to open the World Unlock grid. Open the world map and right-click an area to see its details and unlock/tasks.";
 	}
 
 	private JButton newRectangleButton(String text)
 	{
-		return newRectangleButton(text, buttonRect, POPUP_TEXT);
+		JButton b = LeagueScapeSwingUtil.newRectangleButton(text, buttonRect, POPUP_TEXT);
+		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
+		return b;
 	}
 
 	/**
@@ -328,45 +365,6 @@ public class LeagueScapeSetupFrame extends JDialog
 		g.drawImage(img, x + tw - b, y + b, x + tw, y + th - b, w - b, b, w, h - b, null);
 		// Center (stretched)
 		g.drawImage(img, x + b, y + b, x + tw - b, y + th - b, b, b, w - b, h - b, null);
-	}
-
-	private static JButton newRectangleButton(String text, BufferedImage buttonRect, Color textColor)
-	{
-		BufferedImage img = buttonRect;
-		JButton b = new JButton(text)
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				if (img != null)
-				{
-					g.drawImage(img.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-					g.setColor(getForeground());
-					g.setFont(getFont());
-					java.awt.FontMetrics fm = g.getFontMetrics();
-					String t = getText();
-					int x = (getWidth() - fm.stringWidth(t)) / 2;
-					int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-					g.drawString(t, x, y);
-				}
-				else
-				{
-					super.paintComponent(g);
-				}
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setForeground(textColor);
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(img == null);
-		b.setOpaque(img == null);
-		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
-		return b;
 	}
 
 }

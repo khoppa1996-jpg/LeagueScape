@@ -26,6 +26,8 @@ public class TaskTile
 	boolean requireAllAreas;
 	/** Optional quest requirements (e.g. "Waterfall Quest" or "Another Slice of H.A.M., Giant Dwarf"); must be complete before task can be claimed. */
 	String requirements;
+	/** Optional boss id for icon lookup (e.g. killCount taskType uses boss icon from bossicons). */
+	String bossId;
 
 	/**
 	 * Creates a task tile with no task type (icon lookup will fall back to display name).
@@ -40,7 +42,7 @@ public class TaskTile
 	 */
 	public static TaskTile of(String id, int tier, String displayName, int points, int row, int col)
 	{
-		return new TaskTile(id, tier, displayName, points, row, col, null, null, true, null);
+		return new TaskTile(id, tier, displayName, points, row, col, null, null, true, null, null);
 	}
 
 	/**

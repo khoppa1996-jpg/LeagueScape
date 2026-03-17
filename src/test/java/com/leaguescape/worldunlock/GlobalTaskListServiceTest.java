@@ -176,8 +176,8 @@ public class GlobalTaskListServiceTest
 		when(configManager.getConfiguration(eq(STATE_GROUP), eq("globalTaskProgress_completed"))).thenReturn(null);
 
 		List<TaskTile> grid = new ArrayList<>();
-		grid.add(new TaskTile("0,0", 0, "Free", 0, 0, 0, null, null, true, null));
-		grid.add(new TaskTile("1,0", 1, "Chop Logs", 10, 1, 0, "Woodcutting", null, true, null));
+		grid.add(new TaskTile("0,0", 0, "Free", 0, 0, 0, null, null, true, null, null));
+		grid.add(new TaskTile("1,0", 1, "Chop Logs", 10, 1, 0, "Woodcutting", null, true, null, null));
 
 		TaskState centerState = service.getGlobalState("0,0", grid);
 		assertEquals(TaskState.CLAIMED, centerState);
@@ -194,9 +194,9 @@ public class GlobalTaskListServiceTest
 		when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_CLAIMED))).thenReturn(null);
 
 		List<TaskTile> grid = new ArrayList<>();
-		grid.add(new TaskTile("0,0", 0, "Free", 0, 0, 0, null, null, true, null));
-		grid.add(new TaskTile("1,0", 1, "Chop Logs", 10, 1, 0, "Woodcutting", null, true, null));
-		grid.add(new TaskTile("2,0", 1, "Burn Logs", 10, 2, 0, "Firemaking", null, true, null));
+		grid.add(new TaskTile("0,0", 0, "Free", 0, 0, 0, null, null, true, null, null));
+		grid.add(new TaskTile("1,0", 1, "Chop Logs", 10, 1, 0, "Woodcutting", null, true, null, null));
+		grid.add(new TaskTile("2,0", 1, "Burn Logs", 10, 2, 0, "Firemaking", null, true, null, null));
 
 		// (2,0) neighbors (1,0) and (3,0). (1,0) is in grid but not claimed. So (2,0) is LOCKED
 		TaskState state = service.getGlobalState("2,0", grid);
@@ -227,5 +227,32 @@ public class GlobalTaskListServiceTest
 		// With lazy assignment and strict one-use, we get center + as many adjacent as we have tasks in the pool (here 1)
 		assertTrue("Fallback should use any tasks when no-area is empty, got " + grid.size(),
 			grid.size() >= 2);
+	}
+
+	@Test
+	public void testIsStarterAreaUnlockedOnGridReturnsFalseWhenStarterNotUnlocked()
+	{
+		when(config.startingArea()).thenReturn("lumbridge");
+		when(worldUnlockService.getUnlockedIds()).thenReturn(Collections.emptySet());
+
+		assertFalse(service.isStarterAreaUnlockedOnGrid());
+	}
+
+	@Test
+	public void testIsStarterAreaUnlockedOnGridReturnsFalseWhenStarterAreaConfigEmpty()
+	{
+		when(config.startingArea()).thenReturn("");
+		when(worldUnlockService.getUnlockedIds()).thenReturn(Collections.singleton("lumbridge"));
+
+		assertFalse(service.isStarterAreaUnlockedOnGrid());
+	}
+
+	@Test
+	public void testIsStarterAreaUnlockedOnGridReturnsTrueWhenStarterUnlocked()
+	{
+		when(config.startingArea()).thenReturn("lumbridge");
+		when(worldUnlockService.getUnlockedIds()).thenReturn(new HashSet<>(Arrays.asList("lumbridge", "varrock")));
+
+		assertTrue(service.isStarterAreaUnlockedOnGrid());
 	}
 }

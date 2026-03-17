@@ -16154,7 +16154,7 @@
       "edgeville",
       "falador",
       "southwestern_wilderness",
-      "taverly"
+      "taverley"
     ],
     "unlockCost": 300,
     "pointsToComplete": 300
@@ -16591,7 +16591,7 @@
       "lassar",
       "port_sarim_mudskipper",
       "rimmington",
-      "taverly"
+      "taverley"
     ],
     "unlockCost": 400,
     "pointsToComplete": 400
@@ -20291,8 +20291,8 @@
     "pointsToComplete": 300
   },
   {
-    "id": "taverly",
-    "displayName": "Taverly",
+    "id": "taverley",
+    "displayName": "Taverley",
     "polygons": [
       [
         [
@@ -21320,7 +21320,7 @@
     ],
     "neighbors": [
       "lassar",
-      "taverly",
+      "taverley",
       "trollheim"
     ],
     "unlockCost": 450,
@@ -27349,7 +27349,7 @@
       "draynor",
       "feldip_hills",
       "khazard_battlegrounds",
-      "taverly"
+      "taverley"
     ],
     "unlockCost": 300,
     "pointsToComplete": 200
@@ -29191,7 +29191,7 @@
       "corsair_cove",
       "falador",
       "port_sarim_mudskipper",
-      "taverly"
+      "taverley"
     ],
     "unlockCost": 300,
     "pointsToComplete": 200
@@ -67372,7 +67372,7 @@
     "neighbors": [
       "burthorpe",
       "camelot_seers",
-      "taverly"
+      "taverley"
     ],
     "unlockCost": 200,
     "pointsToComplete": 200
