@@ -107,17 +107,17 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		topButtons.setLayout(new BoxLayout(topButtons, BoxLayout.Y_AXIS));
 		topButtons.setBackground(sectionBg);
 		topButtons.setOpaque(sectionOpaque);
-		JButton addBtn = new JButton("Add new area");
+		JButton addBtn = new JButton(LeagueScapeSetupStrings.AREA_ADD_NEW);
 		addBtn.addActionListener(e -> startEditingNew());
 		addBtn.setAlignmentX(LEFT_ALIGNMENT);
 		styleButton(addBtn);
 		topButtons.add(addBtn);
-		JButton importBtn = new JButton("Import Area JSON");
+		JButton importBtn = new JButton(LeagueScapeSetupStrings.AREA_IMPORT_JSON);
 		importBtn.addActionListener(e -> importAreaJson());
 		importBtn.setAlignmentX(LEFT_ALIGNMENT);
 		styleButton(importBtn);
 		topButtons.add(importBtn);
-		JButton exportBtn = new JButton("Export Area JSON");
+		JButton exportBtn = new JButton(LeagueScapeSetupStrings.AREA_EXPORT_JSON);
 		exportBtn.addActionListener(e -> exportAreaJson());
 		exportBtn.setAlignmentX(LEFT_ALIGNMENT);
 		styleButton(exportBtn);
@@ -134,7 +134,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		listScroll.setOpaque(sectionOpaque);
 		listScroll.getViewport().setBackground(sectionBg);
 		listScroll.getViewport().setOpaque(sectionOpaque);
-		mainPanel.add(createCollapsibleSection("Areas", listScroll, true, null));
+		mainPanel.add(createCollapsibleSection(LeagueScapeSetupStrings.AREA_SECTION_LIST, listScroll, true, null));
 
 		mainPanel.add(new JLabel(" "));
 		removedPanel = com.leaguescape.util.LeagueScapeSwingUtil.newScrollableTrackWidthPanel();
@@ -146,7 +146,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		removedScroll.setOpaque(sectionOpaque);
 		removedScroll.getViewport().setBackground(sectionBg);
 		removedScroll.getViewport().setOpaque(sectionOpaque);
-		mainPanel.add(createCollapsibleSection("Removed areas (Restore to add back)", removedScroll, false, null));
+		mainPanel.add(createCollapsibleSection(LeagueScapeSetupStrings.AREA_SECTION_REMOVED, removedScroll, false, null));
 
 		editPanel = new JPanel();
 		editPanel.setLayout(new BoxLayout(editPanel, BoxLayout.Y_AXIS));
@@ -154,7 +154,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		editPanel.setBackground(sectionBg);
 		editPanel.setOpaque(sectionOpaque);
 		JToggleButton[] editHeaderRef = new JToggleButton[1];
-		mainPanel.add(createCollapsibleSection("Edit area", editPanel, false, editHeaderRef));
+		mainPanel.add(createCollapsibleSection(LeagueScapeSetupStrings.AREA_SECTION_EDIT, editPanel, false, editHeaderRef));
 		editSectionHeader = editHeaderRef[0];
 
 		makeHoleSectionPanel = new JPanel();
@@ -169,7 +169,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		JPanel removeRow = new JPanel(new BorderLayout());
 		removeRow.setBackground(sectionBg);
 		removeRow.setOpaque(sectionOpaque);
-		JLabel removeLbl = new JLabel("Remove polygon");
+		JLabel removeLbl = new JLabel(LeagueScapeSetupStrings.AREA_MAKE_HOLE_REMOVE_POLYGON);
 		removeLbl.setForeground(POPUP_TEXT);
 		removeRow.add(removeLbl, BorderLayout.WEST);
 		removeRow.add(makeHoleInnerCombo, BorderLayout.EAST);
@@ -177,18 +177,18 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		JPanel fromRow = new JPanel(new BorderLayout());
 		fromRow.setBackground(sectionBg);
 		fromRow.setOpaque(sectionOpaque);
-		JLabel fromLbl = new JLabel("from polygon");
+		JLabel fromLbl = new JLabel(LeagueScapeSetupStrings.AREA_MAKE_HOLE_FROM_POLYGON);
 		fromLbl.setForeground(POPUP_TEXT);
 		fromRow.add(fromLbl, BorderLayout.WEST);
 		fromRow.add(makeHoleOuterCombo, BorderLayout.EAST);
 		makeHoleSectionPanel.add(fromRow);
-		JButton makeHoleBtn = new JButton("Make hole");
+		JButton makeHoleBtn = new JButton(LeagueScapeSetupStrings.AREA_MAKE_HOLE_BUTTON);
 		makeHoleBtn.addActionListener(e -> applyMakeHole());
 		makeHoleBtn.setAlignmentX(LEFT_ALIGNMENT);
 		styleButton(makeHoleBtn);
 		makeHoleSectionPanel.add(makeHoleBtn);
 		JToggleButton[] makeHoleHeaderRef = new JToggleButton[1];
-		mainPanel.add(createCollapsibleSection("Make hole", makeHoleSectionPanel, false, makeHoleHeaderRef));
+		mainPanel.add(createCollapsibleSection(LeagueScapeSetupStrings.AREA_SECTION_MAKE_HOLE, makeHoleSectionPanel, false, makeHoleHeaderRef));
 		makeHoleSectionHeader = makeHoleHeaderRef[0];
 
 		JScrollPane scrollPane = new JScrollPane(mainPanel);
@@ -257,11 +257,11 @@ public class LeagueScapeAreaConfigSection extends JPanel
 			JPanel buttons = new JPanel();
 			buttons.setBackground(sectionBg);
 			buttons.setOpaque(sectionOpaque);
-			JButton editBtn = new JButton("Edit");
+			JButton editBtn = new JButton(LeagueScapeSetupStrings.AREA_ROW_EDIT);
 			styleButton(editBtn);
 			editBtn.addActionListener(e -> startEditing(a.getId()));
 			buttons.add(editBtn);
-			JButton removeBtn = new JButton("Remove");
+			JButton removeBtn = new JButton(LeagueScapeSetupStrings.AREA_ROW_REMOVE);
 			styleButton(removeBtn);
 			removeBtn.addActionListener(e -> removeArea(a.getId()));
 			buttons.add(removeBtn);
@@ -293,7 +293,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 			remLabel.setToolTipText(displayName);
 			remLabel.setMinimumSize(new Dimension(0, 0));
 			row.add(remLabel, BorderLayout.CENTER);
-			JButton restoreBtn = new JButton("Restore");
+			JButton restoreBtn = new JButton(LeagueScapeSetupStrings.AREA_ROW_RESTORE);
 			styleButton(restoreBtn);
 			restoreBtn.addActionListener(e -> {
 				areaGraphService.restoreArea(areaId);
@@ -341,12 +341,12 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		if (editSectionHeader != null)
 		{
 			editSectionHeader.setSelected(true);
-			editSectionHeader.setText("▼ Edit area");
+			editSectionHeader.setText(LeagueScapeSetupStrings.AREA_EDIT_HEADER_EXPANDED);
 			editPanel.setVisible(true);
 			if (makeHoleSectionHeader != null && makeHoleSectionPanel != null)
 			{
 				makeHoleSectionHeader.setSelected(true);
-				makeHoleSectionHeader.setText("▼ Make hole");
+				makeHoleSectionHeader.setText(LeagueScapeSetupStrings.AREA_MAKE_HOLE_HEADER_EXPANDED);
 				makeHoleSectionPanel.setVisible(true);
 			}
 			for (Container p = editSectionHeader.getParent(); p != null; p = p.getParent())
@@ -356,7 +356,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		editingHoles.clear();
 		if (holes != null) for (List<int[]> h : holes) editingHoles.add(new ArrayList<>(h));
 
-		JLabel idLbl = new JLabel("Area ID (slug, e.g. " + (areaId.startsWith("new_") ? "lumbridge):" : "):"));
+		JLabel idLbl = new JLabel(areaId.startsWith("new_") ? LeagueScapeSetupStrings.AREA_ID_LABEL_NEW : LeagueScapeSetupStrings.AREA_ID_LABEL_EXISTING);
 		styleLabel(idLbl);
 		editPanel.add(idLbl);
 		idField = new JTextField(id.startsWith("new_") ? "" : id, 12);
@@ -366,7 +366,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		idField.setForeground(POPUP_TEXT);
 		editPanel.add(idField);
 
-		JLabel displayLbl = new JLabel("Display name:");
+		JLabel displayLbl = new JLabel(LeagueScapeSetupStrings.AREA_DISPLAY_NAME);
 		styleLabel(displayLbl);
 		editPanel.add(displayLbl);
 		displayNameField = new JTextField(displayName, 12);
@@ -375,7 +375,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		displayNameField.setForeground(POPUP_TEXT);
 		editPanel.add(displayNameField);
 
-		JLabel descLbl = new JLabel("Description (shown in Area Details on world map):");
+		JLabel descLbl = new JLabel(LeagueScapeSetupStrings.AREA_DESCRIPTION);
 		styleLabel(descLbl);
 		editPanel.add(descLbl);
 		descriptionField = new JTextArea(description != null ? description : "", 3, 20);
@@ -459,14 +459,14 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		neighborsScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, maxNeighborsHeight));
 		editPanel.add(neighborsScroll);
 
-		JLabel costLbl = new JLabel("Unlock cost (points to spend to unlock this area):");
+		JLabel costLbl = new JLabel(LeagueScapeSetupStrings.AREA_UNLOCK_COST);
 		styleLabel(costLbl);
 		editPanel.add(costLbl);
 		unlockCostSpinner = new JSpinner(new SpinnerNumberModel(unlockCost, 0, 9999, 1));
 		styleSpinner(unlockCostSpinner);
 		editPanel.add(unlockCostSpinner);
 
-		JLabel ptsLbl = new JLabel("Points to complete (points to earn in this area to complete it; used in Points-to-complete mode):");
+		JLabel ptsLbl = new JLabel(LeagueScapeSetupStrings.AREA_POINTS_TO_COMPLETE);
 		styleLabel(ptsLbl);
 		editPanel.add(ptsLbl);
 		pointsToCompleteSpinner = new JSpinner(new SpinnerNumberModel(pointsToComplete, 0, 9999, 1));
@@ -480,7 +480,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		saveBtn = new JButton("Save");
 		styleButton(saveBtn);
 		saveBtn.addActionListener(e -> saveArea(areaId));
-		cancelBtn = new JButton("Cancel");
+		cancelBtn = new JButton(LeagueScapeSetupStrings.AREA_CANCEL);
 		styleButton(cancelBtn);
 		cancelBtn.addActionListener(e -> cancelEdit());
 		saveCancel.add(saveBtn);
@@ -525,7 +525,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		if (outerIdx < 0 || innerIdx < 0) return;
 		if (outerIdx == innerIdx)
 		{
-			JOptionPane.showMessageDialog(this, "Choose different polygons: outer and inner must differ.", "Make hole", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, LeagueScapeSetupStrings.AREA_MAKE_HOLE_DIFFERENT_POLYGONS, LeagueScapeSetupStrings.AREA_MAKE_HOLE_TITLE, JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		List<List<int[]>> all = plugin.getAllEditingPolygons();
@@ -539,7 +539,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		}
 		if (!areaGraphService.isPolygonInsidePolygon(outerPoly, innerPoly))
 		{
-			JOptionPane.showMessageDialog(this, "The inner polygon must be entirely inside the outer polygon (e.g. island inside ocean).", "Make hole", JOptionPane.WARNING_MESSAGE);
+			JOptionPane.showMessageDialog(this, LeagueScapeSetupStrings.AREA_MAKE_HOLE_INNER_INSIDE, LeagueScapeSetupStrings.AREA_MAKE_HOLE_TITLE, JOptionPane.WARNING_MESSAGE);
 			return;
 		}
 		List<int[]> removed = plugin.removeEditingPolygonAt(innerIdx);
@@ -586,12 +586,12 @@ public class LeagueScapeAreaConfigSection extends JPanel
 	private void refreshHolesDisplay()
 	{
 		if (holesCountLabel == null || holesListPanel == null) return;
-		holesCountLabel.setText("Holes (cut out): " + editingHoles.size());
+		holesCountLabel.setText(LeagueScapeSetupStrings.areaHolesCountLabel(editingHoles.size()));
 		holesListPanel.removeAll();
 		for (int i = 0; i < editingHoles.size(); i++)
 		{
 			List<int[]> h = editingHoles.get(i);
-			JLabel l = new JLabel("  Hole " + (i + 1) + ": " + h.size() + " vertices");
+			JLabel l = new JLabel(LeagueScapeSetupStrings.areaHoleRowLabel(i, h.size()));
 			styleLabel(l);
 			holesListPanel.add(l);
 		}
@@ -609,7 +609,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 			JPanel row = new JPanel(new BorderLayout());
 			row.setBackground(sectionBg);
 			row.setOpaque(sectionOpaque);
-			JButton removeBtn = new JButton("Remove");
+			JButton removeBtn = new JButton(LeagueScapeSetupStrings.AREA_ROW_REMOVE);
 			styleButton(removeBtn);
 			removeBtn.setActionCommand(String.valueOf(i));
 			removeBtn.addActionListener(e -> {
@@ -625,7 +625,7 @@ public class LeagueScapeAreaConfigSection extends JPanel
 				}
 			});
 			row.add(removeBtn, BorderLayout.WEST);
-			JLabel coordLbl = new JLabel("  " + (i + 1) + ": " + p[0] + ", " + p[1] + ", " + p[2]);
+			JLabel coordLbl = new JLabel(LeagueScapeSetupStrings.areaCornerRowLabel(i, p[0], p[1], p[2]));
 			styleLabel(coordLbl);
 			row.add(coordLbl, BorderLayout.CENTER);
 			cornersPanel.add(row);
@@ -717,16 +717,16 @@ public class LeagueScapeAreaConfigSection extends JPanel
 				refreshAreaList();
 				refreshRemovedList();
 				JOptionPane.showMessageDialog(this,
-					"Imported " + count + " areas from " + file.getName() + ".\nImported areas replace your custom areas; built-in areas are unchanged.",
-					"Import Complete", JOptionPane.INFORMATION_MESSAGE);
+					LeagueScapeSetupStrings.areaImportSuccess(count, file.getName()),
+					LeagueScapeSetupStrings.AREA_IMPORT_COMPLETE_TITLE, JOptionPane.INFORMATION_MESSAGE);
 			}
 			catch (IllegalArgumentException ex)
 			{
-				JOptionPane.showMessageDialog(this, "Invalid area JSON:\n\n" + ex.getMessage(), "Import Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, LeagueScapeSetupStrings.areaImportInvalidJson(ex.getMessage()), LeagueScapeSetupStrings.AREA_IMPORT_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
 			}
 			catch (Exception ex)
 			{
-				JOptionPane.showMessageDialog(this, "Import failed: " + ex.getMessage(), "Import Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, LeagueScapeSetupStrings.areaImportFailed(ex.getMessage()), LeagueScapeSetupStrings.AREA_IMPORT_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -739,11 +739,11 @@ public class LeagueScapeAreaConfigSection extends JPanel
 		{
 			String json = areaGraphService.exportAreasToJson();
 			Files.write(file.toPath(), json.getBytes(StandardCharsets.UTF_8));
-			JOptionPane.showMessageDialog(this, "Exported " + areaGraphService.getAreas().size() + " areas to " + file.getName(), "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, LeagueScapeSetupStrings.areaExportSuccess(areaGraphService.getAreas().size(), file.getName()), LeagueScapeSetupStrings.AREA_EXPORT_COMPLETE_TITLE, JOptionPane.INFORMATION_MESSAGE);
 		}
 		catch (Exception ex)
 		{
-			JOptionPane.showMessageDialog(this, "Export failed: " + ex.getMessage(), "Export Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, LeagueScapeSetupStrings.areaExportFailed(ex.getMessage()), LeagueScapeSetupStrings.AREA_EXPORT_ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
 		}
 	}
 

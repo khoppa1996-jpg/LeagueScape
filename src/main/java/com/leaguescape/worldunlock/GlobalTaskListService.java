@@ -2,6 +2,7 @@ package com.leaguescape.worldunlock;
 
 import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.constants.TaskTypes;
+import com.leaguescape.constants.WorldUnlockTileType;
 import com.leaguescape.grid.GridPos;
 import com.leaguescape.grid.Spiral;
 import com.leaguescape.grid.RevealLogic;
@@ -47,6 +48,12 @@ public class GlobalTaskListService
 	private static final String KEY_GLOBAL_LAST_VIEWED = "globalTaskProgress_lastViewed";
 	/** Stores which grid positions have been claimed (for reveal); format "row,col||row,col". */
 	private static final String KEY_GLOBAL_CLAIMED_POSITIONS = "globalTaskProgress_claimedPositions";
+	/** Ring numbers (Chebyshev) that already awarded a global grid ring-completion bonus. */
+	private static final String KEY_GLOBAL_RING_BONUS = "globalTaskProgress_ringBonus";
+	/** Persisted seed so {@link #buildGlobalGrid(int)} matches the Global Task panel layout. */
+	private static final String KEY_GLOBAL_LAYOUT_SEED = "globalTaskProgress_layoutSeed";
+	/** Max bonus points for completing one full ring on the global task grid. */
+	private static final int RING_BONUS_CAP = 250;
 	private static final String ID_SEP = ",";
 	private static final String POS_ENTRY_SEP = "||";
 	/** Separator for list of claimed positions (must not be comma, since position is "row,col"). */
@@ -84,6 +91,28 @@ public class GlobalTaskListService
 		this.taskGridService = taskGridService;
 	}
 
+	/**
+	 * Stable layout seed for the global task grid (persisted). Call from the Global Task panel so
+	 * {@link #buildGlobalGrid(int)} and ring bonuses use the same shuffle as the UI.
+	 */
+	public int getOrCreateLayoutSeed()
+	{
+		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_LAYOUT_SEED);
+		if (raw != null && !raw.trim().isEmpty())
+		{
+			try
+			{
+				return Integer.parseInt(raw.trim());
+			}
+			catch (NumberFormatException ignored)
+			{
+			}
+		}
+		int seed = (int) System.nanoTime();
+		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_LAYOUT_SEED, String.valueOf(seed));
+		return seed;
+	}
+
 	/** Normalized key for a task (same as TaskGridService: displayName lowercase). */
 	public static String taskKey(TaskDefinition t)
 	{
@@ -107,7 +136,10 @@ public class GlobalTaskListService
 		return req.stream().allMatch(unlockedAreaIds::contains);
 	}
 
-	/** True if the task has a skill bracket requirement and that bracket is unlocked (for prioritization over no-area tasks). */
+	/**
+	 * True if the task has at least one skill-bracket token in requirements and every such bracket's skill tile is unlocked
+	 * (for prioritization over no-area tasks).
+	 */
 	private boolean isUnlockedSkillBracketTask(TaskDefinition t)
 	{
 		String taskType = t.getTaskType();
@@ -115,6 +147,7 @@ public class GlobalTaskListService
 		if (taskType == null || taskType.trim().isEmpty() || req == null || req.trim().isEmpty())
 			return false;
 		Set<String> unlockedIds = worldUnlockService.getUnlockedIds();
+		boolean foundBracket = false;
 		for (String part : req.split(","))
 		{
 			String token = part.trim();
@@ -122,14 +155,14 @@ public class GlobalTaskListService
 			Matcher bracket = SKILL_BRACKET_ONLY.matcher(token);
 			if (bracket.matches())
 			{
+				foundBracket = true;
 				int minLevel = Integer.parseInt(bracket.group(1));
 				String skillTileId = worldUnlockService.getSkillTileIdForLevel(taskType.trim(), minLevel);
-				if (skillTileId != null && unlockedIds.contains(skillTileId))
-					return true;
-				return false; // has bracket requirement but not unlocked
+				if (skillTileId == null || !unlockedIds.contains(skillTileId))
+					return false;
 			}
 		}
-		return false;
+		return foundBracket;
 	}
 
 	/** True if the task has a non-empty required-area list. */
@@ -168,6 +201,21 @@ public class GlobalTaskListService
 	}
 
 	/**
+	 * Global task grid ordering among Collection Log tasks: boss-gated ({@code bossId}) first, then area-bound entries,
+	 * then non-area-specific filler ({@link #isCollectionLogWithoutBossOrArea}). Non-collection tasks return 0.
+	 */
+	private static int collectionLogGridRank(TaskDefinition t)
+	{
+		if (t == null || !TaskTypes.isCollectionLogType(t.getTaskType()))
+			return 0;
+		if (t.getBossId() != null && !t.getBossId().trim().isEmpty())
+			return 3;
+		if (isCollectionLogWithoutBossOrArea(t))
+			return 1;
+		return 2;
+	}
+
+	/**
 	 * Returns the rollable task list for the Global Task panel.
 	 * Tasks are filtered by World Unlock panel state:
 	 * - Area tasks: require all areas (or any if areaRequirement=any) to be unlocked
@@ -182,6 +230,7 @@ public class GlobalTaskListService
 	{
 		UnlockedContent unlocked = buildUnlockedContent();
 		LinkedHashMap<String, TaskDefinition> byKey = new LinkedHashMap<>();
+		Set<String> globalClaimedTaskKeys = loadSet(KEY_GLOBAL_CLAIMED);
 
 		// 1. Add tasks from unlocked taskDisplayNames tiles (explicit task lists)
 		// In World Unlock mode, Quest and Achievement Diary tasks do not populate.
@@ -209,18 +258,18 @@ public class GlobalTaskListService
 			if (isKillCountTask(t) || com.leaguescape.constants.TaskTypes.QUEST.equalsIgnoreCase(t != null ? t.getTaskType() : null)) continue;
 			String key = taskKey(t);
 			if (key.isEmpty() || byKey.containsKey(key)) continue;
-			if (canTaskAppearWithUnlocks(t, unlocked, byKey))
+			if (canTaskAppearWithUnlocks(t, unlocked, byKey, globalClaimedTaskKeys))
 				byKey.put(key, t);
 		}
-		// 2b. Add killCount tasks in order: difficulty 2, then 3, 4, 5 (each tier requires previous in chain)
-		for (int difficulty = 2; difficulty <= 5; difficulty++)
+		// 2b. Add killCount tasks in order: difficulty 1, then 2–5 (chain: previous step must be claimed on global grid)
+		for (int difficulty = 1; difficulty <= 5; difficulty++)
 		{
 			for (TaskDefinition t : allTasks)
 			{
 				if (!isKillCountTask(t) || t.getDifficulty() != difficulty) continue;
 				String key = taskKey(t);
 				if (key.isEmpty() || byKey.containsKey(key)) continue;
-				if (canTaskAppearWithUnlocks(t, unlocked, byKey))
+				if (canTaskAppearWithUnlocks(t, unlocked, byKey, globalClaimedTaskKeys))
 					byKey.put(key, t);
 			}
 		}
@@ -278,6 +327,47 @@ public class GlobalTaskListService
 		return t != null && "killCount".equalsIgnoreCase(t.getTaskType());
 	}
 
+	/** Combat achievements that gate on {@link TaskDefinition#getBossId()} use boss + unlock-tile tokens in §5b/§7, not generic quest-unlock text matching. */
+	private static boolean isCombatWithBossId(TaskDefinition task)
+	{
+		return task != null && "Combat".equalsIgnoreCase(task.getTaskType())
+			&& task.getBossId() != null && !task.getBossId().trim().isEmpty();
+	}
+
+	/**
+	 * Collection Log tasks with {@code bossId} whose requirements are empty or only world-unlock tile ids (e.g. {@code zulrah})
+	 * should use §1/§5/§7 only, not §3 quest text — same idea as legacy {@code "Defeat …"} prerequisites and {@link #isCombatWithBossId}.
+	 * If requirements include non-tile text (e.g. a quest name), §3 still applies.
+	 */
+	private boolean isCollectionLogBossGatedOnlyByUnlockTiles(TaskDefinition task)
+	{
+		if (task == null || !TaskTypes.isCollectionLogType(task.getTaskType())
+			|| task.getBossId() == null || task.getBossId().trim().isEmpty())
+			return false;
+		String req = task.getRequirements();
+		boolean hasReq = req != null && !req.trim().isEmpty();
+		return !hasReq || requirementsAllTokensResolveToWorldUnlockTiles(task);
+	}
+
+	/**
+	 * True when every comma-separated requirements token resolves to a world-unlock tile id (boss/area/quest/skill tile).
+	 * Used so tasks that only reference unlock tiles can pass §3 when no quest tiles are unlocked yet.
+	 */
+	private boolean requirementsAllTokensResolveToWorldUnlockTiles(TaskDefinition task)
+	{
+		String req = task.getRequirements();
+		if (req == null || req.trim().isEmpty())
+			return false;
+		for (String part : req.split(","))
+		{
+			String token = part.trim();
+			if (token.isEmpty()) continue;
+			if (worldUnlockService.resolvePrerequisiteToTileId(token) == null)
+				return false;
+		}
+		return true;
+	}
+
 	/** True if this task is a Quest or Achievement Diary task; such tasks do not populate in World Unlock mode. */
 	private static boolean isQuestOrDiaryTask(TaskDefinition t)
 	{
@@ -289,9 +379,11 @@ public class GlobalTaskListService
 	/**
 	 * True if this task can appear in the Global Task panel given current World Unlock state.
 	 * Mirrors the unlock-type gating from World Unlock tiles.
-	 * @param alreadyInList for killCount chain: tasks already added (previous in chain must be present)
+	 * @param alreadyInList task catalog built so far (used to resolve killCount prerequisite display names)
+	 * @param globalClaimedTaskKeys keys claimed on the global task grid; killCount chains require the previous step to be claimed
 	 */
-	private boolean canTaskAppearWithUnlocks(TaskDefinition task, UnlockedContent u, Map<String, TaskDefinition> alreadyInList)
+	private boolean canTaskAppearWithUnlocks(TaskDefinition task, UnlockedContent u, Map<String, TaskDefinition> alreadyInList,
+		Set<String> globalClaimedTaskKeys)
 	{
 		// 1. Area: required areas must be unlocked
 		List<String> requiredAreas = task.getRequiredAreaIds();
@@ -320,7 +412,7 @@ public class GlobalTaskListService
 		if (taskType != null && containsSkillNameIgnoreCase(u.allSkillNames, taskType) && !containsSkillNameIgnoreCase(u.skills, taskType))
 			return false;
 
-		// 2b. Skill bracket: only allow tasks whose specific skill bracket is unlocked (e.g. Fletching 31-40 only when that bracket is unlocked)
+		// 2b. Skill bracket: every "min-max" token must match an unlocked skill tile for this skill (comma-separated = AND).
 		if (taskType != null && containsSkillNameIgnoreCase(u.allSkillNames, taskType) && hasRequirements)
 		{
 			String req = task.getRequirements();
@@ -338,7 +430,6 @@ public class GlobalTaskListService
 						String skillTileId = worldUnlockService.getSkillTileIdForLevel(taskType.trim(), minLevel);
 						if (skillTileId != null && !unlockedIds.contains(skillTileId))
 							return false;
-						break; // one bracket requirement satisfied
 					}
 				}
 			}
@@ -350,17 +441,29 @@ public class GlobalTaskListService
 		boolean isSkillTask = taskType != null && containsSkillNameIgnoreCase(u.allSkillNames, taskType);
 		boolean hasSkillBracketReq = isSkillTask && hasRequirements && task.getRequirements().matches(".*\\d+\\s*-\\s*\\d+.*");
 		boolean questTypeOrReqNeedsQuestUnlock = com.leaguescape.constants.TaskTypes.QUEST.equalsIgnoreCase(taskType)
-			|| (hasRequirements && !isTaskPrereqReq && !hasSkillBracketReq && !isCollectionLogWithoutBossOrArea(task));
-		if (questTypeOrReqNeedsQuestUnlock)
+			|| (hasRequirements && !isKillCountTask(task) && !isTaskPrereqReq && !hasSkillBracketReq && !isCollectionLogWithoutBossOrArea(task));
+		// Combat+bossId and Collection Log+bossId (tile-id-only requirements): gated by boss unlock + §7, not §3 quest text.
+		boolean useQuestUnlockSection = questTypeOrReqNeedsQuestUnlock && !isCombatWithBossId(task)
+			&& !isCollectionLogBossGatedOnlyByUnlockTiles(task);
+		if (useQuestUnlockSection)
 		{
+			boolean hasReqText = task.getRequirements() != null && !task.getRequirements().trim().isEmpty();
 			if (u.questRequirements.isEmpty())
-				return false;
-			if (task.getRequirements() != null && !task.getRequirements().trim().isEmpty())
+			{
+				// Allow when every requirement token is a resolvable unlock tile (checked in §7); otherwise need at least one quest tile unlocked.
+				if (!hasReqText || !requirementsAllTokensResolveToWorldUnlockTiles(task))
+					return false;
+			}
+			else if (hasReqText)
 			{
 				for (String part : task.getRequirements().split(","))
 				{
-					String q = part.trim().toLowerCase();
-					if (q.isEmpty()) continue;
+					String raw = part.trim();
+					if (raw.isEmpty()) continue;
+					// Unlock-tile names/ids: satisfied by §6–7, not by quest-unlock text pool
+					if (worldUnlockService.resolvePrerequisiteToTileId(raw) != null)
+						continue;
+					String q = raw.toLowerCase();
 					boolean satisfied = u.questRequirements.stream()
 						.anyMatch(unlocked -> unlocked.contains(q) || q.contains(unlocked));
 					if (!satisfied)
@@ -410,7 +513,7 @@ public class GlobalTaskListService
 				return false;
 		}
 
-		// 6. killCount: first task (T2) requires boss AND area unlocked (AND); T3+ require previous task in chain
+		// 6. killCount: comma reqs = AND of unlocked tiles (boss + area, etc.); single req = prior chain step claimed OR unlock tile (quest/boss/area)
 		if ("killCount".equalsIgnoreCase(taskType))
 		{
 			String req = task.getRequirements() != null ? task.getRequirements().trim() : "";
@@ -430,10 +533,26 @@ public class GlobalTaskListService
 			}
 			else
 			{
-				// Single requirement: previous task in chain must already be in the list
 				String prevKey = taskKeyFromName(req);
-				if (!prevKey.isEmpty() && (alreadyInList == null || !alreadyInList.containsKey(prevKey)))
-					return false;
+				boolean prevInCatalog = alreadyInList != null && !prevKey.isEmpty() && alreadyInList.containsKey(prevKey);
+				TaskDefinition prevTask = prevInCatalog ? alreadyInList.get(prevKey) : null;
+				if (prevInCatalog && prevTask != null && isKillCountTask(prevTask))
+				{
+					// e.g. "Defeat Brutus 10 times" requires "Defeat Brutus 5 times" to be claimed before it appears in the pool
+					if (globalClaimedTaskKeys == null || !globalClaimedTaskKeys.contains(prevKey))
+						return false;
+				}
+				else if (!prevInCatalog)
+				{
+					String tileId = worldUnlockService.resolvePrerequisiteToTileId(req);
+					if (tileId != null)
+					{
+						if (!worldUnlockService.getUnlockedIds().contains(tileId))
+							return false;
+					}
+					else if (!prevKey.isEmpty())
+						return false;
+				}
 			}
 		}
 		else if (hasRequirements)
@@ -451,11 +570,9 @@ public class GlobalTaskListService
 				}
 			}
 
-			// 7. Requirements: "[level] [skill]" or "[skill] [bracket]" => that skill unlock must be unlocked.
-			// Revealed-but-unlocked skill tiles should not satisfy task population.
+			// 7. Requirements: each comma-separated token is checked; "[level] [skill]" and bracket tokens gate on unlock;
+			// resolved world-unlock tile ids (quest, area, boss, diary, …) each require that tile unlocked (AND across tokens).
 			Set<String> unlockedIds = worldUnlockService.getUnlockedIds();
-			boolean anyGated = false;
-			boolean anySatisfied = false;
 			for (String part : task.getRequirements().split(","))
 			{
 				String token = part.trim();
@@ -481,33 +598,26 @@ public class GlobalTaskListService
 					continue;
 				}
 				String tileId = worldUnlockService.resolvePrerequisiteToTileId(token);
-				if (tileId != null)
+				if (tileId == null)
+					continue;
+				WorldUnlockTile tile = worldUnlockService.getTileById(tileId);
+				if (tile != null && WorldUnlockTileType.SKILL.equals(tile.getType()))
 				{
-					WorldUnlockTile tile = worldUnlockService.getTileById(tileId);
-					if (tile != null && "skill".equals(tile.getType()))
-					{
-						// [skill] [bracket] requirement: populate only when the skill tile itself is unlocked.
-						if (!unlockedIds.contains(tileId))
-							return false;
-						continue;
-					}
-					// Combat achievement tasks: prerequisite boss must be unlocked (not just area)
-					if (tile != null && "boss".equals(tile.getType()) && "Combat".equalsIgnoreCase(taskType))
-					{
-						if (!unlockedIds.contains(tileId))
-							return false;
-						continue;
-					}
-					// Collection Log without bossId: do not gate on boss tiles from requirement text (area-only or global)
-					if (tile != null && "boss".equals(tile.getType()) && isCollectionLogWithoutBossId(task))
-						continue;
-					anyGated = true;
-					if (unlockedIds.contains(tileId))
-						anySatisfied = true;
+					if (!unlockedIds.contains(tileId))
+						return false;
+					continue;
 				}
+				if (tile != null && WorldUnlockTileType.BOSS.equals(tile.getType()) && "Combat".equalsIgnoreCase(taskType))
+				{
+					if (!unlockedIds.contains(tileId))
+						return false;
+					continue;
+				}
+				if (tile != null && WorldUnlockTileType.BOSS.equals(tile.getType()) && isCollectionLogWithoutBossId(task))
+					continue;
+				if (!unlockedIds.contains(tileId))
+					return false;
 			}
-			if (anyGated && !anySatisfied)
-				return false;
 		}
 
 		return true;
@@ -711,6 +821,7 @@ public class GlobalTaskListService
 			.map(t -> t.getId())
 			.collect(Collectors.toSet());
 		// Prioritize: skill-bracket tasks first when their bracket is unlocked/revealed, then area tasks, then global tasks.
+		// Among Collection Log tasks: boss-gated first, then area-bound, then non-area-specific filler (rare on the grid).
 		availableForNew.sort((a, b) -> {
 			boolean aSkill = isUnlockedSkillBracketTask(a);
 			boolean bSkill = isUnlockedSkillBracketTask(b);
@@ -721,19 +832,31 @@ public class GlobalTaskListService
 			boolean aArea = isAreaTask(a);
 			boolean bArea = isAreaTask(b);
 			if (aArea != bArea) return aArea ? -1 : 1;
+			boolean aCl = TaskTypes.isCollectionLogType(a.getTaskType());
+			boolean bCl = TaskTypes.isCollectionLogType(b.getTaskType());
+			if (aCl && bCl)
+			{
+				int ra = collectionLogGridRank(a);
+				int rb = collectionLogGridRank(b);
+				if (ra != rb) return Integer.compare(rb, ra);
+			}
 			int da = Math.max(1, Math.min(MAX_TIER, a.getDifficulty()));
 			int db = Math.max(1, Math.min(MAX_TIER, b.getDifficulty()));
 			if (da != db) return Integer.compare(da, db);
+			boolean aNa = isCollectionLogWithoutBossOrArea(a);
+			boolean bNa = isCollectionLogWithoutBossOrArea(b);
+			if (aNa != bNa) return aNa ? 1 : -1;
 			return taskKey(a).compareTo(taskKey(b));
 		});
 		Random rnd = new Random(reshuffleSeed);
-		// Shuffle within same (unlockedArea, skillBracket, difficulty) to randomize order while keeping prioritization
+		// Shuffle within same (unlockedArea, skillBracket, area, collectionLogRank, difficulty) to randomize order while keeping prioritization
 		int idx = 0;
 		while (idx < availableForNew.size())
 		{
 			boolean s0 = isUnlockedSkillBracketTask(availableForNew.get(idx));
 			boolean u0 = isUnlockedAreaTask(availableForNew.get(idx), unlockedAreaIds);
 			boolean a0 = isAreaTask(availableForNew.get(idx));
+			int cl0 = collectionLogGridRank(availableForNew.get(idx));
 			int d0 = Math.max(1, Math.min(MAX_TIER, availableForNew.get(idx).getDifficulty()));
 			int j = idx + 1;
 			while (j < availableForNew.size())
@@ -741,8 +864,9 @@ public class GlobalTaskListService
 				boolean s = isUnlockedSkillBracketTask(availableForNew.get(j));
 				boolean u = isUnlockedAreaTask(availableForNew.get(j), unlockedAreaIds);
 				boolean a = isAreaTask(availableForNew.get(j));
+				int cl = collectionLogGridRank(availableForNew.get(j));
 				int d = Math.max(1, Math.min(MAX_TIER, availableForNew.get(j).getDifficulty()));
-				if (s != s0 || u != u0 || a != a0 || d != d0) break;
+				if (s != s0 || u != u0 || a != a0 || cl != cl0 || d != d0) break;
 				j++;
 			}
 			if (j > idx + 1)
@@ -1175,21 +1299,23 @@ public class GlobalTaskListService
 	/**
 	 * Marks a task as claimed: persists and awards points by difficulty. Idempotent if already claimed.
 	 * Use {@link #claimTask(String, int, int)} when the tile position is known so adjacent tiles reveal.
+	 * @return ring-completion bonus points awarded this call (0 if none)
 	 */
-	public void claimTask(String taskKey)
+	public int claimTask(String taskKey)
 	{
-		claimTask(taskKey, UNKNOWN_POS, UNKNOWN_POS);
+		return claimTask(taskKey, UNKNOWN_POS, UNKNOWN_POS);
 	}
 
 	/**
 	 * Marks a task as claimed at the given grid position. Persists the position so adjacent tiles reveal;
 	 * no tile/task repositioning occurs. Idempotent if already claimed.
+	 * @return ring-completion bonus points awarded this call (0 if none)
 	 */
-	public void claimTask(String taskKey, int row, int col)
+	public int claimTask(String taskKey, int row, int col)
 	{
 		Set<String> claimed = loadSet(KEY_GLOBAL_CLAIMED);
 		if (claimed.contains(taskKey))
-			return;
+			return 0;
 
 		TaskDefinition task = getGlobalTasks().stream()
 			.filter(t -> taskKey(t).equals(taskKey))
@@ -1221,6 +1347,103 @@ public class GlobalTaskListService
 			pointsService.addEarned(points);
 			log.debug("Global task {} claimed at ({},{}), +{} points", taskKey, row, col, points);
 		}
+		if (positionKnown)
+			return maybeAwardGlobalRingBonus(row, col);
+		return 0;
+	}
+
+	/**
+	 * When every tile in a Chebyshev ring is claimed on the global grid, awards
+	 * {@code min(ring × pointsForTier(mode difficulty), RING_BONUS_CAP)}.
+	 * @return bonus points awarded, or 0
+	 */
+	private int maybeAwardGlobalRingBonus(int row, int col)
+	{
+		int ring = GridPos.ringNumber(row, col);
+		if (ring <= 0) return 0;
+
+		Set<String> ringBonusDone = loadGlobalRingBonusSet();
+		if (ringBonusDone.contains(Integer.toString(ring))) return 0;
+
+		List<TaskTile> grid = buildGlobalGrid(getOrCreateLayoutSeed());
+		List<TaskTile> inRing = grid.stream()
+			.filter(t -> GridPos.ringNumber(t.getRow(), t.getCol()) == ring)
+			.collect(Collectors.toList());
+		if (inRing.isEmpty()) return 0;
+
+		Set<String> claimed = loadSet(KEY_GLOBAL_CLAIMED);
+		for (TaskTile t : inRing)
+		{
+			String k = taskKeyFromName(t.getDisplayName());
+			if (k.isEmpty() || !claimed.contains(k)) return 0;
+		}
+
+		int modeTier = modeDifficultyTierFromTiles(inRing);
+		int tierPoints = pointsForTier(modeTier);
+		int bonus = Math.min(ring * tierPoints, RING_BONUS_CAP);
+		if (bonus <= 0) return 0;
+
+		pointsService.addEarned(bonus);
+		ringBonusDone.add(Integer.toString(ring));
+		saveGlobalRingBonusSet(ringBonusDone);
+		log.debug("Global grid ring {} completion bonus: +{} (mode tier {})", ring, bonus, modeTier);
+		return bonus;
+	}
+
+	private int modeDifficultyTierFromTiles(List<TaskTile> tiles)
+	{
+		int[] counts = new int[MAX_TIER + 1];
+		for (TaskTile t : tiles)
+		{
+			int d = difficultyTierFromPointsForGlobal(t.getPoints());
+			counts[d]++;
+		}
+		int best = 1;
+		int maxCount = -1;
+		for (int d = 1; d <= MAX_TIER; d++)
+		{
+			if (counts[d] > maxCount)
+			{
+				maxCount = counts[d];
+				best = d;
+			}
+		}
+		return best;
+	}
+
+	private int difficultyTierFromPointsForGlobal(int points)
+	{
+		for (int t = 1; t <= MAX_TIER; t++)
+		{
+			if (points == pointsForTier(t))
+				return t;
+		}
+		for (int t = MAX_TIER; t >= 1; t--)
+		{
+			if (points >= pointsForTier(t))
+				return t;
+		}
+		return 1;
+	}
+
+	private Set<String> loadGlobalRingBonusSet()
+	{
+		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_RING_BONUS);
+		Set<String> set = new HashSet<>();
+		if (raw != null && !raw.isEmpty())
+		{
+			for (String id : raw.split("\\" + ID_SEP))
+			{
+				String tid = id.trim();
+				if (!tid.isEmpty()) set.add(tid);
+			}
+		}
+		return set;
+	}
+
+	private void saveGlobalRingBonusSet(Set<String> set)
+	{
+		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_RING_BONUS, String.join(ID_SEP, set));
 	}
 
 	private int pointsForTier(int tier)
@@ -1268,6 +1491,8 @@ public class GlobalTaskListService
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_PSEUDO_CENTER);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_LAST_VIEWED);
+		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_RING_BONUS);
+		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_LAYOUT_SEED);
 	}
 
 	private static List<int[]> spiralOrderForRing(int tier)

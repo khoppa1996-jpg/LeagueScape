@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
@@ -58,6 +59,7 @@ public class GlobalTaskListServiceTest
 	private static final String KEY_CLAIMED = "globalTaskProgress_claimed";
 	private static final String KEY_POSITIONS = "globalTaskProgress_positions";
 	private static final String KEY_PSEUDO_CENTER = "globalTaskProgress_pseudoCenter";
+	private static final String KEY_GLOBAL_CLAIMED_TASKS = "globalTaskProgress_claimed";
 
 	@Before
 	public void setUp()
@@ -68,6 +70,7 @@ public class GlobalTaskListServiceTest
 		lenient().when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_POSITIONS))).thenReturn(null);
 		lenient().when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_PSEUDO_CENTER))).thenReturn(null);
 		lenient().when(configManager.getConfiguration(eq(STATE_GROUP), eq("globalTaskProgress_completed"))).thenReturn(null);
+		lenient().when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_GLOBAL_CLAIMED_TASKS))).thenReturn(null);
 		lenient().when(configManager.getConfiguration(eq(STATE_GROUP), eq("globalTaskProgress_lastViewed"))).thenReturn(null);
 		lenient().when(config.taskTier1Points()).thenReturn(10);
 		lenient().when(config.taskTier2Points()).thenReturn(25);
@@ -227,5 +230,140 @@ public class GlobalTaskListServiceTest
 		// With lazy assignment and strict one-use, we get center + as many adjacent as we have tasks in the pool (here 1)
 		assertTrue("Fallback should use any tasks when no-area is empty, got " + grid.size(),
 			grid.size() >= 2);
+	}
+
+	@Test
+	public void collectionLogWithBossIdIncludedInGlobalTasksWhenBossAndAreaUnlocked()
+	{
+		TaskDefinition cl = new TaskDefinition();
+		cl.setDisplayName("Obtain a Tanzanite fang");
+		cl.setTaskType("Collection Log");
+		cl.setDifficulty(4);
+		cl.setArea("isafdar");
+		cl.setRequirements("zulrah");
+		cl.setBossId("zulrah");
+		cl.setOnceOnly(true);
+
+		when(taskGridService.getEffectiveDefaultTasks()).thenReturn(Collections.singletonList(cl));
+		when(worldUnlockService.getUnlockedIds()).thenReturn(new HashSet<>(Arrays.asList("isafdar", "zulrah")));
+		when(worldUnlockService.getTasksForUnlock(anyString())).thenReturn(Collections.emptyList());
+
+		WorldUnlockTile boss = new WorldUnlockTile();
+		boss.setType("boss");
+		boss.setId("zulrah");
+		WorldUnlockTile area = new WorldUnlockTile();
+		area.setType("area");
+		area.setId("isafdar");
+		when(worldUnlockService.getTiles()).thenReturn(Arrays.asList(boss, area));
+		when(worldUnlockService.resolvePrerequisiteToTileId(anyString())).thenAnswer(invocation -> {
+			String s = invocation.getArgument(0);
+			if (s == null) return null;
+			String t = s.trim();
+			if ("zulrah".equalsIgnoreCase(t)) return "zulrah";
+			if ("isafdar".equalsIgnoreCase(t)) return "isafdar";
+			return null;
+		});
+		when(worldUnlockService.getTileById(eq("zulrah"))).thenReturn(boss);
+		when(worldUnlockService.getTileById(eq("isafdar"))).thenReturn(area);
+		when(worldUnlockService.getUnlockedOrRevealedTileIds()).thenReturn(new HashSet<>(Arrays.asList("isafdar", "zulrah")));
+		when(worldUnlockService.getUnlockedDiaryTierKeys()).thenReturn(Collections.emptySet());
+		lenient().when(worldUnlockService.getSkillTileIdForLevel(anyString(), anyInt())).thenReturn(null);
+
+		List<TaskDefinition> result = service.getGlobalTasks();
+		assertTrue(result.stream().anyMatch(t -> "Obtain a Tanzanite fang".equals(t.getDisplayName())));
+	}
+
+	@Test
+	public void collectionLogWithBossIdExcludedFromGlobalTasksWhenBossLocked()
+	{
+		TaskDefinition cl = new TaskDefinition();
+		cl.setDisplayName("Obtain a Tanzanite fang");
+		cl.setTaskType("Collection Log");
+		cl.setDifficulty(4);
+		cl.setArea("isafdar");
+		cl.setRequirements("zulrah");
+		cl.setBossId("zulrah");
+		cl.setOnceOnly(true);
+
+		when(taskGridService.getEffectiveDefaultTasks()).thenReturn(Collections.singletonList(cl));
+		when(worldUnlockService.getUnlockedIds()).thenReturn(new HashSet<>(Collections.singletonList("isafdar")));
+		when(worldUnlockService.getTasksForUnlock(anyString())).thenReturn(Collections.emptyList());
+
+		WorldUnlockTile boss = new WorldUnlockTile();
+		boss.setType("boss");
+		boss.setId("zulrah");
+		WorldUnlockTile area = new WorldUnlockTile();
+		area.setType("area");
+		area.setId("isafdar");
+		when(worldUnlockService.getTiles()).thenReturn(Arrays.asList(boss, area));
+		when(worldUnlockService.resolvePrerequisiteToTileId(anyString())).thenAnswer(invocation -> {
+			String s = invocation.getArgument(0);
+			if (s == null) return null;
+			String t = s.trim();
+			if ("zulrah".equalsIgnoreCase(t)) return "zulrah";
+			if ("isafdar".equalsIgnoreCase(t)) return "isafdar";
+			return null;
+		});
+		when(worldUnlockService.getTileById(eq("zulrah"))).thenReturn(boss);
+		when(worldUnlockService.getTileById(eq("isafdar"))).thenReturn(area);
+		when(worldUnlockService.getUnlockedOrRevealedTileIds()).thenReturn(new HashSet<>(Collections.singletonList("isafdar")));
+		when(worldUnlockService.getUnlockedDiaryTierKeys()).thenReturn(Collections.emptySet());
+		lenient().when(worldUnlockService.getSkillTileIdForLevel(anyString(), anyInt())).thenReturn(null);
+
+		List<TaskDefinition> result = service.getGlobalTasks();
+		assertFalse(result.stream().anyMatch(t -> "Obtain a Tanzanite fang".equals(t.getDisplayName())));
+	}
+
+	@Test
+	public void killCountChainNextStepOnlyAfterPreviousClaimed()
+	{
+		TaskDefinition first = new TaskDefinition();
+		first.setDisplayName("Defeat Brutus");
+		first.setTaskType("killCount");
+		first.setDifficulty(1);
+		first.setArea("lumbridge");
+		first.setRequirements("Ides of Milk");
+
+		TaskDefinition second = new TaskDefinition();
+		second.setDisplayName("Defeat Brutus 5 times");
+		second.setTaskType("killCount");
+		second.setDifficulty(1);
+		second.setArea("lumbridge");
+		second.setRequirements("Defeat Brutus");
+
+		when(taskGridService.getEffectiveDefaultTasks()).thenReturn(Arrays.asList(first, second));
+		when(worldUnlockService.getUnlockedIds()).thenReturn(new HashSet<>(Arrays.asList("lumbridge", "quest_ides")));
+		when(worldUnlockService.getTasksForUnlock(anyString())).thenReturn(Collections.emptyList());
+
+		WorldUnlockTile area = new WorldUnlockTile();
+		area.setType("area");
+		area.setId("lumbridge");
+		when(worldUnlockService.getTiles()).thenReturn(Collections.singletonList(area));
+		when(worldUnlockService.resolvePrerequisiteToTileId(anyString())).thenAnswer(invocation -> {
+			String s = invocation.getArgument(0);
+			if (s == null) return null;
+			String t = s.trim();
+			if ("Ides of Milk".equalsIgnoreCase(t)) return "quest_ides";
+			if ("lumbridge".equalsIgnoreCase(t)) return "lumbridge";
+			return null;
+		});
+		when(worldUnlockService.getTileById(anyString())).thenAnswer(invocation -> {
+			WorldUnlockTile w = new WorldUnlockTile();
+			w.setId(invocation.getArgument(0));
+			w.setType("area");
+			return w;
+		});
+		when(worldUnlockService.getUnlockedOrRevealedTileIds()).thenReturn(new HashSet<>(Arrays.asList("lumbridge", "quest_ides")));
+		when(worldUnlockService.getUnlockedDiaryTierKeys()).thenReturn(Collections.emptySet());
+		lenient().when(worldUnlockService.getSkillTileIdForLevel(anyString(), anyInt())).thenReturn(null);
+
+		when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_GLOBAL_CLAIMED_TASKS))).thenReturn(null);
+		List<TaskDefinition> pass1 = service.getGlobalTasks();
+		assertTrue(pass1.stream().anyMatch(t -> "Defeat Brutus".equals(t.getDisplayName())));
+		assertFalse(pass1.stream().anyMatch(t -> "Defeat Brutus 5 times".equals(t.getDisplayName())));
+
+		when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_GLOBAL_CLAIMED_TASKS))).thenReturn("defeat brutus");
+		List<TaskDefinition> pass2 = service.getGlobalTasks();
+		assertTrue(pass2.stream().anyMatch(t -> "Defeat Brutus 5 times".equals(t.getDisplayName())));
 	}
 }

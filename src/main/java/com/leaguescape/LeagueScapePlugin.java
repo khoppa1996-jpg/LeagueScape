@@ -421,7 +421,6 @@ public class LeagueScapePlugin extends Plugin
 				}
 				frame.setLocationRelativeTo(owner);
 			}
-			registerEscapeToClose(frame);
 			frame.setVisible(true);
 		});
 	}
@@ -627,7 +626,7 @@ public class LeagueScapePlugin extends Plugin
 				this::openGlobalTaskList,
 				this::openSetupDialog,
 				this::addUnlockedAreaId,
-				client, audioPlayer, dialog);
+				client, clientThread, audioPlayer, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
 			dialog.setLocationRelativeTo(client.getCanvas());

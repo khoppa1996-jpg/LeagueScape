@@ -2,6 +2,8 @@ package com.leaguescape.worldunlock;
 
 import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.LeagueScapeSounds;
+import com.leaguescape.grid.GridPos;
+import com.leaguescape.util.RingBonusPopup;
 import com.leaguescape.icons.IconCache;
 import com.leaguescape.icons.IconResolver;
 import com.leaguescape.icons.IconResources;
@@ -10,6 +12,7 @@ import com.leaguescape.task.TaskState;
 import com.leaguescape.task.TaskTile;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -106,7 +109,7 @@ public class GlobalTaskListPanel extends JPanel
 		this.audioPlayer = audioPlayer;
 		this.clientThread = clientThread;
 		this.parentDialog = parentDialog;
-		this.layoutSeed = (int) System.nanoTime();
+		this.layoutSeed = globalTaskListService.getOrCreateLayoutSeed();
 
 		padlockImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "padlock_icon.png");
 		checkmarkImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "complete_checkmark.png");
@@ -464,7 +467,8 @@ public class GlobalTaskListPanel extends JPanel
 					}
 					String key = GlobalTaskListService.taskKeyFromName(tile.getDisplayName());
 					playSound(LeagueScapeSounds.TASK_COMPLETE);
-					globalTaskListService.claimTask(key, tile.getRow(), tile.getCol());
+					int ringBonus = globalTaskListService.claimTask(key, tile.getRow(), tile.getCol());
+					showRingBonusPopupIfNeeded(ringBonus, tile.getRow(), tile.getCol());
 					SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);
 					return;
 				}
@@ -526,6 +530,24 @@ public class GlobalTaskListPanel extends JPanel
 		cell.setOpaque(false);
 		cell.setPreferredSize(new Dimension(tileSize, tileSize));
 		return cell;
+	}
+
+	private void showRingBonusPopupIfNeeded(int bonusPoints, int row, int col)
+	{
+		if (bonusPoints <= 0) return;
+		Frame frameOwner = null;
+		if (parentDialog != null)
+		{
+			java.awt.Window w = parentDialog.getOwner();
+			if (w instanceof Frame) frameOwner = (Frame) w;
+		}
+		if (frameOwner == null)
+		{
+			java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
+			if (w instanceof Frame) frameOwner = (Frame) w;
+		}
+		Component loc = parentDialog != null ? parentDialog : client.getCanvas();
+		RingBonusPopup.showAsync(frameOwner, loc, client, audioPlayer, GridPos.ringNumber(row, col), bonusPoints, true, null);
 	}
 
 	private void showTaskDetailPopup(TaskTile tile, TaskState state)
@@ -592,8 +614,10 @@ public class GlobalTaskListPanel extends JPanel
 			int claimRow = tile.getRow(), claimCol = tile.getCol();
 			claimBtn.addActionListener(e -> {
 				playSound(LeagueScapeSounds.TASK_COMPLETE);
-				globalTaskListService.claimTask(taskKey, claimRow, claimCol);
+				int ringBonus = globalTaskListService.claimTask(taskKey, claimRow, claimCol);
 				detail.dispose();
+				if (ringBonus > 0)
+					showRingBonusPopupIfNeeded(ringBonus, claimRow, claimCol);
 				SwingUtilities.invokeLater(this::refresh);
 			});
 			body.add(claimBtn);
@@ -608,8 +632,10 @@ public class GlobalTaskListPanel extends JPanel
 			claimBtn.addActionListener(e -> {
 				playSound(LeagueScapeSounds.TASK_COMPLETE);
 				globalTaskListService.setCompleted(taskKey);
-				globalTaskListService.claimTask(taskKey, claimRow, claimCol);
+				int ringBonus = globalTaskListService.claimTask(taskKey, claimRow, claimCol);
 				detail.dispose();
+				if (ringBonus > 0)
+					showRingBonusPopupIfNeeded(ringBonus, claimRow, claimCol);
 				SwingUtilities.invokeLater(this::refresh);
 			});
 			body.add(claimBtn);

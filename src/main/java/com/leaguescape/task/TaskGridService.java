@@ -14,6 +14,7 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import com.leaguescape.LeagueScapeConfig;
 import com.leaguescape.LeagueScapePlugin;
+import com.leaguescape.grid.GridPos;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.points.AreaCompletionService;
 import com.leaguescape.points.PointsService;
@@ -54,6 +55,10 @@ public class TaskGridService
 	private static final String KEY_PREFIX = "taskProgress_";
 	private static final String SUFFIX_CLAIMED = "_claimed";
 	private static final String SUFFIX_COMPLETED = "_completed";
+	/** Persisted set of ring numbers (Chebyshev distance from center) that already awarded a ring-completion bonus. */
+	private static final String SUFFIX_RING_BONUS = "_ringBonus";
+	/** Max bonus points for completing one full ring on an area task grid. */
+	private static final int RING_BONUS_CAP = 250;
 	private static final String ID_SEP = "|";
 
 	private static final int MAX_TIER = 5;
@@ -849,6 +854,114 @@ public class TaskGridService
 		}
 	}
 
+	/**
+	 * When every tile in a Chebyshev ring (same {@link GridPos#ringNumber(int, int)}) is claimed, awards
+	 * {@code min(ring × pointsForTier(mode difficulty), RING_BONUS_CAP)} where mode = most common difficulty tier in that ring.
+	 * @return bonus points awarded this call, or 0
+	 */
+	private int maybeAwardRingCompletionBonus(String areaId, String claimedTaskId)
+	{
+		String[] p = claimedTaskId.split(",");
+		if (p.length != 2) return 0;
+		int r, c;
+		try
+		{
+			r = Integer.parseInt(p[0].trim());
+			c = Integer.parseInt(p[1].trim());
+		}
+		catch (NumberFormatException e)
+		{
+			return 0;
+		}
+		int ring = GridPos.ringNumber(r, c);
+		if (ring <= 0) return 0;
+
+		Set<String> ringBonusDone = loadRingBonusSet(areaId);
+		if (ringBonusDone.contains(Integer.toString(ring))) return 0;
+
+		List<TaskTile> grid = getGridForArea(areaId);
+		List<TaskTile> inRing = grid.stream()
+			.filter(t -> GridPos.ringNumber(t.getRow(), t.getCol()) == ring)
+			.collect(Collectors.toList());
+		if (inRing.isEmpty()) return 0;
+
+		Set<String> claimed = loadSet(areaId, SUFFIX_CLAIMED);
+		for (TaskTile t : inRing)
+		{
+			if (!claimed.contains(t.getId())) return 0;
+		}
+
+		int modeTier = modeDifficultyTier(inRing);
+		int tierPoints = pointsForTier(modeTier);
+		int bonus = Math.min(ring * tierPoints, RING_BONUS_CAP);
+		if (bonus <= 0) return 0;
+
+		areaCompletionService.addEarnedInArea(areaId, bonus);
+		ringBonusDone.add(Integer.toString(ring));
+		saveRingBonusSet(areaId, ringBonusDone);
+		log.debug("Ring {} completion bonus in {}: +{} (mode tier {}, {} pts/tier)", ring, areaId, bonus, modeTier, tierPoints);
+		return bonus;
+	}
+
+	private int modeDifficultyTier(List<TaskTile> tiles)
+	{
+		int[] counts = new int[MAX_TIER + 1];
+		for (TaskTile t : tiles)
+		{
+			int d = difficultyTierFromPoints(t.getPoints());
+			counts[d]++;
+		}
+		int best = 1;
+		int maxCount = -1;
+		for (int d = 1; d <= MAX_TIER; d++)
+		{
+			if (counts[d] > maxCount)
+			{
+				maxCount = counts[d];
+				best = d;
+			}
+		}
+		return best;
+	}
+
+	/** Maps claimed tile point value to difficulty tier (1–5) using current config tier rewards. */
+	private int difficultyTierFromPoints(int points)
+	{
+		for (int t = 1; t <= MAX_TIER; t++)
+		{
+			if (points == pointsForTier(t))
+				return t;
+		}
+		for (int t = MAX_TIER; t >= 1; t--)
+		{
+			if (points >= pointsForTier(t))
+				return t;
+		}
+		return 1;
+	}
+
+	private Set<String> loadRingBonusSet(String areaId)
+	{
+		String key = KEY_PREFIX + areaId + SUFFIX_RING_BONUS;
+		String raw = configManager.getConfiguration(STATE_GROUP, key);
+		Set<String> set = new HashSet<>();
+		if (raw != null && !raw.isEmpty())
+		{
+			for (String id : raw.split("\\" + ID_SEP))
+			{
+				String tid = id.trim();
+				if (!tid.isEmpty()) set.add(tid);
+			}
+		}
+		return set;
+	}
+
+	private void saveRingBonusSet(String areaId, Set<String> set)
+	{
+		String key = KEY_PREFIX + areaId + SUFFIX_RING_BONUS;
+		configManager.setConfiguration(STATE_GROUP, key, String.join(ID_SEP, set));
+	}
+
 	/** Returns points awarded when a task in the given tier is claimed (from config tier 1–5 points). Tier 6+ uses tier 5 value. */
 	private int pointsForTier(int tier)
 	{
@@ -1186,17 +1299,18 @@ public class TaskGridService
 	 * Marks a task as claimed: adds to claimed set, persists, and awards tier points to
 	 * PointsService and AreaCompletionService. Idempotent if already claimed.
 	 * If the task has a "requirements" (quest) string, all listed quests must be finished or claim is blocked.
+	 * @return ring-completion bonus points awarded by this call (0 if none or claim did not proceed)
 	 */
-	public void setClaimed(String areaId, String taskId)
+	public int setClaimed(String areaId, String taskId)
 	{
 		Set<String> claimed = loadSet(areaId, SUFFIX_CLAIMED);
-		if (claimed.contains(taskId)) return;
+		if (claimed.contains(taskId)) return 0;
 
 		List<TaskTile> grid = getGridForArea(areaId);
 		TaskTile tile = grid.stream().filter(t -> t.getId().equals(taskId)).findFirst().orElse(null);
 		if (tile != null && tile.getRequirements() != null && !tile.getRequirements().isEmpty()
 			&& !areQuestRequirementsMet(tile.getRequirements()))
-			return;
+			return 0;
 
 		claimed.add(taskId);
 		saveSet(areaId, SUFFIX_CLAIMED, claimed);
@@ -1211,6 +1325,7 @@ public class TaskGridService
 			areaCompletionService.addEarnedInArea(areaId, points);
 			log.debug("Task {} claimed in area {}, +{} points", taskId, areaId, points);
 		}
+		return maybeAwardRingCompletionBonus(areaId, taskId);
 	}
 
 	/**
@@ -1293,6 +1408,7 @@ public class TaskGridService
 		{
 			configManager.unsetConfiguration(STATE_GROUP, KEY_PREFIX + areaId + SUFFIX_CLAIMED);
 			configManager.unsetConfiguration(STATE_GROUP, KEY_PREFIX + areaId + SUFFIX_COMPLETED);
+			configManager.unsetConfiguration(STATE_GROUP, KEY_PREFIX + areaId + SUFFIX_RING_BONUS);
 		}
 		invalidateTasksCache();
 	}

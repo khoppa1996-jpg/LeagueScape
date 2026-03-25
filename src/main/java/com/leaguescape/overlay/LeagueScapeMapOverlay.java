@@ -7,7 +7,9 @@ import com.leaguescape.icons.IconCache;
 import com.leaguescape.icons.IconResources;
 import com.leaguescape.icons.IconResolver;
 import com.leaguescape.area.AreaGraphService;
+import com.leaguescape.grid.GridPos;
 import com.leaguescape.data.Area;
+import com.leaguescape.util.RingBonusPopup;
 import com.leaguescape.data.AreaStatus;
 import com.leaguescape.points.AreaCompletionService;
 import com.leaguescape.points.PointsService;
@@ -20,6 +22,7 @@ import com.leaguescape.worldunlock.WorldUnlockTile;
 import com.leaguescape.LeagueScapeSounds;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Frame;
@@ -31,6 +34,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.event.MouseAdapter;
@@ -89,6 +93,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	private static final Color CORNER_MARKER_COLOR = new Color(255, 255, 255, 200);
 	private static final Color CORNER_MARKER_EDIT_COLOR = new Color(255, 220, 100, 220);
 	private static final Color CORNER_MARKER_MOVE_COLOR = new Color(255, 180, 80, 255);
+	/** OSRS sound when unlocking a World Unlock tile from area details ({@link net.runelite.api.Client#playSoundEffect(int)}). */
+	private static final int WORLD_UNLOCK_TILE_SOUND_ID = 52;
 
 	private final Client client;
 	private final AreaGraphService areaGraphService;
@@ -1092,7 +1098,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		return null;
 	}
 
-	/** Local icon path for task (see {@link IconResolver#resolveTaskTileLocalIconPath}). Null for equip (Wiki). */
+	/** Local icon path for task (see {@link IconResolver#resolveTaskTileLocalIconPath}). */
 	private static String getLocalTaskIconPath(String taskType, String displayName, String bossId)
 	{
 		return IconResolver.resolveTaskTileLocalIconPath(taskType, displayName, bossId);
@@ -1461,7 +1467,10 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					}
 					if (unlocked)
 					{
-						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+						if (worldUnlockArea)
+							clientThread.invoke(() -> client.playSoundEffect(WORLD_UNLOCK_TILE_SOUND_ID));
+						else
+							LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
 						dialog.dispose();
 					}
 					else
@@ -1655,7 +1664,9 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 						BufferedImage raw = taskIconCache.get(cacheKey);
 						if (raw == null)
 						{
-							if (isEquipTask(tile.getDisplayName()))
+							// "Equip a …" names: fetch item icon from Wiki unless task type is explicitly Equipment (use Equipment.png).
+							if (isEquipTask(tile.getDisplayName())
+								&& !TaskTypes.EQUIPMENT.equalsIgnoreCase(tile.getTaskType()))
 							{
 								raw = defaultTaskIcon;
 								taskIconCache.put(cacheKey, raw);
@@ -1888,7 +1899,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 								return;
 							}
 							LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE, client);
-							taskGridService.setClaimed(areaId, tile.getId());
+							int ringBonus = taskGridService.setClaimed(areaId, tile.getId());
+							showAreaRingBonusIfNeeded(parentDialog, areaId, tile, ringBonus);
 							SwingUtilities.invokeLater(onRefresh);
 						});
 					});
@@ -1960,6 +1972,26 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		cell.setPreferredSize(new Dimension(tileSize, tileSize));
 		cell.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 		return cell;
+	}
+
+	private void showAreaRingBonusIfNeeded(JDialog parentDialog, String areaId, TaskTile tile, int ringBonus)
+	{
+		if (ringBonus <= 0) return;
+		Frame frameOwner = null;
+		if (parentDialog != null)
+		{
+			Window w = parentDialog.getOwner();
+			if (w instanceof Frame) frameOwner = (Frame) w;
+		}
+		if (frameOwner == null)
+		{
+			Window w = SwingUtilities.windowForComponent(client.getCanvas());
+			if (w instanceof Frame) frameOwner = (Frame) w;
+		}
+		Area a = areaGraphService.getArea(areaId);
+		String label = a != null ? (a.getDisplayName() != null ? a.getDisplayName() : a.getId()) : areaId;
+		Component loc = parentDialog != null ? parentDialog : client.getCanvas();
+		RingBonusPopup.showAsync(frameOwner, loc, client, audioPlayer, GridPos.ringNumber(tile.getRow(), tile.getCol()), ringBonus, false, label);
 	}
 
 	private void showTaskDetailPopup(JDialog parentDialog, String areaId, TaskTile tile, TaskState state,
@@ -2034,8 +2066,9 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 							return;
 						}
 						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE, client);
-						taskGridService.setClaimed(areaId, tile.getId());
+						int ringBonus = taskGridService.setClaimed(areaId, tile.getId());
 						detail.dispose();
+						showAreaRingBonusIfNeeded(parentDialog, areaId, tile, ringBonus);
 						SwingUtilities.invokeLater(onRefresh);
 					});
 				});
@@ -2062,8 +2095,9 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 						}
 						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE, client);
 						taskGridService.setCompleted(areaId, tile.getId());
-						taskGridService.setClaimed(areaId, tile.getId());
+						int ringBonus = taskGridService.setClaimed(areaId, tile.getId());
 						detail.dispose();
+						showAreaRingBonusIfNeeded(parentDialog, areaId, tile, ringBonus);
 						SwingUtilities.invokeLater(onRefresh);
 					});
 				});

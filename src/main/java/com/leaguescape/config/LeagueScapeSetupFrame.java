@@ -14,9 +14,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +33,17 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
+import javax.swing.SwingUtilities;
 import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.util.ImageUtil;
+import com.leaguescape.util.LeagueScapeSwingUtil;
 
 /**
  * Moveable, resizable setup popup opened from the "Rules and Setup" button. Contains four tabs:
- * Rules, Game Mode, Area Configuration, Controls. Solid panel colors (no tiled background images).
+ * Rules, Game Mode, Area Configuration, Controls. Tiled OSRS-style frame ({@code com/leaguescape/*.png}).
  */
 public class LeagueScapeSetupFrame extends JDialog
 {
@@ -67,31 +73,53 @@ public class LeagueScapeSetupFrame extends JDialog
 		PointsService pointsService, AreaCompletionService areaCompletionService,
 		OsrsWikiApiService wikiApi, WikiTaskGenerator wikiTaskGenerator, Client client, AudioPlayer audioPlayer)
 	{
-		super(owner, "LeagueScape – Rules and Setup", false);
+		super(owner, LeagueScapeSetupStrings.FRAME_WINDOW_TITLE, false);
 		this.audioPlayer = audioPlayer;
 		this.client = client;
 		setModal(false);
 		setResizable(true);
 		setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		setUndecorated(true);
 
 		buttonRect = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_rectangle.png");
+		BufferedImage xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
 
-		JPanel root = new JPanel(new BorderLayout(0, 0));
-		root.setBackground(POPUP_BG);
-		root.setBorder(new CompoundBorder(
-			new LineBorder(POPUP_BORDER, 2),
-			new EmptyBorder(0, 0, 0, 0)));
+		BufferedImage fill = loadFrameAsset("fill_color.png");
+		BufferedImage tl = loadFrameAsset("top_left_corner.png");
+		BufferedImage tr = loadFrameAsset("top_right_corner.png");
+		BufferedImage bl = loadFrameAsset("bottom_left_corner.png");
+		BufferedImage br = loadFrameAsset("bottom_right_corner.png");
+		BufferedImage bTop = loadFrameAsset("border_top.png");
+		BufferedImage bBottom = loadFrameAsset("border_bottom.png");
+		BufferedImage bLeft = loadFrameAsset("border_left.png");
+		BufferedImage bRight = loadFrameAsset("border_right.png");
 
-		// Title bar (drag region; window close used for closing)
+		FrameChromePanel chrome = new FrameChromePanel(fill, tl, tr, bl, br, bTop, bBottom, bLeft, bRight);
+		chrome.setLayout(new BorderLayout(0, 0));
+
+		JPanel inner = new JPanel(new BorderLayout(0, 0));
+		inner.setOpaque(false);
+		inner.setBorder(new EmptyBorder(chrome.getChromeInsets()));
+
+		// Title bar: drag region + x close (same behaviour as other LeagueScape popups: Esc via registerEscapeToClose on open)
 		JPanel titleBar = new JPanel(new BorderLayout(4, 0));
-		titleBar.setBackground(POPUP_BG);
-		titleBar.setBorder(new EmptyBorder(8, 12, 8, 12));
-		javax.swing.JLabel titleLabel = new javax.swing.JLabel("LeagueScape – Rules and Setup");
+		titleBar.setOpaque(false);
+		titleBar.setBorder(new EmptyBorder(4, 8, 4, 4));
+		javax.swing.JLabel titleLabel = new javax.swing.JLabel(LeagueScapeSetupStrings.FRAME_WINDOW_TITLE);
 		titleLabel.setForeground(POPUP_TEXT);
 		titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 14f));
 		titleBar.add(titleLabel, BorderLayout.CENTER);
-		// Drag to move (dialog position on screen)
+
+		JButton closeBtn = LeagueScapeSwingUtil.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
+		closeBtn.setPreferredSize(new Dimension(28, 28));
+		closeBtn.addActionListener(e -> {
+			if (audioPlayer != null && client != null)
+				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+			dispose();
+		});
+		titleBar.add(closeBtn, BorderLayout.EAST);
+
 		final int[] dragOffset = new int[2];
 		titleBar.addMouseListener(new MouseAdapter()
 		{
@@ -111,19 +139,15 @@ public class LeagueScapeSetupFrame extends JDialog
 				LeagueScapeSetupFrame.this.setLocation(e.getXOnScreen() - dragOffset[0], e.getYOnScreen() - dragOffset[1]);
 			}
 		});
-		root.add(titleBar, BorderLayout.NORTH);
 
-		// Left tab strip (divider box) + right content with border
 		JPanel body = new JPanel(new BorderLayout(0, 0));
-		body.setBackground(POPUP_BG);
-		body.setBorder(new EmptyBorder(0, 8, 12, 12));
+		body.setOpaque(false);
+		body.setBorder(new EmptyBorder(0, 4, 8, 8));
 
 		JPanel tabStripWrapper = new JPanel(new BorderLayout());
 		tabStripWrapper.setBackground(POPUP_BG);
 		tabStripWrapper.setOpaque(true);
-		tabStripWrapper.setBorder(new CompoundBorder(
-			new LineBorder(POPUP_BORDER, 1),
-			new EmptyBorder(6, 6, 6, 6)));
+		tabStripWrapper.setBorder(new EmptyBorder(4, 4, 4, 4));
 		JPanel tabStrip = new JPanel();
 		tabStrip.setLayout(new BoxLayout(tabStrip, BoxLayout.Y_AXIS));
 		tabStrip.setOpaque(false);
@@ -135,7 +159,6 @@ public class LeagueScapeSetupFrame extends JDialog
 		contentCards.setBackground(POPUP_BG);
 		contentCards.setOpaque(true);
 
-		// Tab content panels
 		JPanel rulesCard = buildRulesTab();
 		JPanel gameModeCard = buildGameModeTab(plugin, configManager, config, areaGraphService, pointsService, areaCompletionService, taskGridService, wikiApi, wikiTaskGenerator, client);
 		JPanel areaConfigCard = new LeagueScapeAreaConfigSection(plugin, areaGraphService, configManager, config);
@@ -147,14 +170,13 @@ public class LeagueScapeSetupFrame extends JDialog
 		contentCards.add(controlsCard, CARD_CONTROLS);
 
 		List<JButton> tabButtons = new ArrayList<>();
-		tabButtons.add(newTabButton("Rules", () -> cardLayout.show(contentCards, CARD_RULES), tabButtons));
-		tabButtons.add(newTabButton("Game Mode", () -> cardLayout.show(contentCards, CARD_GAME_MODE), tabButtons));
-		tabButtons.add(newTabButton("Area Configuration", () -> cardLayout.show(contentCards, CARD_AREA_CONFIG), tabButtons));
-		tabButtons.add(newTabButton("Controls", () -> cardLayout.show(contentCards, CARD_CONTROLS), tabButtons));
+		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_RULES, () -> cardLayout.show(contentCards, CARD_RULES), tabButtons));
+		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_GAME_MODE, () -> cardLayout.show(contentCards, CARD_GAME_MODE), tabButtons));
+		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_AREA_CONFIGURATION, () -> cardLayout.show(contentCards, CARD_AREA_CONFIG), tabButtons));
+		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_CONTROLS, () -> cardLayout.show(contentCards, CARD_CONTROLS), tabButtons));
 
 		for (JButton b : tabButtons)
 			tabStrip.add(b);
-		// Select first tab visually
 		if (!tabButtons.isEmpty())
 			setTabSelected(tabButtons.get(0), tabButtons);
 
@@ -163,15 +185,51 @@ public class LeagueScapeSetupFrame extends JDialog
 		JPanel cardWrapper = new JPanel(new BorderLayout());
 		cardWrapper.setBackground(POPUP_BG);
 		cardWrapper.setOpaque(true);
-		cardWrapper.setBorder(new EmptyBorder(0, 12, 0, 0));
+		cardWrapper.setBorder(new EmptyBorder(0, 8, 0, 0));
 		cardWrapper.add(contentCards, BorderLayout.CENTER);
 
 		body.add(tabStripWrapper, BorderLayout.WEST);
 		body.add(cardWrapper, BorderLayout.CENTER);
-		root.add(body, BorderLayout.CENTER);
 
-		setContentPane(root);
+		inner.add(titleBar, BorderLayout.NORTH);
+		inner.add(body, BorderLayout.CENTER);
+		chrome.add(inner, BorderLayout.CENTER);
+
+		setContentPane(chrome);
+
+		addWindowFocusListener(new WindowAdapter()
+		{
+			@Override
+			public void windowLostFocus(WindowEvent e)
+			{
+				// Do not close when a modal JOptionPane / file chooser (owned by this dialog) takes focus.
+				if (isOppositeWindowOwnedByThisDialog(e.getOppositeWindow()))
+					return;
+				SwingUtilities.invokeLater(() -> {
+					if (LeagueScapeSetupFrame.this.isDisplayable())
+						LeagueScapeSetupFrame.this.dispose();
+				});
+			}
+		});
+
+		LeagueScapePlugin.registerEscapeToClose(this);
 		pack();
+	}
+
+	/** True if focus moved to a top-level window whose owner chain includes this dialog (e.g. JOptionPane). */
+	private boolean isOppositeWindowOwnedByThisDialog(Window opposite)
+	{
+		if (opposite == null) return false;
+		for (Window w = opposite; w != null; w = w.getOwner())
+		{
+			if (w == this) return true;
+		}
+		return false;
+	}
+
+	private static BufferedImage loadFrameAsset(String name)
+	{
+		return ImageUtil.loadImageResource(LeagueScapePlugin.class, name);
 	}
 
 	private static final Dimension TAB_BUTTON_SIZE = new Dimension(TAB_STRIP_WIDTH - 16, 28);
@@ -215,7 +273,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		inner.setBackground(POPUP_BG);
 		inner.setOpaque(true);
 
-		javax.swing.JTextArea mainText = new javax.swing.JTextArea(getRulesText());
+		javax.swing.JTextArea mainText = new javax.swing.JTextArea(LeagueScapeSetupStrings.RULES_MAIN);
 		mainText.setEditable(false);
 		mainText.setLineWrap(true);
 		mainText.setWrapStyleWord(true);
@@ -241,7 +299,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		}
 		iconLabel.setOpaque(false);
 
-		javax.swing.JTextArea taskIconText = new javax.swing.JTextArea(getTaskIconRulesText());
+		javax.swing.JTextArea taskIconText = new javax.swing.JTextArea(LeagueScapeSetupStrings.RULES_TASK_ICON);
 		taskIconText.setEditable(false);
 		taskIconText.setLineWrap(true);
 		taskIconText.setWrapStyleWord(true);
@@ -266,37 +324,6 @@ public class LeagueScapeSetupFrame extends JDialog
 		return panel;
 	}
 
-	private static String getRulesText()
-	{
-		return "Welcome to LeagueScape. This window opens once per RuneScape account the first time you run the plugin "
-			+ "(after you log in). You can reopen it anytime from the LeagueScape sidebar panel or the task icon menu.\n\n"
-			+ "LeagueScape is an area-based progression plugin for Old School RuneScape. You pick a "
-			+ "starting area and starting points in Game Mode. "
-			+ "Complete tasks to earn points, then spend them to unlock more content depending on how you configure the game.\n\n"
-			+ "— Game modes (set in Game Mode tab) —\n\n"
-			+ "• Point buy: Areas are linked by neighbors. Spend points to unlock any neighboring area that you have not unlocked yet. "
-			+ "Each area has its own task grid; open tasks from the task icon (minimap) or the LeagueScape panel.\n\n"
-			+ "• Points to complete: You earn points in your current area. When you spend enough to meet the \"points to complete\" "
-			+ "target for that area, you may unlock one of its connected neighbors (as configured). Task grids work per area like Point buy.\n\n"
-			+ "• World Unlock: You spend points on a spiral grid of unlock tiles (skills, quests, bosses, areas, diaries). "
-			+ "Unlocking tiles reveals tasks and can gate areas. Use the World Unlocks grid from the task icon menu or the LeagueScape panel; "
-			+ "the global task grid lists tasks from your unlocked tiles.\n\n"
-			+ "— This popup —\n"
-			+ "• Rules (this tab): Overview, game modes, and task icon controls.\n"
-			+ "• Game Mode: Unlock mode, task tier points, starter area, starting points, task list, reset progress.\n"
-			+ "• Area Configuration: Import/export areas, edit polygons and neighbors, restore removed areas.\n"
-			+ "• Controls: Keybinds for area editing on the map and in the world map view.";
-	}
-
-	private static String getTaskIconRulesText()
-	{
-		return "Task icon (minimap)\n"
-			+ "• Where: Small square icon to the left of the world map orb (below the minimap). Same icon as shown here.\n"
-			+ "• Left-click: Opens your task panel — in World Unlock mode this is the global task grid; "
-			+ "in Point buy and Points to complete modes it opens tasks for your current area.\n"
-			+ "• Right-click: Opens a menu — Tasks, World Unlocks (World Unlock mode only), and Rules & Setup.";
-	}
-
 	private JPanel buildGameModeTab(LeagueScapePlugin plugin, ConfigManager configManager, LeagueScapeConfig config,
 		AreaGraphService areaGraphService, PointsService pointsService, AreaCompletionService areaCompletionService,
 		TaskGridService taskGridService, OsrsWikiApiService wikiApi, WikiTaskGenerator wikiTaskGenerator, Client client)
@@ -312,8 +339,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBackground(POPUP_BG);
 		panel.setOpaque(true);
-		String controlsText = getControlsText();
-		javax.swing.JTextArea text = new javax.swing.JTextArea(controlsText);
+		javax.swing.JTextArea text = new javax.swing.JTextArea(LeagueScapeSetupStrings.CONTROLS_BODY);
 		text.setEditable(false);
 		text.setLineWrap(true);
 		text.setWrapStyleWord(true);
@@ -327,16 +353,6 @@ public class LeagueScapeSetupFrame extends JDialog
 		scroll.getViewport().setBackground(POPUP_BG);
 		panel.add(scroll, BorderLayout.CENTER);
 		return panel;
-	}
-
-	private static String getControlsText()
-	{
-		return "Area editing – Game viewport (when editing an area):\n"
-			+ "• Shift + Right-click on a tile: Add polygon corner at that tile.\n"
-			+ "• Shift + Right-click on an existing corner: Choose \"Move\" to enter move mode; then click another tile and choose \"Set new corner\" to move the corner there, or \"Cancel move\" to cancel.\n\n"
-			+ "Area editing – World map (when editing an area):\n"
-			+ "• Right-click: Move corner, Remove corner, Fill using others' corners, Begin new polygon, Add neighbors, Done editing, Cancel editing.\n\n"
-			+ "Other: Open the world map and right click an area to see its details and unlock/tasks. Use the LeagueScape sidebar panel for Tasks and World Unlock.";
 	}
 
 	private JButton newRectangleButton(String text)
@@ -381,6 +397,168 @@ public class LeagueScapeSetupFrame extends JDialog
 		b.setOpaque(img == null);
 		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
 		return b;
+	}
+
+	/**
+	 * Paints tiled fill and border strips + corners; content sits inside {@link #getChromeInsets()}.
+	 */
+	private static final class FrameChromePanel extends JPanel
+	{
+		private static final Color FALLBACK_FILL = new Color(0x54, 0x4D, 0x41);
+
+		private final BufferedImage fill;
+		private final BufferedImage tl;
+		private final BufferedImage tr;
+		private final BufferedImage bl;
+		private final BufferedImage br;
+		private final BufferedImage bTop;
+		private final BufferedImage bBottom;
+		private final BufferedImage bLeft;
+		private final BufferedImage bRight;
+		private final Insets chromeInsets;
+
+		FrameChromePanel(BufferedImage fill, BufferedImage tl, BufferedImage tr, BufferedImage bl, BufferedImage br,
+			BufferedImage bTop, BufferedImage bBottom, BufferedImage bLeft, BufferedImage bRight)
+		{
+			this.fill = fill;
+			this.tl = tl;
+			this.tr = tr;
+			this.bl = bl;
+			this.br = br;
+			this.bTop = bTop;
+			this.bBottom = bBottom;
+			this.bLeft = bLeft;
+			this.bRight = bRight;
+			int tlW = tl != null ? tl.getWidth() : 0;
+			int tlH = tl != null ? tl.getHeight() : 0;
+			int trW = tr != null ? tr.getWidth() : 0;
+			int trH = tr != null ? tr.getHeight() : 0;
+			int blW = bl != null ? bl.getWidth() : 0;
+			int blH = bl != null ? bl.getHeight() : 0;
+			int brW = br != null ? br.getWidth() : 0;
+			int brH = br != null ? br.getHeight() : 0;
+			int tH = bTop != null ? bTop.getHeight() : 0;
+			int bH = bBottom != null ? bBottom.getHeight() : 0;
+			int lW = bLeft != null ? bLeft.getWidth() : 0;
+			int rW = bRight != null ? bRight.getWidth() : 0;
+			int top = Math.max(Math.max(tlH, trH), tH);
+			int bot = Math.max(Math.max(blH, brH), bH);
+			int left = Math.max(Math.max(tlW, blW), lW);
+			int right = Math.max(Math.max(trW, brW), rW);
+			chromeInsets = new Insets(top, left, bot, right);
+			setOpaque(false);
+		}
+
+		Insets getChromeInsets()
+		{
+			return new Insets(chromeInsets.top, chromeInsets.left, chromeInsets.bottom, chromeInsets.right);
+		}
+
+		@Override
+		protected void paintComponent(Graphics g)
+		{
+			Graphics2D g2 = (Graphics2D) g.create();
+			try
+			{
+				g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+				paintFrame(g2, getWidth(), getHeight());
+			}
+			finally
+			{
+				g2.dispose();
+			}
+			super.paintComponent(g);
+		}
+
+		private void paintFrame(Graphics2D g, int w, int h)
+		{
+			if (w <= 0 || h <= 0)
+				return;
+			int tlW = tl != null ? tl.getWidth() : 0;
+			int tlH = tl != null ? tl.getHeight() : 0;
+			int trW = tr != null ? tr.getWidth() : 0;
+			int trH = tr != null ? tr.getHeight() : 0;
+			int blW = bl != null ? bl.getWidth() : 0;
+			int blH = bl != null ? bl.getHeight() : 0;
+			int brW = br != null ? br.getWidth() : 0;
+			int brH = br != null ? br.getHeight() : 0;
+			int tH = bTop != null ? bTop.getHeight() : 1;
+			int bH = bBottom != null ? bBottom.getHeight() : 1;
+			int lW = bLeft != null ? bLeft.getWidth() : 1;
+			int rW = bRight != null ? bRight.getWidth() : 1;
+
+			int leftInset = chromeInsets.left;
+			int rightInset = chromeInsets.right;
+			int topInset = chromeInsets.top;
+			int bottomInset = chromeInsets.bottom;
+			int innerW = w - leftInset - rightInset;
+			int innerH = h - topInset - bottomInset;
+			if (innerW > 0 && innerH > 0)
+			{
+				if (fill != null)
+					tileImage(g, fill, leftInset, topInset, innerW, innerH);
+				else
+				{
+					g.setColor(FALLBACK_FILL);
+					g.fillRect(leftInset, topInset, innerW, innerH);
+				}
+			}
+
+			if (bTop != null && w > tlW + trW)
+			{
+				int segW = w - tlW - trW;
+				if (segW > 0)
+					tileImage(g, bTop, tlW, 0, segW, Math.max(1, tH));
+			}
+			if (bBottom != null && w > blW + brW)
+			{
+				int segW = w - blW - brW;
+				int bh = Math.max(1, bH);
+				if (segW > 0)
+					tileImage(g, bBottom, blW, h - bh, segW, bh);
+			}
+			if (bLeft != null && h > tlH + blH)
+			{
+				int segH = h - tlH - blH;
+				if (segH > 0)
+					tileImage(g, bLeft, 0, tlH, Math.max(1, lW), segH);
+			}
+			if (bRight != null && h > trH + brH)
+			{
+				int segH = h - trH - brH;
+				int rw = Math.max(1, rW);
+				if (segH > 0)
+					tileImage(g, bRight, w - rw, trH, rw, segH);
+			}
+
+			if (tl != null)
+				g.drawImage(tl, 0, 0, null);
+			if (tr != null)
+				g.drawImage(tr, w - trW, 0, null);
+			if (bl != null)
+				g.drawImage(bl, 0, h - blH, null);
+			if (br != null)
+				g.drawImage(br, w - brW, h - brH, null);
+		}
+
+		private static void tileImage(Graphics g, BufferedImage tile, int dx, int dy, int regionW, int regionH)
+		{
+			if (tile == null || regionW <= 0 || regionH <= 0)
+				return;
+			int tw = tile.getWidth();
+			int th = tile.getHeight();
+			if (tw <= 0 || th <= 0)
+				return;
+			for (int py = 0; py < regionH; py += th)
+			{
+				int sh = Math.min(th, regionH - py);
+				for (int px = 0; px < regionW; px += tw)
+				{
+					int sw = Math.min(tw, regionW - px);
+					g.drawImage(tile, dx + px, dy + py, dx + px + sw, dy + py + sh, 0, 0, sw, sh, null);
+				}
+			}
+		}
 	}
 
 }

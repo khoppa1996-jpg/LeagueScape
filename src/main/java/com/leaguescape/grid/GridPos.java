@@ -54,4 +54,12 @@ public final class GridPos
 	{
 		return Math.max(Math.abs(r1 - r2), Math.abs(c1 - c2));
 	}
+
+	/**
+	 * Ring index for task grids centered at (0,0): {@code max(|row|,|col|)}. Center is 0; first ring of 8 cells is 1.
+	 */
+	public static int ringNumber(int row, int col)
+	{
+		return Math.max(Math.abs(row), Math.abs(col));
+	}
 }

@@ -3126,7 +3126,7 @@
       "id": "recipe_for_disaster_freeing_the_goblin_generals",
       "displayName": "Recipe for Disaster/Freeing the Goblin generals",
       "tier": 3,
-      "prerequisites": ["lumbridge", "goblin_diplomacy"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest", "goblin_diplomacy"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing the Goblin generals" }
     },
     {
@@ -3134,7 +3134,7 @@
       "id": "recipe_for_disaster_freeing_the_mountain_dwarf",
       "displayName": "Recipe for Disaster/Freeing the Mountain Dwarf",
       "tier": 3,
-      "prerequisites": ["lumbridge", "fishing_contest"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest", "fishing_contest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing the Mountain Dwarf" }
     },
     {
@@ -3142,7 +3142,7 @@
       "id": "recipe_for_disaster_freeing_evil_dave",
       "displayName": "Recipe for Disaster/Freeing Evil Dave",
       "tier": 3,
-      "prerequisites": ["lumbridge", "gertrude_s_cat"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest", "gertrude_s_cat"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing Evil Dave" }
     },
     {
@@ -3150,7 +3150,7 @@
       "id": "recipe_for_disaster_freeing_pirate_pete",
       "displayName": "Recipe for Disaster/Freeing Pirate Pete",
       "tier": 3,
-      "prerequisites": ["lumbridge", "skippy_and_the_mogres"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest", "skippy_and_the_mogres"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing Pirate Pete" }
     },
     {
@@ -3158,7 +3158,7 @@
       "id": "recipe_for_disaster_freeing_the_lumbridge_guide",
       "displayName": "Recipe for Disaster/Freeing the Lumbridge Guide",
       "tier": 3,
-      "prerequisites": ["lumbridge"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest","witchs_house","big_chompy_bird_hunting","biohazard","demon_slayer","murder_mystery","nature_spirit"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing the Lumbridge Guide" }
     },
     {
@@ -3166,7 +3166,7 @@
       "id": "recipe_for_disaster_freeing_sir_amik_varze",
       "displayName": "Recipe for Disaster/Freeing Sir Amik Varze",
       "tier": 3,
-      "prerequisites": ["lumbridge","legends_quest"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest","legends_quest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing Sir Amik Varze" }
     },
     {
@@ -3174,7 +3174,7 @@
       "id": "recipe_for_disaster_freeing_king_awowogei",
       "displayName": "Recipe for Disaster/Freeing King Awowogei",
       "tier": 3,
-      "prerequisites": ["lumbridge","monkey_madness_i"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest","monkey_madness_i"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing King Awowogei" }
     },
     {
@@ -3182,7 +3182,7 @@
       "id": "recipe_for_disaster_freeing_skrach_uglogwee",
       "displayName": "Recipe for Disaster/Freeing Skrach Uglogwee",
       "tier": 3,
-      "prerequisites": ["lumbridge","big_chompy_bird_hunting"],
+      "prerequisites": ["lumbridge","recipe_for_disaster_another_cooks_quest","big_chompy_bird_hunting"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster/Freeing Skrach Uglogwee" }
     },
     {

@@ -48,6 +48,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.util.ImageUtil;
 
 /**
@@ -74,6 +75,7 @@ public class WorldUnlockGridPanel extends JPanel
 	private final Runnable onOpenRulesSetup;
 	private final Consumer<String> onAreaUnlocked;
 	private final Client client;
+	private final ClientThread clientThread;
 	private final AudioPlayer audioPlayer;
 	private final JDialog parentDialog;
 
@@ -89,9 +91,11 @@ public class WorldUnlockGridPanel extends JPanel
 	private static final float ZOOM_MIN = 0.5f;
 	private static final float ZOOM_MAX = 2.0f;
 	private static final float ZOOM_STEP = 0.15f;
+	/** OSRS sound effect when a world unlock tile is unlocked (see {@link Client#playSoundEffect(int)}). */
+	private static final int UNLOCK_TILE_SOUND_ID = 52;
 
 	public WorldUnlockGridPanel(WorldUnlockService worldUnlockService, PointsService pointsService,
-		Runnable onClose, Runnable onOpenTasks, Runnable onOpenRulesSetup, Consumer<String> onAreaUnlocked, Client client, AudioPlayer audioPlayer, JDialog parentDialog)
+		Runnable onClose, Runnable onOpenTasks, Runnable onOpenRulesSetup, Consumer<String> onAreaUnlocked, Client client, ClientThread clientThread, AudioPlayer audioPlayer, JDialog parentDialog)
 	{
 		this.worldUnlockService = worldUnlockService;
 		this.pointsService = pointsService;
@@ -100,6 +104,7 @@ public class WorldUnlockGridPanel extends JPanel
 		this.onOpenRulesSetup = onOpenRulesSetup;
 		this.onAreaUnlocked = onAreaUnlocked;
 		this.client = client;
+		this.clientThread = clientThread;
 		this.audioPlayer = audioPlayer;
 		this.parentDialog = parentDialog;
 
@@ -849,7 +854,7 @@ public class WorldUnlockGridPanel extends JPanel
 				{
 					if (com.leaguescape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
 						onAreaUnlocked.accept(tile.getId());
-					playSound(LeagueScapeSounds.TASK_COMPLETE);
+					playUnlockTileGameSound();
 					detail.dispose();
 					SwingUtilities.invokeLater(this::refresh);
 				}
@@ -911,7 +916,7 @@ public class WorldUnlockGridPanel extends JPanel
 					{
 						if (com.leaguescape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
 							onAreaUnlocked.accept(tile.getId());
-						playSound(LeagueScapeSounds.TASK_COMPLETE);
+						playUnlockTileGameSound();
 						detail.dispose();
 						SwingUtilities.invokeLater(this::refresh);
 					}
@@ -961,6 +966,12 @@ public class WorldUnlockGridPanel extends JPanel
 	{
 		if (audioPlayer != null && client != null)
 			LeagueScapeSounds.play(audioPlayer, sound, client);
+	}
+
+	private void playUnlockTileGameSound()
+	{
+		if (clientThread != null && client != null)
+			clientThread.invoke(() -> client.playSoundEffect(UNLOCK_TILE_SOUND_ID));
 	}
 
 	private static String capitalize(String s)
