@@ -67,6 +67,12 @@ public class GlobalTaskListService
 	/** Legacy separator (taskKey|||pos); still parsed on load for backward compatibility. */
 	private static final String COMPOSITE_SEP = "|||";
 	private static final int MAX_TIER = 5;
+	/** Weight multipliers for {@link #pickWeightedTaskForCell}. */
+	private static final double WEIGHT_NEW_ELIGIBLE = 1.95;
+	private static final double WEIGHT_UNLOCKED_AREA = 1.55;
+	private static final double WEIGHT_AREA_TASK = 1.35;
+	/** Applied to Collection Log tasks without boss link when other tasks exist for the cell. */
+	private static final double WEIGHT_COLLECTION_LOG_DOWN = 0.28;
 	/** Minimum rings (matches Area Task grid); ensures tier 4/5 visibility. */
 	private static final int MIN_RINGS = 9;
 	/** Maximum rings for "infinite" expansion. */
@@ -139,35 +145,6 @@ public class GlobalTaskListService
 		return req.stream().allMatch(unlockedAreaIds::contains);
 	}
 
-	/**
-	 * True if the task has at least one skill-bracket token in requirements and every such bracket's skill tile is unlocked
-	 * (for prioritization over no-area tasks).
-	 */
-	private boolean isUnlockedSkillBracketTask(TaskDefinition t)
-	{
-		String taskType = t.getTaskType();
-		String req = t.getRequirements();
-		if (taskType == null || taskType.trim().isEmpty() || req == null || req.trim().isEmpty())
-			return false;
-		Set<String> unlockedIds = worldUnlockService.getUnlockedIds();
-		boolean foundBracket = false;
-		for (String part : req.split(","))
-		{
-			String token = part.trim();
-			if (token.isEmpty()) continue;
-			Matcher bracket = SKILL_BRACKET_ONLY.matcher(token);
-			if (bracket.matches())
-			{
-				foundBracket = true;
-				int minLevel = Integer.parseInt(bracket.group(1));
-				String skillTileId = worldUnlockService.getSkillTileIdForLevel(taskType.trim(), minLevel);
-				if (skillTileId == null || !unlockedIds.contains(skillTileId))
-					return false;
-			}
-		}
-		return foundBracket;
-	}
-
 	/** True if the task has a non-empty required-area list. */
 	private static boolean isAreaTask(TaskDefinition t)
 	{
@@ -204,18 +181,144 @@ public class GlobalTaskListService
 	}
 
 	/**
-	 * Global task grid ordering among Collection Log tasks: boss-gated ({@code bossId}) first, then area-bound entries,
-	 * then non-area-specific filler ({@link #isCollectionLogWithoutBossOrArea}). Non-collection tasks return 0.
+	 * True when {@code bossId} is set or any requirement token resolves to a boss world-unlock tile.
+	 * Used to avoid downweighting boss-related Collection Log tasks on the global grid.
 	 */
-	private static int collectionLogGridRank(TaskDefinition t)
+	private boolean isCollectionLogBossLinked(TaskDefinition t)
 	{
 		if (t == null || !TaskTypes.isCollectionLogType(t.getTaskType()))
-			return 0;
+			return false;
 		if (t.getBossId() != null && !t.getBossId().trim().isEmpty())
-			return 3;
-		if (isCollectionLogWithoutBossOrArea(t))
-			return 1;
-		return 2;
+			return true;
+		String req = t.getRequirements();
+		if (req == null || req.trim().isEmpty())
+			return false;
+		for (String part : req.split(","))
+		{
+			String token = part.trim();
+			if (token.isEmpty()) continue;
+			String tileId = worldUnlockService.resolvePrerequisiteToTileId(token);
+			if (tileId == null) continue;
+			WorldUnlockTile tile = worldUnlockService.getTileById(tileId);
+			if (tile != null && WorldUnlockTileType.BOSS.equals(tile.getType()))
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isCollectionLogDeprioritized(TaskDefinition t)
+	{
+		return t != null && TaskTypes.isCollectionLogType(t.getTaskType()) && !isCollectionLogBossLinked(t);
+	}
+
+	/** Clamped task difficulty tier (1–{@link #MAX_TIER}). */
+	private static int difficultyTier(TaskDefinition t)
+	{
+		if (t == null) return 1;
+		return Math.max(1, Math.min(MAX_TIER, t.getDifficulty()));
+	}
+
+	/**
+	 * Max difficulty tier allowed for a Chebyshev ring (center = 0). Outer rings allow harder tasks.
+	 */
+	private static int maxDifficultyForRing(int ring)
+	{
+		if (ring <= 1) return 1;
+		if (ring == 2) return 2;
+		if (ring == 3) return 3;
+		return MAX_TIER;
+	}
+
+	/**
+	 * Tasks in {@code remaining} whose difficulty fits the ring cap, widening the cap until non-empty.
+	 */
+	private static List<TaskDefinition> candidatesForRing(List<TaskDefinition> remaining, int ring)
+	{
+		if (remaining.isEmpty())
+			return new ArrayList<>();
+		int cap = maxDifficultyForRing(ring);
+		for (;;)
+		{
+			List<TaskDefinition> list = new ArrayList<>();
+			for (TaskDefinition t : remaining)
+			{
+				if (difficultyTier(t) <= cap)
+					list.add(t);
+			}
+			if (!list.isEmpty())
+				return list;
+			if (cap >= MAX_TIER)
+				return new ArrayList<>(remaining);
+			cap++;
+		}
+	}
+
+	private double taskWeightForCandidate(TaskDefinition t, Set<String> newlyEligibleKeys, Set<String> unlockedAreaIds,
+		boolean applyCollectionLogDownweight)
+	{
+		double w = 1.0;
+		String k = taskKey(t);
+		if (!k.isEmpty() && newlyEligibleKeys.contains(k))
+			w *= WEIGHT_NEW_ELIGIBLE;
+		if (isUnlockedAreaTask(t, unlockedAreaIds))
+			w *= WEIGHT_UNLOCKED_AREA;
+		else if (isAreaTask(t))
+			w *= WEIGHT_AREA_TASK;
+		if (applyCollectionLogDownweight && isCollectionLogDeprioritized(t))
+			w *= WEIGHT_COLLECTION_LOG_DOWN;
+		return w;
+	}
+
+	private TaskDefinition pickWeightedTaskForCell(List<TaskDefinition> remaining, int ring,
+		Set<String> newlyEligibleKeys, Set<String> unlockedAreaIds, Random rnd)
+	{
+		List<TaskDefinition> candidates = candidatesForRing(remaining, ring);
+		if (candidates.isEmpty())
+			return null;
+		// Prefer lowest difficulty among candidates so tier 1 is exhausted before tier 2+ (new and existing tasks).
+		int minTier = Integer.MAX_VALUE;
+		for (TaskDefinition t : candidates)
+		{
+			int d = difficultyTier(t);
+			if (d < minTier)
+				minTier = d;
+		}
+		List<TaskDefinition> atMinTier = new ArrayList<>();
+		for (TaskDefinition t : candidates)
+		{
+			if (difficultyTier(t) == minTier)
+				atMinTier.add(t);
+		}
+		candidates = atMinTier;
+		boolean hasNonDeprioritized = false;
+		for (TaskDefinition t : candidates)
+		{
+			if (!isCollectionLogDeprioritized(t))
+			{
+				hasNonDeprioritized = true;
+				break;
+			}
+		}
+		boolean applyClDown = hasNonDeprioritized;
+		double total = 0.0;
+		double[] weights = new double[candidates.size()];
+		for (int i = 0; i < candidates.size(); i++)
+		{
+			double w = taskWeightForCandidate(candidates.get(i), newlyEligibleKeys, unlockedAreaIds, applyClDown);
+			weights[i] = w;
+			total += w;
+		}
+		if (total <= 0.0)
+			return candidates.get(0);
+		double pick = rnd.nextDouble() * total;
+		double acc = 0.0;
+		for (int i = 0; i < candidates.size(); i++)
+		{
+			acc += weights[i];
+			if (pick < acc)
+				return candidates.get(i);
+		}
+		return candidates.get(candidates.size() - 1);
 	}
 
 	/**
@@ -733,62 +836,6 @@ public class GlobalTaskListService
 	}
 
 	/**
-	 * Skill / area / collection-log / tier prioritization, then shuffle within equal buckets (same as before lazy-assignment changes).
-	 */
-	private void applyPrioritySortAndBucketShuffle(List<TaskDefinition> availableForNew, Set<String> unlockedAreaIds, Random rnd)
-	{
-		availableForNew.sort((a, b) -> {
-			boolean aSkill = isUnlockedSkillBracketTask(a);
-			boolean bSkill = isUnlockedSkillBracketTask(b);
-			if (aSkill != bSkill) return aSkill ? -1 : 1;
-			boolean aUnlockedArea = isUnlockedAreaTask(a, unlockedAreaIds);
-			boolean bUnlockedArea = isUnlockedAreaTask(b, unlockedAreaIds);
-			if (aUnlockedArea != bUnlockedArea) return aUnlockedArea ? -1 : 1;
-			boolean aArea = isAreaTask(a);
-			boolean bArea = isAreaTask(b);
-			if (aArea != bArea) return aArea ? -1 : 1;
-			boolean aCl = TaskTypes.isCollectionLogType(a.getTaskType());
-			boolean bCl = TaskTypes.isCollectionLogType(b.getTaskType());
-			if (aCl && bCl)
-			{
-				int ra = collectionLogGridRank(a);
-				int rb = collectionLogGridRank(b);
-				if (ra != rb) return Integer.compare(rb, ra);
-			}
-			int da = Math.max(1, Math.min(MAX_TIER, a.getDifficulty()));
-			int db = Math.max(1, Math.min(MAX_TIER, b.getDifficulty()));
-			if (da != db) return Integer.compare(da, db);
-			boolean aNa = isCollectionLogWithoutBossOrArea(a);
-			boolean bNa = isCollectionLogWithoutBossOrArea(b);
-			if (aNa != bNa) return aNa ? 1 : -1;
-			return taskKey(a).compareTo(taskKey(b));
-		});
-		int idx = 0;
-		while (idx < availableForNew.size())
-		{
-			boolean s0 = isUnlockedSkillBracketTask(availableForNew.get(idx));
-			boolean u0 = isUnlockedAreaTask(availableForNew.get(idx), unlockedAreaIds);
-			boolean a0 = isAreaTask(availableForNew.get(idx));
-			int cl0 = collectionLogGridRank(availableForNew.get(idx));
-			int d0 = Math.max(1, Math.min(MAX_TIER, availableForNew.get(idx).getDifficulty()));
-			int j = idx + 1;
-			while (j < availableForNew.size())
-			{
-				boolean s = isUnlockedSkillBracketTask(availableForNew.get(j));
-				boolean u = isUnlockedAreaTask(availableForNew.get(j), unlockedAreaIds);
-				boolean a = isAreaTask(availableForNew.get(j));
-				int cl = collectionLogGridRank(availableForNew.get(j));
-				int d = Math.max(1, Math.min(MAX_TIER, availableForNew.get(j).getDifficulty()));
-				if (s != s0 || u != u0 || a != a0 || cl != cl0 || d != d0) break;
-				j++;
-			}
-			if (j > idx + 1)
-				Collections.shuffle(availableForNew.subList(idx, j), rnd);
-			idx = j;
-		}
-	}
-
-	/**
 	 * Builds the grid using lazy assignment: only assign a task to a cell when it is first revealed
 	 * (adjacent to a claimed cell). Center (0,0) is the anchor. Each task is used at most once (strict one-use).
 	 * Available tasks = no-area + unlocked World Unlock state only.
@@ -903,16 +950,14 @@ public class GlobalTaskListService
 			.filter(t -> "area".equals(t.getType()) && worldUnlockService.getUnlockedIds().contains(t.getId()))
 			.map(t -> t.getId())
 			.collect(Collectors.toSet());
-		Random rnd = new Random(reshuffleSeed);
-		applyPrioritySortAndBucketShuffle(oldTasks, unlockedAreaIds, rnd);
 
-		availableForNew = new ArrayList<>(newTasks.size() + oldTasks.size());
-		availableForNew.addAll(newTasks);
-		availableForNew.addAll(oldTasks);
+		List<TaskDefinition> assignmentPool = new ArrayList<>(newTasks.size() + oldTasks.size());
+		assignmentPool.addAll(newTasks);
+		assignmentPool.addAll(oldTasks);
 
 		saveSet(KEY_GLOBAL_ELIGIBLE_SNAPSHOT, eligibleKeysNow);
 
-		// 6. Assign only to toAssign (newly revealed, not in grid state). Add to grid state and remove from available (one-use).
+		// 6. Assign only to toAssign (newly revealed, not in grid state). Weighted random by ring difficulty, area/new boosts, CL downweight.
 		Comparator<int[]> byDistFromCenter = (a, b) -> {
 			int da = chebyshevDist(a[0], a[1], 0, 0);
 			int db = chebyshevDist(b[0], b[1], 0, 0);
@@ -928,12 +973,18 @@ public class GlobalTaskListService
 		}
 		toAssignRc.sort(byDistFromCenter);
 
-		for (int i = 0; i < toAssignRc.size() && i < availableForNew.size(); i++)
+		List<TaskDefinition> remaining = new ArrayList<>(assignmentPool);
+		Random rnd = new Random(reshuffleSeed);
+		for (int i = 0; i < toAssignRc.size() && !remaining.isEmpty(); i++)
 		{
 			int[] rc = toAssignRc.get(i);
 			String pos = rc[0] + "," + rc[1];
-			TaskDefinition def = availableForNew.get(i);
-			if (def == null) def = placeholderTile();
+			int ring = GridPos.ringNumber(rc[0], rc[1]);
+			TaskDefinition def = pickWeightedTaskForCell(remaining, ring, newlyEligibleKeys, unlockedAreaIds, rnd);
+			if (def != null)
+				remaining.remove(def);
+			if (def == null)
+				def = placeholderTile();
 			String tk = taskKey(def);
 			if (!"unknown".equals(tk))
 			{

@@ -107,6 +107,19 @@ public class WorldUnlockService
 		unlockedIds.addAll(ConfigParsing.parseCommaSeparatedSet(configManager.getConfiguration(STATE_GROUP, KEY_WORLD_UNLOCK_UNLOCKED_IDS)));
 		claimedIds.clear();
 		claimedIds.addAll(ConfigParsing.parseCommaSeparatedSet(configManager.getConfiguration(STATE_GROUP, KEY_WORLD_UNLOCK_CLAIMED_IDS)));
+		// Boss tiles match area tiles: unlocked implies claimed for fog/reveal (repair legacy saves missing claimed id).
+		boolean bossClaimRepair = false;
+		for (WorldUnlockTile t : tiles)
+		{
+			if (t == null || t.getId() == null || !WorldUnlockTileType.BOSS.equals(t.getType())) continue;
+			if (unlockedIds.contains(t.getId()) && !claimedIds.contains(t.getId()))
+			{
+				claimedIds.add(t.getId());
+				bossClaimRepair = true;
+			}
+		}
+		if (bossClaimRepair)
+			persistClaimed();
 		loaded = true;
 	}
 
@@ -176,7 +189,8 @@ public class WorldUnlockService
 	 * Center (0,0) = start tile. Tiles are assigned only when first revealed (adjacent to a claimed tile).
 	 * Never reassign; a tile may only be assigned to a revealed slot when every prerequisite is satisfied.
 	 * For <b>quest</b> and <b>boss</b> tiles, every prerequisite that resolves to another unlock tile must be <b>claimed</b>
-	 * (not merely unlocked). Other types use <b>unlocked or claimed</b> as before (area tiles are auto-claimed on unlock).
+	 * (not merely unlocked). For <b>skill</b> tiles, each resolved prerequisite must be <b>claimed</b>, <b>revealed</b> (on the grid), or <b>unlocked</b>.
+	 * Other types use <b>unlocked or claimed</b> as before (area and boss tiles are auto-claimed on unlock).
 	 * Fog-of-war reveal still spreads only from <b>claimed</b> tiles (and the center), so adjacent cells stay hidden until
 	 * the player claims the neighboring tile.
 	 * Rings 1–2: only tier-1 skill tiles (levels 1–10). Ring 3+ (weighted roll): 65% skill, 12% quest (requires an
@@ -246,15 +260,16 @@ public class WorldUnlockService
 		List<String> toAssign = new ArrayList<>(toAssignSet);
 
 		// 5. Available = tiles (not center) not yet placed, with prerequisites satisfied (quest/boss: prereqs claimed; else unlocked or claimed).
-		// Skill tiles are not auto-claimed on unlock; unlocked ∪ claimed still gates them.
+		// Skill tiles: each resolved prerequisite must be claimed, revealed on the grid, or unlocked (see {@link #prerequisitesSatisfied}).
 		Set<String> satisfiedIds = new HashSet<>(claimedIds);
 		satisfiedIds.addAll(unlockedIds);
+		Set<String> revealedTileIds = new HashSet<>(gridState.values());
 		List<WorldUnlockTile> available = new ArrayList<>();
 		for (WorldUnlockTile t : all)
 		{
 			if (t == centerTile) continue;
 			if (placedIds.contains(t.getId())) continue;
-			if (!prerequisitesSatisfied(t, satisfiedIds, claimedIds)) continue;
+			if (!prerequisitesSatisfied(t, satisfiedIds, claimedIds, revealedTileIds)) continue;
 			available.add(t);
 		}
 
@@ -372,7 +387,7 @@ public class WorldUnlockService
 				{
 					if (t == centerTile) continue;
 					if (placedIds.contains(t.getId())) continue;
-					if (!prerequisitesSatisfied(t, satisfiedIds, claimedIds)) continue;
+					if (!prerequisitesSatisfied(t, satisfiedIds, claimedIds, revealedTileIds)) continue;
 					// Never allow non-neighbor areas to populate, even as a fallback.
 					// This ensures the first revealed areas near the starter come from areas.json neighbor relationships.
 					if (WorldUnlockTileType.AREA.equals(t.getType()) && !neighborAreaIds.contains(t.getId())) continue;
@@ -563,20 +578,26 @@ public class WorldUnlockService
 	/**
 	 * True only when all prerequisites are satisfied (AND logic).
 	 * For {@link WorldUnlockTileType#QUEST} and {@link WorldUnlockTileType#BOSS} tiles, each prerequisite that resolves
-	 * to an unlock tile id must be in {@code claimedIds}. Other tile types: each prereq must be in {@code satisfiedIds}
-	 * (typically unlocked ∪ claimed). Unresolved prereqs still use {@code satisfiedIds} for the raw string on quest/boss.
+	 * to an unlock tile id must be in {@code claimedIds}.
+	 * For {@link WorldUnlockTileType#SKILL} tiles, each resolved prerequisite must be {@linkplain #claim claimed},
+	 * assigned on the grid ({@code revealedTileIds}), or {@linkplain #unlock unlocked}.
+	 * Other tile types: each prereq must be in {@code satisfiedIds} (typically unlocked ∪ claimed).
 	 */
-	private boolean prerequisitesSatisfied(WorldUnlockTile tile, Set<String> satisfiedIds, Set<String> claimedIds)
+	private boolean prerequisitesSatisfied(WorldUnlockTile tile, Set<String> satisfiedIds, Set<String> claimedIds,
+		Set<String> revealedTileIds)
 	{
 		if (tile.getPrerequisites() == null || tile.getPrerequisites().isEmpty())
 			return true;
 		boolean requireClaimedPrereqs = WorldUnlockTileType.QUEST.equals(tile.getType())
 			|| WorldUnlockTileType.BOSS.equals(tile.getType());
+		boolean skillTile = WorldUnlockTileType.SKILL.equals(tile.getType());
 		return tile.getPrerequisites().stream().allMatch(prereq -> {
 			String tileId = resolvePrerequisiteToTileId(prereq);
 			String toCheck = (tileId != null) ? tileId : prereq.trim();
 			if (requireClaimedPrereqs && tileId != null)
 				return claimedIds.contains(tileId);
+			if (skillTile && tileId != null)
+				return claimedIds.contains(tileId) || revealedTileIds.contains(tileId) || unlockedIds.contains(tileId);
 			return satisfiedIds.contains(toCheck);
 		});
 	}
@@ -643,6 +664,7 @@ public class WorldUnlockService
 	 * True if this tile is revealed. Center (0,0) is always revealed; any other tile is revealed
 	 * only when at least one cardinal neighbor is claimed (unlocked + action done + claimed).
 	 * Quest and boss tiles stay hidden until every prerequisite unlock tile is {@linkplain #claim claimed}, not merely unlocked.
+	 * Skill tiles additionally require each prerequisite to be claimed, on the grid, or unlocked (same as population rules).
 	 */
 	public boolean isRevealed(WorldUnlockTilePlacement placement, Set<String> claimed, List<WorldUnlockTilePlacement> grid)
 	{
@@ -666,7 +688,34 @@ public class WorldUnlockService
 		WorldUnlockTile tile = placement.getTile();
 		if (tile != null && (WorldUnlockTileType.QUEST.equals(tile.getType()) || WorldUnlockTileType.BOSS.equals(tile.getType())))
 			return resolvedPrerequisitesAllClaimed(tile, claimed);
+		if (tile != null && WorldUnlockTileType.SKILL.equals(tile.getType()))
+			return skillPrerequisitesRevealedOrClaimed(tile, claimed, grid);
 		return true;
+	}
+
+	/**
+	 * Skill unlocks: prerequisite satisfied if claimed, placed on the grid, or unlocked (matches {@link #prerequisitesSatisfied}).
+	 */
+	private boolean skillPrerequisitesRevealedOrClaimed(WorldUnlockTile tile, Set<String> claimedIds,
+		List<WorldUnlockTilePlacement> grid)
+	{
+		if (tile.getPrerequisites() == null || tile.getPrerequisites().isEmpty())
+			return true;
+		Set<String> revealedTileIds = new HashSet<>();
+		for (WorldUnlockTilePlacement p : grid)
+		{
+			if (p != null && p.getTile() != null && p.getTile().getId() != null)
+				revealedTileIds.add(p.getTile().getId());
+		}
+		Set<String> satisfiedIds = new HashSet<>(claimedIds);
+		satisfiedIds.addAll(unlockedIds);
+		return tile.getPrerequisites().stream().allMatch(prereq -> {
+			String tileId = resolvePrerequisiteToTileId(prereq);
+			String toCheck = (tileId != null) ? tileId : prereq.trim();
+			if (tileId != null)
+				return claimedIds.contains(tileId) || revealedTileIds.contains(tileId) || unlockedIds.contains(tileId);
+			return satisfiedIds.contains(toCheck);
+		});
 	}
 
 	/** For quest/boss tiles: every prerequisite that maps to an unlock tile id must be in {@code claimedIds}. */
@@ -756,7 +805,7 @@ public class WorldUnlockService
 
 	/**
 	 * Returns tile ids that are either unlocked or revealed on the World Unlock grid (same visibility as
-	 * {@link #isRevealed}, including quest prerequisite rules).
+	 * {@link #isRevealed}, including quest/boss and skill prerequisite rules).
 	 * Used so task requirements like "[skill] [bracket]" (e.g. "Agility 41-50") allow the task
 	 * to populate once that skill unlock is visible (revealed), not only when it is unlocked.
 	 */
@@ -984,8 +1033,8 @@ public class WorldUnlockService
 		unlockedIds.add(tileId);
 		persistUnlocked();
 		incrementGridSeed();
-		// Area tiles: unlock and claim in one action (no separate "complete action then claim" step)
-		if (WorldUnlockTileType.AREA.equals(tile.getType()))
+		// Area and boss tiles: unlock and claim in one action (no separate "complete action then claim" step)
+		if (WorldUnlockTileType.AREA.equals(tile.getType()) || WorldUnlockTileType.BOSS.equals(tile.getType()))
 		{
 			claimedIds.add(tileId);
 			persistClaimed();

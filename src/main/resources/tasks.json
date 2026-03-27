@@ -28869,45 +28869,12 @@
     "onceOnly": true
   },
   {
-    "displayName": "Obtain Some Beekeeper\u0027s boots",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain Some Beekeeper\u0027s gloves",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain A Beekeeper\u0027s hat",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain Some Beekeeper\u0027s legs",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain A Beekeeper\u0027s top",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
     "displayName": "Obtain A Big bass",
     "taskType": "Collection Log",
     "difficulty": 3,
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "prifddinas, kourend_woodland, ape_atoll, southern_morytania, catherby, kebos_lowlands, hemenster, hosidius, rellekka, fremennik_isles, isle_of_souls, eastern_varlamore, western_varlamore, tlati_rainforest, proudspire, ardent_nw, ardent_se, ardent_sw, unquiet, shrouded_e, shrouded_w, sunset, western_s, western_n,",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Obtain A Big pearl",
@@ -28922,13 +28889,17 @@
     "displayName": "Obtain A Big shark",
     "taskType": "Collection Log",
     "difficulty": 5,
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "prifddinas, kourend_woodland, ape_atoll, southern_morytania, catherby, kebos_lowlands, hemenster, hosidius, rellekka, fremennik_isles, isle_of_souls, eastern_varlamore, western_varlamore, tlati_rainforest, proudspire, ardent_nw, ardent_se, ardent_sw, unquiet, shrouded_e, shrouded_w, sunset, western_s, western_n,",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Obtain A Big swordfish",
     "taskType": "Collection Log",
     "difficulty": 4,
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "prifddinas, kourend_woodland, ape_atoll, port_piscarilius, catherby, ruins_of_unkah, hemenster, hosidius, rellekka, fremennik_isles, isle_of_souls, aldarin, corsair_cove, ardent_nw, ardent_se, ardent_sw, unquiet, shrouded_e, shrouded_w, sunset, western_s, western_n,",
+    "areaRequirement": "any"
   },
   {
     "displayName": "Obtain Some Black boots",
@@ -29006,7 +28977,9 @@
     "displayName": "Obtain Some Bloody notes",
     "taskType": "Collection Log",
     "difficulty": 3,
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "southern_morytania",
+    "requirements": "Shades of Mort\u0027ton"
   },
   {
     "displayName": "Obtain A Blue dark bow paint",
@@ -29246,27 +29219,6 @@
     "taskType": "Collection Log",
     "difficulty": 2,
     "area": "eastern_varlamore",
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain Some Camo bottoms",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain A Camo helmet",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain A Camo top",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
     "onceOnly": true
   },
   {
@@ -30154,13 +30106,6 @@
     "onceOnly": true
   },
   {
-    "displayName": "Obtain A Frog token",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
     "displayName": "Obtain A Frozen whip mix",
     "taskType": "Collection Log",
     "difficulty": 3,
@@ -30914,27 +30859,6 @@
     "onceOnly": true
   },
   {
-    "displayName": "Obtain A Lederhosen hat",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain Some Lederhosen shorts",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain A Lederhosen top",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
     "displayName": "Obtain A Lesser demon champion scroll",
     "taskType": "Collection Log",
     "difficulty": 3,
@@ -31038,41 +30962,6 @@
     "requirements": "chambers_of_xeric",
     "onceOnly": true,
     "bossId": "chambers_of_xeric"
-  },
-  {
-    "displayName": "Obtain Some Mime boots",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain Some Mime gloves",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain Some Mime legs",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain A Mime mask",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain A Mime top",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
-    "onceOnly": true
   },
   {
     "displayName": "Obtain Some Mining gloves",
@@ -32325,13 +32214,6 @@
     "onceOnly": true
   },
   {
-    "displayName": "Obtain A Stale baguette",
-    "taskType": "Collection Log",
-    "difficulty": 3,
-    "f2p": true,
-    "onceOnly": true
-  },
-  {
     "displayName": "Obtain A Star fragment",
     "taskType": "Collection Log",
     "difficulty": 3,
@@ -32812,13 +32694,6 @@
     "difficulty": 3,
     "area": "gnome_stronghold",
     "requirements": "Monkey Madness II",
-    "onceOnly": true
-  },
-  {
-    "displayName": "Obtain Some Zombie boots",
-    "taskType": "Collection Log",
-    "difficulty": 1,
-    "f2p": true,
     "onceOnly": true
   },
   {

@@ -9,8 +9,10 @@ import com.leaguescape.task.TaskTile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import net.runelite.client.config.ConfigManager;
 import org.junit.Before;
@@ -26,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -365,5 +368,153 @@ public class GlobalTaskListServiceTest
 		when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_GLOBAL_CLAIMED_TASKS))).thenReturn("defeat brutus");
 		List<TaskDefinition> pass2 = service.getGlobalTasks();
 		assertTrue(pass2.stream().anyMatch(t -> "Defeat Brutus 5 times".equals(t.getDisplayName())));
+	}
+
+	@Test
+	public void buildGlobalGridFillsRingWhenOnlyCollectionLogTasksWithoutBossInPool()
+	{
+		List<TaskDefinition> tasks = new ArrayList<>();
+		for (int i = 0; i < 8; i++)
+		{
+			TaskDefinition cl = new TaskDefinition();
+			cl.setDisplayName("CL task " + i);
+			cl.setTaskType("Collection Log");
+			cl.setDifficulty(1);
+			tasks.add(cl);
+		}
+		when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_CENTER_CLAIMED))).thenReturn("true");
+		when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_POSITIONS))).thenReturn(null);
+		when(configManager.getConfiguration(eq(STATE_GROUP), eq(KEY_PSEUDO_CENTER))).thenReturn("0,0");
+		when(worldUnlockService.getUnlockedIds()).thenReturn(Collections.emptySet());
+		when(worldUnlockService.getTiles()).thenReturn(Collections.emptyList());
+		when(taskGridService.getEffectiveDefaultTasks()).thenReturn(tasks);
+		when(worldUnlockService.getUnlockedOrRevealedTileIds()).thenReturn(Collections.emptySet());
+		when(worldUnlockService.getUnlockedDiaryTierKeys()).thenReturn(Collections.emptySet());
+		lenient().when(worldUnlockService.getSkillTileIdForLevel(anyString(), anyInt())).thenReturn(null);
+
+		List<TaskTile> grid = service.buildGlobalGrid(42);
+		long nonCenter = grid.stream().filter(t -> t.getRow() != 0 || t.getCol() != 0).count();
+		assertEquals(4, nonCenter);
+		long clCount = grid.stream().filter(t -> t.getRow() != 0 || t.getCol() != 0)
+			.filter(t -> "Collection Log".equals(t.getTaskType())).count();
+		assertEquals(4, clCount);
+	}
+
+	@Test
+	public void collectionLogWithBossInRequirementsNotStronglyDownweightedVersusAlternatives()
+	{
+		Map<String, String> store = new HashMap<>();
+		when(configManager.getConfiguration(eq(STATE_GROUP), anyString())).thenAnswer(inv -> {
+			String key = inv.getArgument(1);
+			return store.containsKey(key) ? store.get(key) : null;
+		});
+		doAnswer(inv -> {
+			store.put(inv.getArgument(1), inv.getArgument(2));
+			return null;
+		}).when(configManager).setConfiguration(eq(STATE_GROUP), anyString(), anyString());
+
+		TaskDefinition cl = new TaskDefinition();
+		cl.setDisplayName("CL zulrah item");
+		cl.setTaskType("Collection Log");
+		cl.setDifficulty(1);
+		cl.setRequirements("zulrah");
+		List<TaskDefinition> tasks = new ArrayList<>();
+		tasks.add(cl);
+		for (int i = 0; i < 5; i++)
+		{
+			TaskDefinition m = new TaskDefinition();
+			m.setDisplayName("Mine ore " + i);
+			m.setTaskType("Mining");
+			m.setDifficulty(1);
+			tasks.add(m);
+		}
+		WorldUnlockTile boss = new WorldUnlockTile();
+		boss.setType("boss");
+		boss.setId("zulrah");
+		when(worldUnlockService.getTiles()).thenReturn(Collections.singletonList(boss));
+		when(worldUnlockService.resolvePrerequisiteToTileId(anyString())).thenAnswer(invocation -> {
+			String s = invocation.getArgument(0);
+			if (s != null && "zulrah".equalsIgnoreCase(s.trim())) return "zulrah";
+			return null;
+		});
+		when(worldUnlockService.getTileById(eq("zulrah"))).thenReturn(boss);
+		when(worldUnlockService.getUnlockedIds()).thenReturn(Collections.emptySet());
+		when(taskGridService.getEffectiveDefaultTasks()).thenReturn(tasks);
+		when(worldUnlockService.getUnlockedOrRevealedTileIds()).thenReturn(Collections.emptySet());
+		when(worldUnlockService.getUnlockedDiaryTierKeys()).thenReturn(Collections.emptySet());
+		lenient().when(worldUnlockService.getSkillTileIdForLevel(anyString(), anyInt())).thenReturn(null);
+
+		int clAssignments = 0;
+		int total = 0;
+		for (int seed = 0; seed < 400; seed++)
+		{
+			store.clear();
+			store.put(KEY_CENTER_CLAIMED, "true");
+			store.put(KEY_PSEUDO_CENTER, "0,0");
+			List<TaskTile> grid = service.buildGlobalGrid(seed);
+			for (TaskTile ti : grid)
+			{
+				if (ti.getRow() == 0 && ti.getCol() == 0) continue;
+				total++;
+				if ("Collection Log".equals(ti.getTaskType()))
+					clAssignments++;
+			}
+		}
+		assertTrue("Boss-linked CL should appear roughly 1/6 of picks, not ~5%: " + clAssignments + "/" + total,
+			clAssignments > total * 0.08);
+	}
+
+	@Test
+	public void collectionLogWithoutBossDownweightedWhenAlternativesExist()
+	{
+		Map<String, String> store = new HashMap<>();
+		when(configManager.getConfiguration(eq(STATE_GROUP), anyString())).thenAnswer(inv -> {
+			String key = inv.getArgument(1);
+			return store.containsKey(key) ? store.get(key) : null;
+		});
+		doAnswer(inv -> {
+			store.put(inv.getArgument(1), inv.getArgument(2));
+			return null;
+		}).when(configManager).setConfiguration(eq(STATE_GROUP), anyString(), anyString());
+
+		TaskDefinition cl = new TaskDefinition();
+		cl.setDisplayName("CL filler");
+		cl.setTaskType("Collection Log");
+		cl.setDifficulty(1);
+		List<TaskDefinition> tasks = new ArrayList<>();
+		tasks.add(cl);
+		for (int i = 0; i < 5; i++)
+		{
+			TaskDefinition m = new TaskDefinition();
+			m.setDisplayName("Mine ore " + i);
+			m.setTaskType("Mining");
+			m.setDifficulty(1);
+			tasks.add(m);
+		}
+		when(worldUnlockService.getTiles()).thenReturn(Collections.emptyList());
+		when(worldUnlockService.getUnlockedIds()).thenReturn(Collections.emptySet());
+		when(taskGridService.getEffectiveDefaultTasks()).thenReturn(tasks);
+		when(worldUnlockService.getUnlockedOrRevealedTileIds()).thenReturn(Collections.emptySet());
+		when(worldUnlockService.getUnlockedDiaryTierKeys()).thenReturn(Collections.emptySet());
+		lenient().when(worldUnlockService.getSkillTileIdForLevel(anyString(), anyInt())).thenReturn(null);
+
+		int clAssignments = 0;
+		int total = 0;
+		for (int seed = 0; seed < 500; seed++)
+		{
+			store.clear();
+			store.put(KEY_CENTER_CLAIMED, "true");
+			store.put(KEY_PSEUDO_CENTER, "0,0");
+			List<TaskTile> grid = service.buildGlobalGrid(seed);
+			for (TaskTile ti : grid)
+			{
+				if (ti.getRow() == 0 && ti.getCol() == 0) continue;
+				total++;
+				if ("Collection Log".equals(ti.getTaskType()))
+					clAssignments++;
+			}
+		}
+		assertTrue("CL without boss should be rarely picked: " + clAssignments + "/" + total,
+			clAssignments < total * 0.14);
 	}
 }
