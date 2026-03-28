@@ -3,6 +3,7 @@ package com.leaguescape.worldunlock;
 import com.leaguescape.LeagueScapePlugin;
 import com.leaguescape.LeagueScapeSounds;
 import com.leaguescape.grid.GridPos;
+import com.leaguescape.util.FogOfWarOverlay;
 import com.leaguescape.util.RingBonusPopup;
 import com.leaguescape.icons.IconCache;
 import com.leaguescape.icons.IconResolver;
@@ -92,7 +93,10 @@ public class GlobalTaskListPanel extends JPanel
 	private JPanel gridPanel;
 	private JScrollPane scrollPane;
 	private float zoom = 1.0f;
-	private static final float ZOOM_MIN = 0.1f;
+	/** Minimum zoom (furthest out); below {@link #ZOOM_INTERACTIVE_MIN} tile clicks zoom in and center before acting. */
+	private static final float ZOOM_EXTREME_MIN = 0.01f;
+	/** Minimum zoom at which tile actions run immediately (matches previous global panel floor). */
+	private static final float ZOOM_INTERACTIVE_MIN = 0.1f;
 	private static final float ZOOM_MAX = 2.0f;
 	private static final float ZOOM_STEP = 0.1f;
 
@@ -167,7 +171,7 @@ public class GlobalTaskListPanel extends JPanel
 			if (e.getWheelRotation() < 0)
 				zoom = Math.min(ZOOM_MAX, zoom + ZOOM_STEP);
 			else
-				zoom = Math.max(ZOOM_MIN, zoom - ZOOM_STEP);
+				zoom = Math.max(ZOOM_EXTREME_MIN, zoom - ZOOM_STEP);
 			if (zoom != prev)
 			{
 				e.consume();
@@ -225,7 +229,7 @@ public class GlobalTaskListPanel extends JPanel
 		JButton zoomOutBtn = newRectangleButton("\u2212", tileBg, POPUP_TEXT);
 		zoomOutBtn.setPreferredSize(new Dimension(28, 28));
 		zoomOutBtn.setToolTipText("Zoom out");
-		zoomOutBtn.addActionListener(e -> { zoom = Math.max(ZOOM_MIN, zoom - ZOOM_STEP); SwingUtilities.invokeLater(this::refresh); });
+		zoomOutBtn.addActionListener(e -> { zoom = Math.max(ZOOM_EXTREME_MIN, zoom - ZOOM_STEP); SwingUtilities.invokeLater(this::refresh); });
 		JButton zoomInBtn = newRectangleButton("+", tileBg, POPUP_TEXT);
 		zoomInBtn.setPreferredSize(new Dimension(28, 28));
 		zoomInBtn.setToolTipText("Zoom in");
@@ -272,14 +276,42 @@ public class GlobalTaskListPanel extends JPanel
 		int refSize = (combatScaled != null) ? Math.max(combatScaled.getWidth(), combatScaled.getHeight()) : iconMaxFit;
 
 		final List<TaskTile> gridFinal = grid;
+		Map<String, TaskState> stateByPos = new HashMap<>();
+		for (TaskTile t : grid)
+		{
+			stateByPos.put(t.getRow() + "," + t.getCol(), globalTaskListService.getGlobalState(t.getId(), gridFinal));
+		}
+
 		int displayedCount = 0;
-		// Iterate all tiles in grid; skip LOCKED (not revealed)
 		for (TaskTile tile : grid)
 		{
-			TaskState state = globalTaskListService.getGlobalState(tile.getId(), gridFinal);
-			if (state == TaskState.LOCKED) continue;  // Do not draw locked tiles
+			TaskState state = stateByPos.get(tile.getRow() + "," + tile.getCol());
+			if (state == null)
+			{
+				continue;
+			}
 
 			displayedCount++;
+			int row = tile.getRow();
+			int col = tile.getCol();
+			int gx = tile.getCol() + maxRing;
+			int gy = maxRing - tile.getRow();
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.gridx = gx;
+			gbc.gridy = gy;
+			gbc.insets = new Insets(2, 2, 2, 2);
+
+			if (state == TaskState.LOCKED)
+			{
+				boolean clearTop = neighborTaskVisible(stateByPos, row + 1, col);
+				boolean clearBottom = neighborTaskVisible(stateByPos, row - 1, col);
+				boolean clearLeft = neighborTaskVisible(stateByPos, row, col - 1);
+				boolean clearRight = neighborTaskVisible(stateByPos, row, col + 1);
+				JPanel fogCell = buildFogLockedCell(tileSize, clearTop, clearBottom, clearLeft, clearRight);
+				gridPanel.add(fogCell, gbc);
+				continue;
+			}
+
 			boolean isCenter = (tile.getRow() == 0 && tile.getCol() == 0);
 
 			BufferedImage taskIcon = null;
@@ -303,14 +335,6 @@ public class GlobalTaskListPanel extends JPanel
 				else
 					taskIcon = defaultTaskIcon != null ? scaleToFitAllowUpscale(defaultTaskIcon, iconMaxFit, iconMaxFit) : null;
 			}
-
-			// Layout: gridx = col + maxRing, gridy = maxRing - row (matches World Unlock panel)
-			int gx = tile.getCol() + maxRing;
-			int gy = maxRing - tile.getRow();
-			GridBagConstraints gbc = new GridBagConstraints();
-			gbc.gridx = gx;
-			gbc.gridy = gy;
-			gbc.insets = new Insets(2, 2, 2, 2);
 
 			// Build cell (clickable, shows icon/state) and add to grid
 			JPanel cell = buildTaskCell(tile, state, taskIcon, tileSize, iconMargin, isCenter, gridFinal);
@@ -355,6 +379,41 @@ public class GlobalTaskListPanel extends JPanel
 				vp.setViewPosition(new Point(vpx, vpy));
 			});
 		}
+	}
+
+	private static boolean neighborTaskVisible(Map<String, TaskState> stateByPos, int row, int col)
+	{
+		TaskState s = stateByPos.get(row + "," + col);
+		return s != null && s != TaskState.LOCKED;
+	}
+
+	private JPanel buildFogLockedCell(int tileSize, boolean clearTop, boolean clearBottom, boolean clearLeft, boolean clearRight)
+	{
+		final BufferedImage tileBgFinal = tileBg;
+		final Color fogBg = POPUP_BG;
+		JPanel cell = new JPanel()
+		{
+			@Override
+			protected void paintComponent(Graphics g)
+			{
+				Graphics2D g2 = (Graphics2D) g.create();
+				if (tileBgFinal != null)
+				{
+					g2.drawImage(tileBgFinal.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+				}
+				else
+				{
+					g2.setColor(new Color(60, 55, 50));
+					g2.fillRect(0, 0, getWidth(), getHeight());
+				}
+				FogOfWarOverlay.paint(g2, getWidth(), getHeight(), clearTop, clearBottom, clearLeft, clearRight, fogBg);
+				g2.dispose();
+				super.paintComponent(g);
+			}
+		};
+		cell.setOpaque(false);
+		cell.setPreferredSize(new Dimension(tileSize, tileSize));
+		return cell;
 	}
 
 	private JPanel buildTaskCell(TaskTile tile, TaskState state, BufferedImage taskIcon,
@@ -445,44 +504,60 @@ public class GlobalTaskListPanel extends JPanel
 			public void mouseClicked(MouseEvent e)
 			{
 				if (e.getButton() != MouseEvent.BUTTON1) return;
-
-				if (isCenter)
-				{
-					if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
-					{
-						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
-						JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
-						return;
-					}
-					playSound(LeagueScapeSounds.TASK_COMPLETE);
-					globalTaskListService.claimCenter();  // Unlocks starter + marks center claimed
-					SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);  // Refresh to show adjacent tiles
-					return;
-				}
-
-				if (state == TaskState.COMPLETED_UNCLAIMED)
-				{
-					if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
-					{
-						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
-						JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
-						return;
-					}
-					String key = GlobalTaskListService.taskKeyFromName(tile.getDisplayName());
-					playSound(LeagueScapeSounds.TASK_COMPLETE);
-					int ringBonus = globalTaskListService.claimTask(key, tile.getRow(), tile.getCol());
-					showRingBonusPopupIfNeeded(ringBonus, tile.getRow(), tile.getCol());
-					SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);
-					return;
-				}
-
-				// REVEALED: show detail popup (click opens details panel)
-				playSound(LeagueScapeSounds.BUTTON_PRESS);
-				showTaskDetailPopup(tile, state);
+				handleTilePrimaryClick(tile, state, isCenter);
 			}
 		});
 		cell.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		return cell;
+	}
+
+	/**
+	 * When zoomed out past {@link #ZOOM_INTERACTIVE_MIN}, centers on the tile and zooms in first;
+	 * then the same click is applied (after layout). Sounds play only on the final interactive pass.
+	 */
+	private void handleTilePrimaryClick(TaskTile tile, TaskState state, boolean isCenter)
+	{
+		if (zoom < ZOOM_INTERACTIVE_MIN)
+		{
+			zoom = ZOOM_INTERACTIVE_MIN;
+			globalTaskListService.saveLastViewedPosition(tile.getRow(), tile.getCol());
+			refresh();
+			SwingUtilities.invokeLater(() -> SwingUtilities.invokeLater(() -> handleTilePrimaryClick(tile, state, isCenter)));
+			return;
+		}
+
+		if (isCenter)
+		{
+			if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
+			{
+				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+				JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
+				return;
+			}
+			playSound(LeagueScapeSounds.TASK_COMPLETE);
+			globalTaskListService.claimCenter();
+			SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);
+			return;
+		}
+
+		if (state == TaskState.COMPLETED_UNCLAIMED)
+		{
+			if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
+			{
+				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+				JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
+				return;
+			}
+			String key = GlobalTaskListService.taskKeyFromName(tile.getDisplayName());
+			playSound(LeagueScapeSounds.TASK_COMPLETE);
+			int ringBonus = globalTaskListService.claimTask(key, tile.getRow(), tile.getCol());
+			showRingBonusPopupIfNeeded(ringBonus, tile.getRow(), tile.getCol());
+			SwingUtilities.invokeLater(GlobalTaskListPanel.this::refresh);
+			return;
+		}
+
+		playSound(LeagueScapeSounds.BUTTON_PRESS);
+		showTaskDetailPopup(tile, state);
 	}
 
 	private JPanel buildClaimedCell(int tileSize, boolean isCenter)

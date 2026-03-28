@@ -7,6 +7,7 @@ import com.leaguescape.icons.IconCache;
 import com.leaguescape.icons.IconResolver;
 import com.leaguescape.icons.IconResources;
 import com.leaguescape.points.PointsService;
+import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,6 +51,7 @@ import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.util.ImageUtil;
+import com.leaguescape.util.FogOfWarOverlay;
 import com.leaguescape.util.LeagueScapeSwingUtil;
 
 /**
@@ -89,9 +91,10 @@ public class WorldUnlockGridPanel extends JPanel
 	private JLabel pointsLabel;
 	private JPanel gridPanel;
 	private float zoom = 1.0f;
-	private static final float ZOOM_MIN = 0.5f;
+	/** Matches {@link GlobalTaskListPanel} extreme zoom-out range. */
+	private static final float ZOOM_MIN = 0.05f;
 	private static final float ZOOM_MAX = 2.0f;
-	private static final float ZOOM_STEP = 0.15f;
+	private static final float ZOOM_STEP = 0.1f;
 	/** OSRS sound effect when a world unlock tile is unlocked (see {@link Client#playSoundEffect(int)}). */
 	private static final int UNLOCK_TILE_SOUND_ID = 52;
 
@@ -267,10 +270,32 @@ public class WorldUnlockGridPanel extends JPanel
 		int iconMargin = Math.max(1, (tileSize * TILE_ICON_MARGIN) / BASE_TILE_SIZE);
 		int iconMaxFit = Math.max(1, tileSize - 2 * iconMargin);
 
+		Map<String, Boolean> revealedAt = new HashMap<>();
+		for (WorldUnlockTilePlacement p : grid)
+		{
+			revealedAt.put(p.getRow() + "," + p.getCol(), worldUnlockService.isRevealed(p, claimed, grid));
+		}
+
 		for (WorldUnlockTilePlacement placement : grid)
 		{
-			if (!worldUnlockService.isRevealed(placement, claimed, grid))
+			int row = placement.getRow();
+			int col = placement.getCol();
+			String posKey = row + "," + col;
+			if (!Boolean.TRUE.equals(revealedAt.get(posKey)))
+			{
+				boolean clearTop = Boolean.TRUE.equals(revealedAt.get((row + 1) + "," + col));
+				boolean clearBottom = Boolean.TRUE.equals(revealedAt.get((row - 1) + "," + col));
+				boolean clearLeft = Boolean.TRUE.equals(revealedAt.get(row + "," + (col - 1)));
+				boolean clearRight = Boolean.TRUE.equals(revealedAt.get(row + "," + (col + 1)));
+				JPanel fogCell = buildFoggedUnrevealedCell(placement, tileSize, iconMargin, iconMaxFit,
+					clearTop, clearBottom, clearLeft, clearRight);
+				GridBagConstraints gbcFog = new GridBagConstraints();
+				gbcFog.gridx = col + maxRing;
+				gbcFog.gridy = maxRing - row;
+				gbcFog.insets = new Insets(2, 2, 2, 2);
+				gridPanel.add(fogCell, gbcFog);
 				continue;
+			}
 
 			WorldUnlockTile tile = placement.getTile();
 			boolean isCenter = placement.getRow() == 0 && placement.getCol() == 0;
@@ -289,6 +314,57 @@ public class WorldUnlockGridPanel extends JPanel
 		}
 		gridPanel.revalidate();
 		gridPanel.repaint();
+	}
+
+	/** Unrevealed tile: dim icon under fog; edges bordering revealed tiles stay clearer. */
+	private JPanel buildFoggedUnrevealedCell(WorldUnlockTilePlacement placement, int tileSize, int iconMargin, int iconMaxFit,
+		boolean clearTop, boolean clearBottom, boolean clearLeft, boolean clearRight)
+	{
+		final BufferedImage bg = tileBg;
+		final BufferedImage iconDim = loadUnlockTileIcon(placement.getTile(), iconMaxFit);
+		final Color fogBg = POPUP_BG;
+		JPanel cell = new JPanel()
+		{
+			@Override
+			protected void paintComponent(Graphics g)
+			{
+				Graphics2D g2 = (Graphics2D) g.create();
+				if (bg != null)
+				{
+					g2.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+				}
+				else
+				{
+					g2.setColor(new Color(60, 55, 50));
+					g2.fillRect(0, 0, getWidth(), getHeight());
+				}
+				if (iconDim != null)
+				{
+					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.32f));
+					int m = iconMargin;
+					int w = getWidth(), h = getHeight();
+					int innerW = Math.max(1, w - 2 * m);
+					int innerH = Math.max(1, h - 2 * m);
+					int iw = iconDim.getWidth(), ih = iconDim.getHeight();
+					if (iw > 0 && ih > 0)
+					{
+						double scale = Math.min((double) innerW / iw, (double) innerH / ih);
+						int drawW = Math.max(1, (int) Math.round(iw * scale));
+						int drawH = Math.max(1, (int) Math.round(ih * scale));
+						int x = m + (innerW - drawW) / 2;
+						int y = m + (innerH - drawH) / 2;
+						g2.drawImage(iconDim.getScaledInstance(drawW, drawH, Image.SCALE_SMOOTH), x, y, null);
+					}
+					g2.setComposite(AlphaComposite.SrcOver);
+				}
+				FogOfWarOverlay.paint(g2, getWidth(), getHeight(), clearTop, clearBottom, clearLeft, clearRight, fogBg);
+				g2.dispose();
+				super.paintComponent(g);
+			}
+		};
+		cell.setOpaque(false);
+		cell.setPreferredSize(new Dimension(tileSize, tileSize));
+		return cell;
 	}
 
 	/** Loads the icon for an unlock tile based on its type. */

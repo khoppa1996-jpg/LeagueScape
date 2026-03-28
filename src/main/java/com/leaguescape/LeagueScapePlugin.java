@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.function.Consumer;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import net.runelite.api.Client;
@@ -35,6 +38,7 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.input.MouseManager;
+import com.leaguescape.util.PanelBoundsStore;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 /**
@@ -69,6 +73,11 @@ public class LeagueScapePlugin extends Plugin
 
 	@Inject
 	private ConfigManager configManager;
+
+	/** At most one of each floating panel; bounds persisted in {@link com.leaguescape.util.PanelBoundsStore}. */
+	private volatile JDialog worldUnlockDialogRef;
+	private volatile JDialog globalTasksDialogRef;
+	private volatile JDialog goalsDialogRef;
 
 	@Inject
 	private LeagueScapeConfig config;
@@ -313,12 +322,13 @@ public class LeagueScapePlugin extends Plugin
 	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
 		LeagueScapeConfig config, com.leaguescape.points.PointsService pointsService,
 		com.leaguescape.points.AreaCompletionService areaCompletionService,
+		ConfigManager configManager,
 		com.leaguescape.task.TaskGridService taskGridService,
 		com.leaguescape.worldunlock.WorldUnlockService worldUnlockService,
 		com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService,
 		AudioPlayer audioPlayer, net.runelite.client.callback.ClientThread clientThread)
 	{
-		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, taskGridService, worldUnlockService, osrsWikiApiService, audioPlayer, clientThread);
+		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, configManager, taskGridService, worldUnlockService, osrsWikiApiService, audioPlayer, clientThread);
 	}
 
 	@Provides
@@ -481,8 +491,17 @@ public class LeagueScapePlugin extends Plugin
 		taskGridServiceProvider.get().incrementGridResetCounter();
 		log.info("LeagueScape progress reset.");
 
-		// Update overlays and UI to match reset: close progress popups and request repaint
-		leagueScapeMapOverlay.closeProgressPopups();
+		// Update overlays and UI to match reset: close floating panels then clear saved bounds (order avoids re-saving after unset).
+		SwingUtilities.invokeLater(() -> {
+			disposeTrackedDialog(worldUnlockDialogRef);
+			worldUnlockDialogRef = null;
+			disposeTrackedDialog(globalTasksDialogRef);
+			globalTasksDialogRef = null;
+			disposeTrackedDialog(goalsDialogRef);
+			goalsDialogRef = null;
+			leagueScapeMapOverlay.closeProgressPopupsOnEdt();
+			PanelBoundsStore.clearPanelBounds(configManager);
+		});
 		clientThread.invokeLater(() -> {
 			if (client.getCanvas() != null)
 			{
@@ -614,11 +633,16 @@ public class LeagueScapePlugin extends Plugin
 	/** Opens the World Unlock grid panel (World Unlock mode only). */
 	public void openWorldUnlockGrid()
 	{
-		javax.swing.SwingUtilities.invokeLater(() -> {
+		SwingUtilities.invokeLater(() -> {
+			if (worldUnlockDialogRef != null && worldUnlockDialogRef.isDisplayable())
+			{
+				worldUnlockDialogRef.toFront();
+				return;
+			}
 			java.awt.Frame owner = null;
-			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
+			java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
-			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "World Unlock", false);
+			JDialog dialog = new JDialog(owner, "World Unlock", false);
 			dialog.setUndecorated(true);
 			com.leaguescape.worldunlock.WorldUnlockGridPanel panel = new com.leaguescape.worldunlock.WorldUnlockGridPanel(
 				worldUnlockService, pointsService,
@@ -629,7 +653,22 @@ public class LeagueScapePlugin extends Plugin
 				client, clientThread, audioPlayer, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
-			dialog.setLocationRelativeTo(client.getCanvas());
+			PanelBoundsStore.applyBounds(dialog, configManager,
+				PanelBoundsStore.KEY_WORLD_UNLOCK, client.getCanvas());
+			PanelBoundsStore.installPersistence(dialog, configManager,
+				PanelBoundsStore.KEY_WORLD_UNLOCK);
+			dialog.addWindowListener(new WindowAdapter()
+			{
+				@Override
+				public void windowClosed(WindowEvent e)
+				{
+					if (worldUnlockDialogRef == dialog)
+					{
+						worldUnlockDialogRef = null;
+					}
+				}
+			});
+			worldUnlockDialogRef = dialog;
 			registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
@@ -638,17 +677,37 @@ public class LeagueScapePlugin extends Plugin
 	/** Opens the Goal tracking panel (from World Unlock grid Goals button). */
 	public void openGoalTrackingPanel()
 	{
-		javax.swing.SwingUtilities.invokeLater(() -> {
+		SwingUtilities.invokeLater(() -> {
+			if (goalsDialogRef != null && goalsDialogRef.isDisplayable())
+			{
+				goalsDialogRef.toFront();
+				return;
+			}
 			java.awt.Frame owner = null;
-			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
+			java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
-			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "Goals", false);
+			JDialog dialog = new JDialog(owner, "Goals", false);
 			com.leaguescape.worldunlock.GoalTrackingPanel panel = new com.leaguescape.worldunlock.GoalTrackingPanel(
 				goalTrackingService, worldUnlockService, dialog::dispose, client, audioPlayer);
 			dialog.setContentPane(panel);
 			dialog.pack();
 			dialog.setSize(380, 300);
-			dialog.setLocationRelativeTo(client.getCanvas());
+			com.leaguescape.util.PanelBoundsStore.applyBounds(dialog, configManager,
+				com.leaguescape.util.PanelBoundsStore.KEY_GOALS, client.getCanvas());
+			com.leaguescape.util.PanelBoundsStore.installPersistence(dialog, configManager,
+				com.leaguescape.util.PanelBoundsStore.KEY_GOALS);
+			dialog.addWindowListener(new WindowAdapter()
+			{
+				@Override
+				public void windowClosed(WindowEvent e)
+				{
+					if (goalsDialogRef == dialog)
+					{
+						goalsDialogRef = null;
+					}
+				}
+			});
+			goalsDialogRef = dialog;
 			registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
@@ -657,20 +716,48 @@ public class LeagueScapePlugin extends Plugin
 	/** Opens the Global task list panel (World Unlock mode only). */
 	public void openGlobalTaskList()
 	{
-		javax.swing.SwingUtilities.invokeLater(() -> {
+		SwingUtilities.invokeLater(() -> {
+			if (globalTasksDialogRef != null && globalTasksDialogRef.isDisplayable())
+			{
+				globalTasksDialogRef.toFront();
+				return;
+			}
 			java.awt.Frame owner = null;
-			java.awt.Window w = javax.swing.SwingUtilities.windowForComponent(client.getCanvas());
+			java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
-			javax.swing.JDialog dialog = new javax.swing.JDialog(owner, "Global tasks", false);
+			JDialog dialog = new JDialog(owner, "Global tasks", false);
 			dialog.setUndecorated(true);
 			com.leaguescape.worldunlock.GlobalTaskListPanel panel = new com.leaguescape.worldunlock.GlobalTaskListPanel(
 				globalTaskListService, pointsService, dialog::dispose, this::openWorldUnlockGrid, this::openSetupDialog, client, audioPlayer, clientThread, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
-			dialog.setLocationRelativeTo(client.getCanvas());
+			PanelBoundsStore.applyBounds(dialog, configManager,
+				PanelBoundsStore.KEY_GLOBAL_TASKS, client.getCanvas());
+			PanelBoundsStore.installPersistence(dialog, configManager,
+				PanelBoundsStore.KEY_GLOBAL_TASKS);
+			dialog.addWindowListener(new WindowAdapter()
+			{
+				@Override
+				public void windowClosed(WindowEvent e)
+				{
+					if (globalTasksDialogRef == dialog)
+					{
+						globalTasksDialogRef = null;
+					}
+				}
+			});
+			globalTasksDialogRef = dialog;
 			registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
+	}
+
+	private static void disposeTrackedDialog(JDialog d)
+	{
+		if (d != null && d.isDisplayable())
+		{
+			d.dispose();
+		}
 	}
 
 	private void openTaskPopupForCurrentArea()

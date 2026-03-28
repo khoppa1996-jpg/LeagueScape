@@ -9,6 +9,8 @@ import com.leaguescape.icons.IconResolver;
 import com.leaguescape.area.AreaGraphService;
 import com.leaguescape.grid.GridPos;
 import com.leaguescape.data.Area;
+import com.leaguescape.util.FogOfWarOverlay;
+import com.leaguescape.util.PanelBoundsStore;
 import com.leaguescape.util.RingBonusPopup;
 import com.leaguescape.util.LeagueScapeSwingUtil;
 import com.leaguescape.data.AreaStatus;
@@ -68,6 +70,7 @@ import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.worldmap.WorldMap;
 import net.runelite.client.input.MouseListener;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -103,6 +106,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	private final PointsService pointsService;
 	private final AreaCompletionService areaCompletionService;
 	private final LeagueScapePlugin plugin;
+	private final ConfigManager configManager;
 	private final TaskGridService taskGridService;
 	private final WorldUnlockService worldUnlockService;
 	private final OsrsWikiApiService wikiApi;
@@ -117,12 +121,14 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Progress-related dialogs so they can be closed on reset (overlays/UI then match reset state). */
 	private volatile JDialog openAreaDetailsDialog = null;
 	private volatile JDialog openTaskGridDialog = null;
+	/** Area id for {@link #openTaskGridDialog}; used to bring front vs replace when reopening. */
+	private volatile String openTaskGridAreaId = null;
 	/** Padlock icon for locked areas on world map; loaded lazily. */
 	private volatile BufferedImage worldMapPadlockIcon = null;
 
 	public LeagueScapeMapOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfig config,
 		PointsService pointsService, AreaCompletionService areaCompletionService, LeagueScapePlugin plugin,
-		TaskGridService taskGridService, WorldUnlockService worldUnlockService, OsrsWikiApiService wikiApi,
+		ConfigManager configManager, TaskGridService taskGridService, WorldUnlockService worldUnlockService, OsrsWikiApiService wikiApi,
 		net.runelite.client.audio.AudioPlayer audioPlayer, ClientThread clientThread)
 	{
 		this.client = client;
@@ -131,6 +137,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		this.pointsService = pointsService;
 		this.areaCompletionService = areaCompletionService;
 		this.plugin = plugin;
+		this.configManager = configManager;
 		this.taskGridService = taskGridService;
 		this.worldUnlockService = worldUnlockService;
 		this.wikiApi = wikiApi;
@@ -1528,18 +1535,23 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	 */
 	public void closeProgressPopups()
 	{
-		SwingUtilities.invokeLater(() -> {
-			if (openTaskGridDialog != null)
-			{
-				openTaskGridDialog.dispose();
-				openTaskGridDialog = null;
-			}
-			if (openAreaDetailsDialog != null)
-			{
-				openAreaDetailsDialog.dispose();
-				openAreaDetailsDialog = null;
-			}
-		});
+		SwingUtilities.invokeLater(this::closeProgressPopupsOnEdt);
+	}
+
+	/** Disposes area-details and per-area task grid dialogs. Must run on the EDT. */
+	public void closeProgressPopupsOnEdt()
+	{
+		if (openTaskGridDialog != null)
+		{
+			openTaskGridDialog.dispose();
+			openTaskGridDialog = null;
+			openTaskGridAreaId = null;
+		}
+		if (openAreaDetailsDialog != null)
+		{
+			openAreaDetailsDialog.dispose();
+			openAreaDetailsDialog = null;
+		}
 	}
 
 	private void showTaskGridPopup(Area area)
@@ -1558,6 +1570,17 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		Map<String, BufferedImage> taskIconCache = new ConcurrentHashMap<>();
 
 		SwingUtilities.invokeLater(() -> {
+			if (openTaskGridDialog != null && openTaskGridDialog.isDisplayable())
+			{
+				if (areaId.equals(openTaskGridAreaId))
+				{
+					openTaskGridDialog.toFront();
+					return;
+				}
+				openTaskGridDialog.dispose();
+				openTaskGridDialog = null;
+				openTaskGridAreaId = null;
+			}
 			Frame owner = null;
 			java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof Frame) owner = (Frame) w;
@@ -1565,10 +1588,15 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			JDialog dialog = new JDialog(owner, displayName + " tasks", false);
 			dialog.setUndecorated(true);
 			openTaskGridDialog = dialog;
+			openTaskGridAreaId = areaId;
 			dialog.addWindowListener(new java.awt.event.WindowAdapter()
 			{
 				@Override
-				public void windowClosed(java.awt.event.WindowEvent e) { openTaskGridDialog = null; }
+				public void windowClosed(java.awt.event.WindowEvent e)
+				{
+					openTaskGridDialog = null;
+					openTaskGridAreaId = null;
+				}
 			});
 
 			JPanel content = new JPanel()
@@ -1619,7 +1647,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			LeagueScapeSwingUtil.installUndecoratedWindowDrag(dialog, header);
 			content.add(header, java.awt.BorderLayout.NORTH);
 
-			// Grid panel: only non-locked tiles, inside scroll pane with vertical + horizontal scroll bars
+			// Grid panel: revealed tiles plus fogged locked cells; scroll pane with vertical + horizontal bars
 			JPanel gridPanel = new JPanel();
 			gridPanel.setOpaque(false);
 			final float[] zoomHolder = new float[]{ 1.0f };
@@ -1645,13 +1673,39 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				BufferedImage combatScaled = combatRaw != null ? scaleToFitAllowUpscale(combatRaw, iconMaxFit, iconMaxFit) : null;
 				int refSize = (combatScaled != null) ? Math.max(combatScaled.getWidth(), combatScaled.getHeight()) : iconMaxFit;
 
+				Map<String, TaskState> stateByPos = new HashMap<>();
+				for (TaskTile t : grid)
+				{
+					stateByPos.put(t.getRow() + "," + t.getCol(), taskGridService.getState(areaId, t.getId(), grid));
+				}
+
 				for (TaskTile tile : grid)
 				{
-					TaskState state = taskGridService.getState(areaId, tile.getId(), grid);
+					TaskState state = stateByPos.get(tile.getRow() + "," + tile.getCol());
+					if (state == null)
+					{
+						continue;
+					}
+					int row = tile.getRow();
+					int col = tile.getCol();
+					int gx = tile.getCol() + center;
+					int gy = center - tile.getRow();
+					GridBagConstraints gbc = new GridBagConstraints();
+					gbc.gridx = gx;
+					gbc.gridy = gy;
+					gbc.insets = new Insets(2, 2, 2, 2);
+
 					if (state == TaskState.LOCKED)
 					{
-						continue; // hide locked tiles
+						boolean clearTop = mapOverlayNeighborTaskVisible(stateByPos, row + 1, col);
+						boolean clearBottom = mapOverlayNeighborTaskVisible(stateByPos, row - 1, col);
+						boolean clearLeft = mapOverlayNeighborTaskVisible(stateByPos, row, col - 1);
+						boolean clearRight = mapOverlayNeighborTaskVisible(stateByPos, row, col + 1);
+						JPanel fogCell = buildFogLockedTaskCell(tileSquare, tileSize, clearTop, clearBottom, clearLeft, clearRight);
+						gridPanel.add(fogCell, gbc);
+						continue;
 					}
+
 					boolean isMystery = tile.isMystery(unlocked, areaId);
 					BufferedImage taskIcon;
 					if (isMystery)
@@ -1702,12 +1756,6 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 						else
 							taskIcon = defaultTaskIcon != null ? scaleToFitAllowUpscale(defaultTaskIcon, iconMaxFit, iconMaxFit) : null;
 					}
-					int gx = tile.getCol() + center;
-					int gy = center - tile.getRow();
-					GridBagConstraints gbc = new GridBagConstraints();
-					gbc.gridx = gx;
-					gbc.gridy = gy;
-					gbc.insets = new Insets(2, 2, 2, 2);
 					JPanel cell = buildTaskCell(areaId, tile, state, checkmarkImg, padlockImg, tileSquare, buttonRect, taskIcon, POPUP_TEXT, refreshHolder[0], dialog, area, isMystery, tileSize, iconMargin);
 					gridPanel.add(cell, gbc);
 				}
@@ -1800,13 +1848,51 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			dialog.setContentPane(content);
 			dialog.getRootPane().setBorder(new javax.swing.border.LineBorder(POPUP_BORDER, 2));
 			dialog.pack();
-			dialog.setLocationRelativeTo(client.getCanvas());
+			PanelBoundsStore.applyBounds(dialog, configManager, PanelBoundsStore.KEY_AREA_TASK_GRID, client.getCanvas());
+			PanelBoundsStore.installPersistence(dialog, configManager, PanelBoundsStore.KEY_AREA_TASK_GRID);
+			LeagueScapePlugin.registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
 	}
 
 	private static final int CLAIMED_CHECKMARK_SIZE = 18;
 	private static final int CLAIMED_CHECKMARK_INSET = 4;
+
+	private static boolean mapOverlayNeighborTaskVisible(Map<String, TaskState> stateByPos, int row, int col)
+	{
+		TaskState s = stateByPos.get(row + "," + col);
+		return s != null && s != TaskState.LOCKED;
+	}
+
+	private JPanel buildFogLockedTaskCell(BufferedImage tileBg, int tileSize, boolean clearTop, boolean clearBottom,
+		boolean clearLeft, boolean clearRight)
+	{
+		final BufferedImage tileBgFinal = tileBg;
+		final Color fogBg = POPUP_BG;
+		JPanel cell = new JPanel()
+		{
+			@Override
+			protected void paintComponent(Graphics g)
+			{
+				Graphics2D g2 = (Graphics2D) g.create();
+				if (tileBgFinal != null)
+				{
+					g2.drawImage(tileBgFinal.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+				}
+				else
+				{
+					g2.setColor(new Color(60, 55, 50));
+					g2.fillRect(0, 0, getWidth(), getHeight());
+				}
+				FogOfWarOverlay.paint(g2, getWidth(), getHeight(), clearTop, clearBottom, clearLeft, clearRight, fogBg);
+				g2.dispose();
+				super.paintComponent(g);
+			}
+		};
+		cell.setOpaque(false);
+		cell.setPreferredSize(new Dimension(tileSize, tileSize));
+		return cell;
+	}
 
 	private JPanel buildTaskCell(String areaId, TaskTile tile, TaskState state,
 		BufferedImage checkmarkImg, BufferedImage padlockImg, BufferedImage tileBg, BufferedImage buttonRect,

@@ -9157,7 +9157,7 @@
     "taskType": "killCount",
     "difficulty": 1,
     "area": "southern_morytania",
-    "requirements": "Priest in Peril",
+    "requirements": "barrows",
     "onceOnly": true,
     "bossId": "barrows"
   },
@@ -9265,6 +9265,7 @@
     "taskType": "killCount",
     "difficulty": 1,
     "area": "varrock",
+    "requirements": "scurrius",
     "onceOnly": true,
     "bossId": "scurrius"
   },
@@ -9318,7 +9319,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "falador",
-    "requirements": "Light source, Spade",
+    "requirements": "giant_mole",
     "onceOnly": true,
     "bossId": "giant_mole"
   },
@@ -9372,7 +9373,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "fossil_island",
-    "requirements": "Bone Voyage",
+    "requirements": "deranged_archaeologist",
     "onceOnly": true,
     "bossId": "deranged_archaeologist"
   },
@@ -9426,7 +9427,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "fremennik_isles",
-    "requirements": "The Fremennik Trials",
+    "requirements": "dagannoth_kings",
     "onceOnly": true,
     "bossId": "dagannoth_kings"
   },
@@ -9480,6 +9481,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "hosidius, kourend_woodland",
+    "requirements": "sarachnis",
     "onceOnly": true,
     "bossId": "sarachnis"
   },
@@ -9529,11 +9531,11 @@
     "bossId": "sarachnis"
   },
   {
-    "displayName": "Defeat Moons of Peril",
+    "displayName": "Defeat the Moons of Peril",
     "taskType": "killCount",
     "difficulty": 2,
     "area": "western_varlamore",
-    "requirements": "Perilous Moons",
+    "requirements": "moons_of_peril",
     "onceOnly": true,
     "bossId": "moons_of_peril"
   },
@@ -9587,6 +9589,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "desert",
+    "requirements": "kalphite_queen",
     "onceOnly": true,
     "bossId": "kalphite_queen"
   },
@@ -9640,7 +9643,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "trollheim",
-    "requirements": "70 Ranged",
+    "requirements": "kreearra",
     "onceOnly": true,
     "bossId": "kreearra"
   },
@@ -9694,7 +9697,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "trollheim",
-    "requirements": "70 Agility",
+    "requirements": "commander_zilyana",
     "onceOnly": true,
     "bossId": "commander_zilyana"
   },
@@ -9748,7 +9751,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "trollheim",
-    "requirements": "70 Strength",
+    "requirements": "general_graardor",
     "onceOnly": true,
     "bossId": "general_graardor"
   },
@@ -9802,7 +9805,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "trollheim",
-    "requirements": "70 Hitpoints",
+    "requirements": "kril_tsutsaroth",
     "onceOnly": true,
     "bossId": "kril_tsutsaroth"
   },
@@ -9856,7 +9859,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "proudspire",
-    "requirements": "Children of the Sun",
+    "requirements": "the_hueycoatl",
     "onceOnly": true,
     "bossId": "the_hueycoatl"
   },
@@ -9910,6 +9913,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "south_central_wilderness",
+    "requirements": "corporeal_beast",
     "onceOnly": true,
     "bossId": "corporeal_beast"
   },
@@ -9963,7 +9967,7 @@
     "taskType": "killCount",
     "difficulty": 5,
     "area": "trollheim",
-    "requirements": "The Frozen Door",
+    "requirements": "nex",
     "onceOnly": true,
     "bossId": "nex"
   },
@@ -10017,6 +10021,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "northwestern_wilderness",
+    "requirements": "chaos_fanatic",
     "onceOnly": true,
     "bossId": "chaos_fanatic"
   },
@@ -10070,6 +10075,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "southwestern_wilderness",
+    "requirements": "crazy_archaeologist",
     "onceOnly": true,
     "bossId": "crazy_archaeologist"
   },
@@ -10123,6 +10129,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "deep_wilderness",
+    "requirements": "scorpia",
     "onceOnly": true,
     "bossId": "scorpia"
   },
@@ -10176,6 +10183,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "northwestern_wilderness",
+    "requirements": "king_black_dragon",
     "onceOnly": true,
     "bossId": "king_black_dragon"
   },
@@ -10229,6 +10237,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "deep_wilderness",
+    "requirements": "chaos_elemental",
     "onceOnly": true,
     "bossId": "chaos_elemental"
   },
@@ -10282,6 +10291,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "north_central_wilderness, south_central_wilderness",
+    "requirements": "revenant_maledictus",
     "onceOnly": true,
     "bossId": "revenant_maledictus"
   },
@@ -10308,7 +10318,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "northeast_wilderness, south_central_wilderness",
-    "requirements": "Wilderness Hard/Medium Diary",
+    "requirements": "calvarion_vetion",
     "onceOnly": true,
     "bossId": "calvarion_vetion"
   },
@@ -10362,7 +10372,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "northeast_wilderness, south_central_wilderness",
-    "requirements": "Wilderness Hard/Medium Diary",
+    "requirements": "spindel_venenatis",
     "onceOnly": true,
     "bossId": "spindel_venenatis"
   },
@@ -10416,7 +10426,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "northeast_wilderness, south_central_wilderness",
-    "requirements": "Wilderness Hard/Medium Diary",
+    "requirements": "artio_callisto",
     "onceOnly": true,
     "bossId": "artio_callisto"
   },
@@ -10470,7 +10480,7 @@
     "taskType": "killCount",
     "difficulty": 1,
     "area": "edgeville",
-    "requirements": "varrock",
+    "requirements": "obor",
     "onceOnly": true,
     "bossId": "obor"
   },
@@ -10524,7 +10534,7 @@
     "taskType": "killCount",
     "difficulty": 1,
     "area": "varrock",
-    "requirements": "Mossy key (first time only)",
+    "requirements": "bryophyta",
     "onceOnly": true,
     "bossId": "bryophyta"
   },
@@ -10578,7 +10588,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "proudspire",
-    "requirements": "The Heart of Darkness",
+    "requirements": "amoxliatl",
     "onceOnly": true,
     "bossId": "amoxliatl"
   },
@@ -10632,6 +10642,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "port_sarim_mudskipper",
+    "requirements": "royal_titans",
     "onceOnly": true,
     "bossId": "royal_titans"
   },
@@ -10685,7 +10696,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "tlati_rainforest",
-    "requirements": "The Final Dawn",
+    "requirements": "doom_of_mokhaiotl",
     "onceOnly": true,
     "bossId": "doom_of_mokhaiotl"
   },
@@ -10739,7 +10750,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "isafdar",
-    "requirements": "isafdar",
+    "requirements": "zulrah",
     "onceOnly": true,
     "bossId": "zulrah"
   },
@@ -10793,7 +10804,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "fremennik_isles",
-    "requirements": "fremennik_isles",
+    "requirements": "vorkath",
     "onceOnly": true,
     "bossId": "vorkath"
   },
@@ -10847,7 +10858,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "weiss",
-    "requirements": "Secrets of the North",
+    "requirements": "phantom_muspah",
     "onceOnly": true,
     "bossId": "phantom_muspah"
   },
@@ -10901,7 +10912,7 @@
     "taskType": "killCount",
     "difficulty": 5,
     "area": "slepe",
-    "requirements": "Priest in Peril",
+    "requirements": "the_nightmare",
     "onceOnly": true,
     "bossId": "the_nightmare"
   },
@@ -10955,7 +10966,7 @@
     "taskType": "killCount",
     "difficulty": 5,
     "area": "shayzien",
-    "requirements": "A Kingdom Divided",
+    "requirements": "yama",
     "onceOnly": true,
     "bossId": "yama"
   },
@@ -11009,7 +11020,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "weiss",
-    "requirements": "Desert Treasure II - The Fallen Empire",
+    "requirements": "duke_sucellus",
     "onceOnly": true,
     "bossId": "duke_sucellus"
   },
@@ -11063,7 +11074,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "al_kharid",
-    "requirements": "Desert Treasure II - The Fallen Empire",
+    "requirements": "the_leviathan",
     "onceOnly": true,
     "bossId": "the_leviathan"
   },
@@ -11117,7 +11128,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "lassar",
-    "requirements": "Desert Treasure II - The Fallen Empire",
+    "requirements": "the_whisperer",
     "onceOnly": true,
     "bossId": "the_whisperer"
   },
@@ -11171,7 +11182,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "custodia_mountains",
-    "requirements": "Desert Treasure II - The Fallen Empire",
+    "requirements": "vardorvis",
     "onceOnly": true,
     "bossId": "vardorvis"
   },
@@ -11225,7 +11236,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "kingstown",
-    "requirements": "Mimic",
+    "requirements": "the_mimic",
     "onceOnly": true,
     "bossId": "the_mimic"
   },
@@ -11252,7 +11263,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "kebos_lowlands",
-    "requirements": "Hespori seed, 65 Farming",
+    "requirements": "hespori",
     "onceOnly": true,
     "bossId": "hespori"
   },
@@ -11306,7 +11317,7 @@
     "taskType": "killCount",
     "difficulty": 3,
     "area": "kingstown",
-    "requirements": "Dark totem",
+    "requirements": "skotizo",
     "onceOnly": true,
     "bossId": "skotizo"
   },
@@ -11360,7 +11371,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "unquiet",
-    "requirements": "51 Slayer, 60 Combat, Troubled Tortugans, Gryphon Slayer task",
+    "requirements": "shellbane_gryphon",
     "onceOnly": true,
     "bossId": "shellbane_gryphon"
   },
@@ -11414,7 +11425,7 @@
     "taskType": "killCount",
     "difficulty": 2,
     "area": "canifis",
-    "requirements": "75 Slayer, 70 Combat, Priest in Peril, Brittle key, Gargoyle or Grotesque Guardians Slayer task",
+    "requirements": "grotesque_guardians",
     "onceOnly": true,
     "bossId": "grotesque_guardians"
   },
@@ -11522,7 +11533,7 @@
     "taskType": "killCount",
     "difficulty": 4,
     "area": "piscatoris",
-    "requirements": "87 Slayer, 50 Magic, 80 Combat, Cave kraken or Kraken Slayer task",
+    "requirements": "kraken",
     "onceOnly": true,
     "bossId": "kraken"
   },
@@ -25717,7 +25728,7 @@
   {
     "displayName": "Climb over the western Falador wall",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "falador, taverly",
     "requirements": "None",
     "areaRequirement": "all"
@@ -25725,1666 +25736,1666 @@
   {
     "displayName": "Use the rope swing to travel to the Moss Giant Island north-west of Karamja",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "musa_point"
   },
   {
     "displayName": "Cross the lava using the stepping stones within Brimhaven Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "musa_point"
   },
   {
     "displayName": "Explore Cairn Island to the west of Karamja",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "karamja"
   },
   {
     "displayName": "Kill an Earth warrior in the Wilderness beneath Edgeville",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "edgeville"
   },
   {
     "displayName": "Cross the Coal Trucks log balance",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "hemenster"
   },
   {
     "displayName": "Climb to the summit of the Agility Pyramid",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "nardah_desert"
   },
   {
     "displayName": "Complete a lap of the Varrock Rooftop Course",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "varrock"
   },
   {
     "displayName": "Complete a lap of the Barbarian Agility Course",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "barbarian_waterfall",
     "requirements": "Alfred Grimhand\u0027s Barcrawl"
   },
   {
     "displayName": "Take the Agility shortcut from the Grand Tree to Otto\u0027s Grotto",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "gnome_stronghold, barbarian_waterfall",
     "areaRequirement": "all"
   },
   {
     "displayName": "Complete a lap of the Canifis Rooftop Agility Course",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "canifis"
   },
   {
     "displayName": "Squeeze through the crevice in the Dwarven Mines",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "falador"
   },
   {
     "displayName": "Catch a Leaping sturgeon",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "barbarian_waterfall",
     "requirements": "Barbarian Training"
   },
   {
     "displayName": "Use the boulder leap shortcut in the dense essence mine.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "northern_kourend"
   },
   {
     "displayName": "Complete a lap of the Falador Rooftop Agility Course",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "falador"
   },
   {
     "displayName": "Kill a Deathwing in the dungeon under the Kharazi Jungle",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "karamja",
     "requirements": "Legends\u0027 Quest"
   },
   {
     "displayName": "Kill an Elf with a Crystal bow",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "gnome_stronghold",
     "requirements": "Roving Elves"
   },
   {
     "displayName": "Squeeze through the obstacle pipe in Edgeville Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "edgeville"
   },
   {
     "displayName": "Complete a lap of the Seers\u0027 Village Rooftop Course",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "camelot_seers"
   },
   {
     "displayName": "Mix a Stamina mix on top of the Seers\u0027 Village bank",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "camelot_seers",
     "requirements": "Barbarian Training"
   },
   {
     "displayName": "Enter the Wilderness God Wars Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "northwestern_wilderness"
   },
   {
     "displayName": "Slay a Spiritual mage within the Wilderness God Wars Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "northwestern_wilderness",
     "areaRequirement": "all"
   },
   {
     "displayName": "Take the Agility shortcut from Trollheim into the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "trollheim, southwestern_wilderness",
     "areaRequirement": "all"
   },
   {
     "displayName": "Use the shortcut to get to the bridge over the Salve",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "canifis, silvarea",
     "areaRequirement": "all"
   },
   {
     "displayName": "Kill the generals of Armadyl, Bandos, Saradomin, and Zamorak in the God Wars Dungeon.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "trollheim",
     "requirements": "Troll Stronghold"
   },
   {
     "displayName": "Complete a lap of the Pollnivneach Rooftop Course",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "polnivneach_desert"
   },
   {
     "displayName": "Climb the advanced spike chain within the Slayer Tower",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "canifis"
   },
   {
     "displayName": "Complete a lap of the Rellekka Rooftop Course",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "rellekka",
     "requirements": "The Fremennik Trials"
   },
   {
     "displayName": "Jump over the strange floor in Taverley Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "taverley"
   },
   {
     "displayName": "Use the Elven Overpass advanced cliffside shortcut",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "isafdar",
     "requirements": "Underground Pass"
   },
   {
     "displayName": "Complete a lap of Ardougne\u0027s Rooftop Agility Course",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "ardougne"
   },
   {
     "displayName": "Enter the Warriors\u0027 Guild",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "burthorpe"
   },
   {
     "displayName": "Defeat a Locust Rider with Keris.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "sophanem",
     "requirements": "Contact!"
   },
   {
     "displayName": "Equip Iban\u0027s upgraded staff or upgrade an Iban staff.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ardougne",
     "requirements": "Underground Pass"
   },
   {
     "displayName": "Loot the Barrows chest while wearing any complete Barrows set",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "southern_morytania"
   },
   {
     "displayName": "Find out what your family crest is from Sir Renitee",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "falador"
   },
   {
     "displayName": "Change your family crest to the Saradomin symbol",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "falador"
   },
   {
     "displayName": "Teleport to Pollnivneach with a redirected Teleport to House tablet (Or Enter you house from Pollnivneach)",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "polnivneach_desert"
   },
   {
     "displayName": "Enter your player-owned house from Hosidius.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "hosidius"
   },
   {
     "displayName": "Pick up your Pet rock from your POH Menagerie",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rellekka",
     "requirements": "The Fremennik Trials"
   },
   {
     "displayName": "Enter your POH from Yanille",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "yanille"
   },
   {
     "displayName": "Have the Seers\u0027 Estate agent decorate your house with Fancy Stone",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "camelot_seers"
   },
   {
     "displayName": "Enter the Kharyrll portal in your POH",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "canifis",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Have the Varrock Estate agent decorate your house with Fancy Stone",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "varrock"
   },
   {
     "displayName": "Build an Isafdar painting in your POH Quest Hall",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "isafdar",
     "requirements": "Roving Elves"
   },
   {
     "displayName": "Speak to the Kq head in your POH",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "desert"
   },
   {
     "displayName": "Cook a Thin snail on the Port Phasmatys range",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "port_phasmatys",
     "requirements": "Ghosts Ahoy"
   },
   {
     "displayName": "Cook a Spider on a stick",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja"
   },
   {
     "displayName": "Cook a Karambwan thoroughly",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "karamja",
     "requirements": "Tai Bwo Wannai Trio"
   },
   {
     "displayName": "Complete a game of Trouble Brewing",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "mos_le_harmless",
     "requirements": "Cabin Fever"
   },
   {
     "displayName": "Make a Chocolate bomb at the Grand Tree",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "gnome_stronghold"
   },
   {
     "displayName": "Catch and cook a Bass in Catherby",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "catherby"
   },
   {
     "displayName": "Catch and cook a Monkfish in Piscatoris",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "piscatoris",
     "requirements": "Swan Song"
   },
   {
     "displayName": "Fish and cook 5 Sharks in Catherby using the Cooking gauntlets",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "catherby",
     "requirements": "Family Crest"
   },
   {
     "displayName": "Catch an anglerfish and cook it whilst in Great Kourend.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "port_piscarilius"
   },
   {
     "displayName": "Bake a Wild pie at the Nardah clay oven",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "nardah_desert"
   },
   {
     "displayName": "Fish and cook a Dark crab in the Resource Area",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "deep_wilderness"
   },
   {
     "displayName": "Catch a Manta ray in the Fishing Trawler and cook it in Port Khazard",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "khazard_battlegrounds"
   },
   {
     "displayName": "Bake a Summer pie in the Cooking Guild",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "varrock"
   },
   {
     "displayName": "Spin a Bowl on the pottery wheel and fire in the oven in Barbarian Village",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "edgeville"
   },
   {
     "displayName": "Create a Yew longbow from scratch around Seers\u0027 Village",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "camelot_seers"
   },
   {
     "displayName": "Make a Rune crossbow yourself from scratch within Witchaven or Yanille",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "yanille, ardougne",
     "areaRequirement": "all"
   },
   {
     "displayName": "Craft any Snelm from scratch in Morytania",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "mort_myre_swamp, haunted_wood",
     "areaRequirement": "any"
   },
   {
     "displayName": "Craft a Tiara from scratch in Rellekka",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "rellekka",
     "requirements": "The Fremennik Trials"
   },
   {
     "displayName": "Repair a crane within Port Piscarilius.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_piscarilius"
   },
   {
     "displayName": "Craft a Fruit basket on the Falador farm loom",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "falador"
   },
   {
     "displayName": "Craft one or more blood runes from Dark essence fragments",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "northern_kourend"
   },
   {
     "displayName": "Mine some Gold ore at the Crafting Guild",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rimmington"
   },
   {
     "displayName": "Claim buckets of sand from Bert in Yanille.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "yanille",
     "requirements": "The Hand in the Sand"
   },
   {
     "displayName": "Craft a Dragonstone amulet in the Neitiznot furnace",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "rellekka",
     "requirements": "The Fremennik Isles"
   },
   {
     "displayName": "Craft a Black dragonhide body in Canifis bank",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "canifis"
   },
   {
     "displayName": "Construct a pyre ship from Magic logs",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "barbarian_waterfall",
     "requirements": "Barbarian Training"
   },
   {
     "displayName": "Slay a Dust devil in the desert cave with a Slayer helmet equipped.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "polnivneach_desert",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Pray at the Altar of Guthix in Taverley whilst wearing full Initiate armour",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "taverley",
     "requirements": "Recruitment Drive"
   },
   {
     "displayName": "Recharge your prayer in Port Sarim church while wearing full Proselyte",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "port_sarim_mudskipper",
     "requirements": "Slug Menace"
   },
   {
     "displayName": "Equip a Dwarven helmet within the Dwarven mines",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "falador",
     "requirements": "Grim Tales"
   },
   {
     "displayName": "Purchase and equip a Granite body from Barbarian Assault",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "barbarian_waterfall"
   },
   {
     "displayName": "Enter the Seers\u0027 Village courthouse with Piety turned on",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "camelot_seers",
     "requirements": "King\u0027s Ransom"
   },
   {
     "displayName": "Pray at the Altar of Nature with Piety activated",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "mort_myre_swamp",
     "requirements": "Nature Spirit, King\u0027s Ransom"
   },
   {
     "displayName": "Plant Jute seeds in the farming patch north of McGrubor\u0027s Wood",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "camelot_seers"
   },
   {
     "displayName": "Place a Scarecrow in the Falador farm patch",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "falador"
   },
   {
     "displayName": "Place a Scarecrow in the Morytania flower patch",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "port_phasmatys"
   },
   {
     "displayName": "Pick some Limpwurt root from the farming patch in Catherby",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "catherby"
   },
   {
     "displayName": "Grow a healthy Fruit tree in the patch near Brimhaven",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "musa_point"
   },
   {
     "displayName": "Harvest some Strawberries from the Ardougne farming patch",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ardougne"
   },
   {
     "displayName": "Enter the Farming Guild.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Harvest some Watermelon from the allotment patch on Harmony Island",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "mos_le_harmless",
     "requirements": "The Great Brain Robbery"
   },
   {
     "displayName": "Harvest some Bittercap mushrooms from the patch in Canifis",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "canifis"
   },
   {
     "displayName": "Collect at least 2 Yew roots from the tree patch in Varrock Palace",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "varrock"
   },
   {
     "displayName": "Check the health of a Palm tree near Tree Gnome Village",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "khazard_battlegrounds"
   },
   {
     "displayName": "Check the health of a Palm tree in Brimhaven",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "musa_point"
   },
   {
     "displayName": "Check the health of your Palm tree in Lletya",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "isafdar",
     "requirements": "Mourning\u0027s End Part I"
   },
   {
     "displayName": "Pick some Poison ivy berries from the patch south of East Ardougne",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ardougne"
   },
   {
     "displayName": "Check the health of your Calquat tree patch",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "karamja"
   },
   {
     "displayName": "Plant some Logavano seeds at the Tithe Farm.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "hosidius"
   },
   {
     "displayName": "Have Prissy Scilla protect your Magic tree",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "gnome_stronghold"
   },
   {
     "displayName": "Pick some Dwarf weed from the herb patch at Catherby",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "catherby"
   },
   {
     "displayName": "Pick some Torstol from the patch north of East Ardougne",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "ardougne"
   },
   {
     "displayName": "Create your own battlestaff from scratch within the Farming Guild.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Find at least 3 Magic roots at once when digging up your Magic tree in Falador",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "falador"
   },
   {
     "displayName": "Chop and burn some Oak logs in the Fremennik Province",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "rellekka"
   },
   {
     "displayName": "Chop and burn some Willow logs in Taverley",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "taverley"
   },
   {
     "displayName": "Chop and burn some Teak logs on Ape Atoll",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ape_atoll",
     "requirements": "Monkey Madness I"
   },
   {
     "displayName": "Use the balloon to travel from Varrock",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "varrock",
     "requirements": "Enlightened Journey"
   },
   {
     "displayName": "Light a Bullseye lantern at the Chemist\u0027s in Rimmington",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rimmington"
   },
   {
     "displayName": "Travel to Castle Wars by hot air balloon",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "yanille",
     "requirements": "Enlightened Journey"
   },
   {
     "displayName": "Subdue the Wintertodt.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "northern_kourend"
   },
   {
     "displayName": "Chop and burn some Mahogany logs on Mos Le\u0027Harmless",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "mos_le_harmless",
     "requirements": "Cabin Fever"
   },
   {
     "displayName": "Chop and burn some Mahogany logs on Ape Atoll",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ape_atoll",
     "requirements": "Monkey Madness I"
   },
   {
     "displayName": "Burn some Yew logs on the Nardah Mayor\u0027s balcony",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "nardah_desert"
   },
   {
     "displayName": "Chop some Yew logs in Varrock and burn them at the top of the Varrock church",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "varrock"
   },
   {
     "displayName": "Burn some Maple logs with a bow in Seers\u0027 Village",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "camelot_seers",
     "requirements": "Barbarian Training"
   },
   {
     "displayName": "Cut and burn some Magic logs in the Resource Area",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "deep_wilderness"
   },
   {
     "displayName": "Cremate any Shade remains on a Magic pyre",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "southern_morytania",
     "requirements": "Shades of Mort\u0027ton"
   },
   {
     "displayName": "Go out fishing on the Fishing Trawler",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "khazard_battlegrounds"
   },
   {
     "displayName": "Catch a Mackerel at Catherby",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "catherby"
   },
   {
     "displayName": "Fish a Trout from the River Molch.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Catch a Bluegill on Lake Molch.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "kebos_swamp"
   },
   {
     "displayName": "Fish some Bass on Ape Atoll",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ape_atoll",
     "requirements": "Monkey Madness I"
   },
   {
     "displayName": "Fish some Raw lava eel in the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "northwestern_wilderness",
     "requirements": "Heroes\u0027 Quest"
   },
   {
     "displayName": "Catch a Karambwan",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja",
     "requirements": "Tai Bwo Wannai Trio"
   },
   {
     "displayName": "Catch a Shark in Burgh de Rott with your bare hands",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "southern_morytania",
     "requirements": "In Aid of the Myreque, Barbarian Training"
   },
   {
     "displayName": "Claim any Chompy bird hat from Rantz",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "feldip_hills",
     "requirements": "Big Chompy Bird Hunting"
   },
   {
     "displayName": "Claim a Chompy bird hat from Rantz after registering at least 125 kills.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "feldip_hills",
     "requirements": "Big Chompy Bird Hunting"
   },
   {
     "displayName": "Claim a Chompy bird hat from Rantz after registering at least 300 kills.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "feldip_hills",
     "requirements": "Big Chompy Bird Hunting"
   },
   {
     "displayName": "Claim a Chompy bird hat from Rantz after registering at least 1,000 kills.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "feldip_hills",
     "requirements": "Big Chompy Bird Hunting"
   },
   {
     "displayName": "Fletch an Oak shortbow in the Gnome Stronghold",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "gnome_stronghold"
   },
   {
     "displayName": "String a Maple shortbow in Seers\u0027 Village bank",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "camelot_seers"
   },
   {
     "displayName": "Smith and fletch 10 Rune darts within Varrock",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "varrock",
     "requirements": "The Tourist Trap"
   },
   {
     "displayName": "Fletch a Magic longbow in the Elven lands",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "isafdar",
     "requirements": "Regicide"
   },
   {
     "displayName": "Fletch some Dragon darts at the Bedabin Camp",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "desert",
     "requirements": "The Tourist Trap"
   },
   {
     "displayName": "Create a strength potion in the The Deeper Lode pub.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "lovakengj"
   },
   {
     "displayName": "Mix a Guthix balance potion while in Morytania",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_phasmatys",
     "requirements": "In Aid of the Myreque"
   },
   {
     "displayName": "Create a Combat potion in the Desert",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "nardah_desert"
   },
   {
     "displayName": "Create a Superantipoison potion from scratch in the Seers\u0027/Catherby area",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "catherby, camelot_seers",
     "areaRequirement": "any"
   },
   {
     "displayName": "Mix a Super defence potion in the Fremennik Province",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "rellekka"
   },
   {
     "displayName": "Mix a Saradomin brew in Falador east bank",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "falador"
   },
   {
     "displayName": "Create an Anti-venom potion whilst standing in the Horseshoe mine",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "musa_point"
   },
   {
     "displayName": "Create a Super combat potion in Varrock west bank",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "varrock"
   },
   {
     "displayName": "Trap a Spined Larupia",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "feldip_hills"
   },
   {
     "displayName": "Catch a Snowy knight",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rellekka"
   },
   {
     "displayName": "Trap a Horned Graahk",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja"
   },
   {
     "displayName": "Catch a chinchompa in the Kourend Woodland.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "kourend_woodland",
     "requirements": "Eagles\u0027 Peak"
   },
   {
     "displayName": "Catch a Red salamander",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "yanille"
   },
   {
     "displayName": "Trade furs with the Fancy Dress Seller for a Spottier cape and equip it",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "varrock"
   },
   {
     "displayName": "Cast Low Alchemy at the Fountain of Rune",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "northeast_wilderness"
   },
   {
     "displayName": "Cast the Teleport to Varrock spell",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "varrock"
   },
   {
     "displayName": "Telegrab some Wine of Zamorak at the Chaos Temple by the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "lassar"
   },
   {
     "displayName": "Teleport to Falador",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "falador"
   },
   {
     "displayName": "Teleport to Camelot",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "camelot_seers"
   },
   {
     "displayName": "Cast the Ardougne Teleport spell",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ardougne",
     "requirements": "Plague City"
   },
   {
     "displayName": "Teleport to Paddewwa",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "edgeville",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Charge a water orb",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "camelot_seers"
   },
   {
     "displayName": "Teleport to the Watchtower",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "yanille",
     "requirements": "Watchtower"
   },
   {
     "displayName": "Charge an earth orb",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "edgeville"
   },
   {
     "displayName": "Cast one of the 3 God spells against another player in the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "deep_wilderness"
   },
   {
     "displayName": "Teleport to Trollheim",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "trollheim",
     "requirements": "Eadgar\u0027s Ruse"
   },
   {
     "displayName": "Teleport to Ape Atoll",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ape_atoll",
     "requirements": "Recipe for Disaster/Freeing King Awowogei"
   },
   {
     "displayName": "Enter the Magic Guild",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "yanille"
   },
   {
     "displayName": "Cast Monster Examine on a mountain troll south of Mount Quidamortem.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "kebos_swamp",
     "requirements": "Dream Mentor"
   },
   {
     "displayName": "Charge an air orb",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "south_central_wilderness, edgeville",
     "areaRequirement": "all"
   },
   {
     "displayName": "Refill your Waterskins in the Desert using Lunar spells (Humidify)",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "desert",
     "requirements": "Dream Mentor"
   },
   {
     "displayName": "Teleport to Waterbirth Island",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "fremennik_isles",
     "requirements": "Lunar Diplomacy"
   },
   {
     "displayName": "Fertilise the Morytania herb patch using Lunar spells (Fertile Soil)",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "port_phasmatys",
     "requirements": "Lunar Diplomacy"
   },
   {
     "displayName": "Use Lunar magic to make 20 Mahogany planks at the Lumber Yard (Plank Make)",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "varrock",
     "requirements": "Dream Mentor"
   },
   {
     "displayName": "Teleport to Catherby",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "catherby",
     "requirements": "Lunar Diplomacy"
   },
   {
     "displayName": "Create an Ape Atoll teleport tablet.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "arceuus",
     "requirements": "Monkey Madness I"
   },
   {
     "displayName": "Cast Ice Barrage on another player in Castle Wars",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "yanille",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Cast Ice Barrage against a foe in the Desert",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "desert",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Teleport to Ghorrock",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "northwestern_wilderness",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Smith some Blurite limbs on Doric\u0027s anvil",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "lassar",
     "requirements": "The Knight\u0027s Sword, Doric\u0027s Quest"
   },
   {
     "displayName": "Mine some iron ore at the Mount Karuulm mine.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Mine some Iron in the south-east mining patch near Varrock",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "varrock"
   },
   {
     "displayName": "Mine some Iron ore in the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "south_central_wilderness"
   },
   {
     "displayName": "Mine some Iron ore near Piscatoris",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "piscatoris"
   },
   {
     "displayName": "Mine some Coal in Rellekka",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rellekka",
     "requirements": "The Fremennik Trials"
   },
   {
     "displayName": "Mine some Coal near the Coal trucks",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "hemenster"
   },
   {
     "displayName": "Craft one or more blood runes.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "northern_kourend"
   },
   {
     "displayName": "Mine some Gold at the Arzinian Mine",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rellekka",
     "requirements": "Between a Rock..."
   },
   {
     "displayName": "Mine some Gold from the rocks on the north-west peninsula of Karamja",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "musa_point"
   },
   {
     "displayName": "Mine a Red topaz from a Gem rock",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja",
     "requirements": "Shilo Village OR Jungle Potion"
   },
   {
     "displayName": "Mine some Gold ore underneath the Grand Tree",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "gnome_stronghold",
     "requirements": "The Grand Tree"
   },
   {
     "displayName": "Mine some volcanic sulphur.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "lovakengj"
   },
   {
     "displayName": "Mine some Mithril ore in the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "north_central_wilderness"
   },
   {
     "displayName": "Mine some Mithril ore in the Abandoned Mine",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "southern_morytania",
     "requirements": "Haunted Mine"
   },
   {
     "displayName": "Enter the Mining Guild while wearing a prospector helmet.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "falador"
   },
   {
     "displayName": "Mine some Lovakite ore.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "lovakengj"
   },
   {
     "displayName": "Mine 5 Adamantite ores on Jatizso",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "fremennik_isles",
     "requirements": "The Fremennik Isles"
   },
   {
     "displayName": "Mine some Adamantite ore in Tirannwn",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "isafdar",
     "requirements": "Regicide"
   },
   {
     "displayName": "Smith a Rune scimitar from scratch in the Resource Area",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "deep_wilderness"
   },
   {
     "displayName": "Recharge your prayer in Port Sarim church while wearing full Proselyte armour",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "port_sarim_mudskipper",
     "requirements": "The Slug Menace"
   },
   {
     "displayName": "Pray at the altar in Varrock Palace with Smite active",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "varrock"
   },
   {
     "displayName": "Restore at least 85 Prayer points when praying at the altar in Sophanem",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "sophanem",
     "requirements": "Icthlarin\u0027s Little Helper"
   },
   {
     "displayName": "Enter the Ranging Guild",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "hemenster"
   },
   {
     "displayName": "Craft some Earth runes",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "varrock"
   },
   {
     "displayName": "Craft some Nature runes",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "karamja"
   },
   {
     "displayName": "Craft 140 Mind runes simultaneously",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "falador"
   },
   {
     "displayName": "Craft some Death runes",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ardougne",
     "requirements": "Mourning\u0027s End Part II"
   },
   {
     "displayName": "Craft 100 or more Earth runes simultaneously",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "varrock"
   },
   {
     "displayName": "Craft 56 Astral runes at once",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "fremennik_isles",
     "requirements": "Lunar Diplomacy"
   },
   {
     "displayName": "Craft 252 Air runes at once",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "falador"
   },
   {
     "displayName": "Craft 56 Nature runes at once",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "karamja"
   },
   {
     "displayName": "Kill a Banshee in the Slayer Tower",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "canifis"
   },
   {
     "displayName": "Slay a Desert lizard",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "nardah_desert"
   },
   {
     "displayName": "Kill a Mogre at Mudskipper Point",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_sarim_mudskipper",
     "requirements": "Skippy and the Mogres"
   },
   {
     "displayName": "Kill a Terror dog",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "southern_morytania",
     "requirements": "Haunted Mine"
   },
   {
     "displayName": "Kill a Fever spider on Braindeath Island",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_phasmatys",
     "requirements": "Rum Deal"
   },
   {
     "displayName": "Be assigned a Slayer task by the Slayer Master in Shilo Village",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "karamja",
     "requirements": "Shilo Village"
   },
   {
     "displayName": "Kill a Bloodveld in the Wilderness God Wars Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "northwestern_wilderness"
   },
   {
     "displayName": "Kill a Cave horror",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "mos_le_harmless",
     "requirements": "Cabin Fever"
   },
   {
     "displayName": "Kill a wyrm in the Karuulm Slayer Dungeon.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Slay a Dust devil with a Slayer helmet equipped",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "polnivneach_desert",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Kill a Spiritual warrior in the Wilderness God Wars Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "north_central_wilderness"
   },
   {
     "displayName": "Kill a Skeletal wyvern in the Asgarnia Ice Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "port_sarim_mudskipper"
   },
   {
     "displayName": "Slay a Spiritual mage within the God Wars Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "trollheim",
     "requirements": "Troll Stronghold"
   },
   {
     "displayName": "Kill an Abyssal demon in the Slayer Tower",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "canifis"
   },
   {
     "displayName": "Kill the thermonuclear smoke devil",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "feldip_hills"
   },
   {
     "displayName": "Kill a hydra in the Karuulm Slayer Dungeon.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Make a batch of steel cannonballs at the Port Phasmatys furnace",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_phasmatys",
     "requirements": "Ghosts Ahoy, Dwarf Cannon"
   },
   {
     "displayName": "Smith a Gold helmet in the Resource Area",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "deep_wilderness",
     "requirements": "Between a Rock..."
   },
   {
     "displayName": "Smith a Dragon sq shield in West Ardougne",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ardougne",
     "requirements": "Legends\u0027 Quest"
   },
   {
     "displayName": "Obtain the Blast Furnace Foreman\u0027s permission to use the Blast Furnace for free",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "rellekka",
     "requirements": "The Giant Dwarf"
   },
   {
     "displayName": "Smith a Mithril platebody near Ardougne",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ardougne"
   },
   {
     "displayName": "Create a Mithril platebody in Nardah",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "nardah_desert"
   },
   {
     "displayName": "Smelt an adamantite bar in The Forsaken Tower.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "lovakengj",
     "requirements": "The Forsaken Tower"
   },
   {
     "displayName": "Smith an Adamant spear at Otto\u0027s Grotto",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "barbarian_waterfall",
     "requirements": "Barbarian Training"
   },
   {
     "displayName": "Smith an Adamant scimitar in the Resource Area",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "deep_wilderness"
   },
   {
     "displayName": "Smith a Rune hasta at Otto\u0027s Grotto",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "barbarian_waterfall",
     "requirements": "Barbarian Training"
   },
   {
     "displayName": "Travel to the Desert via the Eagle transport system",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "uzer_desert",
     "requirements": "Eagles\u0027 Peak"
   },
   {
     "displayName": "Steal a Cake from the East Ardougne market stalls",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "ardougne"
   },
   {
     "displayName": "Steal from the Keldagrim crafting or baker\u0027s stall",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "rellekka",
     "requirements": "The Giant Dwarf"
   },
   {
     "displayName": "Open the sarcophagus in the first room of Pyramid Plunder",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "sophanem",
     "requirements": "Icthlarin\u0027s Little Helper"
   },
   {
     "displayName": "Steal a Phoenix feather from the Desert phoenix",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "uzer_desert",
     "requirements": "The Golem"
   },
   {
     "displayName": "Steal from a Hosidius Food Stall.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "hosidius"
   },
   {
     "displayName": "Pickpocket the Master Farmer north of East Ardougne",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ardougne"
   },
   {
     "displayName": "Pickpocket a Falador guard",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "falador"
   },
   {
     "displayName": "Steal from the Rellekka Fish stalls",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rellekka",
     "requirements": "The Fremennik Trials"
   },
   {
     "displayName": "Steal from the chest in Hemenster",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "hemenster"
   },
   {
     "displayName": "Deliver an artefact to Captain Khaled.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "port_piscarilius"
   },
   {
     "displayName": "Crack a wall safe within the Rogues\u0027 Den",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "burthorpe"
   },
   {
     "displayName": "Knock out a Menaphite thug",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "polnivneach_desert",
     "requirements": "The Feud"
   },
   {
     "displayName": "Attempt to steal from a chest in Ardougne Castle.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ardougne"
   },
   {
     "displayName": "Steal from the Keldagrim gem stall",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "rellekka",
     "requirements": "The Giant Dwarf"
   },
   {
     "displayName": "Attempt to picklock the door to the basement of the Yanille Agility dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "yanille"
   },
   {
     "displayName": "Steal from the Chest (Rogues\u0027 Castle)",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "deep_wilderness"
   },
   {
     "displayName": "Steal from the Grand Gold Chest in the final room of Pyramid Plunder",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "sophanem",
     "requirements": "Icthlarin\u0027s Little Helper"
   },
   {
     "displayName": "Earn 100% favour in the Tai Bwo Wannai Cleanup minigame",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja",
     "requirements": "Jungle Potion"
   },
   {
     "displayName": "Chop the vines to gain deeper access to Brimhaven Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja"
   },
   {
     "displayName": "Climb the stairs within Brimhaven Dungeon",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "musa_point"
   },
   {
     "displayName": "Collect 5 Palm leaves",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "karamja",
     "requirements": "Legends\u0027 Quest"
   },
   {
     "displayName": "Chop some Teak logs near Uzer",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "uzer_desert"
   },
   {
     "displayName": "Cut a log from a Teak",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja",
     "requirements": "Jungle Potion"
   },
   {
     "displayName": "Obtain some Bark from a Hollow tree",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "haunted_wood"
   },
   {
     "displayName": "Cut a log from a Mahogany",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja"
   },
   {
     "displayName": "Chop some mahogany logs north of the Farming Guild.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Craft a Fremennik shield on Neitiznot",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "fremennik_isles",
     "requirements": "The Fremennik Isles"
   },
   {
     "displayName": "Make a Waka canoe near Edgeville",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "edgeville"
   },
   {
     "displayName": "Enter the Woodcutting Guild.",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "kebos_lowlands"
   },
   {
     "displayName": "Chop some Yew logs from an Ent",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "southeast_wilderness"
   },
   {
     "displayName": "Chop some redwood logs.",
     "taskType": "Achievement Diary",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "kourend_woodland"
   },
   {
@@ -27422,925 +27433,964 @@
   },
   {
     "displayName": "Have the Mage of Zamorak teleport you to the Abyss",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "south_central_wilderness",
     "requirements": "Abyss Miniquest"
   },
   {
     "displayName": "Teleport to Xeric\u0027s Heart using Xeric\u0027s talisman.",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "kingstown",
     "requirements": "Architectural Alliance"
   },
   {
     "displayName": "Use Kharedst\u0027s memoirs to teleport to all five cities in Great Kourend.",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "kingstown",
     "requirements": "Architectural Alliance"
   },
   {
     "displayName": "Kill a Mithril dragon",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "barbarian_waterfall",
     "requirements": "Barbarian Training"
   },
   {
     "displayName": "Enter the Combat Training Camp north of West Ardougne",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "ardougne",
     "requirements": "Biohazard"
   },
   {
     "displayName": "Activate Ancient Magicks",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "jaldraocht",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Kill a Shadow hound in the Shadow Dungeon",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "barbarian_waterfall",
     "requirements": "Desert Treasure I"
   },
   {
     "displayName": "Discover the hidden wall in the dungeon below the volcano",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "musa_point",
     "requirements": "Dragon Slayer I"
   },
   {
     "displayName": "Visit the Isle of Crandor via the dungeon below the volcano",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "musa_point",
     "requirements": "Dragon Slayer I"
   },
   {
     "displayName": "Travel to the Snowy Hunter Area via Eagle",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "rellekka",
     "requirements": "Eagles\u0027 Peak"
   },
   {
     "displayName": "Travel from Eagles\u0027 Peak to the Feldip Hills by Eagle",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "feldip_hills",
     "requirements": "Eagles\u0027 Peak"
   },
   {
     "displayName": "Teleport to Enakhra\u0027s Temple with the Camulet",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "jaldraocht",
     "requirements": "Enakhra\u0027s Lament"
   },
   {
     "displayName": "Defeat one of each elemental in the Elemental Workshop",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "camelot_seers",
     "requirements": "Elemental Workshop I"
   },
   {
     "displayName": "Create a Mind helmet",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "camelot_seers",
     "requirements": "Elemental Workshop II"
   },
   {
     "displayName": "Turn your crystal saw seed into a Crystal saw",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "gnome_stronghold",
     "requirements": "The Eyes of Glouphrie"
   },
   {
     "displayName": "Change your boots at Yrsa\u0027s Shoe Store",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "rellekka",
     "requirements": "The Fremennik Trials"
   },
   {
     "displayName": "Pick a White tree fruit",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "varrock",
     "requirements": "Garden of Tranquillity"
   },
   {
     "displayName": "Use an Ectophial to return to Port Phasmatys",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_phasmatys",
     "requirements": "Ghosts Ahoy"
   },
   {
     "displayName": "Browse the Stonemason\u0027s Shop",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "rellekka",
     "requirements": "The Giant Dwarf"
   },
   {
     "displayName": "Travel to Uzer via Magic carpet",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "uzer_desert",
     "requirements": "The Golem"
   },
   {
     "displayName": "Use the Gnome glider to travel to Karamja",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja",
     "requirements": "The Grand Tree"
   },
   {
     "displayName": "Charter a ship from the shipyard in the far east of Karamja",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja",
     "requirements": "The Grand Tree"
   },
   {
     "displayName": "Claim buckets of sand from Bert in Yanille",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "yanille",
     "requirements": "The Hand in the Sand"
   },
   {
     "displayName": "Kill the Blue dragon under the Heroes\u0027 Guild",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "burthorpe",
     "requirements": "Heroes\u0027 Quest"
   },
   {
     "displayName": "Visit the Lighthouse from Waterbirth Island",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "barbarian_waterfall, fremennik_isles",
     "requirements": "Horror from the Deep",
     "areaRequirement": "all"
   },
   {
     "displayName": "Complete a 3 temple trek",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "southern_morytania",
     "requirements": "In Aid of the Myreque"
   },
   {
     "displayName": "Board the Swamp Boaty at the Hollows",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "mort_myre_swamp, southern_morytania",
     "requirements": "In Search of the Myreque",
     "areaRequirement": "all"
   },
   {
     "displayName": "Exchange gems with Safta Doc for a Machete",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja",
     "requirements": "Jungle Potion"
   },
   {
     "displayName": "Recharge some jewellery at the totem in the Legends\u0027 Guild",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ardougne",
     "requirements": "Legends\u0027 Quest"
   },
   {
     "displayName": "Eat an Oomlie wrap",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "karamja",
     "requirements": "Legends\u0027 Quest"
   },
   {
     "displayName": "Have a Monkey Minder put you in Ardougne Zoo\u0027s monkey cage",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "ardougne",
     "requirements": "Monkey Madness I"
   },
   {
     "displayName": "Restore your Prayer points at the Nature Grotto",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "mort_myre_swamp",
     "requirements": "Nature Spirit"
   },
   {
     "displayName": "Travel to the Feldip Hills by Gnome glider",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "feldip_hills",
     "requirements": "One Small Favour, The Grand Tree"
   },
   {
     "displayName": "Have Sbott tan something for you",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "canifis",
     "requirements": "Priest in Peril"
   },
   {
     "displayName": "Enter Mort Myre Swamp",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "canifis, mort_myre_swamp",
     "requirements": "Priest in Peril",
     "areaRequirement": "all"
   },
   {
     "displayName": "Kill a Ghoul",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "canifis",
     "requirements": "Priest in Peril"
   },
   {
     "displayName": "Offer some Bonemeal at the Ectofuntus",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "port_phasmatys",
     "requirements": "Priest in Peril"
   },
   {
     "displayName": "Kill a Werewolf in its human form using the Wolfbane dagger",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "canifis",
     "requirements": "Priest in Peril"
   },
   {
     "displayName": "Travel to Dragontooth Island",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_phasmatys",
     "requirements": "Priest in Peril"
   },
   {
     "displayName": "Browse the Warrens General Store.",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "port_piscarilius",
     "requirements": "The Queen of Thieves"
   },
   {
     "displayName": "Visit the Port Sarim Rat Pits",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "port_sarim_mudskipper",
     "requirements": "Ratcatchers"
   },
   {
     "displayName": "Kill Zulrah",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "isafdar, zulrah",
     "requirements": "Regicide"
   },
   {
     "displayName": "Have Wizard Cromperty teleport you to the Rune essence mine",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "ardougne",
     "requirements": "Rune Mysteries"
   },
   {
     "displayName": "Have Aubury teleport you to the Rune essence mine",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "varrock",
     "requirements": "Rune Mysteries"
   },
   {
     "displayName": "Have Brimstail teleport you to the Rune essence mine",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "gnome_stronghold",
     "requirements": "Rune Mysteries"
   },
   {
     "displayName": "Catch any fish on the Fishing Platform",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ardougne",
     "requirements": "Sea Slug"
   },
   {
     "displayName": "Use Vigroy and Hajedy\u0027s cart service",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja, musa_point",
     "requirements": "Shilo Village",
     "areaRequirement": "all"
   },
   {
     "displayName": "Charter the Lady of the Waves from Cairn Isle to Port Khazard",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "karamja, khazard_battlegrounds",
     "requirements": "Shilo Village",
     "areaRequirement": "all"
   },
   {
     "displayName": "Visit the genie",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "nardah_desert",
     "requirements": "Spirits of the Elid"
   },
   {
     "displayName": "Obtain 100% support from your kingdom subjects",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "fremennik_isles",
     "requirements": "Throne of Miscellania"
   },
   {
     "displayName": "Kill a Swordchick in the Tower of Life",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "ardougne",
     "requirements": "Tower of Life"
   },
   {
     "displayName": "Travel to the Tree Gnome Stronghold by Spirit tree",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "gnome_stronghold",
     "requirements": "Tree Gnome Village"
   },
   {
     "displayName": "Enter the Troll Stronghold",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "trollheim",
     "requirements": "Troll Stronghold"
   },
   {
     "displayName": "Purchase a White 2h sword from Sir Vyvin",
-    "difficulty": "4",
+    "difficulty": 4,
     "area": "falador",
     "requirements": "Wanted!"
   },
   {
     "displayName": "Collect some Cave nightshade from the Skavid caves",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "feldip_hills",
     "requirements": "Watchtower"
   },
   {
     "displayName": "Kill a Fire giant in the Waterfall Dungeon",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "barbarian_waterfall",
     "requirements": "Waterfall Quest"
   },
   {
     "displayName": "Sell Silk to the Silk trader in East Ardougne for 60 coins each",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "ardougne"
   },
   {
     "displayName": "Use the altar in East Ardougne\u0027s church",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "ardougne"
   },
   {
     "displayName": "Have Tindel Marchant identify a Rusty sword for you.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "khazard_battlegrounds"
   },
   {
     "displayName": "Use the Ardougne lever to teleport to the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "ardougne, deep_wilderness",
     "areaRequirement": "all"
   },
   {
     "displayName": "View Aleck\u0027s Hunter Emporium. shop in Yanille",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "yanille"
   },
   {
     "displayName": "Check what pets you have insured with Probita in East Ardougne",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "ardougne"
   },
   {
     "displayName": "Enter the Kalphite Lair",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "desert"
   },
   {
     "displayName": "Mine five Clay in the north-eastern Desert",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "uzer_desert"
   },
   {
     "displayName": "Enter the Desert with a set of Desert robes equipped",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "desert"
   },
   {
     "displayName": "Have the Nardah herbalist clean a herb for you",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "nardah_desert"
   },
   {
     "displayName": "Collect 5 Potato cacti from the Kalphite Lair",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "desert"
   },
   {
     "displayName": "Sell some artefacts to Simon Templeton",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "sophanem, nardah_desert",
     "areaRequirement": "all"
   },
   {
     "displayName": "Cut a desert cactus open to fill a Waterskin",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "desert"
   },
   {
     "displayName": "Travel from the Shantay Pass to Pollnivneach by Magic carpet",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "desert, polnivneach_desert"
   },
   {
     "displayName": "Browse Sarah\u0027s Farming Shop",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "falador"
   },
   {
     "displayName": "Get a Haircut or a Shave from the Falador Hairdresser",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "falador"
   },
   {
     "displayName": "Fill a bucket from the pump north of Falador west Bank",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "falador"
   },
   {
     "displayName": "Take the boat to Entrana",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "port_sarim_mudskipper, entrana",
     "areaRequirement": "all"
   },
   {
     "displayName": "Make a mind tiara",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "lassar"
   },
   {
     "displayName": "Repair a broken strut in the Motherlode Mine",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "falador"
   },
   {
     "displayName": "Claim a Security book from the Security Guard at Port Sarim jail",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "port_sarim_mudskipper"
   },
   {
     "displayName": "Unlock the Crystal chest in Taverley",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "taverley"
   },
   {
     "displayName": "Collect 5 Snape grass on Waterbirth Island",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "fremennik_isles"
   },
   {
     "displayName": "Fill a bucket with water at the Rellekka well",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "rellekka",
     "requirements": "The Fremennik Trials"
   },
   {
     "displayName": "Buy a Candle from the Candle maker in Catherby",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "catherby"
   },
   {
     "displayName": "Collect 5 Flax from the Seers\u0027 Village flax field",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "camelot_seers"
   },
   {
     "displayName": "Play the Organ in the Seers\u0027 Village church",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "camelot_seers"
   },
   {
     "displayName": "Have Galahad make you a Cup of tea",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "hemenster"
   },
   {
     "displayName": "Get a Pet fish from Harry in Catherby",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "catherby"
   },
   {
     "displayName": "Buy a Stew from the Seers\u0027 Village pub",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "camelot_seers"
   },
   {
     "displayName": "Speak to Sherlock",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "camelot_seers"
   },
   {
     "displayName": "Pick 5 Bananas from the plantation located east of the volcano",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "musa_point"
   },
   {
     "displayName": "Travel to Port Sarim via the dock east of Musa Point",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "musa_point"
   },
   {
     "displayName": "Travel to Ardougne via the port near Brimhaven",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "musa_point, ardougne",
     "areaRequirement": "all"
   },
   {
     "displayName": "Use the Fishing spots north of the banana plantation",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "musa_point"
   },
   {
     "displayName": "Collect 5 Seaweed from anywhere on Karamja",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "karamja"
   },
   {
     "displayName": "Attempt the TzHaar Fight Pit or Fight Cave",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "musa_point"
   },
   {
     "displayName": "Claim a ticket from the Agility Arena in Brimhaven",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "musa_point"
   },
   {
     "displayName": "Become the champion of the Fight Pit",
     "taskType": "Achievement Diary",
-    "difficulty": "3",
+    "difficulty": 3,
     "area": "musa_point"
   },
   {
     "displayName": "Hand in a book at the Arceuus Library.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "arceuss",
     "requirements": "Ascent of Arceuus"
   },
   {
     "displayName": "Switch to the Arceuus spellbook via Tyss.",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "northern_kourend",
     "requirements": "Ascent of Arceuus"
   },
   {
     "displayName": "Take a boat to Land\u0027s End.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "kourend_woodland"
   },
   {
     "displayName": "Pray at the altar on the top floor of the Kourend Castle.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "kingstown"
   },
   {
     "displayName": "Dig up some saltpetre.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "kourend_woodland"
   },
   {
     "displayName": "Heal a wounded Shayzien soldier.",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "shayzien"
   },
   {
     "displayName": "Enter the second level of the Stronghold of Security",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "varrock"
   },
   {
     "displayName": "Buy a newspaper",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "varrock"
   },
   {
     "displayName": "Give a dog a bone!",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "varrock"
   },
   {
     "displayName": "Enter the Wilderness from the Ardougne or Edgeville lever",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "deep_wilderness"
   },
   {
     "displayName": "Pray at the Chaos Altar in level 38 western Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "northwestern_wilderness"
   },
   {
     "displayName": "Enter the Chaos Runecraft temple",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "south_central_wilderness"
   },
   {
     "displayName": "Restore some Prayer points at the Demonic Ruins",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "northeast_wilderness"
   },
   {
     "displayName": "Enter the King Black Dragon Lair",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "northwestern_wilderness"
   },
   {
     "displayName": "Collect 5 Red spider\u0027s eggs from the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "edgeville"
   },
   {
     "displayName": "Equip any Team cape in the Wilderness",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "south_central_wilderness"
   },
   {
     "displayName": "Talk to the Emblem Trader in Edgeville about emblems",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "edgeville"
   },
   {
     "displayName": "Open the Muddy chest in the Lava Maze",
     "taskType": "Achievement Diary",
-    "difficulty": "2",
+    "difficulty": 2,
     "area": "northwestern_wilderness"
   },
   {
     "displayName": "Complete a lap of the Gnome Agility Course",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "gnome_stronghold"
   },
   {
     "displayName": "Score a goal in a Gnome Ball match",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "gnome_stronghold"
   },
   {
     "displayName": "Collect a swamp toad at the Tree Gnome Stronghold",
     "taskType": "Achievement Diary",
-    "difficulty": "1",
+    "difficulty": 1,
     "area": "gnome_stronghold"
   },
   {
     "displayName": "Enter the Unicorn pen in Ardougne Zoo using fairy rings",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "ardougne",
     "requirements": "Fairytale II - Cure a Queen"
   },
   {
     "displayName": "Visit the island east of the Necromancer Tower",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "ardougne",
     "requirements": "Fairytale II - Cure a Queen"
   },
   {
     "displayName": "Travel to Miscellania by fairy ring",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "fremennik_isles",
     "requirements": "Fairytale II - Cure a Queen"
   },
   {
     "displayName": "Travel to McGrubor\u0027s Wood by fairy ring",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "hemenster",
     "requirements": "Fairytale II - Cure a Queen"
   },
   {
     "displayName": "Travel to the fairy ring south of Mount Karuulm",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "kebos_lowlands",
     "requirements": "Fairytale II - Cure a Queen"
   },
   {
     "displayName": "Imbue a salve amulet at Nightmare Zone, or equip a salve amulet(i) that was imbued there.",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "yanille"
   },
   {
     "displayName": "Perform a Cape of Accomplishment or Quest point cape emote at the top of the White Knights\u0027 Castle",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "falador"
   },
   {
     "displayName": "Speak to Orlando Smith when you have achieved 153 Kudos",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "varrock"
   },
   {
     "displayName": "Teleport to Pest Control using the Minigame teleports",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "pest_control"
   },
   {
     "displayName": "Complete a novice game of Pest Control",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "pest_control"
   },
   {
     "displayName": "Complete an intermediate game of Pest Control",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "pest_control"
   },
   {
     "displayName": "Complete a veteran game of Pest Control",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "pest_control"
   },
   {
     "displayName": "Equip any complete void set",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "pest_control"
   },
   {
     "displayName": "Kill a Duck in Falador Park",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "falador"
   },
   {
     "displayName": "Kill 5 Rock Crabs",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "rellekka"
   },
   {
     "displayName": "Kill a Sand Crab.",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "hosidius, kourend_woodland",
     "areaRequirement": "any"
   },
   {
     "displayName": "Kill a Terrorbird in the Terrorbird enclosure",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "gnome_stronghold",
     "requirements": "Gnome Stronghold"
   },
   {
     "displayName": "Kill a Vulture",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "nardah_desert"
   },
   {
     "displayName": "Deliver some intelligence to Captain Ginea.",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "shayzien"
   },
   {
     "displayName": "Kill a Jogre in the Pothole Dungeon",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "karamja"
   },
   {
     "displayName": "Kill a lizardman",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "shayzien, kebos_swamp",
     "areaRequirement": "any"
   },
   {
     "displayName": "Kill a Green dragon",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "south_central_wilderness, northeast_wilderness, southwestern_wilderness",
     "areaRequirement": "any"
   },
   {
     "displayName": "Kill a Mammoth",
-    "difficulty": "1",
+    "taskType": "Achievement Diary",
+    "difficulty": 1,
     "area": "south_central_wilderness"
   },
   {
     "displayName": "Teleport to Barbarian Village with a Skull sceptre",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "edgeville"
   },
   {
     "displayName": "Kill an Ankou in the Wilderness",
-    "difficulty": "2",
+    "taskType": "Achievement Diary",
+    "difficulty": 2,
     "area": "north_western_wilderness, southeast_wilderness, northeast_wilderness",
     "areaRequirement": "any"
   },
   {
     "displayName": "Kill a Metal dragon in the Brimhaven Dungeon",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "musa_point"
   },
   {
     "displayName": "Kill a zombie in the Shayzien Crypts.",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "shayzien"
   },
   {
     "displayName": "Kill a lizardman shaman in Molch.",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "kebos_swamp"
   },
   {
     "displayName": "Kill the Crazy archaeologist, Chaos Fanatic and Scorpia",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "southwestern_wilderness, northwestern_wilderness, deep_wilderness",
     "requirements": "crazy_archaeologist, chaos_fanatic, scorpia",
     "areaRequirement": "all"
   },
   {
     "displayName": "Kill the Giant Mole beneath Falador Park",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "falador",
     "requirements": "giant_mole"
   },
   {
     "displayName": "Kill a Lava dragon on the Lava Dragon Isle",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "north_central_wilderness"
   },
   {
     "displayName": "Kill each of the Dagannoth Kings",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "fremennik_isles",
     "requirements": "The Fremennik Trials, dagannoth_kings"
   },
   {
     "displayName": "Kill the Chaos Elemental",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "deep_wilderness",
     "requirements": "chaos_elemental"
   },
   {
     "displayName": "Defeat Skotizo in the Catacombs of Kourend.",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "kingstown",
     "requirements": "skotizo"
   },
   {
     "displayName": "Kill the Kalphite Queen",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "desert",
     "requirements": "kalphite_queen"
   },
   {
     "displayName": "Kill a Ket-Zek in the Fight Caves",
-    "difficulty": "3",
+    "taskType": "Achievement Diary",
+    "difficulty": 3,
     "area": "musa_point",
     "requirements": "tztok_jad"
   },
   {
     "displayName": "Kill Callisto, Venenatis \u0026 Vet\u0027ion",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "northeast_wilderness",
     "requirements": "artio_callisto,spindel_venenatis,calvarion_vetion"
   },
   {
     "displayName": "Equip a fire cape in Mor Ul Rek",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "musa_point",
     "requirements": "tztok_jad"
   },
   {
     "displayName": "Complete a raid in the Chambers of Xeric.",
-    "difficulty": "4",
+    "taskType": "Achievement Diary",
+    "difficulty": 4,
     "area": "kebos_swamp",
     "requirements": "chambers_of_xeric"
   },
@@ -29617,7 +29667,7 @@
   {
     "displayName": "Obtain A Decorative sword (gold)",
     "taskType": "Collection Log",
-    "difficulty": 5,
+    "difficulty": 3,
     "area": "yanille",
     "onceOnly": true
   },
@@ -29650,6 +29700,9 @@
     "displayName": "Obtain A Dragon cannonball",
     "taskType": "Collection Log",
     "difficulty": 3,
+    "area": "ardent_ne, ardent_nw, ardent_se, ardent_sw, unquiet, shrouded_e, shrouded_w, sunset, western_s, western_n, northern_e, northern_w",
+    "requirements": "Pandemonium",
+    "areaRequirement": "any",
     "onceOnly": true
   },
   {
