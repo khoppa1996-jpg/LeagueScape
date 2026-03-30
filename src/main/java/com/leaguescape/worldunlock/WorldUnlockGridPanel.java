@@ -179,7 +179,8 @@ public class WorldUnlockGridPanel extends JPanel
 		gridScrollPane.getViewport().setOpaque(false);
 		gridScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		gridScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		gridScrollPane.setPreferredSize(new Dimension(400, 320));
+		gridScrollPane.setPreferredSize(WorldUnlockUiDimensions.GRID_SCROLL_PREFERRED);
+		gridScrollPane.setMinimumSize(WorldUnlockUiDimensions.GRID_SCROLL_MINIMUM);
 		gridScrollPane.setBorder(null);
 
 		gridScrollPane.getViewport().addMouseWheelListener(e -> {
@@ -270,6 +271,24 @@ public class WorldUnlockGridPanel extends JPanel
 		add(south, BorderLayout.SOUTH);
 
 		refresh();
+	}
+
+	@Override
+	public Dimension getPreferredSize()
+	{
+		return new Dimension(WorldUnlockUiDimensions.PANEL_PREFERRED);
+	}
+
+	@Override
+	public Dimension getMinimumSize()
+	{
+		return new Dimension(WorldUnlockUiDimensions.PANEL_PREFERRED);
+	}
+
+	@Override
+	public Dimension getMaximumSize()
+	{
+		return new Dimension(WorldUnlockUiDimensions.PANEL_PREFERRED);
 	}
 
 	@Override

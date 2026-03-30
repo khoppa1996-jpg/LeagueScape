@@ -653,8 +653,13 @@ public class LeagueScapePlugin extends Plugin
 				client, clientThread, audioPlayer, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
+			dialog.setMinimumSize(com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED);
 			PanelBoundsStore.applyBounds(dialog, configManager,
 				PanelBoundsStore.KEY_WORLD_UNLOCK, client.getCanvas());
+			java.awt.Rectangle wub = dialog.getBounds();
+			java.awt.Dimension wpref = com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED;
+			// Keep saved position only; size is always the shared panel design (not affected by other windows).
+			dialog.setBounds(wub.x, wub.y, wpref.width, wpref.height);
 			PanelBoundsStore.installPersistence(dialog, configManager,
 				PanelBoundsStore.KEY_WORLD_UNLOCK);
 			dialog.addWindowListener(new WindowAdapter()
@@ -720,6 +725,9 @@ public class LeagueScapePlugin extends Plugin
 			if (globalTasksDialogRef != null && globalTasksDialogRef.isDisplayable())
 			{
 				globalTasksDialogRef.toFront();
+				java.awt.Component c = globalTasksDialogRef.getContentPane().getComponent(0);
+				if (c instanceof com.leaguescape.worldunlock.GlobalTaskListPanel)
+					((com.leaguescape.worldunlock.GlobalTaskListPanel) c).syncTaskHubVisibilityAndPosition();
 				return;
 			}
 			java.awt.Frame owner = null;
@@ -731,8 +739,15 @@ public class LeagueScapePlugin extends Plugin
 				globalTaskListService, pointsService, dialog::dispose, this::openWorldUnlockGrid, this::openSetupDialog, client, audioPlayer, clientThread, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
+			dialog.setMinimumSize(com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED);
 			PanelBoundsStore.applyBounds(dialog, configManager,
 				PanelBoundsStore.KEY_GLOBAL_TASKS, client.getCanvas());
+			java.awt.Rectangle gb = dialog.getBounds();
+			java.awt.Dimension pref = com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED;
+			// Same fixed size as World Unlock. Do not use task hub width here — hub is a separate dialog.
+			// Stale wide saves (e.g. old combined layout) are replaced so the grid panel matches World Unlock.
+			dialog.setBounds(gb.x, gb.y, pref.width, pref.height);
+			panel.attachTaskHub();
 			PanelBoundsStore.installPersistence(dialog, configManager,
 				PanelBoundsStore.KEY_GLOBAL_TASKS);
 			dialog.addWindowListener(new WindowAdapter()
@@ -749,6 +764,7 @@ public class LeagueScapePlugin extends Plugin
 			globalTasksDialogRef = dialog;
 			registerEscapeToClose(dialog);
 			dialog.setVisible(true);
+			panel.syncTaskHubVisibilityAndPosition();
 		});
 	}
 

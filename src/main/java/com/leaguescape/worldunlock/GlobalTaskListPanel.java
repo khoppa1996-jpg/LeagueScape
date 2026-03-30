@@ -28,9 +28,13 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.List;
@@ -42,10 +46,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
@@ -53,6 +60,7 @@ import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.util.ImageUtil;
+import com.leaguescape.util.LeagueScapeFrameChromePanel;
 import com.leaguescape.util.LeagueScapeSwingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +118,18 @@ public class GlobalTaskListPanel extends JPanel
 	private static final float ZOOM_STEP = 0.1f;
 
 	private int layoutSeed;
+
+	/** Brief focus highlight from task hub / frontier / search jump. */
+	private Integer highlightRow;
+	private Integer highlightCol;
+	private Timer highlightClearTimer;
+	private GlobalTaskHub taskHubPanel;
+	/** Undecorated extension window docked to the left of {@link #parentDialog}; does not change the main panel size. */
+	private JDialog taskHubDialog;
+	private boolean taskHubPositionListenerInstalled;
+	private boolean taskHubSidebarVisible = true;
+	/** Debounces hub list refresh after bookmark/claim so zoom/pan {@link #refresh()} never rebuilds the hub table. */
+	private Timer hubDataReloadTimer;
 
 	public GlobalTaskListPanel(GlobalTaskListService globalTaskListService, PointsService pointsService,
 		Runnable onClose, Runnable onOpenWorldUnlock, Runnable onOpenRulesSetup, Client client, AudioPlayer audioPlayer, ClientThread clientThread, JDialog parentDialog)
@@ -177,7 +197,8 @@ public class GlobalTaskListPanel extends JPanel
 		scrollPane.getViewport().setOpaque(false);
 		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setPreferredSize(new Dimension(400, 320));
+		scrollPane.setPreferredSize(WorldUnlockUiDimensions.GRID_SCROLL_PREFERRED);
+		scrollPane.setMinimumSize(WorldUnlockUiDimensions.GRID_SCROLL_MINIMUM);
 		scrollPane.setBorder(null);
 
 		scrollPane.getViewport().addMouseWheelListener(e -> {
@@ -217,6 +238,7 @@ public class GlobalTaskListPanel extends JPanel
 				dragStart[0] = e.getPoint();
 			}
 		});
+
 		add(scrollPane, BorderLayout.CENTER);
 
 		JPanel southPanel = new JPanel(new BorderLayout(8, 0));
@@ -237,6 +259,10 @@ public class GlobalTaskListPanel extends JPanel
 			if (onOpenRulesSetup != null) onOpenRulesSetup.run();
 		});
 		westButtons.add(rulesSetupBtn);
+		JButton taskHubBtn = newRectangleButton("Hide task list", buttonRect, POPUP_TEXT);
+		taskHubBtn.setToolTipText("Show or hide the task list sidebar");
+		taskHubBtn.addActionListener(e -> toggleTaskHubSidebar(taskHubBtn));
+		westButtons.add(taskHubBtn);
 		southPanel.add(westButtons, BorderLayout.WEST);
 		JPanel zoomPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING, 4, 0));
 		zoomPanel.setOpaque(false);
@@ -254,6 +280,130 @@ public class GlobalTaskListPanel extends JPanel
 		add(southPanel, BorderLayout.SOUTH);
 
 		refresh();
+	}
+
+	@Override
+	public Dimension getPreferredSize()
+	{
+		return new Dimension(WorldUnlockUiDimensions.PANEL_PREFERRED);
+	}
+
+	@Override
+	public Dimension getMinimumSize()
+	{
+		return new Dimension(WorldUnlockUiDimensions.PANEL_PREFERRED);
+	}
+
+	@Override
+	public Dimension getMaximumSize()
+	{
+		return new Dimension(WorldUnlockUiDimensions.PANEL_PREFERRED);
+	}
+
+	/**
+	 * Builds the task hub once in a separate undecorated dialog (1/3 of this panel's width), docked to the left.
+	 * The global task dialog size is unchanged; the hub is an extension window.
+	 */
+	public GlobalTaskHub attachTaskHub()
+	{
+		if (taskHubPanel != null)
+			return taskHubPanel;
+		taskHubPanel = new GlobalTaskHub(globalTaskListService, layoutSeed,
+			this::focusTile,
+			() -> playSound(LeagueScapeSounds.BUTTON_PRESS),
+			parentDialog != null ? parentDialog : client.getCanvas(),
+			this::scheduleHubDataReload,
+			buttonRect,
+			tileBg,
+			defaultTaskIcon);
+
+		BufferedImage fill = ImageUtil.loadImageResource(LeagueScapePlugin.class, "fill_color.png");
+		BufferedImage bTop = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_top.png");
+		BufferedImage bBottom = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_bottom.png");
+		BufferedImage bLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_left.png");
+		BufferedImage bRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_right.png");
+		BufferedImage cTopLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "top_left_corner.png");
+		BufferedImage cTopRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "top_right_corner.png");
+		BufferedImage cBottomLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "bottom_left_corner.png");
+		BufferedImage cBottomRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "bottom_right_corner.png");
+
+		LeagueScapeFrameChromePanel chrome = new LeagueScapeFrameChromePanel(
+			fill, cTopLeft, cTopRight, cBottomLeft, cBottomRight, bTop, bBottom, bLeft, bRight);
+		chrome.setLayout(new BorderLayout(0, 0));
+		JPanel hubInner = new JPanel(new BorderLayout(0, 0));
+		hubInner.setOpaque(false);
+		hubInner.setBorder(new EmptyBorder(chrome.getChromeInsets()));
+		hubInner.add(taskHubPanel, BorderLayout.CENTER);
+		chrome.add(hubInner, BorderLayout.CENTER);
+
+		taskHubDialog = new JDialog(parentDialog, false);
+		taskHubDialog.setUndecorated(true);
+		taskHubDialog.setContentPane(chrome);
+		taskHubDialog.setAlwaysOnTop(false);
+
+		installTaskHubWindowListeners();
+
+		taskHubDialog.setVisible(false);
+		return taskHubPanel;
+	}
+
+	/** Call after the global tasks dialog is displayable so hub width/height match the host window. */
+	public void syncTaskHubVisibilityAndPosition()
+	{
+		if (taskHubDialog == null)
+			return;
+		positionTaskHubDialog();
+		taskHubDialog.setVisible(taskHubSidebarVisible);
+	}
+
+	/** Sizes and places the hub extension to the left of the global tasks dialog (1/3 of this panel's width, same height). */
+	public void positionTaskHubDialog()
+	{
+		if (taskHubDialog == null || parentDialog == null)
+			return;
+		if (!parentDialog.isDisplayable())
+			return;
+		// Width from this task panel only — not combined with any other window — so hub width tracks panel size.
+		int panelW = getWidth();
+		if (panelW <= 0)
+			panelW = parentDialog.getWidth();
+		int ph = parentDialog.getHeight();
+		int hubW = Math.max(64, (int) Math.round(panelW / 3.0));
+		taskHubDialog.setSize(hubW, ph);
+		taskHubDialog.setLocation(parentDialog.getX() - hubW, parentDialog.getY());
+	}
+
+	private void installTaskHubWindowListeners()
+	{
+		if (parentDialog == null || taskHubPositionListenerInstalled)
+			return;
+		taskHubPositionListenerInstalled = true;
+		parentDialog.addComponentListener(new ComponentAdapter()
+		{
+			@Override
+			public void componentMoved(ComponentEvent e)
+			{
+				positionTaskHubDialog();
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				positionTaskHubDialog();
+			}
+		});
+		parentDialog.addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosed(WindowEvent e)
+			{
+				if (taskHubDialog != null)
+				{
+					taskHubDialog.dispose();
+					taskHubDialog = null;
+				}
+			}
+		});
 	}
 
 	@Override
@@ -408,12 +558,128 @@ public class GlobalTaskListPanel extends JPanel
 		}
 	}
 
+	/** Schedules a single hub table rebuild (not tied to grid zoom/pan refresh). */
+	private void scheduleHubDataReload()
+	{
+		if (taskHubPanel == null || taskHubDialog == null || !taskHubDialog.isVisible())
+			return;
+		if (hubDataReloadTimer != null)
+			hubDataReloadTimer.stop();
+		hubDataReloadTimer = new Timer(280, e -> {
+			hubDataReloadTimer.stop();
+			if (taskHubPanel != null && taskHubDialog != null && taskHubDialog.isVisible())
+				taskHubPanel.reloadFromService();
+		});
+		hubDataReloadTimer.setRepeats(false);
+		hubDataReloadTimer.start();
+	}
+
+	private void toggleTaskHubSidebar(JButton taskHubBtn)
+	{
+		if (taskHubPanel == null || taskHubDialog == null)
+			return;
+		playSound(LeagueScapeSounds.BUTTON_PRESS);
+		taskHubSidebarVisible = !taskHubSidebarVisible;
+		if (taskHubSidebarVisible)
+		{
+			positionTaskHubDialog();
+			taskHubPanel.reloadFromService();
+		}
+		taskHubDialog.setVisible(taskHubSidebarVisible);
+		taskHubBtn.setText(taskHubSidebarVisible ? "Hide task list" : "Show task list");
+		revalidate();
+		repaint();
+	}
+
+	/**
+	 * Scrolls the grid to {@code (row,col)}, optionally bumps zoom for interaction, and shows a short highlight ring.
+	 * Used by the task hub and bookmarks.
+	 */
+	public void focusTile(int row, int col)
+	{
+		if (highlightClearTimer != null)
+			highlightClearTimer.stop();
+		globalTaskListService.saveLastViewedPosition(row, col);
+		if (zoom < ZOOM_INTERACTIVE_MIN)
+			zoom = ZOOM_INTERACTIVE_MIN;
+		highlightRow = row;
+		highlightCol = col;
+		refresh();
+		highlightClearTimer = new Timer(550, e -> {
+			highlightClearTimer.stop();
+			highlightRow = null;
+			highlightCol = null;
+			SwingUtilities.invokeLater(this::refresh);
+		});
+		highlightClearTimer.setRepeats(false);
+		highlightClearTimer.start();
+	}
+
+	/** Opens the same task detail popup as a grid click (for the task hub). */
+	public void openTaskDetail(TaskTile tile, TaskState state)
+	{
+		showTaskDetailPopup(tile, state);
+	}
+
+	private boolean isHighlightCell(int row, int col)
+	{
+		return highlightRow != null && highlightCol != null
+			&& highlightRow == row && highlightCol == col;
+	}
+
+	private void attachBookmarkPopup(JPanel cell, TaskTile tile)
+	{
+		cell.addMouseListener(new MouseAdapter()
+		{
+			@Override
+			public void mousePressed(MouseEvent e)
+			{
+				maybeShow(e);
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e)
+			{
+				maybeShow(e);
+			}
+
+			private void maybeShow(MouseEvent e)
+			{
+				if (!e.isPopupTrigger()) return;
+				int r = tile.getRow(), c = tile.getCol();
+				boolean bookmarked = globalTaskListService.isTaskHubBookmarked(r, c);
+				JPopupMenu menu = new JPopupMenu();
+				JMenuItem item = new JMenuItem(bookmarked ? "Remove bookmark" : "Add bookmark…");
+				item.addActionListener(ev -> {
+					playSound(LeagueScapeSounds.BUTTON_PRESS);
+					if (bookmarked)
+						globalTaskListService.removeTaskHubBookmark(r, c);
+					else
+					{
+						String def = tile.getDisplayName();
+						String label = JOptionPane.showInputDialog(parentDialog, "Bookmark label (optional):", def);
+						if (label == null) return;
+						String lk = label.trim().isEmpty() ? def : label.trim();
+						globalTaskListService.addTaskHubBookmark(new GlobalTaskBookmark(
+							GlobalTaskListService.taskKeyFromName(tile.getDisplayName()), r, c, lk));
+					}
+					SwingUtilities.invokeLater(() -> {
+						refresh();
+						scheduleHubDataReload();
+					});
+				});
+				menu.add(item);
+				menu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
+	}
+
 	private JPanel buildTaskCell(TaskTile tile, TaskState state, BufferedImage taskIcon,
 		int tileSize, int iconMargin, boolean isCenter, List<TaskTile> grid)
 	{
 		if (state == TaskState.CLAIMED)
 		{
-			return buildClaimedCell(tileSize, isCenter);
+			return buildClaimedCell(tile, tileSize, isCenter);
 		}
 
 		final BufferedImage tileBgFinal = tileBg;
@@ -444,6 +710,9 @@ public class GlobalTaskListPanel extends JPanel
 		cell.setLayout(new BorderLayout());
 		cell.setOpaque(false);
 		cell.setPreferredSize(new Dimension(tileSize, tileSize));
+		if (isHighlightCell(tile.getRow(), tile.getCol()))
+			cell.setBorder(new LineBorder(new Color(255, 235, 140), 2));
+		attachBookmarkPopup(cell, tile);
 
 		if (taskIcon != null && !isCenter)
 		{
@@ -593,9 +862,10 @@ public class GlobalTaskListPanel extends JPanel
 		float zs = zoom;
 		float ze = 1.0f;
 		GridClaimFocusAnimation.animateZoomToClaim(zs, ze, ZOOM_EXTREME_MIN, ZOOM_MAX, z -> zoom = z, this::refresh, null);
+		scheduleHubDataReload();
 	}
 
-	private JPanel buildClaimedCell(int tileSize, boolean isCenter)
+	private JPanel buildClaimedCell(TaskTile tile, int tileSize, boolean isCenter)
 	{
 		final BufferedImage bg = tileBg;
 		final BufferedImage checkmark = checkmarkImg != null
@@ -642,6 +912,9 @@ public class GlobalTaskListPanel extends JPanel
 		};
 		cell.setOpaque(false);
 		cell.setPreferredSize(new Dimension(tileSize, tileSize));
+		if (isHighlightCell(tile.getRow(), tile.getCol()))
+			cell.setBorder(new LineBorder(new Color(255, 235, 140), 2));
+		attachBookmarkPopup(cell, tile);
 		return cell;
 	}
 

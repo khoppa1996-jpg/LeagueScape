@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import net.runelite.client.config.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +55,10 @@ public class GlobalTaskListService
 	private static final String KEY_GLOBAL_RING_BONUS = "globalTaskProgress_ringBonus";
 	/** Persisted seed so {@link #buildGlobalGrid(int)} matches the Global Task panel layout. */
 	private static final String KEY_GLOBAL_LAYOUT_SEED = "globalTaskProgress_layoutSeed";
+	/** JSON array of {@link GlobalTaskBookmark} for the task hub. */
+	private static final String KEY_GLOBAL_TASK_HUB_BOOKMARKS = "globalTaskProgress_taskHubBookmarks";
+	private static final Gson BOOKMARK_GSON = new Gson();
+	private static final java.lang.reflect.Type BOOKMARK_LIST_TYPE = new TypeToken<List<GlobalTaskBookmark>>(){}.getType();
 	/** Task keys that were eligible for the global pool on the last {@link #buildGlobalGrid(int)} (comma-separated). */
 	private static final String KEY_GLOBAL_ELIGIBLE_SNAPSHOT = "globalTaskProgress_eligibleSnapshot";
 	/** Max bonus points for completing one full ring on the global task grid. */
@@ -1178,6 +1184,157 @@ public class GlobalTaskListService
 		return parsePos(raw);
 	}
 
+	/** Loads persisted task hub bookmarks (may reference stale positions; use {@link #resolveBookmarkPosition}). */
+	public List<GlobalTaskBookmark> loadTaskHubBookmarks()
+	{
+		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS);
+		if (raw == null || raw.trim().isEmpty())
+			return new ArrayList<>();
+		try
+		{
+			List<GlobalTaskBookmark> list = BOOKMARK_GSON.fromJson(raw, BOOKMARK_LIST_TYPE);
+			return list != null ? new ArrayList<>(list) : new ArrayList<>();
+		}
+		catch (Exception e)
+		{
+			log.warn("[GlobalTask] failed to parse task hub bookmarks", e);
+			return new ArrayList<>();
+		}
+	}
+
+	/** Replaces all task hub bookmarks. */
+	public void saveTaskHubBookmarks(List<GlobalTaskBookmark> bookmarks)
+	{
+		if (bookmarks == null || bookmarks.isEmpty())
+		{
+			configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS);
+			return;
+		}
+		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS, BOOKMARK_GSON.toJson(bookmarks));
+	}
+
+	/** Adds a bookmark if the same (row,col) is not already stored. */
+	public void addTaskHubBookmark(GlobalTaskBookmark bookmark)
+	{
+		if (bookmark == null || bookmark.getTaskKey() == null || bookmark.getTaskKey().isEmpty())
+			return;
+		List<GlobalTaskBookmark> list = loadTaskHubBookmarks();
+		for (GlobalTaskBookmark b : list)
+		{
+			if (b.getRow() == bookmark.getRow() && b.getCol() == bookmark.getCol())
+				return;
+		}
+		list.add(bookmark);
+		saveTaskHubBookmarks(list);
+	}
+
+	public void removeTaskHubBookmark(int row, int col)
+	{
+		List<GlobalTaskBookmark> list = loadTaskHubBookmarks();
+		list.removeIf(b -> b.getRow() == row && b.getCol() == col);
+		saveTaskHubBookmarks(list);
+	}
+
+	public boolean isTaskHubBookmarked(int row, int col)
+	{
+		for (GlobalTaskBookmark b : loadTaskHubBookmarks())
+		{
+			if (b.getRow() == row && b.getCol() == col)
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Resolves a bookmark to a current grid position: exact (row,col) + task key match first,
+	 * else first tile with the same task key.
+	 *
+	 * @return {@code [row, col]} or null if nothing matches
+	 */
+	public int[] resolveBookmarkPosition(GlobalTaskBookmark bookmark, List<TaskTile> grid)
+	{
+		if (bookmark == null || grid == null)
+			return null;
+		String key = bookmark.getTaskKey();
+		if (key == null || key.isEmpty())
+			return null;
+		for (TaskTile t : grid)
+		{
+			if (t.getRow() == bookmark.getRow() && t.getCol() == bookmark.getCol()
+				&& key.equals(taskKeyFromName(t.getDisplayName())))
+				return new int[]{ t.getRow(), t.getCol() };
+		}
+		for (TaskTile t : grid)
+		{
+			if (key.equals(taskKeyFromName(t.getDisplayName())))
+				return new int[]{ t.getRow(), t.getCol() };
+		}
+		return null;
+	}
+
+	/** Looks up a task definition from the effective task list by normalized task key. */
+	public TaskDefinition findTaskDefinitionForKey(String taskKey)
+	{
+		if (taskKey == null || taskKey.isEmpty())
+			return null;
+		for (TaskDefinition def : taskGridService.getEffectiveDefaultTasks())
+		{
+			if (taskKey.equals(taskKey(def)))
+				return def;
+		}
+		return null;
+	}
+
+	/**
+	 * One map for batch hub/grid UI: normalized task key → definition.
+	 * Call once per rebuild, not per tile.
+	 */
+	public Map<String, TaskDefinition> buildTaskDefinitionIndex()
+	{
+		Map<String, TaskDefinition> m = new HashMap<>();
+		List<TaskDefinition> list = taskGridService.getEffectiveDefaultTasks();
+		if (list == null)
+			return m;
+		for (TaskDefinition d : list)
+		{
+			if (d != null)
+				m.put(taskKey(d), d);
+		}
+		return m;
+	}
+
+	/** Positions with a hub bookmark, as {@code "row,col"} keys (single config read per caller). */
+	public Set<String> getTaskHubBookmarkPositionSet()
+	{
+		Set<String> set = new HashSet<>();
+		for (GlobalTaskBookmark b : loadTaskHubBookmarks())
+			set.add(b.getRow() + "," + b.getCol());
+		return set;
+	}
+
+	/** Human-readable area labels for a tile using world-unlock tile display names when available. */
+	public String formatTaskAreaLabels(TaskTile tile)
+	{
+		if (tile == null)
+			return "";
+		List<String> ids = tile.getRequiredAreaIds();
+		if (ids == null || ids.isEmpty())
+			return "";
+		List<String> parts = new ArrayList<>();
+		for (String id : ids)
+		{
+			if (id == null || id.trim().isEmpty())
+				continue;
+			String trim = id.trim();
+			WorldUnlockTile wt = worldUnlockService.getTileById(trim);
+			if (wt != null && wt.getDisplayName() != null && !wt.getDisplayName().isEmpty())
+				parts.add(wt.getDisplayName());
+			else
+				parts.add(trim);
+		}
+		return String.join(", ", parts);
+	}
+
 	/**
 	 * Positions considered "revealed" for layout (center + claimed positions + cardinal neighbors of claimed).
 	 * Used for frontier fog: cells not in this set but adjacent to revealed-unclaimed tiles show fog.
@@ -1600,6 +1757,7 @@ public class GlobalTaskListService
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_RING_BONUS);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_LAYOUT_SEED);
 		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_ELIGIBLE_SNAPSHOT);
+		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS);
 	}
 
 	private static List<int[]> spiralOrderForRing(int tier)
