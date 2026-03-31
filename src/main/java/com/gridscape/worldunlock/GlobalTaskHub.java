@@ -27,6 +27,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -40,12 +41,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -56,7 +59,7 @@ import javax.swing.event.DocumentListener;
 
 /**
  * Left sidebar for global tasks: hamburger menu (tier / type / area filters), Search toggles name filter bar,
- * scrollable rectangle tiles (icon + name). List filtering does not affect the grid.
+ * Sort opens a menu (field + A→Z / Z→A), scrollable rectangle tiles (icon + name). List filtering does not affect the grid.
  */
 public final class GlobalTaskHub extends JPanel
 {
@@ -67,6 +70,8 @@ public final class GlobalTaskHub extends JPanel
 	private static final int TASK_TILE_ICON_MARGIN = 1;
 	/** Padding inside the hub chrome around header + list (px). */
 	private static final int HUB_CONTENT_BUFFER_PX = 1;
+	/** Shared height for menu / search / sort header buttons; width follows each asset's aspect ratio. */
+	private static final int HUB_HEADER_BUTTON_HEIGHT = 30;
 	/** Large list rows (mockup-style rectangle tiles). */
 	private static final int HUB_TILE_HEIGHT = 52;
 	private static final String EMPTY_TYPE = "(none)";
@@ -100,7 +105,6 @@ public final class GlobalTaskHub extends JPanel
 	private final Component dialogParent;
 	private final Runnable notifyParentRefresh;
 	private final BufferedImage listRowRectangleBg;
-	private final BufferedImage headerSquareButtonBg;
 	private final BufferedImage defaultTaskIcon;
 
 	private final List<HubRow> allRows = new ArrayList<>();
@@ -109,7 +113,12 @@ public final class GlobalTaskHub extends JPanel
 	private final JPanel searchFieldPanel;
 	private final AspectFitImageButton menuButton;
 	private final AspectFitImageButton searchToggleButton;
+	private final AspectFitImageButton sortButton;
 	private boolean searchBarVisible;
+
+	private HubSortField sortField = HubSortField.DISPLAY_NAME;
+	/** {@code true} = A→Z / low-to-high tier; {@code false} = Z→A / high-to-low tier. */
+	private boolean sortAscending = true;
 
 	/** Unchecked in the multi-select UI = hide matching list rows. */
 	private final Set<Integer> disabledTiers = new HashSet<>();
@@ -124,8 +133,10 @@ public final class GlobalTaskHub extends JPanel
 		Runnable playSound,
 		Component dialogParent,
 		Runnable notifyParentRefresh,
+		BufferedImage menuButtonArt,
+		BufferedImage searchButtonArt,
+		BufferedImage sortButtonArt,
 		BufferedImage listRowRectangleBg,
-		BufferedImage headerSquareButtonBg,
 		BufferedImage defaultTaskIcon)
 	{
 		this.service = service;
@@ -135,7 +146,6 @@ public final class GlobalTaskHub extends JPanel
 		this.dialogParent = dialogParent;
 		this.notifyParentRefresh = notifyParentRefresh != null ? notifyParentRefresh : () -> {};
 		this.listRowRectangleBg = listRowRectangleBg;
-		this.headerSquareButtonBg = headerSquareButtonBg;
 		this.defaultTaskIcon = defaultTaskIcon != null ? defaultTaskIcon
 			: IconCache.loadWithFallback(IconResources.GENERIC_TASK_ICON,
 				IconResources.TASK_ICONS_RESOURCE_PREFIX + "Other_icon.png");
@@ -144,22 +154,45 @@ public final class GlobalTaskHub extends JPanel
 		setBackground(POPUP_BG);
 		setOpaque(false);
 
-		menuButton = new AspectFitImageButton("\u2630", headerSquareButtonBg, POPUP_TEXT);
+		Dimension dMenu = hubButtonSizeForImage(menuButtonArt, HUB_HEADER_BUTTON_HEIGHT);
+		Dimension dSearch = hubButtonSizeForImage(searchButtonArt, HUB_HEADER_BUTTON_HEIGHT);
+		Dimension dSort = hubButtonSizeForImage(sortButtonArt, HUB_HEADER_BUTTON_HEIGHT);
+
+		menuButton = new AspectFitImageButton("", menuButtonArt, POPUP_TEXT);
 		menuButton.setToolTipText("Filters: tier, type, area");
-		menuButton.setPreferredSize(new Dimension(40, 30));
+		applyFixedHubButtonSize(menuButton, dMenu);
 		menuButton.addActionListener(e -> {
 			playSound.run();
 			showFiltersMenu(menuButton);
 		});
 
-		searchToggleButton = new AspectFitImageButton("Search", listRowRectangleBg, POPUP_TEXT);
+		searchToggleButton = new AspectFitImageButton("", searchButtonArt, POPUP_TEXT);
 		searchToggleButton.setToolTipText("Show or hide name search");
+		applyFixedHubButtonSize(searchToggleButton, dSearch);
 		searchToggleButton.addActionListener(e -> toggleSearchBar());
 
-		JPanel headerRow = new JPanel(new BorderLayout(HUB_CONTENT_BUFFER_PX, 0));
-		headerRow.setOpaque(false);
-		headerRow.add(menuButton, BorderLayout.WEST);
-		headerRow.add(searchToggleButton, BorderLayout.CENTER);
+		sortButton = new AspectFitImageButton("", sortButtonArt, POPUP_TEXT);
+		sortButton.setToolTipText(buildSortTooltip());
+		applyFixedHubButtonSize(sortButton, dSort);
+		sortButton.addActionListener(e -> {
+			playSound.run();
+			showSortMenu(sortButton);
+		});
+
+		/* Horizontal BoxLayout does not wrap; FlowLayout was moving the sort button to a second row when the hub was narrow. */
+		JPanel btnCluster = new JPanel();
+		btnCluster.setLayout(new BoxLayout(btnCluster, BoxLayout.X_AXIS));
+		btnCluster.setOpaque(false);
+		btnCluster.add(Box.createHorizontalGlue());
+		btnCluster.add(menuButton);
+		btnCluster.add(Box.createHorizontalStrut(Math.max(2, HUB_CONTENT_BUFFER_PX)));
+		btnCluster.add(searchToggleButton);
+		btnCluster.add(Box.createHorizontalStrut(Math.max(2, HUB_CONTENT_BUFFER_PX)));
+		btnCluster.add(sortButton);
+		btnCluster.add(Box.createHorizontalGlue());
+		alignHubHeaderButton(menuButton);
+		alignHubHeaderButton(searchToggleButton);
+		alignHubHeaderButton(sortButton);
 
 		searchField.setBackground(POPUP_BG);
 		searchField.setForeground(POPUP_TEXT);
@@ -172,7 +205,7 @@ public final class GlobalTaskHub extends JPanel
 
 		JPanel northStack = new JPanel(new BorderLayout(0, HUB_CONTENT_BUFFER_PX));
 		northStack.setOpaque(false);
-		northStack.add(headerRow, BorderLayout.NORTH);
+		northStack.add(btnCluster, BorderLayout.NORTH);
 		northStack.add(searchFieldPanel, BorderLayout.CENTER);
 
 		tileListPanel = new JPanel();
@@ -252,6 +285,54 @@ public final class GlobalTaskHub extends JPanel
 			p.revalidate();
 			p.repaint();
 		}
+	}
+
+	private String buildSortTooltip()
+	{
+		String dir = sortAscending ? "A→Z" : "Z→A";
+		String extra = sortField == HubSortField.TIER
+			? (sortAscending ? " (low tier first)" : " (high tier first)")
+			: "";
+		return "Sort list: " + sortField.menuLabel + " — " + dir + extra;
+	}
+
+	private void showSortMenu(Component invoker)
+	{
+		JPopupMenu menu = new JPopupMenu();
+		addFilterSectionHeader(menu, "Sort field");
+		ButtonGroup fieldGroup = new ButtonGroup();
+		for (HubSortField f : HubSortField.values())
+		{
+			JRadioButtonMenuItem mi = new JRadioButtonMenuItem(f.menuLabel, f == sortField);
+			fieldGroup.add(mi);
+			final HubSortField ff = f;
+			mi.addActionListener(e -> {
+				sortField = ff;
+				applyFilters();
+				sortButton.setToolTipText(buildSortTooltip());
+			});
+			menu.add(mi);
+		}
+		menu.addSeparator();
+		addFilterSectionHeader(menu, "Direction");
+		ButtonGroup dirGroup = new ButtonGroup();
+		JRadioButtonMenuItem asc = new JRadioButtonMenuItem("A → Z (ascending)", sortAscending);
+		JRadioButtonMenuItem desc = new JRadioButtonMenuItem("Z → A (descending)", !sortAscending);
+		dirGroup.add(asc);
+		dirGroup.add(desc);
+		asc.addActionListener(e -> {
+			sortAscending = true;
+			applyFilters();
+			sortButton.setToolTipText(buildSortTooltip());
+		});
+		desc.addActionListener(e -> {
+			sortAscending = false;
+			applyFilters();
+			sortButton.setToolTipText(buildSortTooltip());
+		});
+		menu.add(asc);
+		menu.add(desc);
+		menu.show(invoker, 0, invoker.getHeight());
 	}
 
 	private void showFiltersMenu(Component invoker)
@@ -441,7 +522,7 @@ public final class GlobalTaskHub extends JPanel
 	private void applyFilters()
 	{
 		String q = searchField.getText().trim().toLowerCase(Locale.ROOT);
-		tileListPanel.removeAll();
+		List<HubRow> visible = new ArrayList<>();
 		for (HubRow r : allRows)
 		{
 			if (disabledTiers.contains(r.difficultyTier))
@@ -456,11 +537,56 @@ public final class GlobalTaskHub extends JPanel
 				if (!name.contains(q))
 					continue;
 			}
+			visible.add(r);
+		}
+		visible.sort(hubRowComparator());
+		tileListPanel.removeAll();
+		for (HubRow r : visible)
+		{
 			tileListPanel.add(new HubTaskTilePanel(r));
 			tileListPanel.add(Box.createVerticalStrut(HUB_CONTENT_BUFFER_PX));
 		}
 		tileListPanel.revalidate();
 		tileListPanel.repaint();
+	}
+
+	private static int cmpText(String a, String b)
+	{
+		String x = a == null ? "" : a;
+		String y = b == null ? "" : b;
+		return x.compareToIgnoreCase(y);
+	}
+
+	private int comparePrimary(HubRow a, HubRow b)
+	{
+		switch (sortField)
+		{
+			case DISPLAY_NAME:
+				return cmpText(a.tile.getDisplayName(), b.tile.getDisplayName());
+			case TASK_TYPE:
+				return cmpText(a.typeStr, b.typeStr);
+			case TIER:
+				return Integer.compare(a.difficultyTier, b.difficultyTier);
+			case AREA:
+				return cmpText(a.areas, b.areas);
+			default:
+				return 0;
+		}
+	}
+
+	private Comparator<HubRow> hubRowComparator()
+	{
+		return (a, b) -> {
+			int c = comparePrimary(a, b);
+			if (!sortAscending)
+				c = -c;
+			if (c != 0)
+				return c;
+			int r = Integer.compare(a.tile.getRow(), b.tile.getRow());
+			if (r != 0)
+				return r;
+			return Integer.compare(a.tile.getCol(), b.tile.getCol());
+		};
 	}
 
 	private boolean areaRowVisible(HubRow r)
@@ -727,6 +853,48 @@ public final class GlobalTaskHub extends JPanel
 		return rawIconCache.computeIfAbsent(path, p -> IconCache.loadWithFallback(p, IconResources.GENERIC_TASK_ICON));
 	}
 
+	private static Dimension hubButtonSizeForImage(BufferedImage img, int fixedHeight)
+	{
+		if (fixedHeight <= 0)
+			fixedHeight = HUB_HEADER_BUTTON_HEIGHT;
+		if (img == null)
+			return new Dimension(40, fixedHeight);
+		int iw = img.getWidth(), ih = img.getHeight();
+		if (iw <= 0 || ih <= 0)
+			return new Dimension(40, fixedHeight);
+		int w = Math.max(1, (int) Math.round((double) iw * fixedHeight / ih));
+		return new Dimension(w, fixedHeight);
+	}
+
+	private static void applyFixedHubButtonSize(JButton c, Dimension d)
+	{
+		c.setPreferredSize(d);
+		c.setMinimumSize(d);
+		c.setMaximumSize(d);
+	}
+
+	private static void alignHubHeaderButton(JButton c)
+	{
+		c.setAlignmentX(Component.CENTER_ALIGNMENT);
+		c.setAlignmentY(Component.CENTER_ALIGNMENT);
+	}
+
+	/**
+	 * Same scaling as task-type icons on the grid: {@link IconCache#scaleToFitAllowUpscale} (resizeImage, sharp).
+	 * Draws letterboxed inside {@code rw×rh} when aspect does not match the button cell exactly.
+	 */
+	private static void drawHeaderButtonImage(Graphics g, BufferedImage img, int rw, int rh)
+	{
+		if (img == null || rw <= 0 || rh <= 0)
+			return;
+		BufferedImage scaled = IconCache.scaleToFitAllowUpscale(img, rw, rh);
+		if (scaled == null)
+			return;
+		int x = (rw - scaled.getWidth()) / 2;
+		int y = (rh - scaled.getHeight()) / 2;
+		g.drawImage(scaled, x, y, null);
+	}
+
 	/**
 	 * Draws {@code img} scaled uniformly to fit inside the rect (letterboxed), preserving aspect ratio.
 	 */
@@ -765,14 +933,17 @@ public final class GlobalTaskHub extends JPanel
 		protected void paintComponent(Graphics g)
 		{
 			if (bg != null)
-				drawImageAspectFit(g, bg, 0, 0, getWidth(), getHeight());
-			g.setColor(getForeground());
-			g.setFont(getFont());
-			FontMetrics fm = g.getFontMetrics();
+				drawHeaderButtonImage(g, bg, getWidth(), getHeight());
 			String t = getText();
-			int x = (getWidth() - fm.stringWidth(t)) / 2;
-			int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-			g.drawString(t, x, y);
+			if (t != null && !t.isEmpty())
+			{
+				g.setColor(getForeground());
+				g.setFont(getFont());
+				FontMetrics fm = g.getFontMetrics();
+				int x = (getWidth() - fm.stringWidth(t)) / 2;
+				int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
+				g.drawString(t, x, y);
+			}
 			if (getModel().isPressed())
 			{
 				g.setColor(GridScapeSwingUtil.PRESSED_INSET_SHADOW);
@@ -780,6 +951,21 @@ public final class GlobalTaskHub extends JPanel
 					getWidth() - 2 * GridScapeSwingUtil.PRESSED_INSET,
 					getHeight() - 2 * GridScapeSwingUtil.PRESSED_INSET);
 			}
+		}
+	}
+
+	private enum HubSortField
+	{
+		DISPLAY_NAME("Display name"),
+		TASK_TYPE("Task type"),
+		TIER("Tier"),
+		AREA("Area");
+
+		final String menuLabel;
+
+		HubSortField(String menuLabel)
+		{
+			this.menuLabel = menuLabel;
 		}
 	}
 

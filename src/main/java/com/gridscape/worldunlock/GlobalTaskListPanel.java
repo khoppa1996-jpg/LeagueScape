@@ -81,6 +81,8 @@ public class GlobalTaskListPanel extends JPanel
 	private static final int TASK_TILE_ICON_MARGIN = 12;
 	private static final int CLAIMED_CHECKMARK_SIZE = 18;
 	private static final int CLAIMED_CHECKMARK_INSET = 4;
+	/** Extra width beyond one-third of the task panel so the hub header buttons fit comfortably. */
+	private static final int TASK_HUB_WIDTH_BONUS_PX = 8;
 
 	private static final Map<String, BufferedImage> rawTaskIconCache = new ConcurrentHashMap<>();
 
@@ -318,13 +320,24 @@ public class GlobalTaskListPanel extends JPanel
 	{
 		if (taskHubPanel != null)
 			return taskHubPanel;
+		BufferedImage hubMenuBtn = ImageUtil.loadImageResource(GridScapePlugin.class, "menu_button.png");
+		BufferedImage hubSearchBtn = ImageUtil.loadImageResource(GridScapePlugin.class, "search_button.png");
+		BufferedImage hubSortBtn = ImageUtil.loadImageResource(GridScapePlugin.class, "sort_button.png");
+		if (hubMenuBtn == null)
+			hubMenuBtn = tileBg;
+		if (hubSearchBtn == null)
+			hubSearchBtn = buttonRect;
+		if (hubSortBtn == null)
+			hubSortBtn = tileBg;
 		taskHubPanel = new GlobalTaskHub(globalTaskListService, layoutSeed,
 			this::focusTile,
 			() -> playSound(GridScapeSounds.BUTTON_PRESS),
 			parentDialog != null ? parentDialog : client.getCanvas(),
 			this::scheduleHubDataReload,
+			hubMenuBtn,
+			hubSearchBtn,
+			hubSortBtn,
 			buttonRect,
-			tileBg,
 			defaultTaskIcon);
 
 		BufferedImage fill = ImageUtil.loadImageResource(GridScapePlugin.class, "fill_color.png");
@@ -366,7 +379,7 @@ public class GlobalTaskListPanel extends JPanel
 		taskHubDialog.setVisible(taskHubSidebarVisible);
 	}
 
-	/** Sizes and places the hub extension to the left of the global tasks dialog (1/3 of this panel's width, same height). */
+	/** Sizes and places the hub extension to the left of the global tasks dialog (1/3 of this panel's width plus {@link #TASK_HUB_WIDTH_BONUS_PX}, same height). */
 	public void positionTaskHubDialog()
 	{
 		if (taskHubDialog == null || parentDialog == null)
@@ -378,7 +391,7 @@ public class GlobalTaskListPanel extends JPanel
 		if (panelW <= 0)
 			panelW = parentDialog.getWidth();
 		int ph = parentDialog.getHeight();
-		int hubW = Math.max(64, (int) Math.round(panelW / 3.0));
+		int hubW = Math.max(64, (int) Math.round(panelW / 3.0)) + TASK_HUB_WIDTH_BONUS_PX;
 		taskHubDialog.setSize(hubW, ph);
 		taskHubDialog.setLocation(parentDialog.getX() - hubW, parentDialog.getY());
 	}
