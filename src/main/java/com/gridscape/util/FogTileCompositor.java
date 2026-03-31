@@ -1,4 +1,4 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 /**
  * Paints frontier fog using four quadrant images (top/bottom × left/right corners).
  * Parameters {@code north,east,south,west} are geographic (row - 1 = north, row + 1 = south, etc.), matching
- * {@link com.leaguescape.util.FrontierFogHelpers}. Task and world-unlock grids lay out with
+ * {@link com.gridscape.util.FrontierFogHelpers}. Task and world-unlock grids lay out with
  * {@code gridy = maxRing - row}, so on screen geographic south (row + 1) sits above the cell and geographic north
  * (row - 1) below. Corner quadrants follow Java screen coords (y-down): the top edge of the cell uses geographic
  * <em>south</em> (neighbor above on screen); the bottom edge uses geographic <em>north</em> (neighbor below on screen).
@@ -25,7 +25,7 @@ public final class FogTileCompositor
 	private FogTileCompositor() {}
 
 	/**
-	 * @param north east south west geographic cardinals from {@link com.leaguescape.util.FrontierFogHelpers}
+	 * @param north east south west geographic cardinals from {@link com.gridscape.util.FrontierFogHelpers}
 	 *        (neighbor at row - 1 / row + 1 / col +/- 1).
 	 */
 	public static void paintFogQuadrants(Graphics g, int w, int h,

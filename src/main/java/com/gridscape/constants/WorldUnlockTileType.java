@@ -1,4 +1,4 @@
-package com.leaguescape.constants;
+package com.gridscape.constants;
 
 /**
  * World unlock tile type strings. Must match values in world_unlocks.json schema.

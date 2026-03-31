@@ -1,4 +1,4 @@
-package com.leaguescape;
+package com.gridscape;
 
 import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
@@ -7,14 +7,14 @@ import net.runelite.api.VarPlayer;
 import net.runelite.client.audio.AudioPlayer;
 
 /**
- * Plays LeagueScape UI sound effects from classpath resources under /soundeffects/.
+ * Plays GridScape UI sound effects from classpath resources under /soundeffects/.
  * Gain is in dB; 0f = normal volume. Use {@link #play(AudioPlayer, String)} or
  * {@link #play(AudioPlayer, String, Client)} with one of the public path constants.
  * When a {@link Client} is provided, volume follows the game's <b>Sound effects</b> slider
  * via {@link VarPlayer#SOUND_EFFECT_VOLUME} (same scale as {@link net.runelite.api.SoundEffectVolume}).
  */
 @Slf4j
-public final class LeagueScapeSounds
+public final class GridScapeSounds
 {
 	private static final String PREFIX = "/soundeffects/";
 
@@ -78,14 +78,14 @@ public final class LeagueScapeSounds
 				return; // Muted
 			}
 		}
-		try (InputStream in = LeagueScapeSounds.class.getResourceAsStream(resourcePath))
+		try (InputStream in = GridScapeSounds.class.getResourceAsStream(resourcePath))
 		{
 			if (in != null)
 				player.play(in, gain);
 		}
 		catch (Exception e)
 		{
-			log.debug("LeagueScape sound failed {}: {}", resourcePath, e.getMessage());
+			log.debug("GridScape sound failed {}: {}", resourcePath, e.getMessage());
 		}
 	}
 }

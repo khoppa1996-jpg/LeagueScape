@@ -1,4 +1,4 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import java.util.ArrayList;
 import java.util.HashSet;

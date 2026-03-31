@@ -1,6 +1,6 @@
-# LeagueScape
+# GridScape
 
-**LeagueScape** is a [RuneLite](https://runelite.net/) plugin for *Old School RuneScape* that adds **area-based progression**: you earn **points** by completing **tasks**, then **unlock** more of the world according to the **game mode** you choose. Locked regions can be greyed out on the game view and world map, with optional strict blocking of interactions in locked areas.
+**GridScape** is a [RuneLite](https://runelite.net/) plugin for *Old School RuneScape* that adds **area-based progression**: you earn **points** by completing **tasks**, then **unlock** more of the world according to the **game mode** you choose. Locked regions can be greyed out on the game view and world map, with optional strict blocking of interactions in locked areas.
 
 ---
 
@@ -26,7 +26,7 @@
 
 1. Build the shaded JAR (from the project root):  
    `.\gradlew.bat shadowJar` (Windows) or `./gradlew shadowJar`
-2. Copy **`build/libs/Leaguescape-<version>-all.jar`** into RuneLite’s external plugins folder and enable the plugin in the client, **or** distribute that JAR to testers with the same instructions.
+2. Copy **`build/libs/GridScape-<version>-all.jar`** into RuneLite’s external plugins folder and enable the plugin in the client, **or** distribute that JAR to testers with the same instructions.
 
 ---
 
@@ -34,7 +34,7 @@
 
 The **Rules & Setup** window opens **once per RuneScape account** the first time you run the plugin after logging in. You can reopen it anytime from:
 
-- The **LeagueScape** sidebar panel → **Rules & Setup**
+- The **GridScape** sidebar panel → **Rules & Setup**
 - The **minimap task icon** → right-click → **Rules & Setup**
 
 Configure **starting area**, **starting points**, **unlock mode**, and task options on the **Game Mode** tab before or during play.
@@ -43,7 +43,7 @@ Configure **starting area**, **starting points**, **unlock mode**, and task opti
 
 ## Game modes (unlock modes)
 
-Set in **RuneLite → Configuration → LeagueScape → Progression → Unlock mode** (or the **Game Mode** tab in Rules & Setup).
+Set in **RuneLite → Configuration → GridScape → Progression → Unlock mode** (or the **Game Mode** tab in Rules & Setup).
 
 | Mode | Summary |
 |------|--------|
@@ -55,7 +55,7 @@ Set in **RuneLite → Configuration → LeagueScape → Progression → Unlock m
 
 `cost = tile tier × tier points × type multiplier`
 
-Tier is 1–5 (higher tiers use tier 5 multipliers). Type multipliers (skill, area, boss, quest, achievement diary) are configurable under **World Unlock** in plugin config; defaults are documented in `LeagueScapeConfig.java`.
+Tier is 1–5 (higher tiers use tier 5 multipliers). Type multipliers (skill, area, boss, quest, achievement diary) are configurable under **World Unlock** in plugin config; defaults are documented in `GridScapeConfig.java`.
 
 ---
 
@@ -81,7 +81,7 @@ Task grids (area grids **and** the global grid in World Unlock) are arranged in 
 
 ## Controls and UI
 
-### LeagueScape sidebar panel
+### GridScape sidebar panel
 
 - Shows **current area**, **points** (spendable / total earned), and unlock actions appropriate to your mode.
 - **Tasks**: Opens the **global** task grid in **World Unlock** mode; otherwise opens tasks for **your current area** (player position).
@@ -96,7 +96,7 @@ Task grids (area grids **and** the global grid in World Unlock) are arranged in 
 
 ### World map
 
-- With the **world map** open, LeagueScape can draw **locked**, **unlocked**, and **unlockable** areas (colors configurable under **Map overlay**).
+- With the **world map** open, GridScape can draw **locked**, **unlocked**, and **unlockable** areas (colors configurable under **Map overlay**).
 - **Right-click an area** for details and, where allowed, **Unlock** and **Tasks**.
 
 ### Locked areas (game view)
@@ -132,7 +132,7 @@ Use **Reset Progress** in **Game Mode** (Rules & Setup). You must confirm with y
 
 ## Configuration reference (RuneLite)
 
-In RuneLite’s plugin list, configuration is under the group **`leaguescape`** (`LeagueScapeConfigConstants.CONFIG_GROUP`). Sections include:
+In RuneLite’s plugin list, configuration is under the group **`gridscape`** (`GridScapeConfigConstants.CONFIG_GROUP`). Sections include:
 
 - **Overlay appearance** – locked overlay, strict enforcement, colors, boundaries, chunk borders.
 - **Map overlay** – draw areas, colors, grid, labels, corner markers.
@@ -145,7 +145,7 @@ In RuneLite’s plugin list, configuration is under the group **`leaguescape`** 
 
 ## Project layout (developers)
 
-- `src/main/java/com/leaguescape/` – plugin entry (`LeagueScapePlugin`), config, areas, points, tasks, world unlock, overlays, UI.
+- `src/main/java/com/gridscape/` – plugin entry (`GridScapePlugin`), config, areas, points, tasks, world unlock, overlays, UI.
 - `src/main/resources/` – `areas.json`, `tasks.json`, `world_unlocks.json`, icons, etc.
 
 ---
@@ -156,7 +156,7 @@ In RuneLite’s plugin list, configuration is under the group **`leaguescape`** 
 ./gradlew shadowJar
 ```
 
-Output: `build/libs/Leaguescape-*-all.jar`.
+Output: `build/libs/GridScape-*-all.jar`.
 
 ---
 

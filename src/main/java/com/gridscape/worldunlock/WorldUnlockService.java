@@ -1,20 +1,20 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
 import com.google.gson.Gson;
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.constants.WorldUnlockTileType;
-import com.leaguescape.grid.GridPos;
-import com.leaguescape.grid.RevealLogic;
-import com.leaguescape.util.ConfigParsing;
-import com.leaguescape.util.LeagueScapeConfigConstants;
-import com.leaguescape.util.ResourceJsonLoader;
-import com.leaguescape.util.ResourcePaths;
-import com.leaguescape.data.Area;
-import com.leaguescape.data.AreaMappingData;
-import com.leaguescape.points.PointsService;
-import com.leaguescape.task.TaskDefinition;
-import com.leaguescape.task.TaskGridService;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.constants.WorldUnlockTileType;
+import com.gridscape.grid.GridPos;
+import com.gridscape.grid.RevealLogic;
+import com.gridscape.util.ConfigParsing;
+import com.gridscape.util.GridScapeConfigConstants;
+import com.gridscape.util.ResourceJsonLoader;
+import com.gridscape.util.ResourcePaths;
+import com.gridscape.data.Area;
+import com.gridscape.data.AreaMappingData;
+import com.gridscape.points.PointsService;
+import com.gridscape.task.TaskDefinition;
+import com.gridscape.task.TaskGridService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class WorldUnlockService
 {
 	private static final Logger log = LoggerFactory.getLogger(WorldUnlockService.class);
-	private static final String STATE_GROUP = LeagueScapeConfigConstants.STATE_GROUP;
+	private static final String STATE_GROUP = GridScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_WORLD_UNLOCK_UNLOCKED_IDS = "worldUnlockUnlockedIds";
 	private static final String KEY_WORLD_UNLOCK_CLAIMED_IDS = "worldUnlockClaimedIds";
 	private static final String KEY_WORLD_UNLOCK_GRID_SEED = "worldUnlockGridSeed";
@@ -48,8 +48,8 @@ public class WorldUnlockService
 	/** Grid state entry format: pos##tileId (same idea as Global Task grid). */
 	private static final String GRID_STATE_SEP = "##";
 	private static final String POS_ENTRY_SEP = "||";
-	private static final String PLUGIN_CONFIG_GROUP = LeagueScapeConfigConstants.CONFIG_GROUP;
-	/** Matches {@code LeagueScapeConfig} per-tier key middle part: worldUnlockTier{N}<suffix>Multiplier */
+	private static final String PLUGIN_CONFIG_GROUP = GridScapeConfigConstants.CONFIG_GROUP;
+	/** Matches {@code GridScapeConfig} per-tier key middle part: worldUnlockTier{N}<suffix>Multiplier */
 	private static final String[] WORLD_UNLOCK_TYPE_SUFFIX = {
 		"Skill", "Area", "Boss", "Quest", "AchievementDiary"
 	};
@@ -62,7 +62,7 @@ public class WorldUnlockService
 	};
 
 	private final ConfigManager configManager;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 	private final PointsService pointsService;
 	private final TaskGridService taskGridService;
 	private final AreaGraphService areaGraphService;
@@ -77,7 +77,7 @@ public class WorldUnlockService
 	private Map<String, List<String>> diaryKeyToAreaIds = null;
 
 	@Inject
-	public WorldUnlockService(ConfigManager configManager, LeagueScapeConfig config, PointsService pointsService,
+	public WorldUnlockService(ConfigManager configManager, GridScapeConfig config, PointsService pointsService,
 		TaskGridService taskGridService, AreaGraphService areaGraphService)
 	{
 		this.configManager = configManager;
@@ -1329,7 +1329,7 @@ public class WorldUnlockService
 		if (link.getDifficulty() != null && link.getDifficulty() != t.getDifficulty())
 			return false;
 		// Achievement diary: match by task area -> diary key (task's required area must belong to this diary)
-		if (WorldUnlockTileType.ACHIEVEMENT_DIARY.equals(tile.getType()) && com.leaguescape.constants.TaskTypes.ACHIEVEMENT_DIARY.equalsIgnoreCase(link.getTaskType()))
+		if (WorldUnlockTileType.ACHIEVEMENT_DIARY.equals(tile.getType()) && com.gridscape.constants.TaskTypes.ACHIEVEMENT_DIARY.equalsIgnoreCase(link.getTaskType()))
 		{
 			List<String> areaIds = t.getRequiredAreaIds();
 			if (areaIds == null || areaIds.isEmpty()) return false;

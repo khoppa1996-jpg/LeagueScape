@@ -1,4 +1,4 @@
-package com.leaguescape.task;
+package com.gridscape.task;
 
 import java.util.Collections;
 import java.util.List;

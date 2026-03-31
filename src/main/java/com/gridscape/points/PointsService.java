@@ -1,17 +1,17 @@
-package com.leaguescape.points;
+package com.gridscape.points;
 
 import lombok.Getter;
 import net.runelite.client.config.ConfigManager;
 
 /**
- * Tracks points earned and spent for LeagueScape. Persists earned total and spent total via
- * ConfigManager so progress survives restarts. Instantiated only via LeagueScapePlugin's
+ * Tracks points earned and spent for GridScape. Persists earned total and spent total via
+ * ConfigManager so progress survives restarts. Instantiated only via GridScapePlugin's
  * {@code @Provides} so a single instance is used. Spendable = earnedTotal - spentTotal (used for
  * unlocking areas in point-buy mode).
  */
 public class PointsService
 {
-	private static final String CONFIG_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.STATE_GROUP;
+	private static final String CONFIG_GROUP = com.gridscape.util.GridScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_EARNED = "pointsEarnedTotal";
 	private static final String KEY_SPENT = "pointsSpentTotal";
 

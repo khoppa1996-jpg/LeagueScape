@@ -1,9 +1,9 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.leaguescape.util.ResourceJsonLoader;
-import com.leaguescape.util.ResourcePaths;
+import com.gridscape.util.ResourceJsonLoader;
+import com.gridscape.util.ResourcePaths;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;

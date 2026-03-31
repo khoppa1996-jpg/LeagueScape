@@ -1,4 +1,4 @@
-package com.leaguescape.task;
+package com.gridscape.task;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,12 +12,12 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.grid.GridPos;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.points.AreaCompletionService;
-import com.leaguescape.points.PointsService;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.grid.GridPos;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.points.AreaCompletionService;
+import com.gridscape.points.PointsService;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 public class TaskGridService
 {
 	private static final Logger log = LoggerFactory.getLogger(TaskGridService.class);
-	private static final String STATE_GROUP = "leaguescapeState";
+	private static final String STATE_GROUP = com.gridscape.util.GridScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_PREFIX = "taskProgress_";
 	private static final String SUFFIX_CLAIMED = "_claimed";
 	private static final String SUFFIX_COMPLETED = "_completed";
@@ -160,7 +160,7 @@ public class TaskGridService
 		.create();
 
 	private final ConfigManager configManager;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 	private final PointsService pointsService;
 	private final AreaCompletionService areaCompletionService;
 	private final AreaGraphService areaGraphService;
@@ -182,7 +182,7 @@ public class TaskGridService
 	}
 
 	@Inject
-	public TaskGridService(ConfigManager configManager, LeagueScapeConfig config,
+	public TaskGridService(ConfigManager configManager, GridScapeConfig config,
 		PointsService pointsService, AreaCompletionService areaCompletionService,
 		AreaGraphService areaGraphService, Client client)
 	{
@@ -220,7 +220,7 @@ public class TaskGridService
 							tasksData = parseTasksDataFromStream(in);
 							if (tasksData != null && tasksData.getDefaultTasks() != null)
 							{
-								log.info("LeagueScape tasks loaded from {}", path);
+								log.info("GridScape tasks loaded from {}", path);
 								return tasksData;
 							}
 						}
@@ -228,25 +228,25 @@ public class TaskGridService
 				}
 				catch (Exception e)
 				{
-					log.warn("LeagueScape failed to load tasks from config path: {}", e.getMessage());
+					log.warn("GridScape failed to load tasks from config path: {}", e.getMessage());
 				}
 			}
 			// 2) Fall back to built-in resource
-			try (InputStream in = LeagueScapePlugin.class.getResourceAsStream(TASKS_RESOURCE))
+			try (InputStream in = GridScapePlugin.class.getResourceAsStream(TASKS_RESOURCE))
 			{
 				if (in != null)
 				{
 					tasksData = parseTasksDataFromStream(in);
 					if (tasksData != null && tasksData.getDefaultTasks() != null)
 					{
-						log.debug("LeagueScape tasks loaded from built-in resource");
+						log.debug("GridScape tasks loaded from built-in resource");
 						return tasksData;
 					}
 				}
 			}
 			catch (Exception e)
 			{
-				log.warn("LeagueScape failed to load built-in tasks: {}", e.getMessage());
+				log.warn("GridScape failed to load built-in tasks: {}", e.getMessage());
 			}
 			// 3) Empty fallback so callers never get null
 			tasksData = new TasksData();
@@ -272,7 +272,7 @@ public class TaskGridService
 			}
 			catch (Exception e)
 			{
-				log.warn("LeagueScape tasks override invalid: {}", e.getMessage());
+				log.warn("GridScape tasks override invalid: {}", e.getMessage());
 			}
 		}
 		return loadTasksData();
@@ -291,7 +291,7 @@ public class TaskGridService
 		}
 		catch (Exception e)
 		{
-			log.warn("LeagueScape custom tasks invalid: {}", e.getMessage());
+			log.warn("GridScape custom tasks invalid: {}", e.getMessage());
 			return new ArrayList<>();
 		}
 	}
@@ -454,7 +454,7 @@ public class TaskGridService
 			})
 			.collect(Collectors.toList());
 		// Free to Play mode: only tasks with f2p == true
-		if (config.taskMode() == LeagueScapeConfig.TaskMode.FREE_TO_PLAY)
+		if (config.taskMode() == GridScapeConfig.TaskMode.FREE_TO_PLAY)
 			list = list.stream()
 				.filter(t -> Boolean.TRUE.equals(t.getF2p()))
 				.collect(Collectors.toList());
@@ -999,12 +999,12 @@ public class TaskGridService
 	private int computeEffectiveMaxTier(String areaId)
 	{
 		int target;
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINT_BUY)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.POINT_BUY)
 		{
 			Set<String> unlocked = areaGraphService.getUnlockedAreaIds();
-			List<com.leaguescape.data.Area> neighbors = areaGraphService.getUnlockableNeighbors(unlocked);
+			List<com.gridscape.data.Area> neighbors = areaGraphService.getUnlockableNeighbors(unlocked);
 			int maxCost = 0;
-			for (com.leaguescape.data.Area a : neighbors)
+			for (com.gridscape.data.Area a : neighbors)
 			{
 				if (a == null) continue;
 				int cost = areaGraphService.getCost(a.getId());

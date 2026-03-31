@@ -1,7 +1,7 @@
-package com.leaguescape.overlay;
+package com.gridscape.overlay;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.area.AreaGraphService;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.area.AreaGraphService;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -35,10 +35,10 @@ public class LockedRegionOverlay extends Overlay
 
 	private final Client client;
 	private final AreaGraphService areaGraphService;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 
 	@Inject
-	public LockedRegionOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfig config)
+	public LockedRegionOverlay(Client client, AreaGraphService areaGraphService, GridScapeConfig config)
 	{
 		this.client = client;
 		this.areaGraphService = areaGraphService;

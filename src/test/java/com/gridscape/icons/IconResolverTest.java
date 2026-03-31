@@ -1,6 +1,6 @@
-package com.leaguescape.icons;
+package com.gridscape.icons;
 
-import com.leaguescape.constants.TaskTypes;
+import com.gridscape.constants.TaskTypes;
 import org.junit.Assert;
 import org.junit.Test;
 

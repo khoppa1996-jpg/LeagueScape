@@ -1,12 +1,12 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.LeagueScapeSounds;
-import com.leaguescape.constants.TaskTypes;
-import com.leaguescape.icons.IconCache;
-import com.leaguescape.icons.IconResolver;
-import com.leaguescape.icons.IconResources;
-import com.leaguescape.points.PointsService;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.GridScapeSounds;
+import com.gridscape.constants.TaskTypes;
+import com.gridscape.icons.IconCache;
+import com.gridscape.icons.IconResolver;
+import com.gridscape.icons.IconResources;
+import com.gridscape.points.PointsService;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,10 +21,10 @@ import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
-import com.leaguescape.grid.GridPos;
-import com.leaguescape.util.FogTileCompositor;
-import com.leaguescape.util.FrontierFogHelpers;
-import com.leaguescape.util.GridClaimFocusAnimation;
+import com.gridscape.grid.GridPos;
+import com.gridscape.util.FogTileCompositor;
+import com.gridscape.util.FrontierFogHelpers;
+import com.gridscape.util.GridClaimFocusAnimation;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -56,7 +56,7 @@ import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.util.ImageUtil;
-import com.leaguescape.util.LeagueScapeSwingUtil;
+import com.gridscape.util.GridScapeSwingUtil;
 
 /**
  * World Unlock grid panel. Displays unlock tiles as square icon-only tiles in a spiral grid
@@ -64,8 +64,8 @@ import com.leaguescape.util.LeagueScapeSwingUtil;
  */
 public class WorldUnlockGridPanel extends JPanel
 {
-	private static final Color POPUP_BG = com.leaguescape.util.LeagueScapeColors.POPUP_BG;
-	private static final Color POPUP_TEXT = com.leaguescape.util.LeagueScapeColors.POPUP_TEXT;
+	private static final Color POPUP_BG = com.gridscape.util.GridScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = com.gridscape.util.GridScapeColors.POPUP_TEXT;
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int BASE_TILE_SIZE = 72;
@@ -128,17 +128,17 @@ public class WorldUnlockGridPanel extends JPanel
 		this.audioPlayer = audioPlayer;
 		this.parentDialog = parentDialog;
 
-		padlockImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "padlock_icon.png");
-		checkmarkImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "complete_checkmark.png");
-		tileBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_square.png");
-		interfaceBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "interface_template.png");
-		buttonRect = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_rectangle.png");
-		xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
-		fogTileBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_base.png");
-		fogTopLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_top_left.png");
-		fogTopRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_top_right.png");
-		fogBottomLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_bottom_left.png");
-		fogBottomRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_bottom_right.png");
+		padlockImg = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
+		checkmarkImg = ImageUtil.loadImageResource(GridScapePlugin.class, "complete_checkmark.png");
+		tileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_square.png");
+		interfaceBg = ImageUtil.loadImageResource(GridScapePlugin.class, "interface_template.png");
+		buttonRect = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_rectangle.png");
+		xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
+		fogTileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_base.png");
+		fogTopLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_left.png");
+		fogTopRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_right.png");
+		fogBottomLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_bottom_left.png");
+		fogBottomRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_bottom_right.png");
 
 		setLayout(new BorderLayout(8, 8));
 		setBackground(POPUP_BG);
@@ -162,12 +162,12 @@ public class WorldUnlockGridPanel extends JPanel
 		titleRow.add(titleLabel, BorderLayout.CENTER);
 		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 		closeBtn.addActionListener(e -> {
-			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			playSound(GridScapeSounds.BUTTON_PRESS);
 			if (onClose != null) onClose.run();
 		});
 		titleRow.add(closeBtn, BorderLayout.EAST);
 		header.add(titleRow, BorderLayout.NORTH);
-		LeagueScapeSwingUtil.installUndecoratedWindowDrag(parentDialog, titleRow);
+		GridScapeSwingUtil.installUndecoratedWindowDrag(parentDialog, titleRow);
 		add(header, BorderLayout.NORTH);
 
 		gridPanel = new JPanel();
@@ -235,14 +235,14 @@ public class WorldUnlockGridPanel extends JPanel
 		westButtons.setOpaque(false);
 		JButton tasksBtn = newRectangleButton("Tasks", buttonRect, POPUP_TEXT);
 		tasksBtn.addActionListener(e -> {
-			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			playSound(GridScapeSounds.BUTTON_PRESS);
 			if (onClose != null) onClose.run();
 			if (onOpenTasks != null) onOpenTasks.run();
 		});
 		westButtons.add(tasksBtn);
 		JButton rulesSetupBtn = newRectangleButton("Rules & Setup", buttonRect, POPUP_TEXT);
 		rulesSetupBtn.addActionListener(e -> {
-			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			playSound(GridScapeSounds.BUTTON_PRESS);
 			if (onOpenRulesSetup != null) onOpenRulesSetup.run();
 		});
 		westButtons.add(rulesSetupBtn);
@@ -250,7 +250,7 @@ public class WorldUnlockGridPanel extends JPanel
 
 		JButton showUnlocksBtn = newRectangleButton("Show Unlocks", buttonRect, POPUP_TEXT);
 		showUnlocksBtn.addActionListener(e -> {
-			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			playSound(GridScapeSounds.BUTTON_PRESS);
 			showUnlocksDialog();
 		});
 		south.add(showUnlocksBtn, BorderLayout.CENTER);
@@ -401,8 +401,8 @@ public class WorldUnlockGridPanel extends JPanel
 	/**
 	 * Non-interactive frontier fog for grid coordinates with no placement yet (or not covered by a revealed tile);
 	 * edge art toward revealed unlocked-unclaimed neighbors. Same placement rules as the global task grid fog ring.
-	 * {@code edgeFlags} is {@code [north, east, south, west]} from {@link com.leaguescape.util.FrontierFogHelpers#cardinalFlagsWorldUnlock};
-	 * {@link com.leaguescape.util.FogTileCompositor} maps geographic cardinals to screen quadrants (same convention as task grids).
+	 * {@code edgeFlags} is {@code [north, east, south, west]} from {@link com.gridscape.util.FrontierFogHelpers#cardinalFlagsWorldUnlock};
+	 * {@link com.gridscape.util.FogTileCompositor} maps geographic cardinals to screen quadrants (same convention as task grids).
 	 */
 	private JPanel buildFogOnlyCell(int row, int col, boolean[] edgeFlags, int tileSize)
 	{
@@ -579,7 +579,7 @@ public class WorldUnlockGridPanel extends JPanel
 		BufferedImage img = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = img.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setColor(com.leaguescape.util.LeagueScapeColors.POPUP_TEXT_ALPHA);
+		g.setColor(com.gridscape.util.GridScapeColors.POPUP_TEXT_ALPHA);
 		g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, Math.max(14, size - 4)));
 		java.awt.FontMetrics fm = g.getFontMetrics();
 		int x = (size - fm.stringWidth(letter)) / 2;
@@ -683,7 +683,7 @@ public class WorldUnlockGridPanel extends JPanel
 				public void mouseClicked(MouseEvent e)
 				{
 					if (e.getButton() != MouseEvent.BUTTON1) return;
-					playSound(LeagueScapeSounds.BUTTON_PRESS);
+					playSound(GridScapeSounds.BUTTON_PRESS);
 					showTileDetailPopup(tile, isCenter);
 				}
 			});
@@ -697,7 +697,7 @@ public class WorldUnlockGridPanel extends JPanel
 			public void mouseClicked(MouseEvent e)
 			{
 				if (e.getButton() != MouseEvent.BUTTON1) return;
-				playSound(LeagueScapeSounds.BUTTON_PRESS);
+				playSound(GridScapeSounds.BUTTON_PRESS);
 				showTileDetailPopup(tile, isCenter);
 			}
 		});
@@ -779,7 +779,7 @@ public class WorldUnlockGridPanel extends JPanel
 			public void mouseClicked(MouseEvent e)
 			{
 				if (e.getButton() != MouseEvent.BUTTON1) return;
-				playSound(LeagueScapeSounds.BUTTON_PRESS);
+				playSound(GridScapeSounds.BUTTON_PRESS);
 				showTileDetailPopup(tile, isCenter);
 			}
 		});
@@ -834,7 +834,7 @@ public class WorldUnlockGridPanel extends JPanel
 			public void mouseClicked(MouseEvent e)
 			{
 				if (e.getButton() != MouseEvent.BUTTON1) return;
-				playSound(LeagueScapeSounds.BUTTON_PRESS);
+				playSound(GridScapeSounds.BUTTON_PRESS);
 				showTileDetailPopup(tile, isCenter);
 			}
 		});
@@ -897,7 +897,7 @@ public class WorldUnlockGridPanel extends JPanel
 
 		JDialog dialog = new JDialog(frameOwner, "Claimed Unlocks", false);
 		dialog.setUndecorated(true);
-		LeagueScapePlugin.registerEscapeToClose(dialog);
+		GridScapePlugin.registerEscapeToClose(dialog);
 
 		JPanel content = new JPanel(new BorderLayout(8, 8));
 		content.setBackground(POPUP_BG);
@@ -915,7 +915,7 @@ public class WorldUnlockGridPanel extends JPanel
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 13f));
 		header.add(titleLabel, BorderLayout.CENTER);
 		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
-		closeBtn.addActionListener(e -> { playSound(LeagueScapeSounds.BUTTON_PRESS); dialog.dispose(); });
+		closeBtn.addActionListener(e -> { playSound(GridScapeSounds.BUTTON_PRESS); dialog.dispose(); });
 		header.add(closeBtn, BorderLayout.EAST);
 		northPanel.add(header);
 		// Filter: All, Skill, Area, Boss, Quest, Achievement diary
@@ -1000,7 +1000,7 @@ public class WorldUnlockGridPanel extends JPanel
 		refreshList.accept("All");
 
 		JButton closeBottomBtn = newRectangleButton("Close", buttonRect, POPUP_TEXT);
-		closeBottomBtn.addActionListener(e -> { playSound(LeagueScapeSounds.BUTTON_PRESS); dialog.dispose(); });
+		closeBottomBtn.addActionListener(e -> { playSound(GridScapeSounds.BUTTON_PRESS); dialog.dispose(); });
 		JPanel southPanel = new JPanel();
 		southPanel.setOpaque(false);
 		southPanel.add(closeBottomBtn);
@@ -1034,7 +1034,7 @@ public class WorldUnlockGridPanel extends JPanel
 		if (windowTitle == null || windowTitle.isEmpty()) windowTitle = tile.getId();
 		JDialog detail = new JDialog(frameOwner, windowTitle, false);
 		detail.setUndecorated(true);
-		LeagueScapePlugin.registerEscapeToClose(detail);
+		GridScapePlugin.registerEscapeToClose(detail);
 
 		JPanel content = new JPanel(new BorderLayout(8, 8));
 		content.setBackground(POPUP_BG);
@@ -1049,7 +1049,7 @@ public class WorldUnlockGridPanel extends JPanel
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 13f));
 		headerPanel.add(titleLabel, BorderLayout.CENTER);
 		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
-		closeBtn.addActionListener(e -> { playSound(LeagueScapeSounds.BUTTON_PRESS); detail.dispose(); });
+		closeBtn.addActionListener(e -> { playSound(GridScapeSounds.BUTTON_PRESS); detail.dispose(); });
 		headerPanel.add(closeBtn, BorderLayout.EAST);
 		content.add(headerPanel, BorderLayout.NORTH);
 
@@ -1082,7 +1082,7 @@ public class WorldUnlockGridPanel extends JPanel
 			unlockBtn.addActionListener(e -> {
 				if (worldUnlockService.unlock(tile.getId(), worldUnlockService.getTileCost(tile)))
 				{
-					if (com.leaguescape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
+					if (com.gridscape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
 						onAreaUnlocked.accept(tile.getId());
 					playUnlockTileGameSound();
 					detail.dispose();
@@ -1107,9 +1107,9 @@ public class WorldUnlockGridPanel extends JPanel
 			claimBtn.addActionListener(e -> {
 				if (worldUnlockService.claim(tile.getId()))
 				{
-					if (com.leaguescape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
+					if (com.gridscape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
 						onAreaUnlocked.accept(tile.getId());
-					playSound(LeagueScapeSounds.TASK_COMPLETE);
+					playSound(GridScapeSounds.TASK_COMPLETE);
 					detail.dispose();
 					int[] rc = findRowColForTileId(tile.getId());
 					pendingClaimFocusRow = rc[0];
@@ -1152,7 +1152,7 @@ public class WorldUnlockGridPanel extends JPanel
 				unlockBtn.addActionListener(e -> {
 					if (worldUnlockService.unlock(tile.getId(), worldUnlockService.getTileCost(tile)))
 					{
-						if (com.leaguescape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
+						if (com.gridscape.constants.WorldUnlockTileType.AREA.equals(tile.getType()) && onAreaUnlocked != null)
 							onAreaUnlocked.accept(tile.getId());
 						playUnlockTileGameSound();
 						detail.dispose();
@@ -1203,7 +1203,7 @@ public class WorldUnlockGridPanel extends JPanel
 	private void playSound(String sound)
 	{
 		if (audioPlayer != null && client != null)
-			LeagueScapeSounds.play(audioPlayer, sound, client);
+			GridScapeSounds.play(audioPlayer, sound, client);
 	}
 
 	private void playUnlockTileGameSound()
@@ -1220,13 +1220,13 @@ public class WorldUnlockGridPanel extends JPanel
 
 	private static JButton newRectangleButton(String text, BufferedImage buttonRect, Color textColor)
 	{
-		JButton b = com.leaguescape.util.LeagueScapeSwingUtil.newRectangleButton(text, buttonRect, textColor);
+		JButton b = com.gridscape.util.GridScapeSwingUtil.newRectangleButton(text, buttonRect, textColor);
 		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
 		return b;
 	}
 
 	private static JButton newPopupButtonWithIcon(BufferedImage iconImg, Color fallbackTextColor)
 	{
-		return com.leaguescape.util.LeagueScapeSwingUtil.newPopupButtonWithIcon(iconImg, fallbackTextColor);
+		return com.gridscape.util.GridScapeSwingUtil.newPopupButtonWithIcon(iconImg, fallbackTextColor);
 	}
 }

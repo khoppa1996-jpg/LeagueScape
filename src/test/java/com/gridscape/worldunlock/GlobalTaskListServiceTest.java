@@ -1,11 +1,11 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.points.PointsService;
-import com.leaguescape.task.TaskDefinition;
-import com.leaguescape.task.TaskGridService;
-import com.leaguescape.task.TaskState;
-import com.leaguescape.task.TaskTile;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.points.PointsService;
+import com.gridscape.task.TaskDefinition;
+import com.gridscape.task.TaskGridService;
+import com.gridscape.task.TaskState;
+import com.gridscape.task.TaskTile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,7 +44,7 @@ public class GlobalTaskListServiceTest
 	private ConfigManager configManager;
 
 	@Mock
-	private LeagueScapeConfig config;
+	private GridScapeConfig config;
 
 	@Mock
 	private PointsService pointsService;
@@ -57,7 +57,7 @@ public class GlobalTaskListServiceTest
 
 	private GlobalTaskListService service;
 
-	private static final String STATE_GROUP = "leaguescapeState";
+	private static final String STATE_GROUP = com.gridscape.util.GridScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_CENTER_CLAIMED = "globalTaskProgress_centerClaimed";
 	private static final String KEY_CLAIMED = "globalTaskProgress_claimed";
 	private static final String KEY_POSITIONS = "globalTaskProgress_positions";

@@ -1,13 +1,13 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import java.awt.Color;
 
 /**
- * Shared UI colors for LeagueScape popups and panels (theme consistency).
+ * Shared UI colors for GridScape popups and panels (theme consistency).
  */
-public final class LeagueScapeColors
+public final class GridScapeColors
 {
-	private LeagueScapeColors() {}
+	private GridScapeColors() {}
 
 	/** Popup/panel background (brown). */
 	public static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);

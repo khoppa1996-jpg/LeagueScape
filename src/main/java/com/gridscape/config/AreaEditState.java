@@ -1,6 +1,6 @@
-package com.leaguescape.config;
+package com.gridscape.config;
 
-import com.leaguescape.data.Area;
+import com.gridscape.data.Area;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,7 +8,7 @@ import net.runelite.api.coords.WorldPoint;
 
 /**
  * Holds state and logic for area polygon editing (corners, polygons, holes, neighbors).
- * Used by LeagueScapePlugin and overlays; plugin remains the composition root and
+ * Used by GridScapePlugin and overlays; plugin remains the composition root and
  * wires callbacks (corner/neighbor updates) and client-dependent actions.
  */
 public final class AreaEditState

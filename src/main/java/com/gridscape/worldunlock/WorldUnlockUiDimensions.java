@@ -1,4 +1,4 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
 import java.awt.Dimension;
 

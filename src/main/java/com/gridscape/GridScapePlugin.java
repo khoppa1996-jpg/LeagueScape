@@ -1,10 +1,13 @@
-package com.leaguescape;
+package com.gridscape;
 
 import com.google.inject.Provides;
 import com.google.inject.Provider;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.function.Consumer;
 import java.awt.event.KeyEvent;
@@ -38,11 +41,11 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.input.MouseManager;
-import com.leaguescape.util.PanelBoundsStore;
+import com.gridscape.util.PanelBoundsStore;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 /**
- * LeagueScape plugin: area-based progression with unlockable regions, task grids per area, and
+ * GridScape plugin: area-based progression with unlockable regions, task grids per area, and
  * point economy. Loads areas from areas.json (and custom/removed from config), tracks unlocked
  * areas and points, enforces locking of tiles in locked areas, and provides the world-map overlay
  * (area details, task grid popups) and side panel (points, unlock buttons, tasks). Config editing
@@ -50,19 +53,20 @@ import net.runelite.client.ui.overlay.OverlayManager;
  * and "Set new corner" on the world map.
  */
 @PluginDescriptor(
-	name = "LeagueScape",
+	name = "GridScape",
 	enabledByDefault = true
 )
-public class LeagueScapePlugin extends Plugin
+public class GridScapePlugin extends Plugin
 {
-	private static final Logger log = LoggerFactory.getLogger(LeagueScapePlugin.class);
+	private static final Logger log = LoggerFactory.getLogger(GridScapePlugin.class);
 	/** Config group for persisted state (unlocked areas, task progress, etc.). */
-	private static final String STATE_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.STATE_GROUP;
+	private static final String STATE_GROUP = com.gridscape.util.GridScapeConfigConstants.STATE_GROUP;
+	private static final String KEY_MIGRATION_DONE = "migrationFromLeagueScapeDone";
 
 	/** Registers Escape key to close the given window (dispose). Call after creating a JDialog/JFrame. */
 	public static void registerEscapeToClose(java.awt.Window window)
 	{
-		com.leaguescape.util.LeagueScapeSwingUtil.registerEscapeToClose(window);
+		com.gridscape.util.GridScapeSwingUtil.registerEscapeToClose(window);
 	}
 	private static final String KEY_UNLOCKED_AREAS = "unlockedAreas";
 	/** Comma-separated list of usernames for which the Rules & Setup panel has been shown (first-time open). */
@@ -74,43 +78,43 @@ public class LeagueScapePlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
-	/** At most one of each floating panel; bounds persisted in {@link com.leaguescape.util.PanelBoundsStore}. */
+	/** At most one of each floating panel; bounds persisted in {@link com.gridscape.util.PanelBoundsStore}. */
 	private volatile JDialog worldUnlockDialogRef;
 	private volatile JDialog globalTasksDialogRef;
 	private volatile JDialog goalsDialogRef;
 
 	@Inject
-	private LeagueScapeConfig config;
+	private GridScapeConfig config;
 
 	@Inject
-	private com.leaguescape.area.AreaGraphService areaGraphService;
+	private com.gridscape.area.AreaGraphService areaGraphService;
 
 	@Inject
-	private com.leaguescape.points.PointsService pointsService;
+	private com.gridscape.points.PointsService pointsService;
 
 	@Inject
-	private com.leaguescape.points.AreaCompletionService areaCompletionService;
+	private com.gridscape.points.AreaCompletionService areaCompletionService;
 
 	@Inject
-	private com.leaguescape.lock.LockEnforcer lockEnforcer;
+	private com.gridscape.lock.LockEnforcer lockEnforcer;
 
 	@Inject
-	private com.leaguescape.overlay.LockedRegionOverlay lockedRegionOverlay;
+	private com.gridscape.overlay.LockedRegionOverlay lockedRegionOverlay;
 
 	@Inject
-	private com.leaguescape.overlay.TaskCompletionPopupOverlay taskCompletionPopupOverlay;
+	private com.gridscape.overlay.TaskCompletionPopupOverlay taskCompletionPopupOverlay;
 
 	@Inject
-	private com.leaguescape.overlay.LeagueScapeMapOverlay leagueScapeMapOverlay;
+	private com.gridscape.overlay.GridScapeMapOverlay gridScapeMapOverlay;
 
 	@Inject
-	private com.leaguescape.overlay.LeagueScapeMinimapButtonOverlay leagueScapeMinimapButtonOverlay;
+	private com.gridscape.overlay.GridScapeMinimapButtonOverlay gridScapeMinimapButtonOverlay;
 
 	@Inject
-	private Provider<com.leaguescape.config.AreaEditOverlay> areaEditOverlayProvider;
+	private Provider<com.gridscape.config.AreaEditOverlay> areaEditOverlayProvider;
 
 	@Inject
-	private Provider<com.leaguescape.task.TaskGridService> taskGridServiceProvider;
+	private Provider<com.gridscape.task.TaskGridService> taskGridServiceProvider;
 
 	@Inject
 	private OverlayManager overlayManager;
@@ -131,31 +135,31 @@ public class LeagueScapePlugin extends Plugin
 	private AudioPlayer audioPlayer;
 
 	@Inject
-	private com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService;
+	private com.gridscape.wiki.OsrsWikiApiService osrsWikiApiService;
 
 	@Inject
-	private com.leaguescape.wiki.WikiTaskGenerator wikiTaskGenerator;
+	private com.gridscape.wiki.WikiTaskGenerator wikiTaskGenerator;
 
 	@Inject
-	private com.leaguescape.worldunlock.WorldUnlockService worldUnlockService;
+	private com.gridscape.worldunlock.WorldUnlockService worldUnlockService;
 
 	@Inject
-	private com.leaguescape.worldunlock.GlobalTaskListService globalTaskListService;
+	private com.gridscape.worldunlock.GlobalTaskListService globalTaskListService;
 
 	@Inject
-	private com.leaguescape.worldunlock.GoalTrackingService goalTrackingService;
+	private com.gridscape.worldunlock.GoalTrackingService goalTrackingService;
 
 	private NavigationButton navButton;
-	private com.leaguescape.config.AreaEditOverlay areaEditOverlay;
+	private com.gridscape.config.AreaEditOverlay areaEditOverlay;
 	private boolean mapMouseListenerRegistered;
 
-	// --- Area config editing (merged from LeagueScape Config plugin) ---
+	// --- Area config editing (merged from GridScape Config plugin) ---
 	private static final String ADD_CORNER_OPTION = "Add polygon corner";
 	private static final String ADD_CORNER_TARGET = "Tile";
 	private static final String MOVE_CORNER_OPTION = "Move";
 	private static final String SET_CORNER_OPTION = "Set new corner";
 	private static final String CANCEL_MOVE_OPTION = "Cancel move";
-	private final com.leaguescape.config.AreaEditState areaEditState = new com.leaguescape.config.AreaEditState();
+	private final com.gridscape.config.AreaEditState areaEditState = new com.gridscape.config.AreaEditState();
 	/** Called when corners change (from plugin thread). */
 	private Consumer<List<int[]>> cornerUpdateCallback;
 	/** Called when neighbors change (e.g. from map "Add neighbors" dialog). */
@@ -164,7 +168,8 @@ public class LeagueScapePlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		log.info("LeagueScape started!");
+		log.info("GridScape started!");
+		migrateLegacyConfigAndStateIfNeeded();
 		eventBus.register(lockEnforcer);
 		pointsService.loadFromConfig();
 		areaCompletionService.loadFromConfig();
@@ -174,22 +179,22 @@ public class LeagueScapePlugin extends Plugin
 			pointsService.setStartingPoints(config.startingPoints());
 		}
 		loadUnlockedAreas();
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
 			worldUnlockService.load();
 		}
 		overlayManager.add(lockedRegionOverlay);
 		overlayManager.add(taskCompletionPopupOverlay);
-		overlayManager.add(leagueScapeMapOverlay);
-		overlayManager.add(leagueScapeMinimapButtonOverlay);
-		mouseManager.registerMouseListener(leagueScapeMinimapButtonOverlay);
+		overlayManager.add(gridScapeMapOverlay);
+		overlayManager.add(gridScapeMinimapButtonOverlay);
+		mouseManager.registerMouseListener(gridScapeMinimapButtonOverlay);
 		areaEditOverlay = areaEditOverlayProvider.get();
 		overlayManager.add(areaEditOverlay);
 		eventBus.register(this);
 		// updateMapMouseListener() uses client (getWidget, isHidden) and must run on client thread; onGameTick will call it
-		LeagueScapePanel panel = new LeagueScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService, audioPlayer, client);
+		GridScapePanel panel = new GridScapePanel(this, config, configManager, areaGraphService, pointsService, areaCompletionService, audioPlayer, client);
 		navButton = NavigationButton.builder()
-			.tooltip("LeagueScape")
+			.tooltip("GridScape")
 			.icon(panel.getIcon())
 			.priority(70)
 			.panel(panel)
@@ -197,6 +202,115 @@ public class LeagueScapePlugin extends Plugin
 		clientToolbar.addNavigation(navButton);
 		// Open Rules & Setup panel for this account if first time (by username)
 		clientThread.invokeLater(this::tryOpenSetupForFirstTime);
+	}
+
+	private void migrateLegacyConfigAndStateIfNeeded()
+	{
+		// Only run once per install. Use the *new* state group as the sentinel.
+		String done = configManager.getConfiguration(com.gridscape.util.GridScapeConfigConstants.STATE_GROUP, KEY_MIGRATION_DONE);
+		if ("true".equalsIgnoreCase(done))
+		{
+			return;
+		}
+
+		int copied = 0;
+		copied += migrateGroupBestEffort(
+			com.gridscape.util.LegacyLeagueScapeConfigConstants.CONFIG_GROUP,
+			com.gridscape.util.GridScapeConfigConstants.CONFIG_GROUP,
+			null);
+		copied += migrateGroupBestEffort(
+			com.gridscape.util.LegacyLeagueScapeConfigConstants.STATE_GROUP,
+			com.gridscape.util.GridScapeConfigConstants.STATE_GROUP,
+			null);
+		copied += migrateGroupBestEffort(
+			com.gridscape.util.LegacyLeagueScapeConfigConstants.CONFIG_GROUP_CUSTOM_AREAS,
+			com.gridscape.util.GridScapeConfigConstants.CONFIG_GROUP_CUSTOM_AREAS,
+			new String[] { "customAreas", "removedAreas" });
+
+		// Mark done regardless to avoid repeated work; leaving old keys intact is intentional.
+		configManager.setConfiguration(com.gridscape.util.GridScapeConfigConstants.STATE_GROUP, KEY_MIGRATION_DONE, "true");
+		if (copied > 0)
+		{
+			log.info("Migrated {} legacy LeagueScape config/state entries to GridScape.", copied);
+		}
+	}
+
+	/**
+	 * Copies keys from {@code oldGroup} to {@code newGroup}. If we can enumerate keys from ConfigManager,
+	 * we migrate everything (including dynamic keys like task progress per area). If not, we fall back
+	 * to a provided allowlist.
+	 */
+	private int migrateGroupBestEffort(String oldGroup, String newGroup, String[] fallbackKeys)
+	{
+		List<String> keys = tryGetConfigurationKeys(oldGroup);
+		if (keys == null || keys.isEmpty())
+		{
+			if (fallbackKeys == null || fallbackKeys.length == 0)
+			{
+				return 0;
+			}
+			keys = new ArrayList<>();
+			Collections.addAll(keys, fallbackKeys);
+		}
+
+		int copied = 0;
+		for (String key : keys)
+		{
+			if (key == null || key.isEmpty())
+			{
+				continue;
+			}
+			String existing = configManager.getConfiguration(newGroup, key);
+			if (existing != null && !existing.isEmpty())
+			{
+				continue; // don't override GridScape user changes
+			}
+			String legacy = configManager.getConfiguration(oldGroup, key);
+			if (legacy == null || legacy.isEmpty())
+			{
+				continue;
+			}
+			configManager.setConfiguration(newGroup, key, legacy);
+			copied++;
+		}
+		return copied;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<String> tryGetConfigurationKeys(String group)
+	{
+		// RuneLite ConfigManager exposes key enumeration in most versions; use reflection so we don't
+		// hard-depend on a particular signature.
+		try
+		{
+			Method m = configManager.getClass().getMethod("getConfigurationKeys", String.class);
+			Object result = m.invoke(configManager, group);
+			if (result instanceof Collection)
+			{
+				return new ArrayList<>((Collection<String>) result);
+			}
+		}
+		catch (Exception ignored)
+		{
+			// ignore
+		}
+
+		// Some versions use getConfigurationKeys(String, String) to return full keys; try that too.
+		try
+		{
+			Method m = configManager.getClass().getMethod("getConfigurationKeys", String.class, String.class);
+			Object result = m.invoke(configManager, group, "");
+			if (result instanceof Collection)
+			{
+				return new ArrayList<>((Collection<String>) result);
+			}
+		}
+		catch (Exception ignored)
+		{
+			// ignore
+		}
+
+		return null;
 	}
 
 	/**
@@ -210,30 +324,30 @@ public class LeagueScapePlugin extends Plugin
 		if (username == null || username.isEmpty())
 			return;
 		String raw = configManager.getConfiguration(STATE_GROUP, KEY_SETUP_OPENED_ACCOUNTS);
-		java.util.Set<String> seen = com.leaguescape.util.ConfigParsing.parseCommaSeparatedSet(raw);
+		java.util.Set<String> seen = com.gridscape.util.ConfigParsing.parseCommaSeparatedSet(raw);
 		if (seen.contains(username))
 			return;
 		seen.add(username);
-		configManager.setConfiguration(STATE_GROUP, KEY_SETUP_OPENED_ACCOUNTS, com.leaguescape.util.ConfigParsing.joinComma(seen));
+		configManager.setConfiguration(STATE_GROUP, KEY_SETUP_OPENED_ACCOUNTS, com.gridscape.util.ConfigParsing.joinComma(seen));
 		openSetupDialog();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("LeagueScape stopped!");
+		log.info("GridScape stopped!");
 		stopAreaEditing();
 		eventBus.unregister(this);
 		if (mapMouseListenerRegistered)
 		{
-			mouseManager.unregisterMouseListener(leagueScapeMapOverlay);
+			mouseManager.unregisterMouseListener(gridScapeMapOverlay);
 			mapMouseListenerRegistered = false;
 		}
 		overlayManager.remove(lockedRegionOverlay);
 		overlayManager.remove(taskCompletionPopupOverlay);
-		overlayManager.remove(leagueScapeMapOverlay);
-		overlayManager.remove(leagueScapeMinimapButtonOverlay);
-		mouseManager.unregisterMouseListener(leagueScapeMinimapButtonOverlay);
+		overlayManager.remove(gridScapeMapOverlay);
+		overlayManager.remove(gridScapeMinimapButtonOverlay);
+		mouseManager.unregisterMouseListener(gridScapeMinimapButtonOverlay);
 		if (areaEditOverlay != null)
 		{
 			overlayManager.remove(areaEditOverlay);
@@ -247,124 +361,124 @@ public class LeagueScapePlugin extends Plugin
 	}
 
 	@Provides
-	LeagueScapeConfig provideConfig(ConfigManager configManager)
+	GridScapeConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(LeagueScapeConfig.class);
+		return configManager.getConfig(GridScapeConfig.class);
 	}
 
 	@Provides
 	@Singleton
-	com.leaguescape.points.PointsService providePointsService(ConfigManager configManager)
+	com.gridscape.points.PointsService providePointsService(ConfigManager configManager)
 	{
-		return new com.leaguescape.points.PointsService(configManager);
+		return new com.gridscape.points.PointsService(configManager);
 	}
 
 	@Provides
 	@Singleton
-	com.leaguescape.points.AreaCompletionService provideAreaCompletionService(ConfigManager configManager,
-		com.leaguescape.area.AreaGraphService areaGraphService, com.leaguescape.points.PointsService pointsService,
-		LeagueScapeConfig config, javax.inject.Provider<com.leaguescape.task.TaskGridService> taskGridServiceProvider)
+	com.gridscape.points.AreaCompletionService provideAreaCompletionService(ConfigManager configManager,
+		com.gridscape.area.AreaGraphService areaGraphService, com.gridscape.points.PointsService pointsService,
+		GridScapeConfig config, javax.inject.Provider<com.gridscape.task.TaskGridService> taskGridServiceProvider)
 	{
-		return new com.leaguescape.points.AreaCompletionService(configManager, areaGraphService, pointsService, config, taskGridServiceProvider);
+		return new com.gridscape.points.AreaCompletionService(configManager, areaGraphService, pointsService, config, taskGridServiceProvider);
 	}
 
 	@Provides
-	com.leaguescape.lock.LockEnforcer provideLockEnforcer(Client client, LeagueScapeConfig config, com.leaguescape.area.AreaGraphService areaGraphService)
+	com.gridscape.lock.LockEnforcer provideLockEnforcer(Client client, GridScapeConfig config, com.gridscape.area.AreaGraphService areaGraphService)
 	{
-		return new com.leaguescape.lock.LockEnforcer(client, config, areaGraphService);
+		return new com.gridscape.lock.LockEnforcer(client, config, areaGraphService);
 	}
 
 	@Provides
-	com.leaguescape.overlay.LockedRegionOverlay provideLockedRegionOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService, LeagueScapeConfig config)
+	com.gridscape.overlay.LockedRegionOverlay provideLockedRegionOverlay(Client client, com.gridscape.area.AreaGraphService areaGraphService, GridScapeConfig config)
 	{
-		return new com.leaguescape.overlay.LockedRegionOverlay(client, areaGraphService, config);
+		return new com.gridscape.overlay.LockedRegionOverlay(client, areaGraphService, config);
 	}
 
 	@Provides
-	com.leaguescape.overlay.TaskCompletionPopupOverlay provideTaskCompletionPopupOverlay(Client client)
+	com.gridscape.overlay.TaskCompletionPopupOverlay provideTaskCompletionPopupOverlay(Client client)
 	{
-		return new com.leaguescape.overlay.TaskCompletionPopupOverlay(client);
-	}
-
-	@Provides
-	@Singleton
-	com.leaguescape.wiki.OsrsWikiApiService provideOsrsWikiApiService()
-	{
-		return new com.leaguescape.wiki.OsrsWikiApiService();
+		return new com.gridscape.overlay.TaskCompletionPopupOverlay(client);
 	}
 
 	@Provides
 	@Singleton
-	com.leaguescape.wiki.WikiTaskGenerator provideWikiTaskGenerator(com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService)
+	com.gridscape.wiki.OsrsWikiApiService provideOsrsWikiApiService()
 	{
-		return new com.leaguescape.wiki.WikiTaskGenerator(osrsWikiApiService);
+		return new com.gridscape.wiki.OsrsWikiApiService();
 	}
 
 	@Provides
 	@Singleton
-	com.leaguescape.wiki.OsrsItemService provideOsrsItemService()
+	com.gridscape.wiki.WikiTaskGenerator provideWikiTaskGenerator(com.gridscape.wiki.OsrsWikiApiService osrsWikiApiService)
 	{
-		return new com.leaguescape.wiki.OsrsItemService();
+		return new com.gridscape.wiki.WikiTaskGenerator(osrsWikiApiService);
 	}
 
 	@Provides
 	@Singleton
-	com.leaguescape.task.TaskGridService provideTaskGridService(ConfigManager configManager, LeagueScapeConfig config,
-		com.leaguescape.points.PointsService pointsService,
-		com.leaguescape.points.AreaCompletionService areaCompletionService,
-		com.leaguescape.area.AreaGraphService areaGraphService,
+	com.gridscape.wiki.OsrsItemService provideOsrsItemService()
+	{
+		return new com.gridscape.wiki.OsrsItemService();
+	}
+
+	@Provides
+	@Singleton
+	com.gridscape.task.TaskGridService provideTaskGridService(ConfigManager configManager, GridScapeConfig config,
+		com.gridscape.points.PointsService pointsService,
+		com.gridscape.points.AreaCompletionService areaCompletionService,
+		com.gridscape.area.AreaGraphService areaGraphService,
 		Client client)
 	{
-		return new com.leaguescape.task.TaskGridService(configManager, config, pointsService, areaCompletionService, areaGraphService, client);
+		return new com.gridscape.task.TaskGridService(configManager, config, pointsService, areaCompletionService, areaGraphService, client);
 	}
 
 	@Provides
-	com.leaguescape.overlay.LeagueScapeMapOverlay provideLeagueScapeMapOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
-		LeagueScapeConfig config, com.leaguescape.points.PointsService pointsService,
-		com.leaguescape.points.AreaCompletionService areaCompletionService,
+	com.gridscape.overlay.GridScapeMapOverlay provideGridScapeMapOverlay(Client client, com.gridscape.area.AreaGraphService areaGraphService,
+		GridScapeConfig config, com.gridscape.points.PointsService pointsService,
+		com.gridscape.points.AreaCompletionService areaCompletionService,
 		ConfigManager configManager,
-		com.leaguescape.task.TaskGridService taskGridService,
-		com.leaguescape.worldunlock.WorldUnlockService worldUnlockService,
-		com.leaguescape.wiki.OsrsWikiApiService osrsWikiApiService,
+		com.gridscape.task.TaskGridService taskGridService,
+		com.gridscape.worldunlock.WorldUnlockService worldUnlockService,
+		com.gridscape.wiki.OsrsWikiApiService osrsWikiApiService,
 		AudioPlayer audioPlayer, net.runelite.client.callback.ClientThread clientThread)
 	{
-		return new com.leaguescape.overlay.LeagueScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, configManager, taskGridService, worldUnlockService, osrsWikiApiService, audioPlayer, clientThread);
+		return new com.gridscape.overlay.GridScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, configManager, taskGridService, worldUnlockService, osrsWikiApiService, audioPlayer, clientThread);
 	}
 
 	@Provides
-	com.leaguescape.config.AreaEditOverlay provideAreaEditOverlay(Client client, com.leaguescape.area.AreaGraphService areaGraphService,
-		Provider<LeagueScapePlugin> pluginProvider)
+	com.gridscape.config.AreaEditOverlay provideAreaEditOverlay(Client client, com.gridscape.area.AreaGraphService areaGraphService,
+		Provider<GridScapePlugin> pluginProvider)
 	{
-		return new com.leaguescape.config.AreaEditOverlay(client, areaGraphService, pluginProvider);
-	}
-
-	@Provides
-	@Singleton
-	com.leaguescape.worldunlock.WorldUnlockService provideWorldUnlockService(ConfigManager configManager,
-		LeagueScapeConfig config,
-		com.leaguescape.points.PointsService pointsService,
-		com.leaguescape.task.TaskGridService taskGridService,
-		com.leaguescape.area.AreaGraphService areaGraphService)
-	{
-		return new com.leaguescape.worldunlock.WorldUnlockService(configManager, config, pointsService, taskGridService, areaGraphService);
+		return new com.gridscape.config.AreaEditOverlay(client, areaGraphService, pluginProvider);
 	}
 
 	@Provides
 	@Singleton
-	com.leaguescape.worldunlock.GlobalTaskListService provideGlobalTaskListService(ConfigManager configManager,
-		LeagueScapeConfig config,
-		com.leaguescape.points.PointsService pointsService,
-		com.leaguescape.worldunlock.WorldUnlockService worldUnlockService,
-		com.leaguescape.task.TaskGridService taskGridService)
+	com.gridscape.worldunlock.WorldUnlockService provideWorldUnlockService(ConfigManager configManager,
+		GridScapeConfig config,
+		com.gridscape.points.PointsService pointsService,
+		com.gridscape.task.TaskGridService taskGridService,
+		com.gridscape.area.AreaGraphService areaGraphService)
 	{
-		return new com.leaguescape.worldunlock.GlobalTaskListService(configManager, config, pointsService, worldUnlockService, taskGridService);
+		return new com.gridscape.worldunlock.WorldUnlockService(configManager, config, pointsService, taskGridService, areaGraphService);
 	}
 
 	@Provides
 	@Singleton
-	com.leaguescape.worldunlock.GoalTrackingService provideGoalTrackingService()
+	com.gridscape.worldunlock.GlobalTaskListService provideGlobalTaskListService(ConfigManager configManager,
+		GridScapeConfig config,
+		com.gridscape.points.PointsService pointsService,
+		com.gridscape.worldunlock.WorldUnlockService worldUnlockService,
+		com.gridscape.task.TaskGridService taskGridService)
 	{
-		return new com.leaguescape.worldunlock.GoalTrackingService();
+		return new com.gridscape.worldunlock.GlobalTaskListService(configManager, config, pointsService, worldUnlockService, taskGridService);
+	}
+
+	@Provides
+	@Singleton
+	com.gridscape.worldunlock.GoalTrackingService provideGoalTrackingService()
+	{
+		return new com.gridscape.worldunlock.GoalTrackingService();
 	}
 
 	private void loadUnlockedAreas()
@@ -378,7 +492,7 @@ public class LeagueScapePlugin extends Plugin
 		else
 		{
 			// In World Unlock mode, starter stays locked until unlocked on the World Unlock grid
-			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+			if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 			{
 				areaGraphService.setUnlockedAreaIds(Collections.emptySet());
 				persistUnlockedAreas();
@@ -402,7 +516,7 @@ public class LeagueScapePlugin extends Plugin
 	}
 
 	/**
-	 * Opens the LeagueScape Rules and Setup popup (moveable, resizable) with tabs: Rules, Game Mode,
+	 * Opens the GridScape Rules and Setup popup (moveable, resizable) with tabs: Rules, Game Mode,
 	 * Area Configuration, Controls. Call from the main panel's "Rules & Setup" button.
 	 */
 	public void openSetupDialog()
@@ -415,7 +529,7 @@ public class LeagueScapePlugin extends Plugin
 				if (w instanceof java.awt.Frame)
 					owner = (java.awt.Frame) w;
 			}
-			com.leaguescape.config.LeagueScapeSetupFrame frame = new com.leaguescape.config.LeagueScapeSetupFrame(
+			com.gridscape.config.GridScapeSetupFrame frame = new com.gridscape.config.GridScapeSetupFrame(
 				owner, this, areaGraphService, taskGridServiceProvider.get(), configManager, config,
 				pointsService, areaCompletionService, osrsWikiApiService, wikiTaskGenerator, client, audioPlayer);
 			// Default size: height = 1/3 of RuneLite window (at least 400), width 520–700
@@ -445,13 +559,13 @@ public class LeagueScapePlugin extends Plugin
 			return true;
 		if (areaGraphService.getUnlockedAreaIds().size() > 0)
 			return true;
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK && worldUnlockService.getUnlockedIds().size() > 0)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK && worldUnlockService.getUnlockedIds().size() > 0)
 			return true;
 		return false;
 	}
 
 	/**
-	 * Resets all LeagueScape progress: points to 0, all area unlocks cleared, all task completions
+	 * Resets all GridScape progress: points to 0, all area unlocks cleared, all task completions
 	 * cleared, area completion state (points-to-complete mode) cleared, and task grids reshuffled.
 	 * Does not remove custom areas or custom tasks.
 	 */
@@ -459,7 +573,7 @@ public class LeagueScapePlugin extends Plugin
 	{
 		pointsService.setStartingPoints(config.startingPoints());
 		// World Unlock: no areas on the map until the player unlocks them on the grid (full reset).
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
 			configManager.setConfiguration(STATE_GROUP, KEY_UNLOCKED_AREAS, "");
 			areaGraphService.setUnlockedAreaIds(Collections.emptySet());
@@ -479,7 +593,7 @@ public class LeagueScapePlugin extends Plugin
 			}
 		}
 		List<String> areaIds = areaGraphService.getAreas().stream()
-			.map(com.leaguescape.data.Area::getId)
+			.map(com.gridscape.data.Area::getId)
 			.collect(Collectors.toList());
 		taskGridServiceProvider.get().clearAllTaskProgress(areaIds);
 		worldUnlockService.clearUnlocked();
@@ -489,7 +603,7 @@ public class LeagueScapePlugin extends Plugin
 		configManager.setConfiguration(STATE_GROUP, "completedAreas", "");
 		areaCompletionService.loadFromConfig();
 		taskGridServiceProvider.get().incrementGridResetCounter();
-		log.info("LeagueScape progress reset.");
+		log.info("GridScape progress reset.");
 
 		// Update overlays and UI to match reset: close floating panels then clear saved bounds (order avoids re-saving after unset).
 		SwingUtilities.invokeLater(() -> {
@@ -499,7 +613,7 @@ public class LeagueScapePlugin extends Plugin
 			globalTasksDialogRef = null;
 			disposeTrackedDialog(goalsDialogRef);
 			goalsDialogRef = null;
-			leagueScapeMapOverlay.closeProgressPopupsOnEdt();
+			gridScapeMapOverlay.closeProgressPopupsOnEdt();
 			PanelBoundsStore.clearPanelBounds(configManager);
 		});
 		clientThread.invokeLater(() -> {
@@ -623,10 +737,10 @@ public class LeagueScapePlugin extends Plugin
 		clientThread.invoke(() -> {
 			if (client.getLocalPlayer() == null) return;
 			net.runelite.api.coords.WorldPoint playerLoc = client.getLocalPlayer().getWorldLocation();
-			com.leaguescape.data.Area area = areaGraphService.getAreaAt(playerLoc);
+			com.gridscape.data.Area area = areaGraphService.getAreaAt(playerLoc);
 			if (area == null) return;
 			if (!areaGraphService.getUnlockedAreaIds().contains(area.getId())) return;
-			leagueScapeMapOverlay.openTaskGridForArea(area);
+			gridScapeMapOverlay.openTaskGridForArea(area);
 		});
 	}
 
@@ -644,7 +758,7 @@ public class LeagueScapePlugin extends Plugin
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
 			JDialog dialog = new JDialog(owner, "World Unlock", false);
 			dialog.setUndecorated(true);
-			com.leaguescape.worldunlock.WorldUnlockGridPanel panel = new com.leaguescape.worldunlock.WorldUnlockGridPanel(
+			com.gridscape.worldunlock.WorldUnlockGridPanel panel = new com.gridscape.worldunlock.WorldUnlockGridPanel(
 				worldUnlockService, pointsService,
 				dialog::dispose,
 				this::openGlobalTaskList,
@@ -653,11 +767,11 @@ public class LeagueScapePlugin extends Plugin
 				client, clientThread, audioPlayer, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
-			dialog.setMinimumSize(com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED);
+			dialog.setMinimumSize(com.gridscape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED);
 			PanelBoundsStore.applyBounds(dialog, configManager,
 				PanelBoundsStore.KEY_WORLD_UNLOCK, client.getCanvas());
 			java.awt.Rectangle wub = dialog.getBounds();
-			java.awt.Dimension wpref = com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED;
+			java.awt.Dimension wpref = com.gridscape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED;
 			// Keep saved position only; size is always the shared panel design (not affected by other windows).
 			dialog.setBounds(wub.x, wub.y, wpref.width, wpref.height);
 			PanelBoundsStore.installPersistence(dialog, configManager,
@@ -692,15 +806,15 @@ public class LeagueScapePlugin extends Plugin
 			java.awt.Window w = SwingUtilities.windowForComponent(client.getCanvas());
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
 			JDialog dialog = new JDialog(owner, "Goals", false);
-			com.leaguescape.worldunlock.GoalTrackingPanel panel = new com.leaguescape.worldunlock.GoalTrackingPanel(
+			com.gridscape.worldunlock.GoalTrackingPanel panel = new com.gridscape.worldunlock.GoalTrackingPanel(
 				goalTrackingService, worldUnlockService, dialog::dispose, client, audioPlayer);
 			dialog.setContentPane(panel);
 			dialog.pack();
 			dialog.setSize(380, 300);
-			com.leaguescape.util.PanelBoundsStore.applyBounds(dialog, configManager,
-				com.leaguescape.util.PanelBoundsStore.KEY_GOALS, client.getCanvas());
-			com.leaguescape.util.PanelBoundsStore.installPersistence(dialog, configManager,
-				com.leaguescape.util.PanelBoundsStore.KEY_GOALS);
+			com.gridscape.util.PanelBoundsStore.applyBounds(dialog, configManager,
+				com.gridscape.util.PanelBoundsStore.KEY_GOALS, client.getCanvas());
+			com.gridscape.util.PanelBoundsStore.installPersistence(dialog, configManager,
+				com.gridscape.util.PanelBoundsStore.KEY_GOALS);
 			dialog.addWindowListener(new WindowAdapter()
 			{
 				@Override
@@ -726,8 +840,8 @@ public class LeagueScapePlugin extends Plugin
 			{
 				globalTasksDialogRef.toFront();
 				java.awt.Component c = globalTasksDialogRef.getContentPane().getComponent(0);
-				if (c instanceof com.leaguescape.worldunlock.GlobalTaskListPanel)
-					((com.leaguescape.worldunlock.GlobalTaskListPanel) c).syncTaskHubVisibilityAndPosition();
+				if (c instanceof com.gridscape.worldunlock.GlobalTaskListPanel)
+					((com.gridscape.worldunlock.GlobalTaskListPanel) c).syncTaskHubVisibilityAndPosition();
 				return;
 			}
 			java.awt.Frame owner = null;
@@ -735,15 +849,15 @@ public class LeagueScapePlugin extends Plugin
 			if (w instanceof java.awt.Frame) owner = (java.awt.Frame) w;
 			JDialog dialog = new JDialog(owner, "Global tasks", false);
 			dialog.setUndecorated(true);
-			com.leaguescape.worldunlock.GlobalTaskListPanel panel = new com.leaguescape.worldunlock.GlobalTaskListPanel(
+			com.gridscape.worldunlock.GlobalTaskListPanel panel = new com.gridscape.worldunlock.GlobalTaskListPanel(
 				globalTaskListService, pointsService, dialog::dispose, this::openWorldUnlockGrid, this::openSetupDialog, client, audioPlayer, clientThread, dialog);
 			dialog.setContentPane(panel);
 			dialog.pack();
-			dialog.setMinimumSize(com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED);
+			dialog.setMinimumSize(com.gridscape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED);
 			PanelBoundsStore.applyBounds(dialog, configManager,
 				PanelBoundsStore.KEY_GLOBAL_TASKS, client.getCanvas());
 			java.awt.Rectangle gb = dialog.getBounds();
-			java.awt.Dimension pref = com.leaguescape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED;
+			java.awt.Dimension pref = com.gridscape.worldunlock.WorldUnlockUiDimensions.PANEL_PREFERRED;
 			// Same fixed size as World Unlock. Do not use task hub width here — hub is a separate dialog.
 			// Stale wide saves (e.g. old combined layout) are replaced so the grid panel matches World Unlock.
 			dialog.setBounds(gb.x, gb.y, pref.width, pref.height);
@@ -780,10 +894,10 @@ public class LeagueScapePlugin extends Plugin
 	{
 		if (client.getLocalPlayer() == null) return;
 		net.runelite.api.coords.WorldPoint playerLoc = client.getLocalPlayer().getWorldLocation();
-		com.leaguescape.data.Area area = areaGraphService.getAreaAt(playerLoc);
+		com.gridscape.data.Area area = areaGraphService.getAreaAt(playerLoc);
 		if (area == null) return;
 		if (!areaGraphService.getUnlockedAreaIds().contains(area.getId())) return;
-		leagueScapeMapOverlay.openTaskGridForArea(area);
+		gridScapeMapOverlay.openTaskGridForArea(area);
 	}
 
 	private void updateMapMouseListener()
@@ -792,12 +906,12 @@ public class LeagueScapePlugin extends Plugin
 		boolean mapOpen = mapContainer != null && !mapContainer.isHidden();
 		if (mapOpen && !mapMouseListenerRegistered)
 		{
-			mouseManager.registerMouseListener(leagueScapeMapOverlay);
+			mouseManager.registerMouseListener(gridScapeMapOverlay);
 			mapMouseListenerRegistered = true;
 		}
 		else if (!mapOpen && mapMouseListenerRegistered)
 		{
-			mouseManager.unregisterMouseListener(leagueScapeMapOverlay);
+			mouseManager.unregisterMouseListener(gridScapeMapOverlay);
 			mapMouseListenerRegistered = false;
 		}
 	}
@@ -817,13 +931,13 @@ public class LeagueScapePlugin extends Plugin
 		boolean alreadyUnlocked = areaGraphService.getUnlockedAreaIds().contains(areaId);
 		areaGraphService.addUnlocked(areaId);
 		persistUnlockedAreas();
-		if (!alreadyUnlocked && config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		if (!alreadyUnlocked && config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
 			globalTaskListService.resetRepeatableSkillTaskProgressAfterAreaUnlock();
 		}
 	}
 
-	// --- Area config editing API (used by LeagueScapeConfigPanel, AreaEditOverlay, LeagueScapeMapOverlay) ---
+	// --- Area config editing API (used by GridScapeConfigPanel, AreaEditOverlay, GridScapeMapOverlay) ---
 
 	public void startEditing(String areaId, List<int[]> initialCorners)
 	{

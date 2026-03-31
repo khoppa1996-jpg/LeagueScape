@@ -1,4 +1,4 @@
-package com.leaguescape.constants;
+package com.gridscape.constants;
 
 import java.util.Arrays;
 import java.util.Collections;

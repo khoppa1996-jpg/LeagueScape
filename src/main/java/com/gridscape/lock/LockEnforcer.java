@@ -1,7 +1,7 @@
-package com.leaguescape.lock;
+package com.gridscape.lock;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.area.AreaGraphService;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.area.AreaGraphService;
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -29,7 +29,7 @@ import net.runelite.client.util.Text;
 public class LockEnforcer
 {
 	private final Client client;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 	private final AreaGraphService areaGraphService;
 
 	/** Tile under the cursor, updated every tick so we have it when menu events fire. */
@@ -37,7 +37,7 @@ public class LockEnforcer
 	private boolean inLockedZone = false;
 
 	@Inject
-	public LockEnforcer(Client client, LeagueScapeConfig config, AreaGraphService areaGraphService)
+	public LockEnforcer(Client client, GridScapeConfig config, AreaGraphService areaGraphService)
 	{
 		this.client = client;
 		this.config = config;

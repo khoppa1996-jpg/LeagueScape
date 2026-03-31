@@ -1,4 +1,4 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import java.awt.Component;
 import java.awt.GraphicsDevice;
@@ -10,7 +10,7 @@ import javax.swing.JDialog;
 import net.runelite.client.config.ConfigManager;
 
 /**
- * Persists floating panel bounds in {@link LeagueScapeConfigConstants#STATE_GROUP} so dialogs reopen
+ * Persists floating panel bounds in {@link GridScapeConfigConstants#STATE_GROUP} so dialogs reopen
  * where the user left them; cleared on progress reset.
  */
 public final class PanelBoundsStore
@@ -27,7 +27,7 @@ public final class PanelBoundsStore
 
 	public static void applyBounds(JDialog dialog, ConfigManager cm, String key, Component canvas)
 	{
-		String raw = cm.getConfiguration(LeagueScapeConfigConstants.STATE_GROUP, key);
+		String raw = cm.getConfiguration(GridScapeConfigConstants.STATE_GROUP, key);
 		Rectangle r = parseRectangle(raw);
 		if (r != null && r.width >= MIN_W && r.height >= MIN_H)
 		{
@@ -49,7 +49,7 @@ public final class PanelBoundsStore
 				return;
 			}
 			Rectangle b = dialog.getBounds();
-			cm.setConfiguration(LeagueScapeConfigConstants.STATE_GROUP, key,
+			cm.setConfiguration(GridScapeConfigConstants.STATE_GROUP, key,
 				b.x + "," + b.y + "," + b.width + "," + b.height);
 		};
 		dialog.addComponentListener(new ComponentAdapter()
@@ -70,10 +70,10 @@ public final class PanelBoundsStore
 
 	public static void clearPanelBounds(ConfigManager cm)
 	{
-		cm.unsetConfiguration(LeagueScapeConfigConstants.STATE_GROUP, KEY_WORLD_UNLOCK);
-		cm.unsetConfiguration(LeagueScapeConfigConstants.STATE_GROUP, KEY_GLOBAL_TASKS);
-		cm.unsetConfiguration(LeagueScapeConfigConstants.STATE_GROUP, KEY_AREA_TASK_GRID);
-		cm.unsetConfiguration(LeagueScapeConfigConstants.STATE_GROUP, KEY_GOALS);
+		cm.unsetConfiguration(GridScapeConfigConstants.STATE_GROUP, KEY_WORLD_UNLOCK);
+		cm.unsetConfiguration(GridScapeConfigConstants.STATE_GROUP, KEY_GLOBAL_TASKS);
+		cm.unsetConfiguration(GridScapeConfigConstants.STATE_GROUP, KEY_AREA_TASK_GRID);
+		cm.unsetConfiguration(GridScapeConfigConstants.STATE_GROUP, KEY_GOALS);
 	}
 
 	private static Rectangle parseRectangle(String raw)

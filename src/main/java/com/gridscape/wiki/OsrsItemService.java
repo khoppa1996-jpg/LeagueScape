@@ -1,4 +1,4 @@
-package com.leaguescape.wiki;
+package com.gridscape.wiki;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,11 +32,11 @@ public class OsrsItemService
 	/** Full list of items: id and name. JSON object keyed by id, values are { "id", "name" }. */
 	public static final String ITEMS_SUMMARY_URL = "https://www.osrsbox.com/osrsbox-db/items-summary.json";
 
-	private static final String USER_AGENT = "LeagueScape/1.0 (OSRS items; RuneLite plugin)";
+	private static final String USER_AGENT = "GridScape/1.0 (OSRS items; RuneLite plugin)";
 	private static final int REQUEST_TIMEOUT_MS = 30_000;
 
 	private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-		Thread t = new Thread(r, "LeagueScape-OsrsItems");
+		Thread t = new Thread(r, "GridScape-OsrsItems");
 		t.setDaemon(true);
 		return t;
 	});

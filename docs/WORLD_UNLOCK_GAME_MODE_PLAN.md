@@ -201,6 +201,6 @@ To run **World Unlock** mode end-to-end:
 - **src/main/resources/areas.json** – Area polygons and metadata.
 - **src/main/resources/quest_tiles.json** – Quest tile reference.
 - **src/main/resources/boss_tiles.json** – Boss reference (requirements, collection log).
-- **LeagueScapeConfig.UnlockMode** – Current area-only modes (POINT_BUY, POINTS_TO_COMPLETE).
+- **GridScapeConfig.UnlockMode** – Current area-only modes (POINT_BUY, POINTS_TO_COMPLETE).
 
 This plan defines the **World Unlock** game mode so that implementation can follow a single, consistent design.

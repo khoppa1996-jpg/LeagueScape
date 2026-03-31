@@ -1,4 +1,4 @@
-package com.leaguescape.wiki;
+package com.gridscape.wiki;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -38,11 +38,11 @@ import lombok.extern.slf4j.Slf4j;
 public class OsrsWikiApiService
 {
 	private static final String API_BASE = "https://oldschool.runescape.wiki/api.php";
-	private static final String USER_AGENT = "LeagueScape/1.0 (OSRS Wiki API; RuneLite plugin)";
+	private static final String USER_AGENT = "GridScape/1.0 (OSRS Wiki API; RuneLite plugin)";
 	private static final int REQUEST_TIMEOUT_MS = 15_000;
 
 	private final ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-		Thread t = new Thread(r, "LeagueScape-WikiApi");
+		Thread t = new Thread(r, "GridScape-WikiApi");
 		t.setDaemon(true);
 		return t;
 	});

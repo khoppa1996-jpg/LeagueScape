@@ -1,15 +1,15 @@
-package com.leaguescape.config;
+package com.gridscape.config;
 
 /**
  * All user-visible copy for the Rules &amp; Setup dialog (tabs, instructions, dialogs).
  * Edit strings here only; UI classes reference these constants.
  */
-public final class LeagueScapeSetupStrings
+public final class GridScapeSetupStrings
 {
-	private LeagueScapeSetupStrings() {}
+	private GridScapeSetupStrings() {}
 
 	/** Window title (also shown in the title row). */
-	public static final String FRAME_WINDOW_TITLE = "LeagueScape – Rules and Setup";
+	public static final String FRAME_WINDOW_TITLE = "GridScape – Rules and Setup";
 
 	public static final String TAB_RULES = "Rules";
 	public static final String TAB_GAME_MODE = "Game Mode";
@@ -17,18 +17,18 @@ public final class LeagueScapeSetupStrings
 	public static final String TAB_CONTROLS = "Controls";
 
 	// --- Rules tab ---
-	public static final String RULES_MAIN = "Welcome to LeagueScape. This window opens once per RuneScape account the first time you run the plugin "
-		+ "(after you log in). You can reopen it anytime from the LeagueScape sidebar panel or the task icon menu.\n\n"
-		+ "LeagueScape is an area-based progression plugin for Old School RuneScape. You pick a "
+	public static final String RULES_MAIN = "Welcome to GridScape. This window opens once per RuneScape account the first time you run the plugin "
+		+ "(after you log in). You can reopen it anytime from the GridScape sidebar panel or the task icon menu.\n\n"
+		+ "GridScape is an area-based progression plugin for Old School RuneScape. You pick a "
 		+ "starting area and starting points in Game Mode. "
 		+ "Complete tasks to earn points, then spend them to unlock more content depending on how you configure the game.\n\n"
 		+ "— Game modes (set in Game Mode tab) —\n\n"
 		+ "• Point buy: Areas are linked by neighbors. Spend points to unlock any neighboring area that you have not unlocked yet. "
-		+ "Each area has its own task grid; open tasks from the task icon (minimap) or the LeagueScape panel.\n\n"
+		+ "Each area has its own task grid; open tasks from the task icon (minimap) or the GridScape panel.\n\n"
 		+ "• Points to complete: You earn points in your current area. When you spend enough to meet the \"points to complete\" "
 		+ "target for that area, you may unlock one of its connected neighbors (as configured). Task grids work per area like Point buy.\n\n"
 		+ "• World Unlock: You spend points on a spiral grid of unlock tiles (skills, quests, bosses, areas, diaries). "
-		+ "Unlocking tiles reveals tasks and can gate areas. Use the World Unlocks grid from the task icon menu or the LeagueScape panel; "
+		+ "Unlocking tiles reveals tasks and can gate areas. Use the World Unlocks grid from the task icon menu or the GridScape panel; "
 		+ "the global task grid lists tasks from your unlocked tiles.\n\n"
 		+ "— Ring completion bonus (task grids) —\n\n"
 		+ "Task grids are built in rings around the center. When you claim the last task in a full ring "
@@ -55,7 +55,7 @@ public final class LeagueScapeSetupStrings
 		+ "• Shift + Right-click on an existing corner: Choose \"Move\" to enter move mode; then click another tile and choose \"Set new corner\" to move the corner there, or \"Cancel move\" to cancel.\n\n"
 		+ "Area editing – World map (when editing an area):\n"
 		+ "• Right-click: Move corner, Remove corner, Fill using others' corners, Begin new polygon, Add neighbors, Done editing, Cancel editing.\n\n"
-		+ "Other: Open the world map and right click an area to see its details and unlock/tasks. Use the LeagueScape sidebar panel for Tasks and World Unlock.";
+		+ "Other: Open the world map and right click an area to see its details and unlock/tasks. Use the GridScape sidebar panel for Tasks and World Unlock.";
 
 	// --- Game Mode tab ---
 	public static final String GAME_MODE_UNLOCK_MODE = "Unlock mode:";
@@ -81,7 +81,7 @@ public final class LeagueScapeSetupStrings
 	public static final String GAME_MODE_UPDATE_RULES_DONE = "Starting rules updated.";
 	public static final String GAME_MODE_UPDATE_RULES_DONE_TITLE = "Update complete";
 
-	public static final String GAME_MODE_RESET_CONFIRM = "Reset all LeagueScape progress (points, area unlocks, and task completions)? This cannot be undone.";
+	public static final String GAME_MODE_RESET_CONFIRM = "Reset all GridScape progress (points, area unlocks, and task completions)? This cannot be undone.";
 	public static final String GAME_MODE_RESET_TITLE = "Reset progress";
 	public static final String GAME_MODE_RESET_INPUT_NAME = "Enter your in-game character name to confirm:";
 	public static final String GAME_MODE_RESET_INPUT_NAME_TITLE = "Confirm reset";

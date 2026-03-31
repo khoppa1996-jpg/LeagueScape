@@ -1,4 +1,4 @@
-package com.leaguescape.area;
+package com.gridscape.area;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,7 +11,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
-import com.leaguescape.data.Area;
+import com.gridscape.data.Area;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
@@ -40,7 +40,7 @@ import net.runelite.client.config.ConfigManager;
 public class AreaGraphService
 {
 	private static final String AREAS_RESOURCE = "areas.json";
-	private static final String CONFIG_GROUP = "leaguescapeConfig";
+	private static final String CONFIG_GROUP = com.gridscape.util.GridScapeConfigConstants.CONFIG_GROUP_CUSTOM_AREAS;
 	private static final String KEY_CUSTOM_AREAS = "customAreas";
 	private static final String KEY_REMOVED_AREAS = "removedAreas";
 

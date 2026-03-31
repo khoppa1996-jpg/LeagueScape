@@ -1,7 +1,7 @@
-package com.leaguescape.data;
+package com.gridscape.data;
 
 /**
- * Runtime status of an area when using LeagueScape.
+ * Runtime status of an area when using GridScape.
  * Areas defined in areas.json can be in one of these states during play.
  */
 public enum AreaStatus

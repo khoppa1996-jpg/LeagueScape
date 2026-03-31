@@ -1,18 +1,18 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.LeagueScapeSounds;
-import com.leaguescape.grid.GridPos;
-import com.leaguescape.util.FogTileCompositor;
-import com.leaguescape.util.FrontierFogHelpers;
-import com.leaguescape.util.GridClaimFocusAnimation;
-import com.leaguescape.util.RingBonusPopup;
-import com.leaguescape.icons.IconCache;
-import com.leaguescape.icons.IconResolver;
-import com.leaguescape.icons.IconResources;
-import com.leaguescape.points.PointsService;
-import com.leaguescape.task.TaskState;
-import com.leaguescape.task.TaskTile;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.GridScapeSounds;
+import com.gridscape.grid.GridPos;
+import com.gridscape.util.FogTileCompositor;
+import com.gridscape.util.FrontierFogHelpers;
+import com.gridscape.util.GridClaimFocusAnimation;
+import com.gridscape.util.RingBonusPopup;
+import com.gridscape.icons.IconCache;
+import com.gridscape.icons.IconResolver;
+import com.gridscape.icons.IconResources;
+import com.gridscape.points.PointsService;
+import com.gridscape.task.TaskState;
+import com.gridscape.task.TaskTile;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -61,8 +61,8 @@ import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.util.ImageUtil;
-import com.leaguescape.util.LeagueScapeFrameChromePanel;
-import com.leaguescape.util.LeagueScapeSwingUtil;
+import com.gridscape.util.GridScapeFrameChromePanel;
+import com.gridscape.util.GridScapeSwingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +73,8 @@ import org.slf4j.LoggerFactory;
 public class GlobalTaskListPanel extends JPanel
 {
 	private static final Logger log = LoggerFactory.getLogger(GlobalTaskListPanel.class);
-	private static final Color POPUP_BG = com.leaguescape.util.LeagueScapeColors.POPUP_BG;
-	private static final Color POPUP_TEXT = com.leaguescape.util.LeagueScapeColors.POPUP_TEXT;
+	private static final Color POPUP_BG = com.gridscape.util.GridScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = com.gridscape.util.GridScapeColors.POPUP_TEXT;
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int BASE_TILE_SIZE = 72;
@@ -155,18 +155,18 @@ public class GlobalTaskListPanel extends JPanel
 		this.parentDialog = parentDialog;
 		this.layoutSeed = globalTaskListService.getOrCreateLayoutSeed();
 
-		padlockImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "padlock_icon.png");
-		checkmarkImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "complete_checkmark.png");
-		tileBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_square.png");
-		interfaceBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "interface_template.png");
-		buttonRect = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_rectangle.png");
-		xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
+		padlockImg = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
+		checkmarkImg = ImageUtil.loadImageResource(GridScapePlugin.class, "complete_checkmark.png");
+		tileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_square.png");
+		interfaceBg = ImageUtil.loadImageResource(GridScapePlugin.class, "interface_template.png");
+		buttonRect = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_rectangle.png");
+		xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
 		defaultTaskIcon = loadDefaultTaskIcon();
-		fogTileBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_base.png");
-		fogTopLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_top_left.png");
-		fogTopRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_top_right.png");
-		fogBottomLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_bottom_left.png");
-		fogBottomRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_bottom_right.png");
+		fogTileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_base.png");
+		fogTopLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_left.png");
+		fogTopRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_right.png");
+		fogBottomLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_bottom_left.png");
+		fogBottomRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_bottom_right.png");
 
 		setLayout(new BorderLayout(8, 8));
 		setBackground(POPUP_BG);
@@ -190,12 +190,12 @@ public class GlobalTaskListPanel extends JPanel
 		titleRow.add(titleLabel, BorderLayout.CENTER);
 		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 		closeBtn.addActionListener(e -> {
-			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			playSound(GridScapeSounds.BUTTON_PRESS);
 			if (onClose != null) onClose.run();
 		});
 		titleRow.add(closeBtn, BorderLayout.EAST);
 		header.add(titleRow, BorderLayout.NORTH);
-		LeagueScapeSwingUtil.installUndecoratedWindowDrag(parentDialog, titleRow);
+		GridScapeSwingUtil.installUndecoratedWindowDrag(parentDialog, titleRow);
 		add(header, BorderLayout.NORTH);
 
 		gridPanel = new JPanel();
@@ -258,14 +258,14 @@ public class GlobalTaskListPanel extends JPanel
 		westButtons.setOpaque(false);
 		JButton worldUnlockBtn = newRectangleButton("World Unlock", buttonRect, POPUP_TEXT);
 		worldUnlockBtn.addActionListener(e -> {
-			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			playSound(GridScapeSounds.BUTTON_PRESS);
 			if (onClose != null) onClose.run();
 			if (onOpenWorldUnlock != null) onOpenWorldUnlock.run();
 		});
 		westButtons.add(worldUnlockBtn);
 		JButton rulesSetupBtn = newRectangleButton("Rules & Setup", buttonRect, POPUP_TEXT);
 		rulesSetupBtn.addActionListener(e -> {
-			playSound(LeagueScapeSounds.BUTTON_PRESS);
+			playSound(GridScapeSounds.BUTTON_PRESS);
 			if (onOpenRulesSetup != null) onOpenRulesSetup.run();
 		});
 		westButtons.add(rulesSetupBtn);
@@ -320,24 +320,24 @@ public class GlobalTaskListPanel extends JPanel
 			return taskHubPanel;
 		taskHubPanel = new GlobalTaskHub(globalTaskListService, layoutSeed,
 			this::focusTile,
-			() -> playSound(LeagueScapeSounds.BUTTON_PRESS),
+			() -> playSound(GridScapeSounds.BUTTON_PRESS),
 			parentDialog != null ? parentDialog : client.getCanvas(),
 			this::scheduleHubDataReload,
 			buttonRect,
 			tileBg,
 			defaultTaskIcon);
 
-		BufferedImage fill = ImageUtil.loadImageResource(LeagueScapePlugin.class, "fill_color.png");
-		BufferedImage bTop = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_top.png");
-		BufferedImage bBottom = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_bottom.png");
-		BufferedImage bLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_left.png");
-		BufferedImage bRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "border_right.png");
-		BufferedImage cTopLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "top_left_corner.png");
-		BufferedImage cTopRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "top_right_corner.png");
-		BufferedImage cBottomLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "bottom_left_corner.png");
-		BufferedImage cBottomRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "bottom_right_corner.png");
+		BufferedImage fill = ImageUtil.loadImageResource(GridScapePlugin.class, "fill_color.png");
+		BufferedImage bTop = ImageUtil.loadImageResource(GridScapePlugin.class, "border_top.png");
+		BufferedImage bBottom = ImageUtil.loadImageResource(GridScapePlugin.class, "border_bottom.png");
+		BufferedImage bLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "border_left.png");
+		BufferedImage bRight = ImageUtil.loadImageResource(GridScapePlugin.class, "border_right.png");
+		BufferedImage cTopLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "top_left_corner.png");
+		BufferedImage cTopRight = ImageUtil.loadImageResource(GridScapePlugin.class, "top_right_corner.png");
+		BufferedImage cBottomLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "bottom_left_corner.png");
+		BufferedImage cBottomRight = ImageUtil.loadImageResource(GridScapePlugin.class, "bottom_right_corner.png");
 
-		LeagueScapeFrameChromePanel chrome = new LeagueScapeFrameChromePanel(
+		GridScapeFrameChromePanel chrome = new GridScapeFrameChromePanel(
 			fill, cTopLeft, cTopRight, cBottomLeft, cBottomRight, bTop, bBottom, bLeft, bRight);
 		chrome.setLayout(new BorderLayout(0, 0));
 		JPanel hubInner = new JPanel(new BorderLayout(0, 0));
@@ -485,7 +485,7 @@ public class GlobalTaskListPanel extends JPanel
 			{
 				String cacheKey = tile.getTaskType() != null ? ("type:" + tile.getTaskType()) : tile.getDisplayName();
 				if (tile.getBossId() != null && !tile.getBossId().isEmpty()
-					&& !com.leaguescape.constants.TaskTypes.isCollectionLogType(tile.getTaskType()))
+					&& !com.gridscape.constants.TaskTypes.isCollectionLogType(tile.getTaskType()))
 					cacheKey = "boss:" + tile.getBossId();
 				BufferedImage raw = rawTaskIconCache.get(cacheKey);
 				if (raw == null)
@@ -593,7 +593,7 @@ public class GlobalTaskListPanel extends JPanel
 	{
 		if (taskHubPanel == null || taskHubDialog == null)
 			return;
-		playSound(LeagueScapeSounds.BUTTON_PRESS);
+		playSound(GridScapeSounds.BUTTON_PRESS);
 		taskHubSidebarVisible = !taskHubSidebarVisible;
 		if (taskHubSidebarVisible)
 		{
@@ -733,7 +733,7 @@ public class GlobalTaskListPanel extends JPanel
 				JPopupMenu menu = new JPopupMenu();
 				JMenuItem item = new JMenuItem(bookmarked ? "Remove bookmark" : "Add bookmark…");
 				item.addActionListener(ev -> {
-					playSound(LeagueScapeSounds.BUTTON_PRESS);
+					playSound(GridScapeSounds.BUTTON_PRESS);
 					if (bookmarked)
 						globalTaskListService.removeTaskHubBookmark(r, c);
 					else
@@ -909,11 +909,11 @@ public class GlobalTaskListPanel extends JPanel
 		{
 			if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
 			{
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.LOCKED, client);
 				JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
 				return;
 			}
-			playSound(LeagueScapeSounds.TASK_COMPLETE);
+			playSound(GridScapeSounds.TASK_COMPLETE);
 			globalTaskListService.claimCenter();
 			startClaimFocusAnimation(0, 0);
 			return;
@@ -923,19 +923,19 @@ public class GlobalTaskListPanel extends JPanel
 		{
 			if (!globalTaskListService.isStarterAreaUnlockedOnGrid())
 			{
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.LOCKED, client);
 				JOptionPane.showMessageDialog(parentDialog, "Unlock the starter area on the World Unlock grid first.");
 				return;
 			}
 			String key = GlobalTaskListService.taskKeyFromName(tile.getDisplayName());
-			playSound(LeagueScapeSounds.TASK_COMPLETE);
+			playSound(GridScapeSounds.TASK_COMPLETE);
 			int ringBonus = globalTaskListService.claimTask(key, tile.getRow(), tile.getCol());
 			showRingBonusPopupIfNeeded(ringBonus, tile.getRow(), tile.getCol());
 			startClaimFocusAnimation(tile.getRow(), tile.getCol());
 			return;
 		}
 
-		playSound(LeagueScapeSounds.BUTTON_PRESS);
+		playSound(GridScapeSounds.BUTTON_PRESS);
 		showTaskDetailPopup(tile, state);
 	}
 
@@ -1044,7 +1044,7 @@ public class GlobalTaskListPanel extends JPanel
 		String windowTitle = tile.getDisplayName();
 		JDialog detail = new JDialog(frameOwner, windowTitle, false);
 		detail.setUndecorated(true);
-		LeagueScapePlugin.registerEscapeToClose(detail);
+		GridScapePlugin.registerEscapeToClose(detail);
 
 		JPanel content = new JPanel(new BorderLayout(8, 8));
 		content.setBackground(POPUP_BG);
@@ -1059,7 +1059,7 @@ public class GlobalTaskListPanel extends JPanel
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 13f));
 		headerPanel.add(titleLabel, BorderLayout.CENTER);
 		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
-		closeBtn.addActionListener(e -> { playSound(LeagueScapeSounds.BUTTON_PRESS); detail.dispose(); });
+		closeBtn.addActionListener(e -> { playSound(GridScapeSounds.BUTTON_PRESS); detail.dispose(); });
 		headerPanel.add(closeBtn, BorderLayout.EAST);
 		content.add(headerPanel, BorderLayout.NORTH);
 
@@ -1089,7 +1089,7 @@ public class GlobalTaskListPanel extends JPanel
 			JButton claimBtn = newRectangleButton("Claim", buttonRect, POPUP_TEXT);
 			int claimRow = tile.getRow(), claimCol = tile.getCol();
 			claimBtn.addActionListener(e -> {
-				playSound(LeagueScapeSounds.TASK_COMPLETE);
+				playSound(GridScapeSounds.TASK_COMPLETE);
 				int ringBonus = globalTaskListService.claimTask(taskKey, claimRow, claimCol);
 				detail.dispose();
 				if (ringBonus > 0)
@@ -1106,7 +1106,7 @@ public class GlobalTaskListPanel extends JPanel
 			JButton claimBtn = newRectangleButton("Claim", buttonRect, POPUP_TEXT);
 			int claimRow = tile.getRow(), claimCol = tile.getCol();
 			claimBtn.addActionListener(e -> {
-				playSound(LeagueScapeSounds.TASK_COMPLETE);
+				playSound(GridScapeSounds.TASK_COMPLETE);
 				globalTaskListService.setCompleted(taskKey);
 				int ringBonus = globalTaskListService.claimTask(taskKey, claimRow, claimCol);
 				detail.dispose();
@@ -1139,7 +1139,7 @@ public class GlobalTaskListPanel extends JPanel
 		detail.requestFocusInWindow();
 	}
 
-	// --- Icon helpers (same as LeagueScapeMapOverlay) ---
+	// --- Icon helpers (same as GridScapeMapOverlay) ---
 
 	private static BufferedImage loadRawLocalIcon(String taskType, String displayName, String bossId)
 	{
@@ -1150,7 +1150,7 @@ public class GlobalTaskListPanel extends JPanel
 
 	private static boolean isCollectionLogTask(String taskType, String displayName)
 	{
-		if (com.leaguescape.constants.TaskTypes.isCollectionLogType(taskType)) return true;
+		if (com.gridscape.constants.TaskTypes.isCollectionLogType(taskType)) return true;
 		return displayName != null && displayName.toLowerCase().contains("collection log");
 	}
 
@@ -1158,8 +1158,8 @@ public class GlobalTaskListPanel extends JPanel
 	{
 		if (taskType != null)
 		{
-			if (com.leaguescape.constants.TaskTypes.QUEST.equalsIgnoreCase(taskType)) return true;
-			if (com.leaguescape.constants.TaskTypes.isAchievementDiaryType(taskType)) return true;
+			if (com.gridscape.constants.TaskTypes.QUEST.equalsIgnoreCase(taskType)) return true;
+			if (com.gridscape.constants.TaskTypes.isAchievementDiaryType(taskType)) return true;
 		}
 		return isCollectionLogTask(taskType, displayName);
 	}
@@ -1178,18 +1178,18 @@ public class GlobalTaskListPanel extends JPanel
 	private void playSound(String sound)
 	{
 		if (audioPlayer != null && client != null)
-			LeagueScapeSounds.play(audioPlayer, sound, client);
+			GridScapeSounds.play(audioPlayer, sound, client);
 	}
 
 	private static JButton newRectangleButton(String text, BufferedImage buttonRect, Color textColor)
 	{
-		JButton b = com.leaguescape.util.LeagueScapeSwingUtil.newRectangleButton(text, buttonRect, textColor);
+		JButton b = com.gridscape.util.GridScapeSwingUtil.newRectangleButton(text, buttonRect, textColor);
 		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
 		return b;
 	}
 
 	private static JButton newPopupButtonWithIcon(BufferedImage iconImg, Color fallbackTextColor)
 	{
-		return com.leaguescape.util.LeagueScapeSwingUtil.newPopupButtonWithIcon(iconImg, fallbackTextColor);
+		return com.gridscape.util.GridScapeSwingUtil.newPopupButtonWithIcon(iconImg, fallbackTextColor);
 	}
 }

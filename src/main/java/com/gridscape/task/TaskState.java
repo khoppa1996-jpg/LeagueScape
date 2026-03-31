@@ -1,4 +1,4 @@
-package com.leaguescape.task;
+package com.gridscape.task;
 
 /**
  * Per-area, per-task state in the task grid.

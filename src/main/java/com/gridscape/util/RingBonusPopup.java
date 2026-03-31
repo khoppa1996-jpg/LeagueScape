@@ -1,7 +1,7 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.LeagueScapeSounds;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.GridScapeSounds;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -26,8 +26,8 @@ import net.runelite.client.util.ImageUtil;
  */
 public final class RingBonusPopup
 {
-	private static final Color POPUP_BG = LeagueScapeColors.POPUP_BG;
-	private static final Color POPUP_TEXT = LeagueScapeColors.POPUP_TEXT;
+	private static final Color POPUP_BG = GridScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = GridScapeColors.POPUP_TEXT;
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
 	private static final Color BONUS_ACCENT = new Color(120, 200, 120);
 	private static final Dimension OK_BUTTON_SIZE = new Dimension(160, 28);
@@ -53,11 +53,11 @@ public final class RingBonusPopup
 		int ringNumber, int bonusPoints, boolean globalGrid, String areaLabel)
 	{
 		if (audioPlayer != null && client != null)
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.COINS_JINGLE, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.COINS_JINGLE, client);
 
 		JDialog detail = new JDialog(frameOwner, "Ring bonus", false);
 		detail.setUndecorated(true);
-		LeagueScapePlugin.registerEscapeToClose(detail);
+		GridScapePlugin.registerEscapeToClose(detail);
 
 		JPanel content = new JPanel(new BorderLayout(8, 8));
 		content.setBackground(POPUP_BG);
@@ -71,11 +71,11 @@ public final class RingBonusPopup
 		titleLabel.setForeground(POPUP_TEXT);
 		titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD, 13f));
 		header.add(titleLabel, BorderLayout.CENTER);
-		java.awt.image.BufferedImage xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
-		JButton closeBtn = LeagueScapeSwingUtil.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
+		java.awt.image.BufferedImage xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
+		JButton closeBtn = GridScapeSwingUtil.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 		closeBtn.addActionListener(e -> {
 			if (audioPlayer != null && client != null)
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			detail.dispose();
 		});
 		header.add(closeBtn, BorderLayout.EAST);
@@ -98,14 +98,14 @@ public final class RingBonusPopup
 		bonusLabel.setFont(bonusLabel.getFont().deriveFont(Font.BOLD, 14f));
 		body.add(bonusLabel);
 
-		java.awt.image.BufferedImage buttonRect = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_rectangle.png");
-		JButton okBtn = LeagueScapeSwingUtil.newRectangleButton("OK", buttonRect, POPUP_TEXT);
+		java.awt.image.BufferedImage buttonRect = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_rectangle.png");
+		JButton okBtn = GridScapeSwingUtil.newRectangleButton("OK", buttonRect, POPUP_TEXT);
 		okBtn.setPreferredSize(OK_BUTTON_SIZE);
 		okBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 		body.add(new JLabel(" "));
 		okBtn.addActionListener(e -> {
 			if (audioPlayer != null && client != null)
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			detail.dispose();
 		});
 		body.add(okBtn);

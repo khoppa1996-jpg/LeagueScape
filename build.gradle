@@ -21,7 +21,7 @@ repositories {
 }
 
 def runeLiteVersion = 'latest.release'
-def pluginMainClass = 'com.leaguescape.LeagueScapePluginTest'
+def pluginMainClass = 'com.gridscape.GridScapePluginTest'
 
 dependencies {
 	compileOnly group: 'net.runelite', name:'client', version: runeLiteVersion
@@ -35,7 +35,7 @@ dependencies {
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
 }
 
-group = 'com.leaguescape'
+group = 'com.gridscape'
 version = '1.0-SNAPSHOT'
 
 tasks.withType(JavaCompile).configureEach {

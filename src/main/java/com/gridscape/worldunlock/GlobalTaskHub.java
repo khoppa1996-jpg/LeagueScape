@@ -1,14 +1,14 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
-import com.leaguescape.icons.IconCache;
-import com.leaguescape.icons.IconResolver;
-import com.leaguescape.icons.IconResources;
-import com.leaguescape.task.TaskDefinition;
-import com.leaguescape.task.TaskState;
-import com.leaguescape.task.TaskTile;
-import com.leaguescape.util.FrontierFogHelpers;
-import com.leaguescape.util.LeagueScapeColors;
-import com.leaguescape.util.LeagueScapeSwingUtil;
+import com.gridscape.icons.IconCache;
+import com.gridscape.icons.IconResolver;
+import com.gridscape.icons.IconResources;
+import com.gridscape.task.TaskDefinition;
+import com.gridscape.task.TaskState;
+import com.gridscape.task.TaskTile;
+import com.gridscape.util.FrontierFogHelpers;
+import com.gridscape.util.GridScapeColors;
+import com.gridscape.util.GridScapeSwingUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -60,8 +60,8 @@ import javax.swing.event.DocumentListener;
  */
 public final class GlobalTaskHub extends JPanel
 {
-	private static final Color POPUP_BG = LeagueScapeColors.POPUP_BG;
-	private static final Color POPUP_TEXT = LeagueScapeColors.POPUP_TEXT;
+	private static final Color POPUP_BG = GridScapeColors.POPUP_BG;
+	private static final Color POPUP_TEXT = GridScapeColors.POPUP_TEXT;
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
 	/** Tight inset around list row icon and text (px). */
 	private static final int TASK_TILE_ICON_MARGIN = 1;
@@ -775,10 +775,10 @@ public final class GlobalTaskHub extends JPanel
 			g.drawString(t, x, y);
 			if (getModel().isPressed())
 			{
-				g.setColor(LeagueScapeSwingUtil.PRESSED_INSET_SHADOW);
-				g.fillRect(LeagueScapeSwingUtil.PRESSED_INSET, LeagueScapeSwingUtil.PRESSED_INSET,
-					getWidth() - 2 * LeagueScapeSwingUtil.PRESSED_INSET,
-					getHeight() - 2 * LeagueScapeSwingUtil.PRESSED_INSET);
+				g.setColor(GridScapeSwingUtil.PRESSED_INSET_SHADOW);
+				g.fillRect(GridScapeSwingUtil.PRESSED_INSET, GridScapeSwingUtil.PRESSED_INSET,
+					getWidth() - 2 * GridScapeSwingUtil.PRESSED_INSET,
+					getHeight() - 2 * GridScapeSwingUtil.PRESSED_INSET);
 			}
 		}
 	}

@@ -1,8 +1,8 @@
-package com.leaguescape.config;
+package com.gridscape.config;
 
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.data.Area;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.data.Area;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -38,10 +38,10 @@ public class AreaEditOverlay extends Overlay
 
 	private final Client client;
 	private final AreaGraphService areaGraphService;
-	private final Provider<LeagueScapePlugin> pluginProvider;
+	private final Provider<GridScapePlugin> pluginProvider;
 
 	@Inject
-	public AreaEditOverlay(Client client, AreaGraphService areaGraphService, Provider<LeagueScapePlugin> pluginProvider)
+	public AreaEditOverlay(Client client, AreaGraphService areaGraphService, Provider<GridScapePlugin> pluginProvider)
 	{
 		this.client = client;
 		this.areaGraphService = areaGraphService;
@@ -53,7 +53,7 @@ public class AreaEditOverlay extends Overlay
 	@Override
 	public Dimension render(Graphics2D graphics)
 	{
-		LeagueScapePlugin plugin = pluginProvider.get();
+		GridScapePlugin plugin = pluginProvider.get();
 		if (plugin == null || !plugin.isEditingArea()) return null;
 
 		var player = client.getLocalPlayer();

@@ -1,6 +1,6 @@
-package com.leaguescape.wiki;
+package com.gridscape.wiki;
 
-import com.leaguescape.task.TaskDefinition;
+import com.gridscape.task.TaskDefinition;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

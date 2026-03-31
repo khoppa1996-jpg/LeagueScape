@@ -1,6 +1,6 @@
-package com.leaguescape.overlay;
+package com.gridscape.overlay;
 
-import com.leaguescape.task.TaskTile;
+import com.gridscape.task.TaskTile;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;

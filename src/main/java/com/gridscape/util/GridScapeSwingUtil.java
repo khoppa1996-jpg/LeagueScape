@@ -1,4 +1,4 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -29,16 +29,16 @@ import javax.swing.RootPaneContainer;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * Shared Swing helpers for LeagueScape: scrollable panel, collapsible section,
+ * Shared Swing helpers for GridScape: scrollable panel, collapsible section,
  * JSON save dialog, popup-style buttons, and Escape-to-close for windows.
  */
-public final class LeagueScapeSwingUtil
+public final class GridScapeSwingUtil
 {
 	/** Used by popup-style buttons for pressed state; exposed for custom buttons that share the same look. */
 	public static final Color PRESSED_INSET_SHADOW = new Color(0, 0, 0, 70);
 	public static final int PRESSED_INSET = 2;
 
-	private LeagueScapeSwingUtil() {}
+	private GridScapeSwingUtil() {}
 
 	/** Panel that tracks viewport width in a scroll pane (no horizontal scroll). */
 	public static final class ScrollableWidthPanel extends JPanel implements Scrollable
@@ -109,7 +109,7 @@ public final class LeagueScapeSwingUtil
 		return file;
 	}
 
-	/** Button with rectangle image background and pressed shadow. Use LeagueScapeColors.POPUP_TEXT for text color. */
+	/** Button with rectangle image background and pressed shadow. Use GridScapeColors.POPUP_TEXT for text color. */
 	public static JButton newRectangleButton(String text, BufferedImage buttonRect, Color textColor)
 	{
 		BufferedImage img = buttonRect;
@@ -138,7 +138,7 @@ public final class LeagueScapeSwingUtil
 				}
 			}
 		};
-		b.setForeground(textColor != null ? textColor : LeagueScapeColors.POPUP_TEXT);
+		b.setForeground(textColor != null ? textColor : GridScapeColors.POPUP_TEXT);
 		b.setFocusPainted(false);
 		b.setBorderPainted(false);
 		b.setContentAreaFilled(img == null);
@@ -146,7 +146,7 @@ public final class LeagueScapeSwingUtil
 		return b;
 	}
 
-	/** Icon-only button (e.g. close) with pressed inset shadow. Use LeagueScapeColors.POPUP_TEXT for fallback text. */
+	/** Icon-only button (e.g. close) with pressed inset shadow. Use GridScapeColors.POPUP_TEXT for fallback text. */
 	public static JButton newPopupButtonWithIcon(BufferedImage iconImg, Color fallbackTextColor)
 	{
 		JButton b = new JButton()
@@ -171,14 +171,14 @@ public final class LeagueScapeSwingUtil
 		else
 		{
 			b.setText("X");
-			b.setForeground(fallbackTextColor != null ? fallbackTextColor : LeagueScapeColors.POPUP_TEXT);
+			b.setForeground(fallbackTextColor != null ? fallbackTextColor : GridScapeColors.POPUP_TEXT);
 		}
 		return b;
 	}
 
 	/**
 	 * Makes an undecorated window draggable from {@code dragRegion} (e.g. title row), matching
-	 * {@link com.leaguescape.config.LeagueScapeSetupFrame} title-bar behaviour.
+	 * {@link com.gridscape.config.GridScapeSetupFrame} title-bar behaviour.
 	 */
 	public static void installUndecoratedWindowDrag(Window window, Component dragRegion)
 	{

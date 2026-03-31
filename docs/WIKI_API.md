@@ -1,6 +1,6 @@
 # OSRS Wiki API – URLs and JSON shape
 
-Use these from the plugin when you need **item sources** (drops, shops, etc.) or any wiki page content. Send a descriptive `User-Agent` (e.g. `LeagueScape/1.0 (OSRS Wiki API; RuneLite plugin)`); the wiki may rate-limit generic clients.
+Use these from the plugin when you need **item sources** (drops, shops, etc.) or any wiki page content. Send a descriptive `User-Agent` (e.g. `GridScape/1.0 (OSRS Wiki API; RuneLite plugin)`); the wiki may rate-limit generic clients.
 
 ---
 

@@ -1,7 +1,7 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 /**
- * Central constants for LeagueScape classpath resource paths (JSON and other assets).
+ * Central constants for GridScape classpath resource paths (JSON and other assets).
  * Use these when loading resources and as default filenames in file choosers.
  */
 public final class ResourcePaths

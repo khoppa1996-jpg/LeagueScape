@@ -1,14 +1,14 @@
-package com.leaguescape.config;
+package com.gridscape.config;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.LeagueScapeSounds;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.points.AreaCompletionService;
-import com.leaguescape.points.PointsService;
-import com.leaguescape.task.TaskGridService;
-import com.leaguescape.wiki.OsrsWikiApiService;
-import com.leaguescape.wiki.WikiTaskGenerator;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.GridScapeSounds;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.points.AreaCompletionService;
+import com.gridscape.points.PointsService;
+import com.gridscape.task.TaskGridService;
+import com.gridscape.wiki.OsrsWikiApiService;
+import com.gridscape.wiki.WikiTaskGenerator;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,14 +37,14 @@ import net.runelite.api.Client;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.util.ImageUtil;
-import com.leaguescape.util.LeagueScapeFrameChromePanel;
-import com.leaguescape.util.LeagueScapeSwingUtil;
+import com.gridscape.util.GridScapeFrameChromePanel;
+import com.gridscape.util.GridScapeSwingUtil;
 
 /**
  * Moveable, resizable setup popup opened from the "Rules and Setup" button. Contains four tabs:
- * Rules, Game Mode, Area Configuration, Controls. Tiled OSRS-style frame ({@code com/leaguescape/*.png}).
+ * Rules, Game Mode, Area Configuration, Controls. Tiled OSRS-style frame ({@code com/gridscape/*.png}).
  */
-public class LeagueScapeSetupFrame extends JDialog
+public class GridScapeSetupFrame extends JDialog
 {
 	private static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);
 	private static final Color POPUP_TEXT = new Color(0xC4, 0xB8, 0x96);
@@ -67,12 +67,12 @@ public class LeagueScapeSetupFrame extends JDialog
 	private final Client client;
 	private BufferedImage buttonRect;
 
-	public LeagueScapeSetupFrame(Frame owner, LeagueScapePlugin plugin, AreaGraphService areaGraphService,
-		TaskGridService taskGridService, ConfigManager configManager, LeagueScapeConfig config,
+	public GridScapeSetupFrame(Frame owner, GridScapePlugin plugin, AreaGraphService areaGraphService,
+		TaskGridService taskGridService, ConfigManager configManager, GridScapeConfig config,
 		PointsService pointsService, AreaCompletionService areaCompletionService,
 		OsrsWikiApiService wikiApi, WikiTaskGenerator wikiTaskGenerator, Client client, AudioPlayer audioPlayer)
 	{
-		super(owner, LeagueScapeSetupStrings.FRAME_WINDOW_TITLE, false);
+		super(owner, GridScapeSetupStrings.FRAME_WINDOW_TITLE, false);
 		this.audioPlayer = audioPlayer;
 		this.client = client;
 		setModal(false);
@@ -81,8 +81,8 @@ public class LeagueScapeSetupFrame extends JDialog
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setUndecorated(true);
 
-		buttonRect = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_rectangle.png");
-		BufferedImage xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
+		buttonRect = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_rectangle.png");
+		BufferedImage xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
 
 		BufferedImage fill = loadFrameAsset("fill_color.png");
 		BufferedImage tl = loadFrameAsset("top_left_corner.png");
@@ -94,27 +94,27 @@ public class LeagueScapeSetupFrame extends JDialog
 		BufferedImage bLeft = loadFrameAsset("border_left.png");
 		BufferedImage bRight = loadFrameAsset("border_right.png");
 
-		LeagueScapeFrameChromePanel chrome = new LeagueScapeFrameChromePanel(fill, tl, tr, bl, br, bTop, bBottom, bLeft, bRight);
+		GridScapeFrameChromePanel chrome = new GridScapeFrameChromePanel(fill, tl, tr, bl, br, bTop, bBottom, bLeft, bRight);
 		chrome.setLayout(new BorderLayout(0, 0));
 
 		JPanel inner = new JPanel(new BorderLayout(0, 0));
 		inner.setOpaque(false);
 		inner.setBorder(new EmptyBorder(chrome.getChromeInsets()));
 
-		// Title bar: drag region + x close (same behaviour as other LeagueScape popups: Esc via registerEscapeToClose on open)
+		// Title bar: drag region + x close (same behaviour as other GridScape popups: Esc via registerEscapeToClose on open)
 		JPanel titleBar = new JPanel(new BorderLayout(4, 0));
 		titleBar.setOpaque(false);
 		titleBar.setBorder(new EmptyBorder(4, 8, 4, 4));
-		javax.swing.JLabel titleLabel = new javax.swing.JLabel(LeagueScapeSetupStrings.FRAME_WINDOW_TITLE);
+		javax.swing.JLabel titleLabel = new javax.swing.JLabel(GridScapeSetupStrings.FRAME_WINDOW_TITLE);
 		titleLabel.setForeground(POPUP_TEXT);
 		titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 14f));
 		titleBar.add(titleLabel, BorderLayout.CENTER);
 
-		JButton closeBtn = LeagueScapeSwingUtil.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
+		JButton closeBtn = GridScapeSwingUtil.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 		closeBtn.setPreferredSize(new Dimension(28, 28));
 		closeBtn.addActionListener(e -> {
 			if (audioPlayer != null && client != null)
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			dispose();
 		});
 		titleBar.add(closeBtn, BorderLayout.EAST);
@@ -125,7 +125,7 @@ public class LeagueScapeSetupFrame extends JDialog
 			@Override
 			public void mousePressed(MouseEvent e)
 			{
-				java.awt.Point loc = LeagueScapeSetupFrame.this.getLocationOnScreen();
+				java.awt.Point loc = GridScapeSetupFrame.this.getLocationOnScreen();
 				dragOffset[0] = e.getXOnScreen() - loc.x;
 				dragOffset[1] = e.getYOnScreen() - loc.y;
 			}
@@ -135,7 +135,7 @@ public class LeagueScapeSetupFrame extends JDialog
 			@Override
 			public void mouseDragged(MouseEvent e)
 			{
-				LeagueScapeSetupFrame.this.setLocation(e.getXOnScreen() - dragOffset[0], e.getYOnScreen() - dragOffset[1]);
+				GridScapeSetupFrame.this.setLocation(e.getXOnScreen() - dragOffset[0], e.getYOnScreen() - dragOffset[1]);
 			}
 		});
 
@@ -160,7 +160,7 @@ public class LeagueScapeSetupFrame extends JDialog
 
 		JPanel rulesCard = buildRulesTab();
 		JPanel gameModeCard = buildGameModeTab(plugin, configManager, config, areaGraphService, pointsService, areaCompletionService, taskGridService, wikiApi, wikiTaskGenerator, client);
-		JPanel areaConfigCard = new LeagueScapeAreaConfigSection(plugin, areaGraphService, configManager, config);
+		JPanel areaConfigCard = new GridScapeAreaConfigSection(plugin, areaGraphService, configManager, config);
 		JPanel controlsCard = buildControlsTab();
 
 		contentCards.add(rulesCard, CARD_RULES);
@@ -169,10 +169,10 @@ public class LeagueScapeSetupFrame extends JDialog
 		contentCards.add(controlsCard, CARD_CONTROLS);
 
 		List<JButton> tabButtons = new ArrayList<>();
-		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_RULES, () -> cardLayout.show(contentCards, CARD_RULES), tabButtons));
-		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_GAME_MODE, () -> cardLayout.show(contentCards, CARD_GAME_MODE), tabButtons));
-		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_AREA_CONFIGURATION, () -> cardLayout.show(contentCards, CARD_AREA_CONFIG), tabButtons));
-		tabButtons.add(newTabButton(LeagueScapeSetupStrings.TAB_CONTROLS, () -> cardLayout.show(contentCards, CARD_CONTROLS), tabButtons));
+		tabButtons.add(newTabButton(GridScapeSetupStrings.TAB_RULES, () -> cardLayout.show(contentCards, CARD_RULES), tabButtons));
+		tabButtons.add(newTabButton(GridScapeSetupStrings.TAB_GAME_MODE, () -> cardLayout.show(contentCards, CARD_GAME_MODE), tabButtons));
+		tabButtons.add(newTabButton(GridScapeSetupStrings.TAB_AREA_CONFIGURATION, () -> cardLayout.show(contentCards, CARD_AREA_CONFIG), tabButtons));
+		tabButtons.add(newTabButton(GridScapeSetupStrings.TAB_CONTROLS, () -> cardLayout.show(contentCards, CARD_CONTROLS), tabButtons));
 
 		for (JButton b : tabButtons)
 			tabStrip.add(b);
@@ -205,13 +205,13 @@ public class LeagueScapeSetupFrame extends JDialog
 				if (isOppositeWindowOwnedByThisDialog(e.getOppositeWindow()))
 					return;
 				SwingUtilities.invokeLater(() -> {
-					if (LeagueScapeSetupFrame.this.isDisplayable())
-						LeagueScapeSetupFrame.this.dispose();
+					if (GridScapeSetupFrame.this.isDisplayable())
+						GridScapeSetupFrame.this.dispose();
 				});
 			}
 		});
 
-		LeagueScapePlugin.registerEscapeToClose(this);
+		GridScapePlugin.registerEscapeToClose(this);
 		pack();
 	}
 
@@ -228,7 +228,7 @@ public class LeagueScapeSetupFrame extends JDialog
 
 	private static BufferedImage loadFrameAsset(String name)
 	{
-		return ImageUtil.loadImageResource(LeagueScapePlugin.class, name);
+		return ImageUtil.loadImageResource(GridScapePlugin.class, name);
 	}
 
 	private static final Dimension TAB_BUTTON_SIZE = new Dimension(TAB_STRIP_WIDTH - 16, 28);
@@ -242,7 +242,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		b.setAlignmentX(java.awt.Component.LEFT_ALIGNMENT);
 		b.addActionListener(e -> {
 			if (audioPlayer != null && client != null)
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			setTabSelected(b, allTabs);
 			onSelect.run();
 		});
@@ -272,7 +272,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		inner.setBackground(POPUP_BG);
 		inner.setOpaque(true);
 
-		javax.swing.JTextArea mainText = new javax.swing.JTextArea(LeagueScapeSetupStrings.RULES_MAIN);
+		javax.swing.JTextArea mainText = new javax.swing.JTextArea(GridScapeSetupStrings.RULES_MAIN);
 		mainText.setEditable(false);
 		mainText.setLineWrap(true);
 		mainText.setWrapStyleWord(true);
@@ -289,7 +289,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		taskIconBlock.setBorder(new EmptyBorder(0, 12, 12, 12));
 
 		JLabel iconLabel = new JLabel();
-		BufferedImage taskIconImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "task_icon.png");
+		BufferedImage taskIconImg = ImageUtil.loadImageResource(GridScapePlugin.class, "task_icon.png");
 		if (taskIconImg != null)
 		{
 			Image scaled = taskIconImg.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
@@ -298,7 +298,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		}
 		iconLabel.setOpaque(false);
 
-		javax.swing.JTextArea taskIconText = new javax.swing.JTextArea(LeagueScapeSetupStrings.RULES_TASK_ICON);
+		javax.swing.JTextArea taskIconText = new javax.swing.JTextArea(GridScapeSetupStrings.RULES_TASK_ICON);
 		taskIconText.setEditable(false);
 		taskIconText.setLineWrap(true);
 		taskIconText.setWrapStyleWord(true);
@@ -323,11 +323,11 @@ public class LeagueScapeSetupFrame extends JDialog
 		return panel;
 	}
 
-	private JPanel buildGameModeTab(LeagueScapePlugin plugin, ConfigManager configManager, LeagueScapeConfig config,
+	private JPanel buildGameModeTab(GridScapePlugin plugin, ConfigManager configManager, GridScapeConfig config,
 		AreaGraphService areaGraphService, PointsService pointsService, AreaCompletionService areaCompletionService,
 		TaskGridService taskGridService, OsrsWikiApiService wikiApi, WikiTaskGenerator wikiTaskGenerator, Client client)
 	{
-		LeagueScapeGameModeTabPanel p = new LeagueScapeGameModeTabPanel(plugin, configManager, config, areaGraphService,
+		GridScapeGameModeTabPanel p = new GridScapeGameModeTabPanel(plugin, configManager, config, areaGraphService,
 			pointsService, areaCompletionService, taskGridService, wikiApi, wikiTaskGenerator, client,
 			POPUP_BG, POPUP_TEXT, this::newRectangleButton);
 		return p;
@@ -338,7 +338,7 @@ public class LeagueScapeSetupFrame extends JDialog
 		JPanel panel = new JPanel(new BorderLayout());
 		panel.setBackground(POPUP_BG);
 		panel.setOpaque(true);
-		javax.swing.JTextArea text = new javax.swing.JTextArea(LeagueScapeSetupStrings.CONTROLS_BODY);
+		javax.swing.JTextArea text = new javax.swing.JTextArea(GridScapeSetupStrings.CONTROLS_BODY);
 		text.setEditable(false);
 		text.setLineWrap(true);
 		text.setWrapStyleWord(true);

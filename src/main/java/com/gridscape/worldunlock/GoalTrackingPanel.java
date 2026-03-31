@@ -1,6 +1,6 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
-import com.leaguescape.LeagueScapeSounds;
+import com.gridscape.GridScapeSounds;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.List;
@@ -56,7 +56,7 @@ public class GoalTrackingPanel extends JPanel
 		closeBtn.setForeground(TEXT);
 		closeBtn.addActionListener(e -> {
 			if (audioPlayer != null && client != null)
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			if (onClose != null) onClose.run();
 		});
 		JPanel south = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.TRAILING));

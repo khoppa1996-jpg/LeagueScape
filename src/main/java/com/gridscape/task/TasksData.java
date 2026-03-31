@@ -1,4 +1,4 @@
-package com.leaguescape.task;
+package com.gridscape.task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

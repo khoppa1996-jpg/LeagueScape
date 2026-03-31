@@ -1,4 +1,4 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -11,9 +11,9 @@ import javax.swing.JPanel;
 /**
  * OSRS-style tiled frame: {@code fill_color} in the center and {@code border_*} strips on edges.
  * Corner images are optional (nullable). Content should use {@link #getChromeInsets()} for padding.
- * Asset paths match {@link com.leaguescape.LeagueScapePlugin} resources ({@code fill_color.png}, etc.).
+ * Asset paths match {@link com.gridscape.GridScapePlugin} resources ({@code fill_color.png}, etc.).
  */
-public final class LeagueScapeFrameChromePanel extends JPanel
+public final class GridScapeFrameChromePanel extends JPanel
 {
 	private static final Color FALLBACK_FILL = new Color(0x54, 0x4D, 0x41);
 
@@ -28,7 +28,7 @@ public final class LeagueScapeFrameChromePanel extends JPanel
 	private final BufferedImage bRight;
 	private final Insets chromeInsets;
 
-	public LeagueScapeFrameChromePanel(BufferedImage fill, BufferedImage tl, BufferedImage tr, BufferedImage bl, BufferedImage br,
+	public GridScapeFrameChromePanel(BufferedImage fill, BufferedImage tl, BufferedImage tr, BufferedImage bl, BufferedImage br,
 		BufferedImage bTop, BufferedImage bBottom, BufferedImage bLeft, BufferedImage bRight)
 	{
 		this.fill = fill;

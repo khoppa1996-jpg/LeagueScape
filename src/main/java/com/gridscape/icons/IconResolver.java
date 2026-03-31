@@ -1,6 +1,6 @@
-package com.leaguescape.icons;
+package com.gridscape.icons;
 
-import com.leaguescape.constants.TaskTypes;
+import com.gridscape.constants.TaskTypes;
 import java.util.Map;
 
 /** Resolves classpath resource paths for boss and task-type icons. */

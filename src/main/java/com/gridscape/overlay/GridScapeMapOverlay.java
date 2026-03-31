@@ -1,30 +1,30 @@
-package com.leaguescape.overlay;
+package com.gridscape.overlay;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.constants.TaskTypes;
-import com.leaguescape.icons.IconCache;
-import com.leaguescape.icons.IconResources;
-import com.leaguescape.icons.IconResolver;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.grid.GridPos;
-import com.leaguescape.data.Area;
-import com.leaguescape.util.FogTileCompositor;
-import com.leaguescape.util.FrontierFogHelpers;
-import com.leaguescape.util.GridClaimFocusAnimation;
-import com.leaguescape.util.PanelBoundsStore;
-import com.leaguescape.util.RingBonusPopup;
-import com.leaguescape.util.LeagueScapeSwingUtil;
-import com.leaguescape.data.AreaStatus;
-import com.leaguescape.points.AreaCompletionService;
-import com.leaguescape.points.PointsService;
-import com.leaguescape.task.TaskState;
-import com.leaguescape.task.TaskTile;
-import com.leaguescape.task.TaskGridService;
-import com.leaguescape.wiki.OsrsWikiApiService;
-import com.leaguescape.worldunlock.WorldUnlockService;
-import com.leaguescape.worldunlock.WorldUnlockTile;
-import com.leaguescape.LeagueScapeSounds;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.constants.TaskTypes;
+import com.gridscape.icons.IconCache;
+import com.gridscape.icons.IconResources;
+import com.gridscape.icons.IconResolver;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.grid.GridPos;
+import com.gridscape.data.Area;
+import com.gridscape.util.FogTileCompositor;
+import com.gridscape.util.FrontierFogHelpers;
+import com.gridscape.util.GridClaimFocusAnimation;
+import com.gridscape.util.PanelBoundsStore;
+import com.gridscape.util.RingBonusPopup;
+import com.gridscape.util.GridScapeSwingUtil;
+import com.gridscape.data.AreaStatus;
+import com.gridscape.points.AreaCompletionService;
+import com.gridscape.points.PointsService;
+import com.gridscape.task.TaskState;
+import com.gridscape.task.TaskTile;
+import com.gridscape.task.TaskGridService;
+import com.gridscape.wiki.OsrsWikiApiService;
+import com.gridscape.worldunlock.WorldUnlockService;
+import com.gridscape.worldunlock.WorldUnlockTile;
+import com.gridscape.GridScapeSounds;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
@@ -80,7 +80,7 @@ import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 
 /**
- * World-map overlay for LeagueScape. Draws area polygons (locked/unlocked/unlockable) when the
+ * World-map overlay for GridScape. Draws area polygons (locked/unlocked/unlockable) when the
  * world map is open; hover highlights an area with a white border; right-click opens an area
  * details popup (description, status, Unlock button, Tasks button). Tasks button opens the task
  * grid popup for that area (tiles, claim/complete, icons from task type or Wiki). Also handles
@@ -89,7 +89,7 @@ import net.runelite.client.ui.overlay.OverlayPosition;
  * that). All popups and dialogs are created on the EDT; game-thread code uses SwingUtilities.invokeLater
  * where needed.
  */
-public class LeagueScapeMapOverlay extends Overlay implements MouseListener
+public class GridScapeMapOverlay extends Overlay implements MouseListener
 {
 	private static final int REGION_SIZE = 1 << 6;
 	private static final int REGION_TRUNCATE = ~0x3F;
@@ -106,10 +106,10 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 
 	private final Client client;
 	private final AreaGraphService areaGraphService;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 	private final PointsService pointsService;
 	private final AreaCompletionService areaCompletionService;
-	private final LeagueScapePlugin plugin;
+	private final GridScapePlugin plugin;
 	private final ConfigManager configManager;
 	private final TaskGridService taskGridService;
 	private final WorldUnlockService worldUnlockService;
@@ -130,8 +130,8 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Padlock icon for locked areas on world map; loaded lazily. */
 	private volatile BufferedImage worldMapPadlockIcon = null;
 
-	public LeagueScapeMapOverlay(Client client, AreaGraphService areaGraphService, LeagueScapeConfig config,
-		PointsService pointsService, AreaCompletionService areaCompletionService, LeagueScapePlugin plugin,
+	public GridScapeMapOverlay(Client client, AreaGraphService areaGraphService, GridScapeConfig config,
+		PointsService pointsService, AreaCompletionService areaCompletionService, GridScapePlugin plugin,
 		ConfigManager configManager, TaskGridService taskGridService, WorldUnlockService worldUnlockService, OsrsWikiApiService wikiApi,
 		net.runelite.client.audio.AudioPlayer audioPlayer, ClientThread clientThread)
 	{
@@ -175,7 +175,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		graphics.setClip(worldMapRect);
 
 		Set<String> unlocked = areaGraphService.getUnlockedAreaIds();
-		java.util.Set<String> completedIds = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+		java.util.Set<String> completedIds = (config.unlockMode() == GridScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
 			? areaCompletionService.getEffectiveCompletedAreaIds()
 			: null;
 		List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
@@ -666,7 +666,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	{
 		if (worldMapPadlockIcon == null)
 		{
-			worldMapPadlockIcon = ImageUtil.loadImageResource(LeagueScapePlugin.class, "padlock_icon.png");
+			worldMapPadlockIcon = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
 		}
 		if (worldMapPadlockIcon == null) return;
 
@@ -1259,7 +1259,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Points display string: spendable total in point-buy mode, or "Points in [area]: X / Y" in points-to-complete mode. */
 	private String getPointsDisplayText(Area area)
 	{
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
 		{
 			String name = area.getDisplayName() != null ? area.getDisplayName() : area.getId();
 			int earned = areaCompletionService.getPointsEarnedInArea(area.getId());
@@ -1278,7 +1278,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		final String costLabelText;
 		final boolean canUnlock;
 		final boolean worldUnlockArea;
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
 			WorldUnlockTile tile = worldUnlockService.getTileById(area.getId());
 			worldUnlockArea = (tile != null && "area".equals(tile.getType()));
@@ -1299,21 +1299,21 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		{
 			worldUnlockArea = false;
 			cost = area.getUnlockCost();
-			Set<String> completedIds = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+			Set<String> completedIds = (config.unlockMode() == GridScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
 				? areaCompletionService.getEffectiveCompletedAreaIds()
 				: null;
 			List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
 			canUnlock = unlockable.contains(area) && pointsService.getSpendable() >= cost;
-			costLabelText = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+			costLabelText = (config.unlockMode() == GridScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
 				? "Points to unlock: " + cost
 				: "Unlock cost: " + cost + " point" + (cost != 1 ? "s" : "");
 		}
 		AreaStatus status = areaCompletionService.getAreaStatus(area.getId());
 
-		BufferedImage interfaceBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "interface_template.png");
-		BufferedImage buttonRect = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_rectangle.png");
-		BufferedImage xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
-		BufferedImage checkmarkImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "complete_checkmark.png");
+		BufferedImage interfaceBg = ImageUtil.loadImageResource(GridScapePlugin.class, "interface_template.png");
+		BufferedImage buttonRect = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_rectangle.png");
+		BufferedImage xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
+		BufferedImage checkmarkImg = ImageUtil.loadImageResource(GridScapePlugin.class, "complete_checkmark.png");
 
 		SwingUtilities.invokeLater(() -> {
 			Frame owner = null;
@@ -1372,7 +1372,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			header.add(titleLabel, java.awt.BorderLayout.CENTER);
 			JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 			closeBtn.addActionListener(e -> {
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
 			});
 			header.add(closeBtn, java.awt.BorderLayout.EAST);
@@ -1420,7 +1420,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			{
 				JButton tasksBtn = newRectangleButton("Tasks", buttonRect, POPUP_TEXT);
 				tasksBtn.addActionListener(e -> {
-					LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+					GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 					dialog.dispose();
 					openTaskGridForArea(area);
 				});
@@ -1428,7 +1428,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			}
 
 			// Unlock button only when area is still locked (and when in World Unlock, only if area has a tile in the grid)
-			if (!areaUnlocked && (!(config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK) || worldUnlockArea))
+			if (!areaUnlocked && (!(config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK) || worldUnlockArea))
 			{
 				JButton unlockBtn = new JButton("Unlock")
 				{
@@ -1482,12 +1482,12 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 						if (worldUnlockArea)
 							clientThread.invoke(() -> client.playSoundEffect(WORLD_UNLOCK_TILE_SOUND_ID));
 						else
-							LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+							GridScapeSounds.play(audioPlayer, GridScapeSounds.LOCKED, client);
 						dialog.dispose();
 					}
 					else
 					{
-						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.WRONG, client);
+						GridScapeSounds.play(audioPlayer, GridScapeSounds.WRONG, client);
 					}
 				});
 				southPanel.add(unlockBtn);
@@ -1525,7 +1525,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 	/** Opens the task grid popup for the given area (e.g. from world map menu). Call from EDT or client thread. */
 	public void openTaskGridForArea(Area area)
 	{
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
 			plugin.openGlobalTaskList();
 			return;
@@ -1564,17 +1564,17 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		String displayName = area.getDisplayName() != null ? area.getDisplayName() : area.getId();
 		String areaId = area.getId();
 
-		BufferedImage interfaceBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "interface_template.png");
-		BufferedImage buttonRect = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_rectangle.png");
-		BufferedImage tileSquare = ImageUtil.loadImageResource(LeagueScapePlugin.class, "empty_button_square.png");
-		BufferedImage xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
-		BufferedImage checkmarkImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "complete_checkmark.png");
-			BufferedImage padlockImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "padlock_icon.png");
-			BufferedImage fogTileBg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_base.png");
-			BufferedImage fogTopLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_top_left.png");
-			BufferedImage fogTopRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_top_right.png");
-			BufferedImage fogBottomLeft = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_bottom_left.png");
-			BufferedImage fogBottomRight = ImageUtil.loadImageResource(LeagueScapePlugin.class, "/com/leaguescape/fog_tile_corner_bottom_right.png");
+		BufferedImage interfaceBg = ImageUtil.loadImageResource(GridScapePlugin.class, "interface_template.png");
+		BufferedImage buttonRect = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_rectangle.png");
+		BufferedImage tileSquare = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_square.png");
+		BufferedImage xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
+		BufferedImage checkmarkImg = ImageUtil.loadImageResource(GridScapePlugin.class, "complete_checkmark.png");
+			BufferedImage padlockImg = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
+			BufferedImage fogTileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_base.png");
+			BufferedImage fogTopLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_left.png");
+			BufferedImage fogTopRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_right.png");
+			BufferedImage fogBottomLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_bottom_left.png");
+			BufferedImage fogBottomRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_bottom_right.png");
 			BufferedImage defaultTaskIcon = loadTaskIcon();
 			Map<String, BufferedImage> taskIconCache = new ConcurrentHashMap<>();
 
@@ -1644,7 +1644,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			titleRow.add(titleLabel, java.awt.BorderLayout.CENTER);
 			JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 			closeBtn.addActionListener(e -> {
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
 			});
 			titleRow.add(closeBtn, java.awt.BorderLayout.EAST);
@@ -1653,7 +1653,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			pointsLabelHolder[0] = new JLabel(getPointsDisplayText(area));
 			pointsLabelHolder[0].setForeground(POPUP_TEXT);
 			header.add(pointsLabelHolder[0], java.awt.BorderLayout.SOUTH);
-			LeagueScapeSwingUtil.installUndecoratedWindowDrag(dialog, header);
+			GridScapeSwingUtil.installUndecoratedWindowDrag(dialog, header);
 			content.add(header, java.awt.BorderLayout.NORTH);
 
 			// Grid panel: only non-locked tiles, inside scroll pane with vertical + horizontal scroll bars
@@ -1849,7 +1849,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			JButton backBtn = newRectangleButton("Back to area", buttonRect, POPUP_TEXT);
 			backBtn.setMaximumSize(RECTANGLE_BUTTON_SIZE);
 			backBtn.addActionListener(e -> {
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
 				showAreaDetailsPopup(area);
 			});
@@ -1882,7 +1882,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 			dialog.pack();
 			PanelBoundsStore.applyBounds(dialog, configManager, PanelBoundsStore.KEY_AREA_TASK_GRID, client.getCanvas());
 			PanelBoundsStore.installPersistence(dialog, configManager, PanelBoundsStore.KEY_AREA_TASK_GRID);
-			LeagueScapePlugin.registerEscapeToClose(dialog);
+			GridScapePlugin.registerEscapeToClose(dialog);
 			dialog.setVisible(true);
 		});
 	}
@@ -2038,7 +2038,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 									"Quest requirements", javax.swing.JOptionPane.INFORMATION_MESSAGE);
 								return;
 							}
-							LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE, client);
+							GridScapeSounds.play(audioPlayer, GridScapeSounds.TASK_COMPLETE, client);
 							int ringBonus = taskGridService.setClaimed(areaId, tile.getId());
 							showAreaRingBonusIfNeeded(parentDialog, areaId, tile, ringBonus);
 							onClaimFocus.accept(tile.getRow(), tile.getCol());
@@ -2046,7 +2046,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 					});
 					return;
 				}
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				showTaskDetailPopup(parentDialog, areaId, tile, state, buttonRect, checkmarkImg, textColor, onRefresh, onClaimFocus, mystery);
 			}
 		});
@@ -2166,10 +2166,10 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		titleLabel.setForeground(textColor);
 		titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 13f));
 		header.add(titleLabel, java.awt.BorderLayout.CENTER);
-		BufferedImage xBtnImg = ImageUtil.loadImageResource(LeagueScapePlugin.class, "x_button.png");
+		BufferedImage xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
 		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 		closeBtn.addActionListener(e -> {
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			detail.dispose();
 		});
 		header.add(closeBtn, java.awt.BorderLayout.EAST);
@@ -2206,7 +2206,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 								"Quest requirements", javax.swing.JOptionPane.INFORMATION_MESSAGE);
 							return;
 						}
-						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE, client);
+						GridScapeSounds.play(audioPlayer, GridScapeSounds.TASK_COMPLETE, client);
 						int ringBonus = taskGridService.setClaimed(areaId, tile.getId());
 						detail.dispose();
 						showAreaRingBonusIfNeeded(parentDialog, areaId, tile, ringBonus);
@@ -2234,7 +2234,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 								"Quest requirements", javax.swing.JOptionPane.INFORMATION_MESSAGE);
 							return;
 						}
-						LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.TASK_COMPLETE, client);
+						GridScapeSounds.play(audioPlayer, GridScapeSounds.TASK_COMPLETE, client);
 						taskGridService.setCompleted(areaId, tile.getId());
 						int ringBonus = taskGridService.setClaimed(areaId, tile.getId());
 						detail.dispose();
@@ -2318,7 +2318,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		// Add New Area mode: Shift+left-click adds a corner at the clicked tile
 		if (plugin.isAddNewAreaMode() && event.isShiftDown())
 		{
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			plugin.addCornerFromWorldPoint(wp);
 			return event;
 		}
@@ -2332,7 +2332,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				plugin.setMoveCornerIndex(-1);
 				return event;
 			}
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			plugin.addCornerFromWorldPoint(wp);
 			return event;
 		}
@@ -2412,12 +2412,12 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 				for (JCheckBox cb : boxes)
 					if (cb.isSelected() && cb.getName() != null) selected.add(cb.getName());
 				plugin.setEditingNeighbors(selected);
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
 			});
 			JButton cancelBtn = new JButton("Cancel");
 			cancelBtn.addActionListener(e -> {
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
 			});
 			buttonPanel.add(cancelBtn);
@@ -2467,7 +2467,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		{
 			JMenuItem fillItem = new JMenuItem("Fill using others' corners");
 			fillItem.addActionListener(e -> {
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				fillUsingOthersCorners();
 			});
 			menu.add(fillItem);
@@ -2475,7 +2475,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		}
 		JMenuItem beginNewItem = new JMenuItem("Begin new polygon");
 		beginNewItem.addActionListener(e -> {
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			plugin.startNewPolygon();
 		});
 		menu.add(beginNewItem);
@@ -2483,7 +2483,7 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		{
 			JMenuItem neighborsItem = new JMenuItem("Add neighbors");
 			neighborsItem.addActionListener(e -> {
-				LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				showAddNeighborsDialog();
 			});
 			menu.add(neighborsItem);
@@ -2491,13 +2491,13 @@ public class LeagueScapeMapOverlay extends Overlay implements MouseListener
 		menu.addSeparator();
 		JMenuItem doneItem = new JMenuItem("Done editing");
 		doneItem.addActionListener(e -> {
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			exitMapEditMode(true);
 		});
 		menu.add(doneItem);
 		JMenuItem cancelItem = new JMenuItem("Cancel editing");
 		cancelItem.addActionListener(e -> {
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.BUTTON_PRESS, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			exitMapEditMode(false);
 		});
 		menu.add(cancelItem);

@@ -1,12 +1,12 @@
-package com.leaguescape.config;
+package com.gridscape.config;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.data.Area;
-import com.leaguescape.points.AreaCompletionService;
-import com.leaguescape.points.PointsService;
-import com.leaguescape.task.TaskGridService;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.data.Area;
+import com.gridscape.points.AreaCompletionService;
+import com.gridscape.points.PointsService;
+import com.gridscape.task.TaskGridService;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -35,11 +35,11 @@ import net.runelite.client.config.ConfigManager;
 
 /**
  * Game Mode tab content: unlock mode, task system (mode + tier points), starting area,
- * starting points, reset progress. Styled with LeagueScape popup colors.
+ * starting points, reset progress. Styled with GridScape popup colors.
  */
-public class LeagueScapeGameModeTabPanel extends JPanel
+public class GridScapeGameModeTabPanel extends JPanel
 {
-	private static final String CONFIG_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.CONFIG_GROUP;
+	private static final String CONFIG_GROUP = com.gridscape.util.GridScapeConfigConstants.CONFIG_GROUP;
 	/** Uniform width and height for all dropdowns and matching spinners in this tab. */
 	private static final Dimension COMBO_SIZE = new Dimension(176, 28);
 	/** Horizontal gap between setting label and the control column. */
@@ -50,7 +50,7 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 	private static final String[] WORLD_UNLOCK_MULT_TYPE_SUFFIX = {
 		"Skill", "Area", "Boss", "Quest", "AchievementDiary"
 	};
-	/** Matches {@link LeagueScapeConfig} key names: worldUnlockTier{N}{Skill|Area|…}Multiplier */
+	/** Matches {@link GridScapeConfig} key names: worldUnlockTier{N}{Skill|Area|…}Multiplier */
 	private static final String[] WORLD_UNLOCK_LEGACY_KEYS = {
 		"worldUnlockSkillMultiplier",
 		"worldUnlockAreaMultiplier",
@@ -65,10 +65,10 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		return "worldUnlockTier" + tier + WORLD_UNLOCK_MULT_TYPE_SUFFIX[typeIndex] + "Multiplier";
 	}
 
-	public LeagueScapeGameModeTabPanel(LeagueScapePlugin plugin, ConfigManager configManager, LeagueScapeConfig config,
+	public GridScapeGameModeTabPanel(GridScapePlugin plugin, ConfigManager configManager, GridScapeConfig config,
 		AreaGraphService areaGraphService, PointsService pointsService, AreaCompletionService areaCompletionService,
-		TaskGridService taskGridService, com.leaguescape.wiki.OsrsWikiApiService wikiApi,
-		com.leaguescape.wiki.WikiTaskGenerator wikiTaskGenerator, Client client,
+		TaskGridService taskGridService, com.gridscape.wiki.OsrsWikiApiService wikiApi,
+		com.gridscape.wiki.WikiTaskGenerator wikiTaskGenerator, Client client,
 		Color bgColor, Color textColor, Function<String, JButton> buttonFactory)
 	{
 		boolean transparent = (bgColor != null && bgColor.getAlpha() == 0);
@@ -83,27 +83,27 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		content.setBorder(new EmptyBorder(12, 12, 12, 12));
 
 		// Unlock mode
-		JLabel unlockLabel = new JLabel(LeagueScapeSetupStrings.GAME_MODE_UNLOCK_MODE);
+		JLabel unlockLabel = new JLabel(GridScapeSetupStrings.GAME_MODE_UNLOCK_MODE);
 		unlockLabel.setForeground(textColor);
-		JComboBox<LeagueScapeConfig.UnlockMode> unlockCombo = new JComboBox<>(LeagueScapeConfig.UnlockMode.values());
+		JComboBox<GridScapeConfig.UnlockMode> unlockCombo = new JComboBox<>(GridScapeConfig.UnlockMode.values());
 		unlockCombo.setSelectedItem(config.unlockMode());
 		styleCombo(unlockCombo, bgColor, textColor);
 		JPanel worldUnlockMultipliersPanel = new JPanel();
 		worldUnlockMultipliersPanel.setLayout(new BoxLayout(worldUnlockMultipliersPanel, BoxLayout.Y_AXIS));
 		worldUnlockMultipliersPanel.setBackground(bgColor);
 		worldUnlockMultipliersPanel.setOpaque(!transparent);
-		JLabel worldUnlockMultLabel = new JLabel(LeagueScapeSetupStrings.GAME_MODE_WORLD_UNLOCK_COST_HTML);
+		JLabel worldUnlockMultLabel = new JLabel(GridScapeSetupStrings.GAME_MODE_WORLD_UNLOCK_COST_HTML);
 		worldUnlockMultLabel.setForeground(textColor);
 		worldUnlockMultLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		worldUnlockMultipliersPanel.add(worldUnlockMultLabel);
-		JLabel tierSelectLabel = new JLabel(LeagueScapeSetupStrings.GAME_MODE_MULTIPLIER_TIER);
+		JLabel tierSelectLabel = new JLabel(GridScapeSetupStrings.GAME_MODE_MULTIPLIER_TIER);
 		tierSelectLabel.setForeground(textColor);
 		JComboBox<Integer> worldUnlockTierCombo = new JComboBox<>(new Integer[] { 1, 2, 3, 4, 5 });
 		worldUnlockTierCombo.setSelectedItem(1);
 		styleCombo(worldUnlockTierCombo, bgColor, textColor);
 		JPanel tierSelectRow = formRow(tierSelectLabel, worldUnlockTierCombo, bgColor, transparent);
 		worldUnlockMultipliersPanel.add(tierSelectRow);
-		String[] multLabels = LeagueScapeSetupStrings.GAME_MODE_WORLD_UNLOCK_TYPE_LABELS;
+		String[] multLabels = GridScapeSetupStrings.GAME_MODE_WORLD_UNLOCK_TYPE_LABELS;
 		final JSpinner[] worldUnlockMultSpinners = new JSpinner[multLabels.length];
 		final boolean[] suppressWorldUnlockMultWrite = { false };
 		for (int i = 0; i < multLabels.length; i++)
@@ -149,7 +149,7 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		wuPowerRow.setBackground(bgColor);
 		wuPowerRow.setOpaque(!transparent);
 		wuPowerRow.setAlignmentX(Component.LEFT_ALIGNMENT);
-		JButton resetTierBtn = buttonFactory.apply(LeagueScapeSetupStrings.GAME_MODE_RESET_TIER_DEFAULTS);
+		JButton resetTierBtn = buttonFactory.apply(GridScapeSetupStrings.GAME_MODE_RESET_TIER_DEFAULTS);
 		resetTierBtn.addActionListener(e -> {
 			Object sel = worldUnlockTierCombo.getSelectedItem();
 			int t = sel instanceof Integer ? (Integer) sel : 1;
@@ -159,13 +159,13 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		});
 		wuPowerRow.add(resetTierBtn);
 		worldUnlockMultipliersPanel.add(wuPowerRow);
-		worldUnlockMultipliersPanel.setVisible(config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK);
+		worldUnlockMultipliersPanel.setVisible(config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK);
 		unlockCombo.addItemListener(e -> {
-			if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED && e.getItem() instanceof LeagueScapeConfig.UnlockMode)
+			if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED && e.getItem() instanceof GridScapeConfig.UnlockMode)
 			{
-				LeagueScapeConfig.UnlockMode mode = (LeagueScapeConfig.UnlockMode) e.getItem();
+				GridScapeConfig.UnlockMode mode = (GridScapeConfig.UnlockMode) e.getItem();
 				configManager.setConfiguration(CONFIG_GROUP, "unlockMode", mode.name());
-				worldUnlockMultipliersPanel.setVisible(mode == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK);
+				worldUnlockMultipliersPanel.setVisible(mode == GridScapeConfig.UnlockMode.WORLD_UNLOCK);
 			}
 		});
 		JPanel unlockRow = formRow(unlockLabel, unlockCombo, bgColor, transparent);
@@ -174,14 +174,14 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		content.add(worldUnlockMultipliersPanel);
 
 		// Task mode
-		JLabel taskModeLabel = new JLabel(LeagueScapeSetupStrings.GAME_MODE_TASK_MODE);
+		JLabel taskModeLabel = new JLabel(GridScapeSetupStrings.GAME_MODE_TASK_MODE);
 		taskModeLabel.setForeground(textColor);
-		JComboBox<LeagueScapeConfig.TaskMode> taskModeCombo = new JComboBox<>(LeagueScapeConfig.TaskMode.values());
+		JComboBox<GridScapeConfig.TaskMode> taskModeCombo = new JComboBox<>(GridScapeConfig.TaskMode.values());
 		taskModeCombo.setSelectedItem(config.taskMode());
 		styleCombo(taskModeCombo, bgColor, textColor);
 		taskModeCombo.addItemListener(e -> {
-			if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED && e.getItem() instanceof LeagueScapeConfig.TaskMode)
-				configManager.setConfiguration(CONFIG_GROUP, "taskMode", ((LeagueScapeConfig.TaskMode) e.getItem()).name());
+			if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED && e.getItem() instanceof GridScapeConfig.TaskMode)
+				configManager.setConfiguration(CONFIG_GROUP, "taskMode", ((GridScapeConfig.TaskMode) e.getItem()).name());
 		});
 		JPanel taskModeRow = formRow(taskModeLabel, taskModeCombo, bgColor, transparent);
 		content.add(taskModeRow);
@@ -192,7 +192,7 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		{
 			final int t = tier;
 			int pts = tierPoints(config, tier);
-			JLabel tierLabel = new JLabel(LeagueScapeSetupStrings.gameModeTierPointsLabel(tier));
+			JLabel tierLabel = new JLabel(GridScapeSetupStrings.gameModeTierPointsLabel(tier));
 			tierLabel.setForeground(textColor);
 			JSpinner tierSpinner = new JSpinner(new SpinnerNumberModel(pts, 0, 999, 1));
 			styleSpinner(tierSpinner, bgColor, textColor);
@@ -203,7 +203,7 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		}
 
 		// Starting area
-		JLabel startAreaLabel = new JLabel(LeagueScapeSetupStrings.GAME_MODE_STARTER_AREA);
+		JLabel startAreaLabel = new JLabel(GridScapeSetupStrings.GAME_MODE_STARTER_AREA);
 		startAreaLabel.setForeground(textColor);
 		JComboBox<String> startAreaCombo = new JComboBox<>();
 		List<Area> areas = new ArrayList<>(areaGraphService.getAreas());
@@ -240,7 +240,7 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		content.add(startAreaRow);
 
 		// Starting points
-		JLabel startPointsLabel = new JLabel(LeagueScapeSetupStrings.GAME_MODE_STARTING_POINTS);
+		JLabel startPointsLabel = new JLabel(GridScapeSetupStrings.GAME_MODE_STARTING_POINTS);
 		startPointsLabel.setForeground(textColor);
 		JSpinner startPointsSpinner = new JSpinner(new SpinnerNumberModel(config.startingPoints(), 0, 99999, 1));
 		styleSpinner(startPointsSpinner, bgColor, textColor);
@@ -251,13 +251,13 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		content.add(new JLabel(" "));
 
 		// Update starting rules: apply current selections to config without resetting progress
-		JButton updateRulesBtn = buttonFactory.apply(LeagueScapeSetupStrings.GAME_MODE_UPDATE_STARTING_RULES);
+		JButton updateRulesBtn = buttonFactory.apply(GridScapeSetupStrings.GAME_MODE_UPDATE_STARTING_RULES);
 		updateRulesBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 		updateRulesBtn.addActionListener(e -> showUpdateRulesFlow(this, configManager, unlockCombo, taskModeCombo, startAreaCombo, startPointsSpinner, tierSpinners, areas));
 		content.add(updateRulesBtn);
 
 		// Reset progress
-		JButton resetBtn = buttonFactory.apply(LeagueScapeSetupStrings.GAME_MODE_RESET_PROGRESS);
+		JButton resetBtn = buttonFactory.apply(GridScapeSetupStrings.GAME_MODE_RESET_PROGRESS);
 		resetBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 		resetBtn.addActionListener(e -> showResetFlow(this, plugin, configManager, config, areaGraphService, pointsService, areaCompletionService, taskGridService, client));
 		content.add(resetBtn);
@@ -317,7 +317,7 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		control.setMaximumSize(COMBO_SIZE);
 	}
 
-	private static int tierPoints(LeagueScapeConfig config, int tier)
+	private static int tierPoints(GridScapeConfig config, int tier)
 	{
 		switch (tier)
 		{
@@ -386,30 +386,30 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 	}
 
 	private static void showUpdateRulesFlow(Component parent, ConfigManager configManager,
-		JComboBox<LeagueScapeConfig.UnlockMode> unlockCombo, JComboBox<LeagueScapeConfig.TaskMode> taskModeCombo,
+		JComboBox<GridScapeConfig.UnlockMode> unlockCombo, JComboBox<GridScapeConfig.TaskMode> taskModeCombo,
 		JComboBox<String> startAreaCombo, JSpinner startPointsSpinner, JSpinner[] tierSpinners, List<Area> areas)
 	{
 		int choice = JOptionPane.showConfirmDialog(parent,
-			LeagueScapeSetupStrings.GAME_MODE_UPDATE_RULES_CONFIRM,
-			LeagueScapeSetupStrings.GAME_MODE_UPDATE_RULES_TITLE,
+			GridScapeSetupStrings.GAME_MODE_UPDATE_RULES_CONFIRM,
+			GridScapeSetupStrings.GAME_MODE_UPDATE_RULES_TITLE,
 			JOptionPane.YES_NO_OPTION,
 			JOptionPane.QUESTION_MESSAGE);
 		if (choice != JOptionPane.YES_OPTION)
 			return;
 		applySelectionsToConfig(configManager, unlockCombo, taskModeCombo, startAreaCombo, startPointsSpinner, tierSpinners, areas);
-		JOptionPane.showMessageDialog(parent, LeagueScapeSetupStrings.GAME_MODE_UPDATE_RULES_DONE, LeagueScapeSetupStrings.GAME_MODE_UPDATE_RULES_DONE_TITLE, JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(parent, GridScapeSetupStrings.GAME_MODE_UPDATE_RULES_DONE, GridScapeSetupStrings.GAME_MODE_UPDATE_RULES_DONE_TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	private static void applySelectionsToConfig(ConfigManager configManager,
-		JComboBox<LeagueScapeConfig.UnlockMode> unlockCombo, JComboBox<LeagueScapeConfig.TaskMode> taskModeCombo,
+		JComboBox<GridScapeConfig.UnlockMode> unlockCombo, JComboBox<GridScapeConfig.TaskMode> taskModeCombo,
 		JComboBox<String> startAreaCombo, JSpinner startPointsSpinner, JSpinner[] tierSpinners, List<Area> areas)
 	{
 		Object unlockSel = unlockCombo.getSelectedItem();
-		if (unlockSel instanceof LeagueScapeConfig.UnlockMode)
-			configManager.setConfiguration(CONFIG_GROUP, "unlockMode", ((LeagueScapeConfig.UnlockMode) unlockSel).name());
+		if (unlockSel instanceof GridScapeConfig.UnlockMode)
+			configManager.setConfiguration(CONFIG_GROUP, "unlockMode", ((GridScapeConfig.UnlockMode) unlockSel).name());
 		Object taskModeSel = taskModeCombo.getSelectedItem();
-		if (taskModeSel instanceof LeagueScapeConfig.TaskMode)
-			configManager.setConfiguration(CONFIG_GROUP, "taskMode", ((LeagueScapeConfig.TaskMode) taskModeSel).name());
+		if (taskModeSel instanceof GridScapeConfig.TaskMode)
+			configManager.setConfiguration(CONFIG_GROUP, "taskMode", ((GridScapeConfig.TaskMode) taskModeSel).name());
 		Object startAreaSel = startAreaCombo.getSelectedItem();
 		if (startAreaSel != null)
 		{
@@ -437,13 +437,13 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		}
 	}
 
-	private static void showResetFlow(Component parent, LeagueScapePlugin plugin, ConfigManager configManager, LeagueScapeConfig config,
+	private static void showResetFlow(Component parent, GridScapePlugin plugin, ConfigManager configManager, GridScapeConfig config,
 		AreaGraphService areaGraphService, PointsService pointsService, AreaCompletionService areaCompletionService,
 		TaskGridService taskGridService, Client client)
 	{
 		int choice = JOptionPane.showConfirmDialog(parent,
-			LeagueScapeSetupStrings.GAME_MODE_RESET_CONFIRM,
-			LeagueScapeSetupStrings.GAME_MODE_RESET_TITLE,
+			GridScapeSetupStrings.GAME_MODE_RESET_CONFIRM,
+			GridScapeSetupStrings.GAME_MODE_RESET_TITLE,
 			JOptionPane.YES_NO_OPTION,
 			JOptionPane.WARNING_MESSAGE);
 		if (choice != JOptionPane.YES_OPTION)
@@ -453,26 +453,26 @@ public class LeagueScapeGameModeTabPanel extends JPanel
 		{
 			String expected = client.getLocalPlayer().getName();
 			String typed = JOptionPane.showInputDialog(parent,
-				LeagueScapeSetupStrings.GAME_MODE_RESET_INPUT_NAME,
-				LeagueScapeSetupStrings.GAME_MODE_RESET_INPUT_NAME_TITLE,
+				GridScapeSetupStrings.GAME_MODE_RESET_INPUT_NAME,
+				GridScapeSetupStrings.GAME_MODE_RESET_INPUT_NAME_TITLE,
 				JOptionPane.WARNING_MESSAGE);
 			confirmed = typed != null && typed.trim().equalsIgnoreCase(expected);
 			if (!confirmed)
-				JOptionPane.showMessageDialog(parent, LeagueScapeSetupStrings.GAME_MODE_RESET_NAME_MISMATCH, LeagueScapeSetupStrings.GAME_MODE_RESET_CANCELLED_TITLE, JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(parent, GridScapeSetupStrings.GAME_MODE_RESET_NAME_MISMATCH, GridScapeSetupStrings.GAME_MODE_RESET_CANCELLED_TITLE, JOptionPane.INFORMATION_MESSAGE);
 		}
 		else
 		{
 			String typed = JOptionPane.showInputDialog(parent,
-				LeagueScapeSetupStrings.GAME_MODE_RESET_INPUT_RESET,
-				LeagueScapeSetupStrings.GAME_MODE_RESET_INPUT_NAME_TITLE,
+				GridScapeSetupStrings.GAME_MODE_RESET_INPUT_RESET,
+				GridScapeSetupStrings.GAME_MODE_RESET_INPUT_NAME_TITLE,
 				JOptionPane.WARNING_MESSAGE);
 			confirmed = typed != null && "RESET".equals(typed.trim());
 			if (!confirmed)
-				JOptionPane.showMessageDialog(parent, LeagueScapeSetupStrings.GAME_MODE_RESET_CANCELLED, LeagueScapeSetupStrings.GAME_MODE_RESET_CANCELLED_TITLE, JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(parent, GridScapeSetupStrings.GAME_MODE_RESET_CANCELLED, GridScapeSetupStrings.GAME_MODE_RESET_CANCELLED_TITLE, JOptionPane.INFORMATION_MESSAGE);
 		}
 		if (!confirmed)
 			return;
 		plugin.resetProgress();
-		JOptionPane.showMessageDialog(parent, LeagueScapeSetupStrings.GAME_MODE_RESET_DONE, LeagueScapeSetupStrings.GAME_MODE_RESET_DONE_TITLE, JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(parent, GridScapeSetupStrings.GAME_MODE_RESET_DONE, GridScapeSetupStrings.GAME_MODE_RESET_DONE_TITLE, JOptionPane.INFORMATION_MESSAGE);
 	}
 }

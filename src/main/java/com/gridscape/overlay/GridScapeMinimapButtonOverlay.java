@@ -1,7 +1,7 @@
-package com.leaguescape.overlay;
+package com.gridscape.overlay;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.LeagueScapePlugin;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.GridScapePlugin;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -21,11 +21,11 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.util.ImageUtil;
 
 /**
- * Draws a LeagueScape button under the minimap, to the left of the world map orb (offset 28px south).
+ * Draws a GridScape button under the minimap, to the left of the world map orb (offset 28px south).
  * Left click: opens the Tasks panel (global in World Unlock mode, area in other modes).
  * Right click: shows a menu with "Tasks", "World Unlocks" (World Unlock mode only), and "Rules & Setup".
  */
-public class LeagueScapeMinimapButtonOverlay extends Overlay implements MouseListener
+public class GridScapeMinimapButtonOverlay extends Overlay implements MouseListener
 {
 	private static final int BUTTON_SIZE = 28;
 	private static final int GAP = 6;
@@ -33,8 +33,8 @@ public class LeagueScapeMinimapButtonOverlay extends Overlay implements MouseLis
 	private static final int SOUTH_OFFSET = 28;
 
 	private final Client client;
-	private final LeagueScapeConfig config;
-	private final LeagueScapePlugin plugin;
+	private final GridScapeConfig config;
+	private final GridScapePlugin plugin;
 
 	private volatile Rectangle buttonBounds = null;
 	private BufferedImage buttonImage;
@@ -42,7 +42,7 @@ public class LeagueScapeMinimapButtonOverlay extends Overlay implements MouseLis
 	private volatile boolean taskIconHovered;
 
 	@Inject
-	public LeagueScapeMinimapButtonOverlay(Client client, LeagueScapeConfig config, LeagueScapePlugin plugin)
+	public GridScapeMinimapButtonOverlay(Client client, GridScapeConfig config, GridScapePlugin plugin)
 	{
 		this.client = client;
 		this.config = config;
@@ -70,9 +70,9 @@ public class LeagueScapeMinimapButtonOverlay extends Overlay implements MouseLis
 		buttonBounds = new Rectangle(x, y, BUTTON_SIZE, BUTTON_SIZE);
 
 		if (buttonImage == null)
-			buttonImage = ImageUtil.loadImageResource(LeagueScapePlugin.class, "task_icon.png");
+			buttonImage = ImageUtil.loadImageResource(GridScapePlugin.class, "task_icon.png");
 		if (buttonImageHovered == null)
-			buttonImageHovered = ImageUtil.loadImageResource(LeagueScapePlugin.class, "task_icon_hovered.png");
+			buttonImageHovered = ImageUtil.loadImageResource(GridScapePlugin.class, "task_icon_hovered.png");
 		BufferedImage source = taskIconHovered && buttonImageHovered != null ? buttonImageHovered : buttonImage;
 		if (source != null)
 		{
@@ -161,7 +161,7 @@ public class LeagueScapeMinimapButtonOverlay extends Overlay implements MouseLis
 
 	private void openTasksPanel()
 	{
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 			plugin.openGlobalTaskList();
 		else
 			plugin.openTasksForCurrentArea();
@@ -174,7 +174,7 @@ public class LeagueScapeMinimapButtonOverlay extends Overlay implements MouseLis
 			JMenuItem tasksItem = new JMenuItem("Tasks");
 			tasksItem.addActionListener(e -> openTasksPanel());
 			menu.add(tasksItem);
-			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+			if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 			{
 				JMenuItem worldUnlocksItem = new JMenuItem("World Unlocks");
 				worldUnlocksItem.addActionListener(e -> plugin.openWorldUnlockGrid());

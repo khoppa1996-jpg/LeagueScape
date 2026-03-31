@@ -1,6 +1,6 @@
-package com.leaguescape.icons;
+package com.gridscape.icons;
 
-import com.leaguescape.LeagueScapePlugin;
+import com.gridscape.GridScapePlugin;
 import java.awt.image.BufferedImage;
 import net.runelite.client.util.ImageUtil;
 
@@ -18,7 +18,7 @@ public final class IconCache
 
 	/**
 	 * RuneLite {@link ImageUtil#loadImageResource(Class, String)} treats paths without a leading {@code '/'}
-	 * as relative to the class's package ({@code com/leaguescape/}), which breaks resources under
+	 * as relative to the class's package ({@code com/gridscape/}), which breaks resources under
 	 * {@code /com/taskIcons/}, {@code /com/bossicons/}, etc. Classpath-root resources must keep the leading slash.
 	 */
 	private static BufferedImage load(String path)
@@ -29,7 +29,7 @@ public final class IconCache
 			p = "/" + p;
 		try
 		{
-			return ImageUtil.loadImageResource(LeagueScapePlugin.class, p);
+			return ImageUtil.loadImageResource(GridScapePlugin.class, p);
 		}
 		catch (Exception e)
 		{

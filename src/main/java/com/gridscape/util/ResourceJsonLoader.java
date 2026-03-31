@@ -1,4 +1,4 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import com.google.gson.Gson;
 import java.io.InputStream;

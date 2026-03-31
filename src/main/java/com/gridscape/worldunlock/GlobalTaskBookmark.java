@@ -1,4 +1,4 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
 /**
  * Persisted bookmark for the global task hub: stable task key plus grid position and optional label.

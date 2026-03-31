@@ -1,9 +1,9 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
-import com.leaguescape.task.TaskState;
-import com.leaguescape.task.TaskTile;
-import com.leaguescape.worldunlock.WorldUnlockService;
-import com.leaguescape.worldunlock.WorldUnlockTilePlacement;
+import com.gridscape.task.TaskState;
+import com.gridscape.task.TaskTile;
+import com.gridscape.worldunlock.WorldUnlockService;
+import com.gridscape.worldunlock.WorldUnlockTilePlacement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

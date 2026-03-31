@@ -1,6 +1,6 @@
-package com.leaguescape.icons;
+package com.gridscape.icons;
 
-import com.leaguescape.constants.TaskTypes;
+import com.gridscape.constants.TaskTypes;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public final class IconResources
 	public static final String TASK_ICONS_RESOURCE_PREFIX = "/com/taskIcons/";
 	public static final String BOSS_ICONS_RESOURCE_PREFIX = "/com/bossicons/";
 	public static final String AREA_ICONS_RESOURCE_PREFIX = "/com/area_icons/";
-	public static final String GENERIC_TASK_ICON = "/com/leaguescape/task_icon.png";
+	public static final String GENERIC_TASK_ICON = "/com/gridscape/task_icon.png";
 
 	/** Boss unlock tile id -> boss icon filename (e.g. game_icon_barrowschests.png) where id does not match filename. */
 	public static final Map<String, String> BOSS_ICON_OVERRIDES;

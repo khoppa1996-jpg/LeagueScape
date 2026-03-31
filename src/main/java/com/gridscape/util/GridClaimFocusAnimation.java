@@ -1,4 +1,4 @@
-package com.leaguescape.util;
+package com.gridscape.util;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -22,8 +22,8 @@ public final class GridClaimFocusAnimation
 	private GridClaimFocusAnimation() {}
 
 	/** Client properties on each grid cell so we can read real {@link Component#getBounds()} after layout. */
-	public static final String GRID_CELL_ROW_KEY = "leaguescape.gridRow";
-	public static final String GRID_CELL_COL_KEY = "leaguescape.gridCol";
+	public static final String GRID_CELL_ROW_KEY = "GridScape.gridRow";
+	public static final String GRID_CELL_COL_KEY = "GridScape.gridCol";
 
 	public static void putGridCellKeys(JComponent c, int row, int col)
 	{

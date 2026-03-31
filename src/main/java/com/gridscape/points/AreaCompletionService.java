@@ -1,9 +1,9 @@
-package com.leaguescape.points;
+package com.gridscape.points;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.data.AreaStatus;
-import com.leaguescape.task.TaskGridService;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.data.AreaStatus;
+import com.gridscape.task.TaskGridService;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -23,21 +23,21 @@ import net.runelite.client.config.ConfigManager;
 @Singleton
 public class AreaCompletionService
 {
-	private static final String CONFIG_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.STATE_GROUP;
+	private static final String CONFIG_GROUP = com.gridscape.util.GridScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_POINTS_PER_AREA = "pointsEarnedPerArea";
 	private static final String KEY_COMPLETED_AREAS = "completedAreas";
 
 	private final ConfigManager configManager;
 	private final AreaGraphService areaGraphService;
 	private final PointsService pointsService;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 
 	private final Map<String, Integer> pointsEarnedInArea = new ConcurrentHashMap<>();
 	private final Set<String> completedAreaIds = new HashSet<>();
 	private final Provider<TaskGridService> taskGridServiceProvider;
 
 	@Inject
-	public AreaCompletionService(ConfigManager configManager, AreaGraphService areaGraphService, PointsService pointsService, LeagueScapeConfig config,
+	public AreaCompletionService(ConfigManager configManager, AreaGraphService areaGraphService, PointsService pointsService, GridScapeConfig config,
 		Provider<TaskGridService> taskGridServiceProvider)
 	{
 		this.configManager = configManager;
@@ -77,7 +77,7 @@ public class AreaCompletionService
 		}
 
 		completedAreaIds.clear();
-		completedAreaIds.addAll(com.leaguescape.util.ConfigParsing.parseCommaSeparatedSet(configManager.getConfiguration(CONFIG_GROUP, KEY_COMPLETED_AREAS)));
+		completedAreaIds.addAll(com.gridscape.util.ConfigParsing.parseCommaSeparatedSet(configManager.getConfiguration(CONFIG_GROUP, KEY_COMPLETED_AREAS)));
 		// Recompute completed from points (in case area pointsToComplete threshold changed in config)
 		for (String areaId : pointsEarnedInArea.keySet())
 		{
@@ -118,7 +118,7 @@ public class AreaCompletionService
 	 */
 	public Set<String> getEffectiveCompletedAreaIds()
 	{
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINT_BUY)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.POINT_BUY)
 		{
 			Set<String> out = new HashSet<>();
 			TaskGridService taskGrid = taskGridServiceProvider.get();
@@ -142,7 +142,7 @@ public class AreaCompletionService
 		{
 			return AreaStatus.LOCKED;
 		}
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINT_BUY)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.POINT_BUY)
 		{
 			// Unlocked area is complete only when all tasks in that area are completed
 			return taskGridServiceProvider.get().isAreaFullyCompleted(areaId) ? AreaStatus.COMPLETE : AreaStatus.UNLOCKED;

@@ -1,6 +1,6 @@
-package com.leaguescape;
+package com.gridscape;
 
-import com.leaguescape.util.LeagueScapeConfigConstants;
+import com.gridscape.util.GridScapeConfigConstants;
 import java.awt.Color;
 import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
@@ -9,13 +9,13 @@ import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
 /**
- * LeagueScape configuration: overlay appearance (locked overlay, boundary lines, colors), map
+ * GridScape configuration: overlay appearance (locked overlay, boundary lines, colors), map
  * overlay options, progression (starting area, points, unlock mode), and task system (task mode
  * F2P/Members, difficulty multiplier, points per tier, tasks file path). Used by the plugin and
  * config panel; values are persisted by RuneLite's config system.
  */
-@ConfigGroup(LeagueScapeConfigConstants.CONFIG_GROUP)
-public interface LeagueScapeConfig extends Config
+@ConfigGroup(GridScapeConfigConstants.CONFIG_GROUP)
+public interface GridScapeConfig extends Config
 {
 	@ConfigSection(
 		name = "Overlay appearance",
@@ -54,7 +54,7 @@ public interface LeagueScapeConfig extends Config
 
 	@ConfigSection(
 		name = "Resetting progress",
-		description = "Reset all LeagueScape progress (points, area unlocks, task completions). Use the Reset Progress button in the Rules & Setup panel.",
+		description = "Reset all GridScape progress (points, area unlocks, task completions). Use the Reset Progress button in the Rules & Setup panel.",
 		position = 5
 	)
 	String resetSection = "resetSection";

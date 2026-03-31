@@ -1,16 +1,16 @@
-package com.leaguescape.worldunlock;
+package com.gridscape.worldunlock;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.constants.TaskTypes;
-import com.leaguescape.constants.WorldUnlockTileType;
-import com.leaguescape.grid.GridPos;
-import com.leaguescape.grid.Spiral;
-import com.leaguescape.grid.RevealLogic;
-import com.leaguescape.points.PointsService;
-import com.leaguescape.task.TaskDefinition;
-import com.leaguescape.task.TaskGridService;
-import com.leaguescape.task.TaskState;
-import com.leaguescape.task.TaskTile;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.constants.TaskTypes;
+import com.gridscape.constants.WorldUnlockTileType;
+import com.gridscape.grid.GridPos;
+import com.gridscape.grid.Spiral;
+import com.gridscape.grid.RevealLogic;
+import com.gridscape.points.PointsService;
+import com.gridscape.task.TaskDefinition;
+import com.gridscape.task.TaskGridService;
+import com.gridscape.task.TaskState;
+import com.gridscape.task.TaskTile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class GlobalTaskListService
 {
 	private static final Logger log = LoggerFactory.getLogger(GlobalTaskListService.class);
-	private static final String STATE_GROUP = com.leaguescape.util.LeagueScapeConfigConstants.STATE_GROUP;
+	private static final String STATE_GROUP = com.gridscape.util.GridScapeConfigConstants.STATE_GROUP;
 	private static final String KEY_GLOBAL_CLAIMED = "globalTaskProgress_claimed";
 	private static final String KEY_GLOBAL_COMPLETED = "globalTaskProgress_completed";
 	private static final String KEY_GLOBAL_CENTER_CLAIMED = "globalTaskProgress_centerClaimed";
@@ -89,13 +89,13 @@ public class GlobalTaskListService
 	private static final Pattern SKILL_BRACKET_ONLY = Pattern.compile("^(\\d+)\\s*-\\s*(\\d+)$");
 
 	private final ConfigManager configManager;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 	private final PointsService pointsService;
 	private final WorldUnlockService worldUnlockService;
 	private final TaskGridService taskGridService;
 
 	@Inject
-	public GlobalTaskListService(ConfigManager configManager, LeagueScapeConfig config,
+	public GlobalTaskListService(ConfigManager configManager, GridScapeConfig config,
 		PointsService pointsService, WorldUnlockService worldUnlockService,
 		TaskGridService taskGridService)
 	{
@@ -367,7 +367,7 @@ public class GlobalTaskListService
 		// 2a. Add non-killCount tasks first (including Achievement Diary when area + diary tier unlocked)
 		for (TaskDefinition t : allTasks)
 		{
-			if (isKillCountTask(t) || com.leaguescape.constants.TaskTypes.QUEST.equalsIgnoreCase(t != null ? t.getTaskType() : null)) continue;
+			if (isKillCountTask(t) || com.gridscape.constants.TaskTypes.QUEST.equalsIgnoreCase(t != null ? t.getTaskType() : null)) continue;
 			String key = taskKey(t);
 			if (key.isEmpty() || byKey.containsKey(key)) continue;
 			if (canTaskAppearWithUnlocks(t, unlocked, byKey, globalClaimedTaskKeys))
@@ -485,7 +485,7 @@ public class GlobalTaskListService
 	{
 		if (t == null || t.getTaskType() == null) return false;
 		String type = t.getTaskType();
-		return com.leaguescape.constants.TaskTypes.QUEST.equalsIgnoreCase(type) || com.leaguescape.constants.TaskTypes.isAchievementDiaryType(type);
+		return com.gridscape.constants.TaskTypes.QUEST.equalsIgnoreCase(type) || com.gridscape.constants.TaskTypes.isAchievementDiaryType(type);
 	}
 
 	/**
@@ -552,7 +552,7 @@ public class GlobalTaskListService
 		boolean isTaskPrereqReq = isTaskPrerequisiteRequirement(task.getRequirements());
 		boolean isSkillTask = taskType != null && containsSkillNameIgnoreCase(u.allSkillNames, taskType);
 		boolean hasSkillBracketReq = isSkillTask && hasRequirements && task.getRequirements().matches(".*\\d+\\s*-\\s*\\d+.*");
-		boolean questTypeOrReqNeedsQuestUnlock = com.leaguescape.constants.TaskTypes.QUEST.equalsIgnoreCase(taskType)
+		boolean questTypeOrReqNeedsQuestUnlock = com.gridscape.constants.TaskTypes.QUEST.equalsIgnoreCase(taskType)
 			|| (hasRequirements && !isKillCountTask(task) && !isTaskPrereqReq && !hasSkillBracketReq && !isCollectionLogWithoutBossOrArea(task));
 		// Combat+bossId and Collection Log+bossId (tile-id-only requirements): gated by boss unlock + §7, not §3 quest text.
 		boolean useQuestUnlockSection = questTypeOrReqNeedsQuestUnlock && !isCombatWithBossId(task)
@@ -586,7 +586,7 @@ public class GlobalTaskListService
 
 		// 4. Achievement Diary: the appropriate area(s) for that diary must be unlocked AND the diary tier must be unlocked.
 		// Uses area_mapping.json: diary key -> area ids. At least one of those areas must be unlocked, and the tier key (e.g. varrock_1) must be unlocked.
-		if (com.leaguescape.constants.TaskTypes.isAchievementDiaryType(taskType))
+		if (com.gridscape.constants.TaskTypes.isAchievementDiaryType(taskType))
 		{
 			List<String> diaryAreas = task.getRequiredAreaIds();
 			if (diaryAreas == null || diaryAreas.isEmpty())

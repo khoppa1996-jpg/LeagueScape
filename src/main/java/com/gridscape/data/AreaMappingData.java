@@ -1,4 +1,4 @@
-package com.leaguescape.data;
+package com.gridscape.data;
 
 import java.util.List;
 import java.util.Map;

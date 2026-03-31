@@ -1,4 +1,4 @@
-package com.leaguescape.grid;
+package com.gridscape.grid;
 
 import java.util.ArrayList;
 import java.util.List;

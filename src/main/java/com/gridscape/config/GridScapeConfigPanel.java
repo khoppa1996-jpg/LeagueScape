@@ -1,11 +1,11 @@
-package com.leaguescape.config;
+package com.gridscape.config;
 
-import com.leaguescape.LeagueScapeConfig;
-import com.leaguescape.LeagueScapePlugin;
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.data.Area;
-import com.leaguescape.task.TaskDefinition;
-import com.leaguescape.task.TaskGridService;
+import com.gridscape.GridScapeConfig;
+import com.gridscape.GridScapePlugin;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.data.Area;
+import com.gridscape.task.TaskDefinition;
+import com.gridscape.task.TaskGridService;
 import net.runelite.client.config.ConfigManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -38,7 +38,7 @@ import net.runelite.client.util.ImageUtil;
 import java.awt.Container;
 import java.awt.Rectangle;
 
-public class LeagueScapeConfigPanel extends PluginPanel
+public class GridScapeConfigPanel extends PluginPanel
 {
 	/** Panel that stays within scroll viewport width (no horizontal scroll). */
 	private static class ScrollableWidthPanel extends JPanel implements Scrollable
@@ -91,13 +91,13 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		return wrapper;
 	}
 
-	private static final String CONFIG_GROUP = "leaguescape";
+	private static final String CONFIG_GROUP = com.gridscape.util.GridScapeConfigConstants.CONFIG_GROUP;
 
-	private final LeagueScapePlugin plugin;
+	private final GridScapePlugin plugin;
 	private final AreaGraphService areaGraphService;
 	private final TaskGridService taskGridService;
 	private final ConfigManager configManager;
-	private final LeagueScapeConfig config;
+	private final GridScapeConfig config;
 
 	private JPanel mainPanel;
 	private JPanel listPanel;
@@ -132,8 +132,8 @@ public class LeagueScapeConfigPanel extends PluginPanel
 	private JPanel taskAreasPanel;
 	private int editingTaskIndex = -1;
 
-	public LeagueScapeConfigPanel(LeagueScapePlugin plugin, AreaGraphService areaGraphService, TaskGridService taskGridService,
-		ConfigManager configManager, LeagueScapeConfig config)
+	public GridScapeConfigPanel(GridScapePlugin plugin, AreaGraphService areaGraphService, TaskGridService taskGridService,
+		ConfigManager configManager, GridScapeConfig config)
 	{
 		this.plugin = plugin;
 		this.areaGraphService = areaGraphService;
@@ -147,7 +147,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 		// Buttons stacked vertically so all show in narrow sidebar
 		JPanel topSection = new JPanel();
 		topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
-		JLabel title = new JLabel("LeagueScape Area Config");
+		JLabel title = new JLabel("GridScape Area Config");
 		title.setAlignmentX(CENTER_ALIGNMENT);
 		topSection.add(title);
 		topSection.add(new JLabel(" "));
@@ -997,7 +997,7 @@ public class LeagueScapeConfigPanel extends PluginPanel
 
 	public BufferedImage getIcon()
 	{
-		BufferedImage icon = ImageUtil.loadImageResource(LeagueScapePlugin.class, "icon.png");
+		BufferedImage icon = ImageUtil.loadImageResource(GridScapePlugin.class, "icon.png");
 		if (icon != null) return icon;
 		BufferedImage placeholder = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 		for (int x = 0; x < 16; x++)

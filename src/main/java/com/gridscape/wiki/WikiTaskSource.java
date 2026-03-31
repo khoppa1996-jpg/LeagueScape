@@ -1,4 +1,4 @@
-package com.leaguescape.wiki;
+package com.gridscape.wiki;
 
 import java.util.Arrays;
 import java.util.Collections;

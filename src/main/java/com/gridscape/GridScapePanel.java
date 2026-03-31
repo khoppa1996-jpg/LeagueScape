@@ -1,10 +1,10 @@
-package com.leaguescape;
+package com.gridscape;
 
-import com.leaguescape.area.AreaGraphService;
-import com.leaguescape.data.Area;
-import com.leaguescape.data.AreaStatus;
-import com.leaguescape.points.AreaCompletionService;
-import com.leaguescape.points.PointsService;
+import com.gridscape.area.AreaGraphService;
+import com.gridscape.data.Area;
+import com.gridscape.data.AreaStatus;
+import com.gridscape.points.AreaCompletionService;
+import com.gridscape.points.PointsService;
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -22,14 +22,14 @@ import net.runelite.client.ui.PluginPanel;
 import net.runelite.client.util.ImageUtil;
 
 /**
- * LeagueScape side panel: shows current area, points, and unlock buttons. In points-to-complete
+ * GridScape side panel: shows current area, points, and unlock buttons. In points-to-complete
  * mode also shows area completion progress. "Tasks" opens the task grid for the current area;
  * "Rules & Setup" is reserved for future config/setup UI.
  */
-public class LeagueScapePanel extends PluginPanel
+public class GridScapePanel extends PluginPanel
 {
-	private final LeagueScapePlugin plugin;
-	private final LeagueScapeConfig config;
+	private final GridScapePlugin plugin;
+	private final GridScapeConfig config;
 	private final ConfigManager configManager;
 	private final AreaGraphService areaGraphService;
 	private final PointsService pointsService;
@@ -43,7 +43,7 @@ public class LeagueScapePanel extends PluginPanel
 	private final net.runelite.client.audio.AudioPlayer audioPlayer;
 	private final net.runelite.api.Client client;
 
-	public LeagueScapePanel(LeagueScapePlugin plugin, LeagueScapeConfig config, ConfigManager configManager,
+	public GridScapePanel(GridScapePlugin plugin, GridScapeConfig config, ConfigManager configManager,
 		AreaGraphService areaGraphService, PointsService pointsService, AreaCompletionService areaCompletionService,
 		net.runelite.client.audio.AudioPlayer audioPlayer, net.runelite.api.Client client)
 	{
@@ -61,7 +61,7 @@ public class LeagueScapePanel extends PluginPanel
 		JPanel content = new JPanel();
 		content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
-		JLabel title = new JLabel("LeagueScape");
+		JLabel title = new JLabel("GridScape");
 		title.setAlignmentX(CENTER_ALIGNMENT);
 		content.add(title);
 
@@ -74,8 +74,8 @@ public class LeagueScapePanel extends PluginPanel
 
 		content.add(new JLabel(" "));
 
-		boolean pointsToComplete = config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE;
-		boolean worldUnlockMode = config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK;
+		boolean pointsToComplete = config.unlockMode() == GridScapeConfig.UnlockMode.POINTS_TO_COMPLETE;
+		boolean worldUnlockMode = config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK;
 		if (pointsToComplete && !worldUnlockMode)
 		{
 			content.add(new JLabel("Complete areas (earn points in each):"));
@@ -105,7 +105,7 @@ public class LeagueScapePanel extends PluginPanel
 
 		JButton tasksBtn = new JButton("Tasks");
 		tasksBtn.addActionListener(e -> {
-			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+			if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 			{
 				plugin.openGlobalTaskList();
 			}
@@ -138,7 +138,7 @@ public class LeagueScapePanel extends PluginPanel
 	private void refreshUnlockButtons()
 	{
 		unlockPanel.removeAll();
-		if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+		if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 		{
 			JButton worldUnlockBtn = new JButton("World Unlock");
 			worldUnlockBtn.addActionListener(e -> plugin.openWorldUnlockGrid());
@@ -146,7 +146,7 @@ public class LeagueScapePanel extends PluginPanel
 		}
 		else
 		{
-			Set<String> completedIds = (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+			Set<String> completedIds = (config.unlockMode() == GridScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
 				? areaCompletionService.getEffectiveCompletedAreaIds()
 				: null;
 			List<Area> unlockable = areaGraphService.getUnlockableNeighbors(completedIds);
@@ -197,9 +197,9 @@ public class LeagueScapePanel extends PluginPanel
 		refreshPointsLabel();
 		if (unlockSectionLabel != null)
 		{
-			if (config.unlockMode() == LeagueScapeConfig.UnlockMode.WORLD_UNLOCK)
+			if (config.unlockMode() == GridScapeConfig.UnlockMode.WORLD_UNLOCK)
 				unlockSectionLabel.setText("Open World Unlock grid to spend points on tiles.");
-			else if (config.unlockMode() == LeagueScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
+			else if (config.unlockMode() == GridScapeConfig.UnlockMode.POINTS_TO_COMPLETE)
 				unlockSectionLabel.setText("Next unlock (complete an area first):");
 			else
 				unlockSectionLabel.setText("Next unlock (affordable):");
@@ -212,14 +212,14 @@ public class LeagueScapePanel extends PluginPanel
 	{
 		if (plugin.unlockArea(areaId, cost))
 		{
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.LOCKED, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.LOCKED, client);
 			refreshPointsLabel();
 			refreshCurrentAreaLabel(areaId);
 			refreshUnlockButtons();
 		}
 		else
 		{
-			LeagueScapeSounds.play(audioPlayer, LeagueScapeSounds.WRONG, client);
+			GridScapeSounds.play(audioPlayer, GridScapeSounds.WRONG, client);
 		}
 	}
 
@@ -234,10 +234,15 @@ public class LeagueScapePanel extends PluginPanel
 	/** Returns the plugin panel icon from resources, or a small teal placeholder if missing. */
 	public BufferedImage getIcon()
 	{
-		BufferedImage icon = ImageUtil.loadImageResource(getClass(), "icon.png");
-		if (icon != null)
+		try
 		{
-			return icon;
+			BufferedImage icon = ImageUtil.loadImageResource(getClass(), "icon.png");
+			if (icon != null)
+				return icon;
+		}
+		catch (IllegalArgumentException ignored)
+		{
+			// Missing resource: fall back to placeholder
 		}
 		// Placeholder 16x16 until icon.png is added (max 48x72 for plugin hub)
 		BufferedImage placeholder = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
