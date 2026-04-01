@@ -13,7 +13,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.AlphaComposite;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -632,19 +631,23 @@ public class WorldUnlockGridPanel extends JPanel
 				boolean[] f = FrontierFogHelpers.cardinalFlagsWorldUnlock(fogRow, fogCol, worldUnlockService, claimed, grid);
 				if (f[0] || f[1] || f[2] || f[3])
 					FogTileCompositor.paintFogQuadrants(g, getWidth(), getHeight(), f[0], f[1], f[2], f[3], ftl, ftr, fbl, fbr);
+				super.paintComponent(g);
+			}
+
+			@Override
+			protected void paintChildren(Graphics g)
+			{
+				super.paintChildren(g);
+				/* Padlock above task icon (icon is a child; default paint order drew it on top of padlock). */
 				if (padlock != null)
 				{
 					int w = getWidth(), h = getHeight();
-					int s = Math.max(8, Math.min(w, h) / 4);
+					int s = Math.max(16, Math.min(w, h) / 2);
 					int inset = Math.max(1, Math.min(w, h) / 18);
 					int x = w - s - inset;
 					int y = inset;
-					Graphics2D g2 = (Graphics2D) g.create();
-					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
-					g2.drawImage(padlock.getScaledInstance(s, s, Image.SCALE_SMOOTH), x, y, null);
-					g2.dispose();
+					g.drawImage(padlock.getScaledInstance(s, s, Image.SCALE_SMOOTH), x, y, null);
 				}
-				super.paintComponent(g);
 			}
 		};
 		cell.setLayout(new BorderLayout());
@@ -711,7 +714,6 @@ public class WorldUnlockGridPanel extends JPanel
 	private JPanel buildClaimedCell(WorldUnlockTile tile, boolean isCenter, BufferedImage tileIcon, int tileSize, int iconMargin)
 	{
 		final BufferedImage bg = tileBg;
-		final BufferedImage padlock = padlockImg;
 		final BufferedImage iconImage = tileIcon;
 		final int margin = iconMargin;
 		final BufferedImage checkmark = checkmarkImg != null
@@ -744,14 +746,6 @@ public class WorldUnlockGridPanel extends JPanel
 						int y = margin + (innerH - drawH) / 2;
 						g.drawImage(iconImage.getScaledInstance(drawW, drawH, Image.SCALE_SMOOTH), x, y, null);
 					}
-				}
-				if (isCenter && padlock != null)
-				{
-					Graphics2D g2 = (Graphics2D) g.create();
-					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f));
-					int s = Math.min(getWidth(), getHeight()) * 3 / 4;
-					g2.drawImage(padlock.getScaledInstance(s, s, Image.SCALE_SMOOTH), (getWidth() - s) / 2, (getHeight() - s) / 2, null);
-					g2.dispose();
 				}
 				g.setColor(new Color(120, 120, 120, 140));
 				g.fillRect(0, 0, getWidth(), getHeight());

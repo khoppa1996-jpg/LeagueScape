@@ -45,7 +45,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
@@ -106,6 +105,8 @@ public final class GlobalTaskHub extends JPanel
 	private final Runnable notifyParentRefresh;
 	private final BufferedImage listRowRectangleBg;
 	private final BufferedImage defaultTaskIcon;
+	/** Upper-right on hub list planks; may be null if asset missing. */
+	private final BufferedImage bookmarkHubIcon;
 
 	private final List<HubRow> allRows = new ArrayList<>();
 	private final JPanel tileListPanel;
@@ -124,6 +125,8 @@ public final class GlobalTaskHub extends JPanel
 	private final Set<Integer> disabledTiers = new HashSet<>();
 	private final Set<String> disabledTypes = new HashSet<>();
 	private final Set<String> disabledAreas = new HashSet<>();
+	/** When true, the hub list only shows tasks with a hub bookmark at that grid cell. */
+	private boolean showBookmarkedOnly;
 
 	private Timer searchDebounce;
 	private boolean reloadPosted;
@@ -137,7 +140,8 @@ public final class GlobalTaskHub extends JPanel
 		BufferedImage searchButtonArt,
 		BufferedImage sortButtonArt,
 		BufferedImage listRowRectangleBg,
-		BufferedImage defaultTaskIcon)
+		BufferedImage defaultTaskIcon,
+		BufferedImage bookmarkHubIcon)
 	{
 		this.service = service;
 		this.layoutSeed = layoutSeed;
@@ -146,6 +150,7 @@ public final class GlobalTaskHub extends JPanel
 		this.dialogParent = dialogParent;
 		this.notifyParentRefresh = notifyParentRefresh != null ? notifyParentRefresh : () -> {};
 		this.listRowRectangleBg = listRowRectangleBg;
+		this.bookmarkHubIcon = bookmarkHubIcon;
 		this.defaultTaskIcon = defaultTaskIcon != null ? defaultTaskIcon
 			: IconCache.loadWithFallback(IconResources.GENERIC_TASK_ICON,
 				IconResources.TASK_ICONS_RESOURCE_PREFIX + "Other_icon.png");
@@ -159,7 +164,7 @@ public final class GlobalTaskHub extends JPanel
 		Dimension dSort = hubButtonSizeForImage(sortButtonArt, HUB_HEADER_BUTTON_HEIGHT);
 
 		menuButton = new AspectFitImageButton("", menuButtonArt, POPUP_TEXT);
-		menuButton.setToolTipText("Filters: tier, type, area");
+		menuButton.setToolTipText("Filters: tier, type, area, bookmarks");
 		applyFixedHubButtonSize(menuButton, dMenu);
 		menuButton.addActionListener(e -> {
 			playSound.run();
@@ -405,6 +410,22 @@ public final class GlobalTaskHub extends JPanel
 				root.add(cb);
 			}
 		}
+		root.addSeparator();
+		addFilterSectionHeader(root, "Bookmarks");
+		JCheckBoxMenuItem bookmarkOnly = new JCheckBoxMenuItem("Bookmarked tasks only", showBookmarkedOnly);
+		applyMenuHideOnClickFalse(bookmarkOnly);
+		bookmarkOnly.addActionListener(e -> {
+			showBookmarkedOnly = bookmarkOnly.isSelected();
+			applyFilters();
+			if (MENU_ITEM_SET_HIDE_ON_CLICK == null)
+			{
+				SwingUtilities.invokeLater(() -> {
+					if (invoker.isShowing())
+						root.show(invoker, 0, invoker.getHeight());
+				});
+			}
+		});
+		root.add(bookmarkOnly);
 		root.show(invoker, 0, invoker.getHeight());
 	}
 
@@ -530,6 +551,8 @@ public final class GlobalTaskHub extends JPanel
 			if (disabledTypes.contains(r.typeStr))
 				continue;
 			if (!areaRowVisible(r))
+				continue;
+			if (showBookmarkedOnly && !service.isTaskHubBookmarked(r.tile.getRow(), r.tile.getCol()))
 				continue;
 			if (!q.isEmpty())
 			{
@@ -702,21 +725,14 @@ public final class GlobalTaskHub extends JPanel
 			int r = tile.getRow(), c = tile.getCol();
 			boolean bookmarked = service.isTaskHubBookmarked(r, c);
 			JPopupMenu menu = new JPopupMenu();
-			JMenuItem item = new JMenuItem(bookmarked ? "Remove bookmark" : "Add bookmark…");
+			JMenuItem item = new JMenuItem(bookmarked ? "Remove bookmark" : "Add bookmark");
 			item.addActionListener(ev -> {
 				playSound.run();
 				if (bookmarked)
 					service.removeTaskHubBookmark(r, c);
 				else
-				{
-					String def = tile.getDisplayName();
-					String label = JOptionPane.showInputDialog(dialogParent, "Bookmark label (optional):", def);
-					if (label == null)
-						return;
-					String lk = label.trim().isEmpty() ? def : label.trim();
 					service.addTaskHubBookmark(new GlobalTaskBookmark(
-						GlobalTaskListService.taskKeyFromName(tile.getDisplayName()), r, c, lk));
-				}
+						GlobalTaskListService.taskKeyFromName(tile.getDisplayName()), r, c, ""));
 				notifyParentRefresh.run();
 			});
 			menu.add(item);
@@ -739,6 +755,21 @@ public final class GlobalTaskHub extends JPanel
 				{
 					g.setColor(POPUP_BG);
 					g.fillRect(0, plankH, w, h - plankH);
+				}
+			}
+			if (bookmarkHubIcon != null && service.isTaskHubBookmarked(row.tile.getRow(), row.tile.getCol()))
+			{
+				int m = TASK_TILE_ICON_MARGIN;
+				int bm = Math.max(8, Math.min(plankH - 2 * m, 22));
+				if (bm > 0 && plankH >= m + bm)
+				{
+					BufferedImage sm = IconCache.scaleToFitAllowUpscale(bookmarkHubIcon, bm, bm);
+					if (sm != null)
+					{
+						int bx = w - sm.getWidth() - m;
+						int by = m;
+						g.drawImage(sm, bx, by, null);
+					}
 				}
 			}
 

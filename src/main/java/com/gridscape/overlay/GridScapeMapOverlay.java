@@ -1569,7 +1569,9 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		BufferedImage tileSquare = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_square.png");
 		BufferedImage xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
 		BufferedImage checkmarkImg = ImageUtil.loadImageResource(GridScapePlugin.class, "complete_checkmark.png");
-			BufferedImage padlockImg = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
+		BufferedImage padlockImg = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
+			BufferedImage centerTileIconImg = IconCache.loadWithFallback(IconResources.GENERIC_TASK_ICON,
+				IconResources.TASK_ICONS_RESOURCE_PREFIX + "Other_icon.png");
 			BufferedImage fogTileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_base.png");
 			BufferedImage fogTopLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_left.png");
 			BufferedImage fogTopRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_right.png");
@@ -1769,7 +1771,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 						else
 							taskIcon = defaultTaskIcon != null ? scaleToFitAllowUpscale(defaultTaskIcon, iconMaxFit, iconMaxFit) : null;
 					}
-					JPanel cell = buildTaskCell(areaId, tile, state, checkmarkImg, padlockImg, tileSquare, buttonRect, taskIcon, POPUP_TEXT, refreshHolder[0], claimFocusAfter, dialog, area, isMystery, tileSize, iconMargin);
+					JPanel cell = buildTaskCell(areaId, tile, state, checkmarkImg, centerTileIconImg, tileSquare, buttonRect, taskIcon, POPUP_TEXT, refreshHolder[0], claimFocusAfter, dialog, area, isMystery, tileSize, iconMargin);
 					gridPanel.add(cell, gbc);
 				}
 				for (TaskTile tile : grid)
@@ -1945,17 +1947,17 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 	}
 
 	private JPanel buildTaskCell(String areaId, TaskTile tile, TaskState state,
-		BufferedImage checkmarkImg, BufferedImage padlockImg, BufferedImage tileBg, BufferedImage buttonRect,
+		BufferedImage checkmarkImg, BufferedImage centerTileIconImg, BufferedImage tileBg, BufferedImage buttonRect,
 		BufferedImage taskIcon, Color textColor, Runnable onRefresh, BiConsumer<Integer, Integer> onClaimFocus,
 		JDialog parentDialog, Area area, boolean isMystery, int tileSize, int iconMargin)
 	{
 		boolean isCenter = (tile.getRow() == 0 && tile.getCol() == 0);
 		if (state == TaskState.CLAIMED)
 		{
-			return buildClaimedTaskCell(tileBg, checkmarkImg, padlockImg, tileSize, isCenter);
+			return buildClaimedTaskCell(tileBg, checkmarkImg, centerTileIconImg, tileSize, isCenter);
 		}
 		final BufferedImage tileBgFinal = tileBg;
-		final BufferedImage padlockFinal = padlockImg;
+		final BufferedImage centerIconFinal = centerTileIconImg;
 		final boolean centerTile = isCenter;
 		JPanel cell = new JPanel()
 		{
@@ -1971,15 +1973,15 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 					g.setColor(new Color(60, 55, 50));
 					g.fillRect(0, 0, getWidth(), getHeight());
 				}
-				// Center tile: always show padlock so the center is easy to find
-				if (centerTile && padlockFinal != null)
+				// Center tile: generic task icon (task_icon.png) so the center is easy to find
+				if (centerTile && centerIconFinal != null)
 				{
 					int w = getWidth();
 					int h = getHeight();
 					int size = Math.min(w, h) * 3 / 4;
 					int x = (w - size) / 2;
 					int y = (h - size) / 2;
-					g.drawImage(padlockFinal.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
+					g.drawImage(centerIconFinal.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
 				}
 				super.paintComponent(g);
 			}
@@ -1988,7 +1990,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		cell.setOpaque(false);
 		cell.setPreferredSize(new Dimension(tileSize, tileSize));
 
-		// Center tile shows only padlock (no task icon)
+		// Center tile shows only the generic task icon above (no per-task icon child)
 		if (taskIcon != null && !centerTile)
 		{
 			final BufferedImage iconImage = taskIcon;
@@ -2055,12 +2057,12 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		return cell;
 	}
 
-	/** Claimed task: desaturated tile, single small checkmark in corner (or on top of padlock for center tile), not clickable. */
-	private JPanel buildClaimedTaskCell(BufferedImage tileBg, BufferedImage checkmarkImg, BufferedImage padlockImg, int tileSize, boolean isCenter)
+	/** Claimed task: desaturated tile, single small checkmark in corner (or on top of center task icon for center tile), not clickable. */
+	private JPanel buildClaimedTaskCell(BufferedImage tileBg, BufferedImage checkmarkImg, BufferedImage centerTileIconImg, int tileSize, boolean isCenter)
 	{
 		final BufferedImage bg = tileBg;
 		final BufferedImage checkmark = checkmarkImg != null ? ImageUtil.resizeImage(checkmarkImg, CLAIMED_CHECKMARK_SIZE, CLAIMED_CHECKMARK_SIZE) : null;
-		final BufferedImage padlock = padlockImg;
+		final BufferedImage centerIcon = centerTileIconImg;
 		final boolean centerTile = isCenter;
 		JPanel cell = new JPanel()
 		{
@@ -2077,15 +2079,15 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 					g.setColor(new Color(60, 55, 50));
 					g.fillRect(0, 0, getWidth(), getHeight());
 				}
-				// Center tile: draw padlock first, then checkmark on top
-				if (centerTile && padlock != null)
+				// Center tile: draw generic task icon first, then checkmark on top
+				if (centerTile && centerIcon != null)
 				{
 					int w = getWidth();
 					int h = getHeight();
 					int size = Math.min(w, h) * 3 / 4;
 					int x = (w - size) / 2;
 					int y = (h - size) / 2;
-					g.drawImage(padlock.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
+					g.drawImage(centerIcon.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
 				}
 				// Desaturate with semi-transparent gray overlay
 				g.setColor(new Color(120, 120, 120, 140));
@@ -2094,7 +2096,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 				{
 					if (centerTile)
 					{
-						// Checkmark on top of padlock (centered)
+						// Checkmark on top of center icon (centered)
 						int x = (getWidth() - CLAIMED_CHECKMARK_SIZE) / 2;
 						int y = (getHeight() - CLAIMED_CHECKMARK_SIZE) / 2;
 						g.drawImage(checkmark, x, y, null);

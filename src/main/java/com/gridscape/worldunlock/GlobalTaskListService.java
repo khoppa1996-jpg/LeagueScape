@@ -1235,6 +1235,16 @@ public class GlobalTaskListService
 		saveTaskHubBookmarks(list);
 	}
 
+	/** Removes all hub bookmarks for the given task key (e.g. when that task is claimed). */
+	public void removeTaskHubBookmarksForTaskKey(String taskKey)
+	{
+		if (taskKey == null || taskKey.isEmpty())
+			return;
+		List<GlobalTaskBookmark> list = loadTaskHubBookmarks();
+		if (list.removeIf(b -> taskKey.equals(b.getTaskKey())))
+			saveTaskHubBookmarks(list);
+	}
+
 	public boolean isTaskHubBookmarked(int row, int col)
 	{
 		for (GlobalTaskBookmark b : loadTaskHubBookmarks())
@@ -1453,6 +1463,7 @@ public class GlobalTaskListService
 		claimedPos.add("0,0");
 		saveClaimedPositions(claimedPos);
 		savePseudoCenter("0,0");
+		removeTaskHubBookmark(0, 0);
 		// Auto-unlock the starter world tile (e.g. Lumbridge) so getGlobalTasks returns area tasks for adjacent slots
 		List<WorldUnlockTilePlacement> grid = worldUnlockService.getGrid();
 		if (!grid.isEmpty())
@@ -1588,6 +1599,7 @@ public class GlobalTaskListService
 
 		claimed.add(taskKey);
 		saveSet(KEY_GLOBAL_CLAIMED, claimed);
+		removeTaskHubBookmarksForTaskKey(taskKey);
 
 		// Persist claimed position only when known so getClaimedPositions() reveals adjacent tiles
 		boolean positionKnown = (row != UNKNOWN_POS || col != UNKNOWN_POS);

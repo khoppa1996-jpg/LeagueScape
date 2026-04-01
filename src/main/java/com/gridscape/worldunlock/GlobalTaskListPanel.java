@@ -96,13 +96,14 @@ public class GlobalTaskListPanel extends JPanel
 	private final JDialog parentDialog;
 	private final Runnable onOpenRulesSetup;
 
-	private BufferedImage padlockImg;
 	private BufferedImage checkmarkImg;
 	private BufferedImage tileBg;
 	private BufferedImage interfaceBg;
 	private BufferedImage buttonRect;
 	private BufferedImage xBtnImg;
 	private BufferedImage defaultTaskIcon;
+	/** Shown on bookmarked task tiles (grid) and hub list rows when {@link #bookmarkIconImg} is non-null. */
+	private BufferedImage bookmarkIconImg;
 	/** Base fill for frontier fog cells; not {@link #tileBg} (revealed task button art). */
 	private BufferedImage fogTileBg;
 	private BufferedImage fogTopLeft;
@@ -157,13 +158,13 @@ public class GlobalTaskListPanel extends JPanel
 		this.parentDialog = parentDialog;
 		this.layoutSeed = globalTaskListService.getOrCreateLayoutSeed();
 
-		padlockImg = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
 		checkmarkImg = ImageUtil.loadImageResource(GridScapePlugin.class, "complete_checkmark.png");
 		tileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_square.png");
 		interfaceBg = ImageUtil.loadImageResource(GridScapePlugin.class, "interface_template.png");
 		buttonRect = ImageUtil.loadImageResource(GridScapePlugin.class, "empty_button_rectangle.png");
 		xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
 		defaultTaskIcon = loadDefaultTaskIcon();
+		bookmarkIconImg = ImageUtil.loadImageResource(GridScapePlugin.class, "bookmark_icon.png");
 		fogTileBg = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_base.png");
 		fogTopLeft = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_left.png");
 		fogTopRight = ImageUtil.loadImageResource(GridScapePlugin.class, "/com/gridscape/fog_tile_corner_top_right.png");
@@ -338,7 +339,8 @@ public class GlobalTaskListPanel extends JPanel
 			hubSearchBtn,
 			hubSortBtn,
 			buttonRect,
-			defaultTaskIcon);
+			defaultTaskIcon,
+			bookmarkIconImg);
 
 		BufferedImage fill = ImageUtil.loadImageResource(GridScapePlugin.class, "fill_color.png");
 		BufferedImage bTop = ImageUtil.loadImageResource(GridScapePlugin.class, "border_top.png");
@@ -744,20 +746,14 @@ public class GlobalTaskListPanel extends JPanel
 				int r = tile.getRow(), c = tile.getCol();
 				boolean bookmarked = globalTaskListService.isTaskHubBookmarked(r, c);
 				JPopupMenu menu = new JPopupMenu();
-				JMenuItem item = new JMenuItem(bookmarked ? "Remove bookmark" : "Add bookmark…");
+				JMenuItem item = new JMenuItem(bookmarked ? "Remove bookmark" : "Add bookmark");
 				item.addActionListener(ev -> {
 					playSound(GridScapeSounds.BUTTON_PRESS);
 					if (bookmarked)
 						globalTaskListService.removeTaskHubBookmark(r, c);
 					else
-					{
-						String def = tile.getDisplayName();
-						String label = JOptionPane.showInputDialog(parentDialog, "Bookmark label (optional):", def);
-						if (label == null) return;
-						String lk = label.trim().isEmpty() ? def : label.trim();
 						globalTaskListService.addTaskHubBookmark(new GlobalTaskBookmark(
-							GlobalTaskListService.taskKeyFromName(tile.getDisplayName()), r, c, lk));
-					}
+							GlobalTaskListService.taskKeyFromName(tile.getDisplayName()), r, c, ""));
 					SwingUtilities.invokeLater(() -> {
 						refresh();
 						scheduleHubDataReload();
@@ -778,7 +774,8 @@ public class GlobalTaskListPanel extends JPanel
 		}
 
 		final BufferedImage tileBgFinal = tileBg;
-		final BufferedImage padlockFinal = padlockImg;
+		final BufferedImage centerIconFinal = defaultTaskIcon;
+		final BufferedImage bookmarkArt = bookmarkIconImg;
 
 		JPanel cell = new JPanel()
 		{
@@ -792,14 +789,23 @@ public class GlobalTaskListPanel extends JPanel
 					g.setColor(new Color(60, 55, 50));
 					g.fillRect(0, 0, getWidth(), getHeight());
 				}
-				if (isCenter && padlockFinal != null)
+				if (isCenter && centerIconFinal != null)
 				{
 					int w = getWidth(), h = getHeight();
 					int size = Math.min(w, h) * 3 / 4;
 					int x = (w - size) / 2, y = (h - size) / 2;
-					g.drawImage(padlockFinal.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
+					g.drawImage(centerIconFinal.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
 				}
 				super.paintComponent(g);
+				if (bookmarkArt != null && globalTaskListService.isTaskHubBookmarked(tile.getRow(), tile.getCol()))
+				{
+					int cw = getWidth(), ch = getHeight();
+					int bs = Math.max(8, Math.min(Math.min(cw, ch) / 5, 28));
+					int inset = Math.max(2, TASK_TILE_ICON_MARGIN / 4);
+					BufferedImage sm = IconCache.scaleToFitAllowUpscale(bookmarkArt, bs, bs);
+					if (sm != null)
+						g.drawImage(sm, inset, inset, null);
+				}
 			}
 		};
 		cell.setLayout(new BorderLayout());
@@ -972,7 +978,7 @@ public class GlobalTaskListPanel extends JPanel
 		final BufferedImage bg = tileBg;
 		final BufferedImage checkmark = checkmarkImg != null
 			? ImageUtil.resizeImage(checkmarkImg, CLAIMED_CHECKMARK_SIZE, CLAIMED_CHECKMARK_SIZE) : null;
-		final BufferedImage padlock = padlockImg;
+		final BufferedImage centerIcon = defaultTaskIcon;
 
 		JPanel cell = new JPanel()
 		{
@@ -986,12 +992,12 @@ public class GlobalTaskListPanel extends JPanel
 					g.setColor(new Color(60, 55, 50));
 					g.fillRect(0, 0, getWidth(), getHeight());
 				}
-				if (isCenter && padlock != null)
+				if (isCenter && centerIcon != null)
 				{
 					int w = getWidth(), h = getHeight();
 					int size = Math.min(w, h) * 3 / 4;
 					int x = (w - size) / 2, y = (h - size) / 2;
-					g.drawImage(padlock.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
+					g.drawImage(centerIcon.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
 				}
 				g.setColor(new Color(120, 120, 120, 140));
 				g.fillRect(0, 0, getWidth(), getHeight());
@@ -1016,7 +1022,6 @@ public class GlobalTaskListPanel extends JPanel
 		cell.setPreferredSize(new Dimension(tileSize, tileSize));
 		if (isHighlightCell(tile.getRow(), tile.getCol()))
 			cell.setBorder(new LineBorder(new Color(255, 235, 140), 2));
-		attachBookmarkPopup(cell, tile);
 		GridClaimFocusAnimation.putGridCellKeys(cell, tile.getRow(), tile.getCol());
 		return cell;
 	}
