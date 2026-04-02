@@ -22,14 +22,6 @@
 
 ---
 
-## Installation (beta / external JAR)
-
-1. Build the shaded JAR (from the project root):  
-   `.\gradlew.bat shadowJar` (Windows) or `./gradlew shadowJar`
-2. Copy **`build/libs/GridScape-<version>-all.jar`** into RuneLite’s external plugins folder and enable the plugin in the client, **or** distribute that JAR to testers with the same instructions.
-
----
-
 ## First launch
 
 The **Rules & Setup** window opens **once per RuneScape account** the first time you run the plugin after logging in. You can reopen it anytime from:
