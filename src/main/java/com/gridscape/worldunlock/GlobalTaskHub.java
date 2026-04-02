@@ -9,6 +9,7 @@ import com.gridscape.task.TaskTile;
 import com.gridscape.util.FrontierFogHelpers;
 import com.gridscape.util.GridScapeColors;
 import com.gridscape.util.GridScapeSwingUtil;
+import com.gridscape.util.ScaledImageCache;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,7 +19,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -941,7 +941,7 @@ public final class GlobalTaskHub extends JPanel
 		int dh = Math.max(1, (int) Math.round(ih * scale));
 		int ox = rx + (rw - dw) / 2;
 		int oy = ry + (rh - dh) / 2;
-		g.drawImage(img.getScaledInstance(dw, dh, Image.SCALE_SMOOTH), ox, oy, null);
+		ScaledImageCache.drawScaled(g, img, ox, oy, dw, dh);
 	}
 
 	/** Header controls: stone art scaled uniformly inside bounds (no stretch). */

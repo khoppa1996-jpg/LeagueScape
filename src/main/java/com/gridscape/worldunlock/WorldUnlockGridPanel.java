@@ -17,13 +17,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import com.gridscape.grid.GridPos;
 import com.gridscape.util.FogTileCompositor;
 import com.gridscape.util.FrontierFogHelpers;
 import com.gridscape.util.GridClaimFocusAnimation;
+import com.gridscape.util.ScaledImageCache;
+import com.gridscape.task.ui.TaskTileCellFactory;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -69,9 +70,6 @@ public class WorldUnlockGridPanel extends JPanel
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int BASE_TILE_SIZE = 72;
 	private static final int TILE_ICON_MARGIN = 12;
-	private static final int CLAIMED_CHECKMARK_SIZE = 18;
-	private static final int CLAIMED_CHECKMARK_INSET = 4;
-
 	private static final Map<String, BufferedImage> iconCache = new ConcurrentHashMap<>();
 
 	private final WorldUnlockService worldUnlockService;
@@ -295,7 +293,7 @@ public class WorldUnlockGridPanel extends JPanel
 	{
 		super.paintComponent(g);
 		if (interfaceBg != null)
-			g.drawImage(interfaceBg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+			ScaledImageCache.drawScaled(g, interfaceBg, 0, 0, getWidth(), getHeight());
 	}
 
 	public void refresh()
@@ -418,7 +416,7 @@ public class WorldUnlockGridPanel extends JPanel
 			{
 				super.paintComponent(g);
 				if (bg != null)
-					g.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+					ScaledImageCache.drawScaled(g, bg, 0, 0, getWidth(), getHeight());
 				else
 				{
 					g.setColor(new Color(60, 55, 50));
@@ -622,7 +620,7 @@ public class WorldUnlockGridPanel extends JPanel
 			protected void paintComponent(Graphics g)
 			{
 				if (bg != null)
-					g.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+					ScaledImageCache.drawScaled(g, bg, 0, 0, getWidth(), getHeight());
 				else
 				{
 					g.setColor(new Color(60, 55, 50));
@@ -646,7 +644,7 @@ public class WorldUnlockGridPanel extends JPanel
 					int inset = Math.max(1, Math.min(w, h) / 18);
 					int x = w - s - inset;
 					int y = inset;
-					g.drawImage(padlock.getScaledInstance(s, s, Image.SCALE_SMOOTH), x, y, null);
+					ScaledImageCache.drawScaled(g, padlock, x, y, s, s);
 				}
 			}
 		};
@@ -656,28 +654,7 @@ public class WorldUnlockGridPanel extends JPanel
 
 		if (tileIcon != null)
 		{
-			final BufferedImage iconImage = tileIcon;
-			final int margin = iconMargin;
-			JPanel iconPanel = new JPanel()
-			{
-				@Override
-				protected void paintComponent(Graphics g)
-				{
-					super.paintComponent(g);
-					int w = getWidth(), h = getHeight();
-					int innerW = Math.max(1, w - 2 * margin);
-					int innerH = Math.max(1, h - 2 * margin);
-					int iw = iconImage.getWidth(), ih = iconImage.getHeight();
-					if (iw <= 0 || ih <= 0) return;
-					double scale = Math.min((double) innerW / iw, (double) innerH / ih);
-					int drawW = Math.max(1, (int) Math.round(iw * scale));
-					int drawH = Math.max(1, (int) Math.round(ih * scale));
-					int x = margin + (innerW - drawW) / 2;
-					int y = margin + (innerH - drawH) / 2;
-					g.drawImage(iconImage.getScaledInstance(drawW, drawH, Image.SCALE_SMOOTH), x, y, null);
-				}
-			};
-			iconPanel.setOpaque(false);
+			JPanel iconPanel = TaskTileCellFactory.newFittedTaskIconPanel(tileIcon, iconMargin);
 			cell.add(iconPanel, BorderLayout.CENTER);
 			// Clicks hit the icon panel first; cell.mouseClicked would not run (Swing does not bubble).
 			iconPanel.addMouseListener(new MouseAdapter()
@@ -717,7 +694,7 @@ public class WorldUnlockGridPanel extends JPanel
 		final BufferedImage iconImage = tileIcon;
 		final int margin = iconMargin;
 		final BufferedImage checkmark = checkmarkImg != null
-			? ImageUtil.resizeImage(checkmarkImg, CLAIMED_CHECKMARK_SIZE, CLAIMED_CHECKMARK_SIZE) : null;
+			? ImageUtil.resizeImage(checkmarkImg, TaskTileCellFactory.CLAIMED_CHECKMARK_SIZE, TaskTileCellFactory.CLAIMED_CHECKMARK_SIZE) : null;
 
 		JPanel cell = new JPanel()
 		{
@@ -725,7 +702,7 @@ public class WorldUnlockGridPanel extends JPanel
 			protected void paintComponent(Graphics g)
 			{
 				if (bg != null)
-					g.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+					ScaledImageCache.drawScaled(g, bg, 0, 0, getWidth(), getHeight());
 				else
 				{
 					g.setColor(new Color(60, 55, 50));
@@ -744,7 +721,7 @@ public class WorldUnlockGridPanel extends JPanel
 						int drawH = Math.max(1, (int) Math.round(ih * scale));
 						int x = margin + (innerW - drawW) / 2;
 						int y = margin + (innerH - drawH) / 2;
-						g.drawImage(iconImage.getScaledInstance(drawW, drawH, Image.SCALE_SMOOTH), x, y, null);
+						ScaledImageCache.drawScaled(g, iconImage, x, y, drawW, drawH);
 					}
 				}
 				g.setColor(new Color(120, 120, 120, 140));
@@ -753,14 +730,14 @@ public class WorldUnlockGridPanel extends JPanel
 				{
 					if (isCenter)
 					{
-						int x = (getWidth() - CLAIMED_CHECKMARK_SIZE) / 2;
-						int y = (getHeight() - CLAIMED_CHECKMARK_SIZE) / 2;
+						int x = (getWidth() - TaskTileCellFactory.CLAIMED_CHECKMARK_SIZE) / 2;
+						int y = (getHeight() - TaskTileCellFactory.CLAIMED_CHECKMARK_SIZE) / 2;
 						g.drawImage(checkmark, x, y, null);
 					}
 					else
 					{
-						g.drawImage(checkmark, getWidth() - CLAIMED_CHECKMARK_SIZE - CLAIMED_CHECKMARK_INSET,
-							CLAIMED_CHECKMARK_INSET, null);
+						g.drawImage(checkmark, getWidth() - TaskTileCellFactory.CLAIMED_CHECKMARK_SIZE - TaskTileCellFactory.CLAIMED_CHECKMARK_INSET,
+							TaskTileCellFactory.CLAIMED_CHECKMARK_INSET, null);
 					}
 				}
 			}
@@ -794,29 +771,7 @@ public class WorldUnlockGridPanel extends JPanel
 			@Override
 			protected void paintComponent(Graphics g)
 			{
-				if (bg != null)
-					g.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-				else
-				{
-					g.setColor(new Color(60, 55, 50));
-					g.fillRect(0, 0, getWidth(), getHeight());
-				}
-				if (iconImage != null)
-				{
-					int w = getWidth(), h = getHeight();
-					int innerW = Math.max(1, w - 2 * margin);
-					int innerH = Math.max(1, h - 2 * margin);
-					int iw = iconImage.getWidth(), ih = iconImage.getHeight();
-					if (iw > 0 && ih > 0)
-					{
-						double scale = Math.min((double) innerW / iw, (double) innerH / ih);
-						int drawW = Math.max(1, (int) Math.round(iw * scale));
-						int drawH = Math.max(1, (int) Math.round(ih * scale));
-						int x = margin + (innerW - drawW) / 2;
-						int y = margin + (innerH - drawH) / 2;
-						g.drawImage(iconImage.getScaledInstance(drawW, drawH, Image.SCALE_SMOOTH), x, y, null);
-					}
-				}
+				TaskTileCellFactory.paintBackgroundAndFittedIcon(g, getWidth(), getHeight(), bg, iconImage, margin);
 			}
 		};
 		cell.setLayout(new BorderLayout());

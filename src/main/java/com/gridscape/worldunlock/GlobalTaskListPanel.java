@@ -7,12 +7,14 @@ import com.gridscape.util.FogTileCompositor;
 import com.gridscape.util.FrontierFogHelpers;
 import com.gridscape.util.GridClaimFocusAnimation;
 import com.gridscape.util.RingBonusPopup;
+import com.gridscape.util.ScaledImageCache;
 import com.gridscape.icons.IconCache;
 import com.gridscape.icons.IconResolver;
 import com.gridscape.icons.IconResources;
 import com.gridscape.points.PointsService;
 import com.gridscape.task.TaskState;
 import com.gridscape.task.TaskTile;
+import com.gridscape.task.ui.TaskTileCellFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -24,7 +26,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import javax.swing.JViewport;
@@ -79,8 +80,6 @@ public class GlobalTaskListPanel extends JPanel
 	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int BASE_TILE_SIZE = 72;
 	private static final int TASK_TILE_ICON_MARGIN = 12;
-	private static final int CLAIMED_CHECKMARK_SIZE = 18;
-	private static final int CLAIMED_CHECKMARK_INSET = 4;
 	/** Extra width beyond one-third of the task panel so the hub header buttons fit comfortably. */
 	private static final int TASK_HUB_WIDTH_BONUS_PX = 8;
 
@@ -436,7 +435,7 @@ public class GlobalTaskListPanel extends JPanel
 	{
 		super.paintComponent(g);
 		if (interfaceBg != null)
-			g.drawImage(interfaceBg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+			ScaledImageCache.drawScaled(g, interfaceBg, 0, 0, getWidth(), getHeight());
 	}
 
 	public void refresh()
@@ -782,20 +781,7 @@ public class GlobalTaskListPanel extends JPanel
 			@Override
 			protected void paintComponent(Graphics g)
 			{
-				if (tileBgFinal != null)
-					g.drawImage(tileBgFinal.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-				else
-				{
-					g.setColor(new Color(60, 55, 50));
-					g.fillRect(0, 0, getWidth(), getHeight());
-				}
-				if (isCenter && centerIconFinal != null)
-				{
-					int w = getWidth(), h = getHeight();
-					int size = Math.min(w, h) * 3 / 4;
-					int x = (w - size) / 2, y = (h - size) / 2;
-					g.drawImage(centerIconFinal.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
-				}
+				TaskTileCellFactory.paintBackgroundAndCenterIcon(g, getWidth(), getHeight(), tileBgFinal, centerIconFinal, isCenter);
 				super.paintComponent(g);
 				if (bookmarkArt != null && globalTaskListService.isTaskHubBookmarked(tile.getRow(), tile.getCol()))
 				{
@@ -817,29 +803,7 @@ public class GlobalTaskListPanel extends JPanel
 
 		if (taskIcon != null && !isCenter)
 		{
-			final BufferedImage iconImage = taskIcon;
-			final int margin = iconMargin;
-			JPanel iconPanel = new JPanel()
-			{
-				@Override
-				protected void paintComponent(Graphics g)
-				{
-					super.paintComponent(g);
-					int w = getWidth(), h = getHeight();
-					int innerW = Math.max(1, w - 2 * margin);
-					int innerH = Math.max(1, h - 2 * margin);
-					int iw = iconImage.getWidth(), ih = iconImage.getHeight();
-					if (iw <= 0 || ih <= 0) return;
-					double scale = Math.min((double) innerW / iw, (double) innerH / ih);
-					int drawW = Math.max(1, (int) Math.round(iw * scale));
-					int drawH = Math.max(1, (int) Math.round(ih * scale));
-					int x = margin + (innerW - drawW) / 2;
-					int y = margin + (innerH - drawH) / 2;
-					g.drawImage(iconImage.getScaledInstance(drawW, drawH, Image.SCALE_SMOOTH), x, y, null);
-				}
-			};
-			iconPanel.setOpaque(false);
-			cell.add(iconPanel, BorderLayout.CENTER);
+			cell.add(TaskTileCellFactory.newFittedTaskIconPanel(taskIcon, iconMargin), BorderLayout.CENTER);
 		}
 
 		if (state == TaskState.COMPLETED_UNCLAIMED && !isCenter)
@@ -893,7 +857,7 @@ public class GlobalTaskListPanel extends JPanel
 			{
 				super.paintComponent(g);
 				if (bg != null)
-					g.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+					ScaledImageCache.drawScaled(g, bg, 0, 0, getWidth(), getHeight());
 				else
 				{
 					g.setColor(new Color(60, 55, 50));
@@ -975,51 +939,7 @@ public class GlobalTaskListPanel extends JPanel
 
 	private JPanel buildClaimedCell(TaskTile tile, int tileSize, boolean isCenter)
 	{
-		final BufferedImage bg = tileBg;
-		final BufferedImage checkmark = checkmarkImg != null
-			? ImageUtil.resizeImage(checkmarkImg, CLAIMED_CHECKMARK_SIZE, CLAIMED_CHECKMARK_SIZE) : null;
-		final BufferedImage centerIcon = defaultTaskIcon;
-
-		JPanel cell = new JPanel()
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				if (bg != null)
-					g.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-				else
-				{
-					g.setColor(new Color(60, 55, 50));
-					g.fillRect(0, 0, getWidth(), getHeight());
-				}
-				if (isCenter && centerIcon != null)
-				{
-					int w = getWidth(), h = getHeight();
-					int size = Math.min(w, h) * 3 / 4;
-					int x = (w - size) / 2, y = (h - size) / 2;
-					g.drawImage(centerIcon.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
-				}
-				g.setColor(new Color(120, 120, 120, 140));
-				g.fillRect(0, 0, getWidth(), getHeight());
-				if (checkmark != null)
-				{
-					if (isCenter)
-					{
-						int x = (getWidth() - CLAIMED_CHECKMARK_SIZE) / 2;
-						int y = (getHeight() - CLAIMED_CHECKMARK_SIZE) / 2;
-						g.drawImage(checkmark, x, y, null);
-					}
-					else
-					{
-						int x = getWidth() - CLAIMED_CHECKMARK_SIZE - CLAIMED_CHECKMARK_INSET;
-						int y = CLAIMED_CHECKMARK_INSET;
-						g.drawImage(checkmark, x, y, null);
-					}
-				}
-			}
-		};
-		cell.setOpaque(false);
-		cell.setPreferredSize(new Dimension(tileSize, tileSize));
+		JPanel cell = TaskTileCellFactory.newClaimedTaskCellForTaskGrid(tileSize, tileBg, checkmarkImg, defaultTaskIcon, isCenter);
 		if (isHighlightCell(tile.getRow(), tile.getCol()))
 			cell.setBorder(new LineBorder(new Color(255, 235, 140), 2));
 		GridClaimFocusAnimation.putGridCellKeys(cell, tile.getRow(), tile.getCol());

@@ -6,7 +6,6 @@ import java.awt.Container;
 import java.awt.Window;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.io.File;
@@ -120,7 +119,7 @@ public final class GridScapeSwingUtil
 			{
 				if (img != null)
 				{
-					g.drawImage(img.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+					ScaledImageCache.drawScaled(g, img, 0, 0, getWidth(), getHeight());
 					g.setColor(getForeground());
 					g.setFont(getFont());
 					java.awt.FontMetrics fm = g.getFontMetrics();

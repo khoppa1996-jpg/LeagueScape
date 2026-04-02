@@ -22,7 +22,6 @@ import javax.swing.SwingUtilities;
 import net.runelite.api.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.runelite.api.KeyCode;
 import net.runelite.api.MenuAction;
 import net.runelite.api.Tile;
 import net.runelite.api.WorldView;
@@ -154,11 +153,6 @@ public class GridScapePlugin extends Plugin
 	private boolean mapMouseListenerRegistered;
 
 	// --- Area config editing (merged from GridScape Config plugin) ---
-	private static final String ADD_CORNER_OPTION = "Add polygon corner";
-	private static final String ADD_CORNER_TARGET = "Tile";
-	private static final String MOVE_CORNER_OPTION = "Move";
-	private static final String SET_CORNER_OPTION = "Set new corner";
-	private static final String CANCEL_MOVE_OPTION = "Cancel move";
 	private final com.gridscape.config.AreaEditState areaEditState = new com.gridscape.config.AreaEditState();
 	/** Called when corners change (from plugin thread). */
 	private Consumer<List<int[]>> cornerUpdateCallback;
@@ -363,14 +357,14 @@ public class GridScapePlugin extends Plugin
 	@Provides
 	GridScapeConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(GridScapeConfig.class);
+		return GridScapeGuiceModule.provideConfig(configManager);
 	}
 
 	@Provides
 	@Singleton
 	com.gridscape.points.PointsService providePointsService(ConfigManager configManager)
 	{
-		return new com.gridscape.points.PointsService(configManager);
+		return GridScapeGuiceModule.providePointsService(configManager);
 	}
 
 	@Provides
@@ -379,46 +373,46 @@ public class GridScapePlugin extends Plugin
 		com.gridscape.area.AreaGraphService areaGraphService, com.gridscape.points.PointsService pointsService,
 		GridScapeConfig config, javax.inject.Provider<com.gridscape.task.TaskGridService> taskGridServiceProvider)
 	{
-		return new com.gridscape.points.AreaCompletionService(configManager, areaGraphService, pointsService, config, taskGridServiceProvider);
+		return GridScapeGuiceModule.provideAreaCompletionService(configManager, areaGraphService, pointsService, config, taskGridServiceProvider);
 	}
 
 	@Provides
 	com.gridscape.lock.LockEnforcer provideLockEnforcer(Client client, GridScapeConfig config, com.gridscape.area.AreaGraphService areaGraphService)
 	{
-		return new com.gridscape.lock.LockEnforcer(client, config, areaGraphService);
+		return GridScapeGuiceModule.provideLockEnforcer(client, config, areaGraphService);
 	}
 
 	@Provides
 	com.gridscape.overlay.LockedRegionOverlay provideLockedRegionOverlay(Client client, com.gridscape.area.AreaGraphService areaGraphService, GridScapeConfig config)
 	{
-		return new com.gridscape.overlay.LockedRegionOverlay(client, areaGraphService, config);
+		return GridScapeGuiceModule.provideLockedRegionOverlay(client, areaGraphService, config);
 	}
 
 	@Provides
 	com.gridscape.overlay.TaskCompletionPopupOverlay provideTaskCompletionPopupOverlay(Client client)
 	{
-		return new com.gridscape.overlay.TaskCompletionPopupOverlay(client);
+		return GridScapeGuiceModule.provideTaskCompletionPopupOverlay(client);
 	}
 
 	@Provides
 	@Singleton
 	com.gridscape.wiki.OsrsWikiApiService provideOsrsWikiApiService()
 	{
-		return new com.gridscape.wiki.OsrsWikiApiService();
+		return GridScapeGuiceModule.provideOsrsWikiApiService();
 	}
 
 	@Provides
 	@Singleton
 	com.gridscape.wiki.WikiTaskGenerator provideWikiTaskGenerator(com.gridscape.wiki.OsrsWikiApiService osrsWikiApiService)
 	{
-		return new com.gridscape.wiki.WikiTaskGenerator(osrsWikiApiService);
+		return GridScapeGuiceModule.provideWikiTaskGenerator(osrsWikiApiService);
 	}
 
 	@Provides
 	@Singleton
 	com.gridscape.wiki.OsrsItemService provideOsrsItemService()
 	{
-		return new com.gridscape.wiki.OsrsItemService();
+		return GridScapeGuiceModule.provideOsrsItemService();
 	}
 
 	@Provides
@@ -429,7 +423,7 @@ public class GridScapePlugin extends Plugin
 		com.gridscape.area.AreaGraphService areaGraphService,
 		Client client)
 	{
-		return new com.gridscape.task.TaskGridService(configManager, config, pointsService, areaCompletionService, areaGraphService, client);
+		return GridScapeGuiceModule.provideTaskGridService(configManager, config, pointsService, areaCompletionService, areaGraphService, client);
 	}
 
 	@Provides
@@ -442,14 +436,14 @@ public class GridScapePlugin extends Plugin
 		com.gridscape.wiki.OsrsWikiApiService osrsWikiApiService,
 		AudioPlayer audioPlayer, net.runelite.client.callback.ClientThread clientThread)
 	{
-		return new com.gridscape.overlay.GridScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, this, configManager, taskGridService, worldUnlockService, osrsWikiApiService, audioPlayer, clientThread);
+		return GridScapeGuiceModule.provideGridScapeMapOverlay(client, areaGraphService, config, pointsService, areaCompletionService, configManager, taskGridService, worldUnlockService, osrsWikiApiService, audioPlayer, clientThread, this);
 	}
 
 	@Provides
 	com.gridscape.config.AreaEditOverlay provideAreaEditOverlay(Client client, com.gridscape.area.AreaGraphService areaGraphService,
 		Provider<GridScapePlugin> pluginProvider)
 	{
-		return new com.gridscape.config.AreaEditOverlay(client, areaGraphService, pluginProvider);
+		return GridScapeGuiceModule.provideAreaEditOverlay(client, areaGraphService, pluginProvider);
 	}
 
 	@Provides
@@ -460,7 +454,7 @@ public class GridScapePlugin extends Plugin
 		com.gridscape.task.TaskGridService taskGridService,
 		com.gridscape.area.AreaGraphService areaGraphService)
 	{
-		return new com.gridscape.worldunlock.WorldUnlockService(configManager, config, pointsService, taskGridService, areaGraphService);
+		return GridScapeGuiceModule.provideWorldUnlockService(configManager, config, pointsService, taskGridService, areaGraphService);
 	}
 
 	@Provides
@@ -471,14 +465,14 @@ public class GridScapePlugin extends Plugin
 		com.gridscape.worldunlock.WorldUnlockService worldUnlockService,
 		com.gridscape.task.TaskGridService taskGridService)
 	{
-		return new com.gridscape.worldunlock.GlobalTaskListService(configManager, config, pointsService, worldUnlockService, taskGridService);
+		return GridScapeGuiceModule.provideGlobalTaskListService(configManager, config, pointsService, worldUnlockService, taskGridService);
 	}
 
 	@Provides
 	@Singleton
 	com.gridscape.worldunlock.GoalTrackingService provideGoalTrackingService()
 	{
-		return new com.gridscape.worldunlock.GoalTrackingService();
+		return GridScapeGuiceModule.provideGoalTrackingService();
 	}
 
 	private void loadUnlockedAreas()
@@ -640,62 +634,9 @@ public class GridScapePlugin extends Plugin
 	@Subscribe
 	public void onMenuEntryAdded(MenuEntryAdded event)
 	{
-		// Area config: Shift+right-click on tile to add/move polygon corners when editing an area
-		if (areaEditState.isEditingArea())
+		if (AreaMapEditController.handleEditingMenu(this, client, areaEditState, event))
 		{
-			MenuAction action = event.getMenuEntry().getType();
-			if (action == MenuAction.WALK || action == MenuAction.SET_HEADING)
-			{
-				int worldViewId = event.getMenuEntry().getWorldViewId();
-				WorldView wv = client.getWorldView(worldViewId);
-				if (wv == null) wv = client.getTopLevelWorldView();
-				if (wv != null)
-				{
-					Tile tile = wv.getSelectedSceneTile();
-					if (tile != null)
-					{
-						WorldPoint wp = tileToWorldPoint(client, tile, wv);
-						if (wp != null && client.isKeyPressed(KeyCode.KC_SHIFT))
-						{
-							if (areaEditState.getMoveCornerIndex() >= 0)
-							{
-								client.createMenuEntry(-1)
-									.setOption(SET_CORNER_OPTION)
-									.setTarget(ADD_CORNER_TARGET)
-									.setType(MenuAction.RUNELITE)
-									.onClick(e -> setCornerAtSelectedTile());
-								client.createMenuEntry(-1)
-									.setOption(CANCEL_MOVE_OPTION)
-									.setTarget(ADD_CORNER_TARGET)
-									.setType(MenuAction.RUNELITE)
-									.onClick(e -> { areaEditState.setMoveCornerIndex(-1); notifyCornersUpdated(); });
-							}
-							else
-							{
-								int idx = findCornerAt(wp.getX(), wp.getY(), wp.getPlane());
-								if (idx >= 0)
-								{
-									final int cornerIdx = idx;
-									client.createMenuEntry(-1)
-										.setOption(MOVE_CORNER_OPTION)
-										.setTarget(ADD_CORNER_TARGET)
-										.setType(MenuAction.RUNELITE)
-										.onClick(e -> { areaEditState.setMoveCornerIndex(cornerIdx); notifyCornersUpdated(); });
-								}
-								else
-								{
-									client.createMenuEntry(-1)
-										.setOption(ADD_CORNER_OPTION)
-										.setTarget(ADD_CORNER_TARGET)
-										.setType(MenuAction.RUNELITE)
-										.onClick(e -> addCornerAtSelectedTile());
-								}
-							}
-							return;
-						}
-					}
-				}
-			}
+			return;
 		}
 
 		boolean addViewAreaTasks = false;
@@ -1095,7 +1036,7 @@ public class GridScapePlugin extends Plugin
 		notifyCornersUpdated();
 	}
 
-	private void notifyCornersUpdated()
+	void notifyCornersUpdated()
 	{
 		if (cornerUpdateCallback != null)
 		{
@@ -1104,7 +1045,7 @@ public class GridScapePlugin extends Plugin
 		}
 	}
 
-	private void addCornerAtSelectedTile()
+	void addCornerAtSelectedTile()
 	{
 		if (!areaEditState.isEditingArea()) return;
 		WorldPoint wp = getSelectedWorldPoint();
@@ -1114,7 +1055,7 @@ public class GridScapePlugin extends Plugin
 		client.addChatMessage(net.runelite.api.ChatMessageType.GAMEMESSAGE, "", "Added corner: " + wp.getX() + ", " + wp.getY(), null);
 	}
 
-	private void setCornerAtSelectedTile()
+	void setCornerAtSelectedTile()
 	{
 		if (!areaEditState.isEditingArea() || areaEditState.getMoveCornerIndex() < 0) return;
 		WorldPoint wp = getSelectedWorldPoint();
@@ -1129,7 +1070,7 @@ public class GridScapePlugin extends Plugin
 		areaEditState.setMoveCornerIndex(-1);
 	}
 
-	private int findCornerAt(int x, int y, int plane)
+	int findCornerAt(int x, int y, int plane)
 	{
 		return areaEditState.findCornerAt(x, y, plane);
 	}
@@ -1143,7 +1084,7 @@ public class GridScapePlugin extends Plugin
 		return tileToWorldPoint(client, tile, wv);
 	}
 
-	private static WorldPoint tileToWorldPoint(Client client, Tile tile, WorldView wv)
+	static WorldPoint tileToWorldPoint(Client client, Tile tile, WorldView wv)
 	{
 		if (tile == null || wv == null) return null;
 		var local = tile.getLocalLocation();

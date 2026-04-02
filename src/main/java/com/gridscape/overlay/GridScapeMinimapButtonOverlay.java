@@ -2,6 +2,7 @@ package com.gridscape.overlay;
 
 import com.gridscape.GridScapeConfig;
 import com.gridscape.GridScapePlugin;
+import com.gridscape.util.ScaledImageCache;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -76,8 +77,7 @@ public class GridScapeMinimapButtonOverlay extends Overlay implements MouseListe
 		BufferedImage source = taskIconHovered && buttonImageHovered != null ? buttonImageHovered : buttonImage;
 		if (source != null)
 		{
-			Image scaled = source.getScaledInstance(BUTTON_SIZE, BUTTON_SIZE, Image.SCALE_SMOOTH);
-			graphics.drawImage(scaled, x, y, null);
+			ScaledImageCache.drawScaled(graphics, source, x, y, BUTTON_SIZE, BUTTON_SIZE);
 		}
 		else
 		{

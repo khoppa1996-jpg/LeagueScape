@@ -43,24 +43,8 @@ public class GlobalTaskListService
 {
 	private static final Logger log = LoggerFactory.getLogger(GlobalTaskListService.class);
 	private static final String STATE_GROUP = com.gridscape.util.GridScapeConfigConstants.STATE_GROUP;
-	private static final String KEY_GLOBAL_CLAIMED = "globalTaskProgress_claimed";
-	private static final String KEY_GLOBAL_COMPLETED = "globalTaskProgress_completed";
-	private static final String KEY_GLOBAL_CENTER_CLAIMED = "globalTaskProgress_centerClaimed";
-	private static final String KEY_GLOBAL_TASK_POSITIONS = "globalTaskProgress_positions";
-	private static final String KEY_GLOBAL_PSEUDO_CENTER = "globalTaskProgress_pseudoCenter";
-	private static final String KEY_GLOBAL_LAST_VIEWED = "globalTaskProgress_lastViewed";
-	/** Stores which grid positions have been claimed (for reveal); format "row,col||row,col". */
-	private static final String KEY_GLOBAL_CLAIMED_POSITIONS = "globalTaskProgress_claimedPositions";
-	/** Ring numbers (Chebyshev) that already awarded a global grid ring-completion bonus. */
-	private static final String KEY_GLOBAL_RING_BONUS = "globalTaskProgress_ringBonus";
-	/** Persisted seed so {@link #buildGlobalGrid(int)} matches the Global Task panel layout. */
-	private static final String KEY_GLOBAL_LAYOUT_SEED = "globalTaskProgress_layoutSeed";
-	/** JSON array of {@link GlobalTaskBookmark} for the task hub. */
-	private static final String KEY_GLOBAL_TASK_HUB_BOOKMARKS = "globalTaskProgress_taskHubBookmarks";
 	private static final Gson BOOKMARK_GSON = new Gson();
 	private static final java.lang.reflect.Type BOOKMARK_LIST_TYPE = new TypeToken<List<GlobalTaskBookmark>>(){}.getType();
-	/** Task keys that were eligible for the global pool on the last {@link #buildGlobalGrid(int)} (comma-separated). */
-	private static final String KEY_GLOBAL_ELIGIBLE_SNAPSHOT = "globalTaskProgress_eligibleSnapshot";
 	/** Max bonus points for completing one full ring on the global task grid. */
 	private static final int RING_BONUS_CAP = 250;
 	private static final String ID_SEP = ",";
@@ -112,7 +96,7 @@ public class GlobalTaskListService
 	 */
 	public int getOrCreateLayoutSeed()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_LAYOUT_SEED);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_LAYOUT_SEED);
 		if (raw != null && !raw.trim().isEmpty())
 		{
 			try
@@ -124,7 +108,7 @@ public class GlobalTaskListService
 			}
 		}
 		int seed = (int) System.nanoTime();
-		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_LAYOUT_SEED, String.valueOf(seed));
+		configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_LAYOUT_SEED, String.valueOf(seed));
 		return seed;
 	}
 
@@ -342,7 +326,7 @@ public class GlobalTaskListService
 	{
 		UnlockedContent unlocked = buildUnlockedContent();
 		LinkedHashMap<String, TaskDefinition> byKey = new LinkedHashMap<>();
-		Set<String> globalClaimedTaskKeys = loadSet(KEY_GLOBAL_CLAIMED);
+		Set<String> globalClaimedTaskKeys = loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED);
 
 		// 1. Add tasks from unlocked taskDisplayNames tiles (explicit task lists)
 		// In World Unlock mode, Quest and Achievement Diary tasks do not populate.
@@ -920,7 +904,7 @@ public class GlobalTaskListService
 
 		// 5. Available for new assignment = pool minus (task keys already in grid state) minus (claimed). One-use: when we add to grid we remove from pool.
 		Set<String> usedTaskKeys = new HashSet<>(gridState.values());
-		usedTaskKeys.addAll(loadSet(KEY_GLOBAL_CLAIMED));
+		usedTaskKeys.addAll(loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED));
 		List<TaskDefinition> availableForNew = new ArrayList<>();
 		for (TaskDefinition t : taskByKey.values())
 		{
@@ -929,7 +913,7 @@ public class GlobalTaskListService
 		}
 
 		Set<String> eligibleKeysNow = new HashSet<>(taskByKey.keySet());
-		Set<String> eligibleSnapshot = loadSet(KEY_GLOBAL_ELIGIBLE_SNAPSHOT);
+		Set<String> eligibleSnapshot = loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_ELIGIBLE_SNAPSHOT);
 		Set<String> newlyEligibleKeys = new HashSet<>();
 		if (!eligibleSnapshot.isEmpty())
 		{
@@ -961,7 +945,7 @@ public class GlobalTaskListService
 		assignmentPool.addAll(newTasks);
 		assignmentPool.addAll(oldTasks);
 
-		saveSet(KEY_GLOBAL_ELIGIBLE_SNAPSHOT, eligibleKeysNow);
+		saveSet(GlobalTaskListStateKeys.KEY_GLOBAL_ELIGIBLE_SNAPSHOT, eligibleKeysNow);
 
 		// 6. Assign only to toAssign (newly revealed, not in grid state). Weighted random by ring difficulty, area/new boosts, CL downweight.
 		Comparator<int[]> byDistFromCenter = (a, b) -> {
@@ -1098,7 +1082,7 @@ public class GlobalTaskListService
 	 */
 	private Map<String, String> loadGridState()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_TASK_POSITIONS);
 		Map<String, String> gridState = new HashMap<>();
 		if (raw == null || raw.isEmpty()) return gridState;
 		Pattern entrySplit = Pattern.compile("\\|\\|(?!\\|)");
@@ -1140,7 +1124,7 @@ public class GlobalTaskListService
 			if (pos != null && !pos.isEmpty() && taskKey != null && !taskKey.isEmpty() && !isPositionLike(taskKey))
 				parts.add(pos + GRID_STATE_SEP + taskKey);
 		}
-		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS, String.join(POS_ENTRY_SEP, parts));
+		configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_TASK_POSITIONS, String.join(POS_ENTRY_SEP, parts));
 	}
 
 	/** Returns all positions in grid state that have the given task key. */
@@ -1160,26 +1144,26 @@ public class GlobalTaskListService
 	/** Returns the pseudo-center position (e.g. "0,0" or last claimed). Defaults to "0,0" if null. */
 	private String loadPseudoCenter()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_PSEUDO_CENTER);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_PSEUDO_CENTER);
 		return (raw != null && !raw.isEmpty()) ? raw : "0,0";
 	}
 
 	private void savePseudoCenter(String pos)
 	{
 		if (pos != null && !pos.isEmpty())
-			configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_PSEUDO_CENTER, pos);
+			configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_PSEUDO_CENTER, pos);
 	}
 
 	/** Saves the last viewed tile position (row,col) for focus-on-open. */
 	public void saveLastViewedPosition(int row, int col)
 	{
-		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_LAST_VIEWED, row + "," + col);
+		configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_LAST_VIEWED, row + "," + col);
 	}
 
 	/** Returns the last viewed tile position [row, col] or null if never viewed (use center). */
 	public int[] loadLastViewedPosition()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_LAST_VIEWED);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_LAST_VIEWED);
 		if (raw == null || raw.isEmpty()) return null;
 		return parsePos(raw);
 	}
@@ -1187,7 +1171,7 @@ public class GlobalTaskListService
 	/** Loads persisted task hub bookmarks (may reference stale positions; use {@link #resolveBookmarkPosition}). */
 	public List<GlobalTaskBookmark> loadTaskHubBookmarks()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_TASK_HUB_BOOKMARKS);
 		if (raw == null || raw.trim().isEmpty())
 			return new ArrayList<>();
 		try
@@ -1207,10 +1191,10 @@ public class GlobalTaskListService
 	{
 		if (bookmarks == null || bookmarks.isEmpty())
 		{
-			configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS);
+			configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_TASK_HUB_BOOKMARKS);
 			return;
 		}
-		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS, BOOKMARK_GSON.toJson(bookmarks));
+		configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_TASK_HUB_BOOKMARKS, BOOKMARK_GSON.toJson(bookmarks));
 	}
 
 	/** Adds a bookmark if the same (row,col) is not already stored. */
@@ -1423,7 +1407,7 @@ public class GlobalTaskListService
 	/** Loads the set of grid positions (row,col) that have been claimed (for reveal logic). */
 	private Set<String> loadClaimedPositions()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED_POSITIONS);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED_POSITIONS);
 		Set<String> set = new HashSet<>();
 		if (raw != null && !raw.isEmpty())
 		{
@@ -1438,13 +1422,13 @@ public class GlobalTaskListService
 
 	private void saveClaimedPositions(Set<String> positions)
 	{
-		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED_POSITIONS,
+		configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED_POSITIONS,
 			String.join(CLAIMED_POS_SEP, positions));
 	}
 
 	public boolean isCenterClaimed()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_CENTER_CLAIMED);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_CENTER_CLAIMED);
 		return "true".equals(raw);
 	}
 
@@ -1458,7 +1442,7 @@ public class GlobalTaskListService
 	public void claimCenter()
 	{
 		// Persist center as claimed
-		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_CENTER_CLAIMED, "true");
+		configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_CENTER_CLAIMED, "true");
 		Set<String> claimedPos = loadClaimedPositions();
 		claimedPos.add("0,0");
 		saveClaimedPositions(claimedPos);
@@ -1503,8 +1487,8 @@ public class GlobalTaskListService
 
 		String placeholderKey = taskKey(placeholderTile());
 
-		Set<String> completed = loadSet(KEY_GLOBAL_COMPLETED);
-		Set<String> claimed = loadSet(KEY_GLOBAL_CLAIMED);
+		Set<String> completed = loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_COMPLETED);
+		Set<String> claimed = loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED);
 		Set<String> claimedPos = loadClaimedPositions();
 		Map<String, String> gridState = loadGridState();
 		Set<String> seenKeys = new HashSet<>();
@@ -1536,8 +1520,8 @@ public class GlobalTaskListService
 
 		if (changed)
 		{
-			saveSet(KEY_GLOBAL_COMPLETED, completed);
-			saveSet(KEY_GLOBAL_CLAIMED, claimed);
+			saveSet(GlobalTaskListStateKeys.KEY_GLOBAL_COMPLETED, completed);
+			saveSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED, claimed);
 			saveClaimedPositions(claimedPos);
 			saveGridState(gridState);
 		}
@@ -1545,20 +1529,20 @@ public class GlobalTaskListService
 
 	public boolean isCompleted(String taskKey)
 	{
-		return loadSet(KEY_GLOBAL_COMPLETED).contains(taskKey);
+		return loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_COMPLETED).contains(taskKey);
 	}
 
 	public boolean isClaimed(String taskKey)
 	{
-		return loadSet(KEY_GLOBAL_CLAIMED).contains(taskKey);
+		return loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED).contains(taskKey);
 	}
 
 	/** Marks a task as completed (e.g. by auto-completion). Does not award points. */
 	public void setCompleted(String taskKey)
 	{
-		Set<String> completed = loadSet(KEY_GLOBAL_COMPLETED);
+		Set<String> completed = loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_COMPLETED);
 		completed.add(taskKey);
-		saveSet(KEY_GLOBAL_COMPLETED, completed);
+		saveSet(GlobalTaskListStateKeys.KEY_GLOBAL_COMPLETED, completed);
 	}
 
 	/** Returns the points awarded when a task of the given difficulty is claimed. */
@@ -1587,7 +1571,7 @@ public class GlobalTaskListService
 	 */
 	public int claimTask(String taskKey, int row, int col)
 	{
-		Set<String> claimed = loadSet(KEY_GLOBAL_CLAIMED);
+		Set<String> claimed = loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED);
 		if (claimed.contains(taskKey))
 			return 0;
 
@@ -1598,7 +1582,7 @@ public class GlobalTaskListService
 		int points = task != null ? pointsForTier(task.getDifficulty()) : 0;
 
 		claimed.add(taskKey);
-		saveSet(KEY_GLOBAL_CLAIMED, claimed);
+		saveSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED, claimed);
 		removeTaskHubBookmarksForTaskKey(taskKey);
 
 		// Persist claimed position only when known so getClaimedPositions() reveals adjacent tiles
@@ -1646,7 +1630,7 @@ public class GlobalTaskListService
 			.collect(Collectors.toList());
 		if (inRing.isEmpty()) return 0;
 
-		Set<String> claimed = loadSet(KEY_GLOBAL_CLAIMED);
+		Set<String> claimed = loadSet(GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED);
 		for (TaskTile t : inRing)
 		{
 			String k = taskKeyFromName(t.getDisplayName());
@@ -1703,7 +1687,7 @@ public class GlobalTaskListService
 
 	private Set<String> loadGlobalRingBonusSet()
 	{
-		String raw = configManager.getConfiguration(STATE_GROUP, KEY_GLOBAL_RING_BONUS);
+		String raw = configManager.getConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_RING_BONUS);
 		Set<String> set = new HashSet<>();
 		if (raw != null && !raw.isEmpty())
 		{
@@ -1718,7 +1702,7 @@ public class GlobalTaskListService
 
 	private void saveGlobalRingBonusSet(Set<String> set)
 	{
-		configManager.setConfiguration(STATE_GROUP, KEY_GLOBAL_RING_BONUS, String.join(ID_SEP, set));
+		configManager.setConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_RING_BONUS, String.join(ID_SEP, set));
 	}
 
 	private int pointsForTier(int tier)
@@ -1759,17 +1743,17 @@ public class GlobalTaskListService
 	/** Clears global task completed and claimed state (e.g. on reset). */
 	public void clearGlobalTaskProgress()
 	{
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_COMPLETED);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_CENTER_CLAIMED);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_CLAIMED_POSITIONS);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_POSITIONS);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_PSEUDO_CENTER);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_LAST_VIEWED);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_RING_BONUS);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_LAYOUT_SEED);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_ELIGIBLE_SNAPSHOT);
-		configManager.unsetConfiguration(STATE_GROUP, KEY_GLOBAL_TASK_HUB_BOOKMARKS);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_COMPLETED);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_CENTER_CLAIMED);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_CLAIMED_POSITIONS);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_TASK_POSITIONS);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_PSEUDO_CENTER);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_LAST_VIEWED);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_RING_BONUS);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_LAYOUT_SEED);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_ELIGIBLE_SNAPSHOT);
+		configManager.unsetConfiguration(STATE_GROUP, GlobalTaskListStateKeys.KEY_GLOBAL_TASK_HUB_BOOKMARKS);
 	}
 
 	private static List<int[]> spiralOrderForRing(int tier)

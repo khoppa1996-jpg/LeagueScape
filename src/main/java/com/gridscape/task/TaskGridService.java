@@ -143,6 +143,7 @@ public class TaskGridService
 	/** Parses JSON from the stream into TasksData. Accepts both root array {@code [ ... ]} and object {@code {"defaultTasks": [...]}. */
 	private static TasksData parseTasksDataFromStream(InputStream in) throws Exception
 	{
+		@SuppressWarnings("deprecation")
 		JsonElement root = new JsonParser().parse(new InputStreamReader(in, StandardCharsets.UTF_8));
 		if (root == null) return null;
 		if (root.isJsonArray())
@@ -168,6 +169,9 @@ public class TaskGridService
 
 	private volatile TasksData tasksData;
 
+	/** Merged base + custom tasks; cleared with {@link #invalidateTasksCache()}. */
+	private volatile TasksData effectiveTasksDataSnapshot;
+
 	/** Cache: task key -> area id for onceOnly tasks. Cleared when tasks cache is invalidated. */
 	private volatile Map<String, String> onceOnlyAssignmentCache;
 
@@ -178,6 +182,7 @@ public class TaskGridService
 	public void invalidateTasksCache()
 	{
 		tasksData = null;
+		effectiveTasksDataSnapshot = null;
 		onceOnlyAssignmentCache = null;
 	}
 
@@ -314,14 +319,28 @@ public class TaskGridService
 	/** Effective task set: base defaultTasks + custom tasks, and base areas. Used for grid and export. */
 	private TasksData getEffectiveTasksData()
 	{
-		TasksData base = loadBaseTasksData();
-		List<TaskDefinition> custom = loadCustomTasksFromConfig();
-		TasksData result = new TasksData();
-		List<TaskDefinition> combined = new ArrayList<>(base.getDefaultTasks() != null ? base.getDefaultTasks() : new ArrayList<>());
-		combined.addAll(custom);
-		result.setDefaultTasks(combined);
-		result.setAreas(base.getAreas() != null ? new java.util.HashMap<>(base.getAreas()) : new java.util.HashMap<>());
-		return result;
+		TasksData snap = effectiveTasksDataSnapshot;
+		if (snap != null)
+		{
+			return snap;
+		}
+		synchronized (this)
+		{
+			snap = effectiveTasksDataSnapshot;
+			if (snap != null)
+			{
+				return snap;
+			}
+			TasksData base = loadBaseTasksData();
+			List<TaskDefinition> custom = loadCustomTasksFromConfig();
+			TasksData result = new TasksData();
+			List<TaskDefinition> combined = new ArrayList<>(base.getDefaultTasks() != null ? base.getDefaultTasks() : new ArrayList<>());
+			combined.addAll(custom);
+			result.setDefaultTasks(combined);
+			result.setAreas(base.getAreas() != null ? new java.util.HashMap<>(base.getAreas()) : new java.util.HashMap<>());
+			effectiveTasksDataSnapshot = result;
+			return result;
+		}
 	}
 
 	// --- Task config API (import, export, custom tasks) ---

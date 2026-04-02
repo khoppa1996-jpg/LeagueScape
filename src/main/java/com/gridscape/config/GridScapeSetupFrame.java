@@ -15,7 +15,6 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -39,6 +38,7 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.util.ImageUtil;
 import com.gridscape.util.GridScapeFrameChromePanel;
 import com.gridscape.util.GridScapeSwingUtil;
+import com.gridscape.util.ScaledImageCache;
 
 /**
  * Moveable, resizable setup popup opened from the "Rules and Setup" button. Contains four tabs:
@@ -292,7 +292,7 @@ public class GridScapeSetupFrame extends JDialog
 		BufferedImage taskIconImg = ImageUtil.loadImageResource(GridScapePlugin.class, "task_icon.png");
 		if (taskIconImg != null)
 		{
-			Image scaled = taskIconImg.getScaledInstance(32, 32, Image.SCALE_SMOOTH);
+			BufferedImage scaled = ScaledImageCache.getScaled(taskIconImg, 32, 32);
 			iconLabel.setIcon(new ImageIcon(scaled));
 			iconLabel.setVerticalAlignment(JLabel.TOP);
 		}
@@ -369,7 +369,7 @@ public class GridScapeSetupFrame extends JDialog
 			{
 				if (img != null)
 				{
-					g.drawImage(img.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+					ScaledImageCache.drawScaled(g, img, 0, 0, getWidth(), getHeight());
 					g.setColor(getForeground());
 					g.setFont(getFont());
 					java.awt.FontMetrics fm = g.getFontMetrics();

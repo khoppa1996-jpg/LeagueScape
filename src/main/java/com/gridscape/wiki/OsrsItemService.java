@@ -57,7 +57,7 @@ public class OsrsItemService
 		{
 			String json = httpGet(ITEMS_SUMMARY_URL);
 			if (json == null) return new ArrayList<>();
-			JsonObject root = new JsonParser().parse(json).getAsJsonObject();
+			@SuppressWarnings("deprecation") JsonObject root = new JsonParser().parse(json).getAsJsonObject();
 			List<OsrsItemSummary> out = new ArrayList<>(root.size());
 			for (String key : root.keySet())
 			{

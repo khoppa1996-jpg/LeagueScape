@@ -66,7 +66,7 @@ public class OsrsWikiApiService
 		{
 			String json = httpGet(API_BASE + query);
 			if (json == null) return null;
-			JsonObject root = new JsonParser().parse(json).getAsJsonObject();
+			@SuppressWarnings("deprecation") JsonObject root = new JsonParser().parse(json).getAsJsonObject();
 			JsonObject pages = root.getAsJsonObject("query").getAsJsonObject("pages");
 			for (String id : pages.keySet())
 			{
@@ -133,7 +133,7 @@ public class OsrsWikiApiService
 		{
 			String json = httpGet(API_BASE + query);
 			if (json == null) return new CategoryMembersResult(new ArrayList<>(), null);
-			JsonObject root = new JsonParser().parse(json).getAsJsonObject();
+			@SuppressWarnings("deprecation") JsonObject root = new JsonParser().parse(json).getAsJsonObject();
 			JsonObject queryObj = root.getAsJsonObject("query");
 			JsonArray members = queryObj != null && queryObj.has("categorymembers")
 				? queryObj.getAsJsonArray("categorymembers") : new JsonArray();
@@ -190,6 +190,7 @@ public class OsrsWikiApiService
 		{
 			String json = httpGet(API_BASE + query);
 			if (json == null) return new ArrayList<>();
+			@SuppressWarnings("deprecation")
 			JsonArray root = new JsonParser().parse(json).getAsJsonArray();
 			// OpenSearch returns [ query, titles[], descriptions[], urls[] ]
 			if (root.size() < 2) return new ArrayList<>();
@@ -218,7 +219,7 @@ public class OsrsWikiApiService
 		{
 			String json = httpGet(API_BASE + query);
 			if (json == null) return null;
-			JsonObject root = new JsonParser().parse(json).getAsJsonObject();
+			@SuppressWarnings("deprecation") JsonObject root = new JsonParser().parse(json).getAsJsonObject();
 			JsonObject pages = root.getAsJsonObject("query").getAsJsonObject("pages");
 			for (String id : pages.keySet())
 			{

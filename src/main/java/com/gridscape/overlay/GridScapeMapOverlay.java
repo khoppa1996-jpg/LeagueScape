@@ -15,12 +15,14 @@ import com.gridscape.util.GridClaimFocusAnimation;
 import com.gridscape.util.PanelBoundsStore;
 import com.gridscape.util.RingBonusPopup;
 import com.gridscape.util.GridScapeSwingUtil;
+import com.gridscape.util.ScaledImageCache;
 import com.gridscape.data.AreaStatus;
 import com.gridscape.points.AreaCompletionService;
 import com.gridscape.points.PointsService;
 import com.gridscape.task.TaskState;
 import com.gridscape.task.TaskTile;
 import com.gridscape.task.TaskGridService;
+import com.gridscape.task.ui.TaskTileCellFactory;
 import com.gridscape.wiki.OsrsWikiApiService;
 import com.gridscape.worldunlock.WorldUnlockService;
 import com.gridscape.worldunlock.WorldUnlockTile;
@@ -33,7 +35,6 @@ import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -91,9 +92,6 @@ import net.runelite.client.ui.overlay.OverlayPosition;
  */
 public class GridScapeMapOverlay extends Overlay implements MouseListener
 {
-	private static final int REGION_SIZE = 1 << 6;
-	private static final int REGION_TRUNCATE = ~0x3F;
-	private static final int LABEL_PADDING = 4;
 	private static final float HOVER_BORDER_WIDTH = 2.5f;
 	private static final Color HOVER_BORDER_COLOR = Color.WHITE;
 	private static final int CORNER_MARKER_RADIUS = 4;
@@ -193,11 +191,15 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			else
 				color = config.mapLockedColor();
 
-			drawAreaShapeWithHoles((Graphics2D) graphics, area, worldMap, worldMapRect, pixelsPerTile, color, false);
+			WorldMapAreaPainter.drawAreaShapeWithHoles((Graphics2D) graphics, area, worldMap, worldMapRect, pixelsPerTile, color, false);
 		}
 
 		// Padlock icon at center of each polygon for locked areas
-		drawLockedAreaPadlocks((Graphics2D) graphics, worldMap, worldMapRect, pixelsPerTile, unlocked);
+		if (worldMapPadlockIcon == null)
+		{
+			worldMapPadlockIcon = WorldMapAreaPainter.loadWorldMapPadlockIcon();
+		}
+		WorldMapAreaPainter.drawLockedAreaPadlocks((Graphics2D) graphics, worldMap, worldMapRect, pixelsPerTile, unlocked, areaGraphService.getAreas(), worldMapPadlockIcon);
 
 		// Hover: white border on hovered area (with holes so outline is correct)
 		Area hovered = hoveredArea;
@@ -205,7 +207,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		{
 			graphics.setColor(HOVER_BORDER_COLOR);
 			graphics.setStroke(new BasicStroke(HOVER_BORDER_WIDTH));
-			drawAreaShapeWithHoles((Graphics2D) graphics, hovered, worldMap, worldMapRect, pixelsPerTile, null, true);
+			WorldMapAreaPainter.drawAreaShapeWithHoles((Graphics2D) graphics, hovered, worldMap, worldMapRect, pixelsPerTile, null, true);
 		}
 
 		// Corner markers: overlay map-edit state, plugin Area Edit mode, or Add New Area mode
@@ -224,13 +226,13 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 				for (List<int[]> poly : allPolygons)
 				{
 					if (poly == null || poly.size() < 3) continue;
-					Path2D.Double path = worldPolygonToPath2D(poly, worldMap, worldMapRect, pixelsPerTile);
+					Path2D.Double path = WorldMapAreaPainter.worldPolygonToPath2D(poly, worldMap, worldMapRect, pixelsPerTile);
 					if (path != null) combined.add(new java.awt.geom.Area(path));
 				}
 				for (List<int[]> hole : editingHoles)
 				{
 					if (hole == null || hole.size() < 3) continue;
-					Path2D.Double path = worldPolygonToPath2D(hole, worldMap, worldMapRect, pixelsPerTile);
+					Path2D.Double path = WorldMapAreaPainter.worldPolygonToPath2D(hole, worldMap, worldMapRect, pixelsPerTile);
 					if (path != null) combined.subtract(new java.awt.geom.Area(path));
 				}
 				if (!combined.isEmpty())
@@ -247,7 +249,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 				for (List<int[]> poly : allPolygons)
 				{
 					if (poly == null || poly.isEmpty()) continue;
-					Polygon screenPoly = worldPolygonToScreen(poly, worldMap, worldMapRect, pixelsPerTile);
+					Polygon screenPoly = WorldMapAreaPainter.worldPolygonToScreen(poly, worldMap, worldMapRect, pixelsPerTile);
 					if (screenPoly != null && screenPoly.npoints >= 3)
 					{
 						graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 80));
@@ -264,7 +266,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 				if (poly == null || poly.isEmpty()) continue;
 				for (int[] v : poly)
 				{
-					Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+					Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 					if (screen == null) continue;
 					if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
 					graphics.setColor(CORNER_MARKER_COLOR);
@@ -277,7 +279,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			for (int i = 0; i < currentCorners.size(); i++)
 			{
 				int[] v = currentCorners.get(i);
-				Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+				Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 				if (screen == null) continue;
 				if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
 				if (i == movingIdx)
@@ -289,7 +291,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			}
 			if (currentCorners.size() >= 3)
 			{
-				Polygon editPoly = worldPolygonToScreen(currentCorners, worldMap, worldMapRect, pixelsPerTile);
+				Polygon editPoly = WorldMapAreaPainter.worldPolygonToScreen(currentCorners, worldMap, worldMapRect, pixelsPerTile);
 				if (editPoly != null && editPoly.npoints >= 3)
 				{
 					graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 120));
@@ -312,14 +314,14 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 					if (poly == null || poly.isEmpty()) continue;
 					for (int[] v : poly)
 					{
-						Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+						Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 						if (screen == null) continue;
 						if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
 						graphics.setColor(CORNER_MARKER_COLOR);
 						graphics.fillOval(screen.getX() - CORNER_MARKER_RADIUS, screen.getY() - CORNER_MARKER_RADIUS,
 							CORNER_MARKER_RADIUS * 2, CORNER_MARKER_RADIUS * 2);
 					}
-					Polygon screenPoly = worldPolygonToScreen(poly, worldMap, worldMapRect, pixelsPerTile);
+					Polygon screenPoly = WorldMapAreaPainter.worldPolygonToScreen(poly, worldMap, worldMapRect, pixelsPerTile);
 					if (screenPoly != null && screenPoly.npoints >= 3)
 					{
 						graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 80));
@@ -336,7 +338,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			for (int i = 0; i < cornersToDraw.size(); i++)
 			{
 				int[] v = cornersToDraw.get(i);
-				Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+				Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 				if (screen == null) continue;
 				if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
 				if (i == movingIdx)
@@ -358,7 +360,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 					if (polygon == null) continue;
 					for (int[] v : polygon)
 					{
-						Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+						Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 						if (screen == null) continue;
 						if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
 						graphics.setColor(CORNER_MARKER_COLOR);
@@ -373,14 +375,14 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 				if (poly == null || poly.isEmpty()) continue;
 				for (int[] v : poly)
 				{
-					Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+					Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 					if (screen == null) continue;
 					if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
 					graphics.setColor(CORNER_MARKER_COLOR);
 					graphics.fillOval(screen.getX() - CORNER_MARKER_RADIUS, screen.getY() - CORNER_MARKER_RADIUS,
 						CORNER_MARKER_RADIUS * 2, CORNER_MARKER_RADIUS * 2);
 				}
-				Polygon screenPoly = worldPolygonToScreen(poly, worldMap, worldMapRect, pixelsPerTile);
+				Polygon screenPoly = WorldMapAreaPainter.worldPolygonToScreen(poly, worldMap, worldMapRect, pixelsPerTile);
 				if (screenPoly != null && screenPoly.npoints >= 3)
 				{
 					graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 80));
@@ -395,7 +397,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 				List<int[]> newCorners = plugin.getEditingCorners();
 				for (int[] v : newCorners)
 				{
-					Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+					Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 					if (screen == null) continue;
 					if (!worldMapRect.contains(screen.getX(), screen.getY())) continue;
 					graphics.setColor(CORNER_MARKER_EDIT_COLOR);
@@ -404,7 +406,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 				}
 				if (newCorners.size() >= 3)
 				{
-					Polygon newPoly = worldPolygonToScreen(newCorners, worldMap, worldMapRect, pixelsPerTile);
+					Polygon newPoly = WorldMapAreaPainter.worldPolygonToScreen(newCorners, worldMap, worldMapRect, pixelsPerTile);
 					if (newPoly != null && newPoly.npoints >= 3)
 					{
 						graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 120));
@@ -421,7 +423,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		// In edit mode, draw the editing polygon outline (and fill if >= 3 points)
 		if (isEditMode && editingCorners.size() >= 3)
 		{
-			Polygon editPoly = worldPolygonToScreen(editingCorners, worldMap, worldMapRect, pixelsPerTile);
+			Polygon editPoly = WorldMapAreaPainter.worldPolygonToScreen(editingCorners, worldMap, worldMapRect, pixelsPerTile);
 			if (editPoly != null && editPoly.npoints >= 3)
 			{
 				graphics.setColor(new Color(config.mapUnlockedColor().getRed(), config.mapUnlockedColor().getGreen(), config.mapUnlockedColor().getBlue(), 120));
@@ -435,334 +437,16 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		// Draw chunk grid (like region-locker)
 		if (config.drawMapGrid())
 		{
-			drawChunkGrid(graphics, worldMap, worldMapRect, pixelsPerTile);
+			WorldMapAreaPainter.drawChunkGrid(graphics, worldMap, worldMapRect, pixelsPerTile);
 		}
 
 		// Draw area labels
 		if (config.drawAreaLabels())
 		{
-			drawAreaLabels(graphics, worldMap, worldMapRect, pixelsPerTile);
+			WorldMapAreaPainter.drawAreaLabels(graphics, areaGraphService.getAreas(), worldMap, worldMapRect, pixelsPerTile);
 		}
 
 		return null;
-	}
-
-	private Polygon worldPolygonToScreen(List<int[]> polygon, WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile)
-	{
-		int widthInTiles = (int) Math.ceil(worldMapRect.getWidth() / pixelsPerTile);
-		int heightInTiles = (int) Math.ceil(worldMapRect.getHeight() / pixelsPerTile);
-		Point worldMapPosition = worldMap.getWorldMapPosition();
-
-		int[] xPoints = new int[polygon.size()];
-		int[] yPoints = new int[polygon.size()];
-		int n = 0;
-
-		for (int[] v : polygon)
-		{
-			int wx = v[0];
-			int wy = v[1];
-			int plane = v.length > 2 ? v[2] : 0;
-			if (plane != 0)
-			{
-				continue; // Skip non-surface for map
-			}
-
-			if (!worldMap.getWorldMapData().surfaceContainsPosition(wx, wy))
-			{
-				continue;
-			}
-
-			int yTileMax = worldMapPosition.getY() - heightInTiles / 2;
-			int yTileOffset = (yTileMax - wy - 1) * -1;
-			int xTileOffset = wx + widthInTiles / 2 - worldMapPosition.getX();
-
-			int xGraphDiff = (int) (xTileOffset * pixelsPerTile);
-			int yGraphDiff = (int) (yTileOffset * pixelsPerTile);
-			yGraphDiff -= pixelsPerTile - Math.ceil(pixelsPerTile / 2);
-			xGraphDiff += pixelsPerTile - Math.ceil(pixelsPerTile / 2);
-			yGraphDiff = worldMapRect.height - yGraphDiff;
-			yGraphDiff += (int) worldMapRect.getY();
-			xGraphDiff += (int) worldMapRect.getX();
-
-			xPoints[n] = xGraphDiff;
-			yPoints[n] = yGraphDiff;
-			n++;
-		}
-
-		if (n < 3)
-		{
-			return null;
-		}
-
-		// Trim to actual size
-		int[] xTrim = new int[n];
-		int[] yTrim = new int[n];
-		System.arraycopy(xPoints, 0, xTrim, 0, n);
-		System.arraycopy(yPoints, 0, yTrim, 0, n);
-		return new Polygon(xTrim, yTrim, n);
-	}
-
-	/** Converts world polygon to screen Path2D for use with Area (fill with holes). */
-	private Path2D.Double worldPolygonToPath2D(List<int[]> polygon, WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile)
-	{
-		Polygon p = worldPolygonToScreen(polygon, worldMap, worldMapRect, pixelsPerTile);
-		if (p == null || p.npoints < 3) return null;
-		Path2D.Double path = new Path2D.Double();
-		path.moveTo(p.xpoints[0], p.ypoints[0]);
-		for (int i = 1; i < p.npoints; i++)
-			path.lineTo(p.xpoints[i], p.ypoints[i]);
-		path.closePath();
-		return path;
-	}
-
-	/** Draw an area's shape (polygons minus holes). fillColor non-null = fill; outlineOnly true = draw outline only (e.g. hover). */
-	private void drawAreaShapeWithHoles(Graphics2D graphics, Area area, WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile, Color fillColor, boolean outlineOnly)
-	{
-		List<List<int[]>> polygons = area.getPolygons();
-		List<List<int[]>> holes = area.getHoles();
-		boolean hasHoles = holes != null && !holes.isEmpty();
-		if (hasHoles)
-		{
-			java.awt.geom.Area combined = new java.awt.geom.Area();
-			for (List<int[]> poly : polygons)
-			{
-				if (poly == null || poly.size() < 3) continue;
-				Path2D.Double path = worldPolygonToPath2D(poly, worldMap, worldMapRect, pixelsPerTile);
-				if (path != null) combined.add(new java.awt.geom.Area(path));
-			}
-			for (List<int[]> hole : holes)
-			{
-				if (hole == null || hole.size() < 3) continue;
-				Path2D.Double path = worldPolygonToPath2D(hole, worldMap, worldMapRect, pixelsPerTile);
-				if (path != null) combined.subtract(new java.awt.geom.Area(path));
-			}
-			if (!combined.isEmpty())
-			{
-				if (fillColor != null && !outlineOnly)
-				{
-					graphics.setColor(fillColor);
-					graphics.fill(combined);
-				}
-				if (outlineOnly)
-					graphics.draw(combined);
-			}
-		}
-		else
-		{
-			for (List<int[]> polygon : polygons)
-			{
-				if (polygon == null || polygon.size() < 3) continue;
-				Polygon poly = worldPolygonToScreen(polygon, worldMap, worldMapRect, pixelsPerTile);
-				if (poly != null && poly.npoints >= 3)
-				{
-					if (fillColor != null && !outlineOnly)
-					{
-						graphics.setColor(fillColor);
-						graphics.fillPolygon(poly);
-					}
-					if (outlineOnly)
-						graphics.drawPolygon(poly);
-				}
-			}
-		}
-	}
-
-	private void drawChunkGrid(Graphics2D graphics, WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile)
-	{
-		int widthInTiles = (int) Math.ceil(worldMapRect.getWidth() / pixelsPerTile);
-		int heightInTiles = (int) Math.ceil(worldMapRect.getHeight() / pixelsPerTile);
-		Point worldMapPosition = worldMap.getWorldMapPosition();
-
-		int yTileMin = worldMapPosition.getY() - heightInTiles / 2;
-		int xRegionMin = (worldMapPosition.getX() - widthInTiles / 2) & REGION_TRUNCATE;
-		int xRegionMax = ((worldMapPosition.getX() + widthInTiles / 2) & REGION_TRUNCATE) + REGION_SIZE;
-		int yRegionMin = yTileMin & REGION_TRUNCATE;
-		int yRegionMax = ((worldMapPosition.getY() + heightInTiles / 2) & REGION_TRUNCATE) + REGION_SIZE;
-		int regionPixelSize = (int) Math.ceil(REGION_SIZE * pixelsPerTile);
-
-		graphics.setColor(new Color(0, 19, 36, 127));
-		for (int x = xRegionMin; x < xRegionMax; x += REGION_SIZE)
-		{
-			for (int y = yRegionMin; y < yRegionMax; y += REGION_SIZE)
-			{
-				int yTileOffset = -(yTileMin - y);
-				int xTileOffset = x + widthInTiles / 2 - worldMapPosition.getX();
-
-				int xPos = (int) (xTileOffset * pixelsPerTile) + (int) worldMapRect.getX();
-				int yPos = (worldMapRect.height - (int) (yTileOffset * pixelsPerTile)) + (int) worldMapRect.getY();
-				yPos -= regionPixelSize;
-
-				graphics.drawRect(xPos, yPos, regionPixelSize, regionPixelSize);
-			}
-		}
-	}
-
-	private void drawAreaLabels(Graphics2D graphics, WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile)
-	{
-		for (Area area : areaGraphService.getAreas())
-		{
-			// Use first polygon for label placement
-			List<int[]> firstPoly = area.getPolygon();
-			if (firstPoly == null || firstPoly.size() < 3) continue;
-
-			// Compute centroid of first polygon
-			double cx = 0;
-			double cy = 0;
-			int count = 0;
-			for (int[] v : firstPoly)
-			{
-				if (v.length > 2 && v[2] != 0)
-				{
-					continue;
-				}
-				cx += v[0];
-				cy += v[1];
-				count++;
-			}
-			if (count == 0)
-			{
-				continue;
-			}
-			cx /= count;
-			cy /= count;
-
-			Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, (int) cx, (int) cy);
-			if (screen == null)
-			{
-				continue;
-			}
-
-			String label = area.getDisplayName() != null ? area.getDisplayName() : area.getId();
-			FontMetrics fm = graphics.getFontMetrics();
-			int textWidth = fm.stringWidth(label);
-			int textHeight = fm.getHeight();
-
-			// Ensure label is within map bounds
-			int x = screen.getX() - textWidth / 2;
-			int y = screen.getY() + textHeight / 2;
-			if (x < worldMapRect.x)
-			{
-				x = worldMapRect.x + LABEL_PADDING;
-			}
-			if (x + textWidth > worldMapRect.x + worldMapRect.width)
-			{
-				x = worldMapRect.x + worldMapRect.width - textWidth - LABEL_PADDING;
-			}
-			if (y < worldMapRect.y)
-			{
-				y = worldMapRect.y + textHeight + LABEL_PADDING;
-			}
-			if (y > worldMapRect.y + worldMapRect.height)
-			{
-				y = worldMapRect.y + worldMapRect.height - LABEL_PADDING;
-			}
-
-			graphics.setColor(Color.WHITE);
-			graphics.drawString(label, x, y);
-		}
-	}
-
-	private void drawLockedAreaPadlocks(Graphics2D graphics, WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile, Set<String> unlocked)
-	{
-		if (worldMapPadlockIcon == null)
-		{
-			worldMapPadlockIcon = ImageUtil.loadImageResource(GridScapePlugin.class, "padlock_icon.png");
-		}
-		if (worldMapPadlockIcon == null) return;
-
-		int iconSize = Math.max(12, Math.min(32, (int) (pixelsPerTile * 1.5)));
-		int half = iconSize / 2;
-
-		for (Area area : areaGraphService.getAreas())
-		{
-			if (unlocked.contains(area.getId())) continue;
-			List<List<int[]>> polygons = area.getPolygons();
-			if (polygons == null) continue;
-
-			for (List<int[]> poly : polygons)
-			{
-				if (poly == null || poly.size() < 3) continue;
-				double cx = 0;
-				double cy = 0;
-				int count = 0;
-				for (int[] v : poly)
-				{
-					if (v.length > 2 && v[2] != 0) continue;
-					cx += v[0];
-					cy += v[1];
-					count++;
-				}
-				if (count == 0) continue;
-				cx /= count;
-				cy /= count;
-
-				Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, (int) cx, (int) cy);
-				if (screen == null) continue;
-				int sx = screen.getX();
-				int sy = screen.getY();
-				if (sx - half < worldMapRect.x || sx + half > worldMapRect.x + worldMapRect.width
-					|| sy - half < worldMapRect.y || sy + half > worldMapRect.y + worldMapRect.height)
-				{
-					continue;
-				}
-				graphics.drawImage(worldMapPadlockIcon.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH),
-					sx - half, sy - half, null);
-			}
-		}
-	}
-
-	private Point mapWorldPointToGraphicsPoint(WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile, int wx, int wy)
-	{
-		if (!worldMap.getWorldMapData().surfaceContainsPosition(wx, wy))
-		{
-			return null;
-		}
-
-		int widthInTiles = (int) Math.ceil(worldMapRect.getWidth() / pixelsPerTile);
-		int heightInTiles = (int) Math.ceil(worldMapRect.getHeight() / pixelsPerTile);
-		Point worldMapPosition = worldMap.getWorldMapPosition();
-
-		int yTileMax = worldMapPosition.getY() - heightInTiles / 2;
-		int yTileOffset = (yTileMax - wy - 1) * -1;
-		int xTileOffset = wx + widthInTiles / 2 - worldMapPosition.getX();
-
-		int xGraphDiff = (int) (xTileOffset * pixelsPerTile);
-		int yGraphDiff = (int) (yTileOffset * pixelsPerTile);
-		yGraphDiff -= pixelsPerTile - Math.ceil(pixelsPerTile / 2);
-		xGraphDiff += pixelsPerTile - Math.ceil(pixelsPerTile / 2);
-		yGraphDiff = worldMapRect.height - yGraphDiff;
-		yGraphDiff += (int) worldMapRect.getY();
-		xGraphDiff += (int) worldMapRect.getX();
-
-		return new Point(xGraphDiff, yGraphDiff);
-	}
-
-	/** Convert screen position (canvas coords) inside map rect to world tile (plane 0), or null if outside/invalid. */
-	private WorldPoint screenToWorldPoint(WorldMap worldMap, Rectangle worldMapRect, float pixelsPerTile, int sx, int sy)
-	{
-		if (!worldMapRect.contains(sx, sy))
-		{
-			return null;
-		}
-		int widthInTiles = (int) Math.ceil(worldMapRect.getWidth() / pixelsPerTile);
-		int heightInTiles = (int) Math.ceil(worldMapRect.getHeight() / pixelsPerTile);
-		Point worldMapPosition = worldMap.getWorldMapPosition();
-		double halfTile = pixelsPerTile - Math.ceil(pixelsPerTile / 2);
-
-		// Inverse of mapWorldPointToGraphicsPoint: same halfTile and tile-offset logic so click lands on correct tile
-		double xTileOffset = (sx - worldMapRect.getX() - halfTile) / pixelsPerTile;
-		int wx = worldMapPosition.getX() - widthInTiles / 2 + (int) Math.round(xTileOffset);
-
-		// Forward has screenY = worldMapRect.getY() + height - (yTileOffset*pixelsPerTile) + halfTile, so inverse:
-		double yTileOffset = (worldMapRect.getY() + worldMapRect.getHeight() - sy + halfTile) / pixelsPerTile;
-		int yTileMax = worldMapPosition.getY() - heightInTiles / 2;
-		int wy = yTileMax + (int) Math.round(yTileOffset) - 1;
-
-		if (!worldMap.getWorldMapData().surfaceContainsPosition(wx, wy))
-		{
-			return null;
-		}
-		return new WorldPoint(wx, wy, 0);
 	}
 
 	private void updateHoveredArea(int screenX, int screenY)
@@ -786,7 +470,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		}
 		WorldMap worldMap = client.getWorldMap();
 		float pixelsPerTile = worldMap.getWorldMapZoom();
-		WorldPoint wp = screenToWorldPoint(worldMap, worldMapRect, pixelsPerTile, screenX, screenY);
+		WorldPoint wp = WorldMapAreaPainter.screenToWorldPoint(worldMap, worldMapRect, pixelsPerTile, screenX, screenY);
 		hoveredArea = (wp != null) ? areaGraphService.getAreaAt(wp) : null;
 	}
 
@@ -875,7 +559,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		for (int i = 0; i < corners.size(); i++)
 		{
 			int[] v = corners.get(i);
-			Point screen = mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
+			Point screen = WorldMapAreaPainter.mapWorldPointToGraphicsPoint(worldMap, worldMapRect, pixelsPerTile, v[0], v[1]);
 			if (screen == null) continue;
 			int dx = screen.getX() - screenX;
 			int dy = screen.getY() - screenY;
@@ -1026,9 +710,6 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 	private static final Color POPUP_BG = new Color(0x54, 0x4D, 0x41);
 	private static final Color POPUP_TEXT = new Color(0xC4, 0xB8, 0x96);
 	private static final Color POPUP_BORDER = new Color(0x2a, 0x28, 0x24);
-	private static final Color PRESSED_INSET_SHADOW = new Color(0, 0, 0, 70);
-	private static final int PRESSED_INSET = 2;
-	private static final Dimension RECTANGLE_BUTTON_SIZE = new Dimension(160, 28);
 	private static final int TASK_ICON_SIZE = 28;
 	/** Margin on all sides of the task tile; icon is scaled to fill the rest (same size for all). */
 	private static final int TASK_TILE_ICON_MARGIN = 12;
@@ -1166,96 +847,6 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		return img;
 	}
 
-	/** Button with empty_button_rectangle background and pressed shadow. Use for Tasks, Back to area, Complete, Claim. */
-	private static JButton newRectangleButton(String text, BufferedImage buttonRect, Color textColor)
-	{
-		BufferedImage img = buttonRect;
-		JButton b = new JButton(text)
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				if (img != null)
-				{
-					g.drawImage(img.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-					g.setColor(getForeground());
-					g.setFont(getFont());
-					java.awt.FontMetrics fm = g.getFontMetrics();
-					String t = getText();
-					int x = (getWidth() - fm.stringWidth(t)) / 2;
-					int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
-					g.drawString(t, x, y);
-				}
-				else
-				{
-					super.paintComponent(g);
-				}
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setForeground(textColor);
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(img == null);
-		b.setOpaque(img == null);
-		b.setPreferredSize(RECTANGLE_BUTTON_SIZE);
-		return b;
-	}
-
-	/** Simple text button with pressed shadow (when rectangle image not needed). */
-	private static JButton newPopupButton(String text)
-	{
-		JButton b = new JButton(text)
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				super.paintComponent(g);
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setFocusPainted(false);
-		return b;
-	}
-
-	/** Icon-only button (e.g. close) with pressed inset shadow. */
-	private static JButton newPopupButtonWithIcon(BufferedImage iconImg, Color fallbackTextColor)
-	{
-		JButton b = new JButton()
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				super.paintComponent(g);
-				if (getModel().isPressed())
-				{
-					g.setColor(PRESSED_INSET_SHADOW);
-					g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
-				}
-			}
-		};
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(false);
-		b.setMargin(new Insets(0, 0, 0, 0));
-		if (iconImg != null)
-			b.setIcon(new javax.swing.ImageIcon(ImageUtil.resizeImage(iconImg, 24, 24)));
-		else
-		{
-			b.setText("X");
-			b.setForeground(fallbackTextColor);
-		}
-		return b;
-	}
-
 	/** Points display string: spendable total in point-buy mode, or "Points in [area]: X / Y" in points-to-complete mode. */
 	private String getPointsDisplayText(Area area)
 	{
@@ -1347,7 +938,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 					super.paintComponent(g);
 					if (interfaceBg != null)
 					{
-						g.drawImage(interfaceBg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+						ScaledImageCache.drawScaled(g, interfaceBg, 0, 0, getWidth(), getHeight());
 					}
 					else
 					{
@@ -1370,7 +961,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			titleLabel.setForeground(POPUP_TEXT);
 			titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 14f));
 			header.add(titleLabel, java.awt.BorderLayout.CENTER);
-			JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
+			JButton closeBtn = TaskPopupUiFactory.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 			closeBtn.addActionListener(e -> {
 				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
@@ -1418,7 +1009,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			southPanel.setOpaque(false);
 			if (areaUnlocked)
 			{
-				JButton tasksBtn = newRectangleButton("Tasks", buttonRect, POPUP_TEXT);
+				JButton tasksBtn = TaskPopupUiFactory.newRectangleButton("Tasks", buttonRect, POPUP_TEXT);
 				tasksBtn.addActionListener(e -> {
 					GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 					dialog.dispose();
@@ -1437,7 +1028,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 					{
 						if (buttonRect != null)
 						{
-							g.drawImage(buttonRect.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+							ScaledImageCache.drawScaled(g, buttonRect, 0, 0, getWidth(), getHeight());
 							g.setColor(getForeground());
 							g.setFont(getFont());
 							java.awt.FontMetrics fm = g.getFontMetrics();
@@ -1452,8 +1043,9 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 						}
 						if (getModel().isPressed())
 						{
-							g.setColor(PRESSED_INSET_SHADOW);
-							g.fillRect(PRESSED_INSET, PRESSED_INSET, getWidth() - 2 * PRESSED_INSET, getHeight() - 2 * PRESSED_INSET);
+							g.setColor(GridScapeSwingUtil.PRESSED_INSET_SHADOW);
+							g.fillRect(GridScapeSwingUtil.PRESSED_INSET, GridScapeSwingUtil.PRESSED_INSET,
+								getWidth() - 2 * GridScapeSwingUtil.PRESSED_INSET, getHeight() - 2 * GridScapeSwingUtil.PRESSED_INSET);
 						}
 					}
 				};
@@ -1618,7 +1210,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 					super.paintComponent(g);
 					if (interfaceBg != null)
 					{
-						g.drawImage(interfaceBg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+						ScaledImageCache.drawScaled(g, interfaceBg, 0, 0, getWidth(), getHeight());
 					}
 					else
 					{
@@ -1644,7 +1236,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			titleLabel.setForeground(POPUP_TEXT);
 			titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 16f));
 			titleRow.add(titleLabel, java.awt.BorderLayout.CENTER);
-			JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
+			JButton closeBtn = TaskPopupUiFactory.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 			closeBtn.addActionListener(e -> {
 				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
@@ -1848,21 +1440,21 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			content.add(scrollPane, java.awt.BorderLayout.CENTER);
 
 			// Back to area button: keep aspect ratio of empty_button_rectangle (no stretch)
-			JButton backBtn = newRectangleButton("Back to area", buttonRect, POPUP_TEXT);
-			backBtn.setMaximumSize(RECTANGLE_BUTTON_SIZE);
+			JButton backBtn = TaskPopupUiFactory.newRectangleButton("Back to area", buttonRect, POPUP_TEXT);
+			backBtn.setMaximumSize(TaskPopupUiFactory.RECTANGLE_BUTTON_SIZE);
 			backBtn.addActionListener(e -> {
 				GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 				dialog.dispose();
 				showAreaDetailsPopup(area);
 			});
 			// Zoom out / Zoom in buttons, right-aligned
-			JButton zoomOutBtn = newRectangleButton("−", buttonRect, POPUP_TEXT);
+			JButton zoomOutBtn = TaskPopupUiFactory.newRectangleButton("−", buttonRect, POPUP_TEXT);
 			zoomOutBtn.setToolTipText("Zoom out");
 			zoomOutBtn.addActionListener(e -> {
 				zoomHolder[0] = Math.max(ZOOM_MIN, zoomHolder[0] - ZOOM_STEP);
 				SwingUtilities.invokeLater(refreshHolder[0]);
 			});
-			JButton zoomInBtn = newRectangleButton("+", buttonRect, POPUP_TEXT);
+			JButton zoomInBtn = TaskPopupUiFactory.newRectangleButton("+", buttonRect, POPUP_TEXT);
 			zoomInBtn.setToolTipText("Zoom in");
 			zoomInBtn.addActionListener(e -> {
 				zoomHolder[0] = Math.min(ZOOM_MAX, zoomHolder[0] + ZOOM_STEP);
@@ -1889,8 +1481,6 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		});
 	}
 
-	private static final int CLAIMED_CHECKMARK_SIZE = 18;
-	private static final int CLAIMED_CHECKMARK_INSET = 4;
 
 	/** True if any cardinal neighbor is REVEALED or COMPLETED_UNCLAIMED (frontier fog). */
 	private boolean areaTileHasFogNeighbor(String areaId, TaskTile tile, List<TaskTile> grid)
@@ -1931,7 +1521,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			{
 				super.paintComponent(g);
 				if (bg != null)
-					g.drawImage(bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
+					ScaledImageCache.drawScaled(g, bg, 0, 0, getWidth(), getHeight());
 				else
 				{
 					g.setColor(new Color(60, 55, 50));
@@ -1964,25 +1554,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			@Override
 			protected void paintComponent(Graphics g)
 			{
-				if (tileBgFinal != null)
-				{
-					g.drawImage(tileBgFinal.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH), 0, 0, null);
-				}
-				else
-				{
-					g.setColor(new Color(60, 55, 50));
-					g.fillRect(0, 0, getWidth(), getHeight());
-				}
-				// Center tile: generic task icon (task_icon.png) so the center is easy to find
-				if (centerTile && centerIconFinal != null)
-				{
-					int w = getWidth();
-					int h = getHeight();
-					int size = Math.min(w, h) * 3 / 4;
-					int x = (w - size) / 2;
-					int y = (h - size) / 2;
-					g.drawImage(centerIconFinal.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
-				}
+				TaskTileCellFactory.paintBackgroundAndCenterIcon(g, getWidth(), getHeight(), tileBgFinal, centerIconFinal, centerTile);
 				super.paintComponent(g);
 			}
 		};
@@ -1993,31 +1565,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		// Center tile shows only the generic task icon above (no per-task icon child)
 		if (taskIcon != null && !centerTile)
 		{
-			final BufferedImage iconImage = taskIcon;
-			final int margin = iconMargin;
-			JPanel iconPanel = new JPanel()
-			{
-				@Override
-				protected void paintComponent(Graphics g)
-				{
-					super.paintComponent(g);
-					int w = getWidth();
-					int h = getHeight();
-					int innerW = Math.max(1, w - 2 * margin);
-					int innerH = Math.max(1, h - 2 * margin);
-					int iw = iconImage.getWidth();
-					int ih = iconImage.getHeight();
-					if (iw <= 0 || ih <= 0) return;
-					double scale = Math.min((double) innerW / iw, (double) innerH / ih);
-					int drawW = Math.max(1, (int) Math.round(iw * scale));
-					int drawH = Math.max(1, (int) Math.round(ih * scale));
-					int x = margin + (innerW - drawW) / 2;
-					int y = margin + (innerH - drawH) / 2;
-					g.drawImage(iconImage.getScaledInstance(drawW, drawH, Image.SCALE_SMOOTH), x, y, null);
-				}
-			};
-			iconPanel.setOpaque(false);
-			cell.add(iconPanel, java.awt.BorderLayout.CENTER);
+			cell.add(TaskTileCellFactory.newFittedTaskIconPanel(taskIcon, iconMargin), java.awt.BorderLayout.CENTER);
 		}
 		// Single click to claim when completed; otherwise open detail popup
 		final boolean mystery = isMystery;
@@ -2060,60 +1608,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 	/** Claimed task: desaturated tile, single small checkmark in corner (or on top of center task icon for center tile), not clickable. */
 	private JPanel buildClaimedTaskCell(BufferedImage tileBg, BufferedImage checkmarkImg, BufferedImage centerTileIconImg, int tileSize, boolean isCenter)
 	{
-		final BufferedImage bg = tileBg;
-		final BufferedImage checkmark = checkmarkImg != null ? ImageUtil.resizeImage(checkmarkImg, CLAIMED_CHECKMARK_SIZE, CLAIMED_CHECKMARK_SIZE) : null;
-		final BufferedImage centerIcon = centerTileIconImg;
-		final boolean centerTile = isCenter;
-		JPanel cell = new JPanel()
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				if (bg != null)
-				{
-					Image scaled = bg.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH);
-					g.drawImage(scaled, 0, 0, null);
-				}
-				else
-				{
-					g.setColor(new Color(60, 55, 50));
-					g.fillRect(0, 0, getWidth(), getHeight());
-				}
-				// Center tile: draw generic task icon first, then checkmark on top
-				if (centerTile && centerIcon != null)
-				{
-					int w = getWidth();
-					int h = getHeight();
-					int size = Math.min(w, h) * 3 / 4;
-					int x = (w - size) / 2;
-					int y = (h - size) / 2;
-					g.drawImage(centerIcon.getScaledInstance(size, size, Image.SCALE_SMOOTH), x, y, null);
-				}
-				// Desaturate with semi-transparent gray overlay
-				g.setColor(new Color(120, 120, 120, 140));
-				g.fillRect(0, 0, getWidth(), getHeight());
-				if (checkmark != null)
-				{
-					if (centerTile)
-					{
-						// Checkmark on top of center icon (centered)
-						int x = (getWidth() - CLAIMED_CHECKMARK_SIZE) / 2;
-						int y = (getHeight() - CLAIMED_CHECKMARK_SIZE) / 2;
-						g.drawImage(checkmark, x, y, null);
-					}
-					else
-					{
-						int x = getWidth() - CLAIMED_CHECKMARK_SIZE - CLAIMED_CHECKMARK_INSET;
-						int y = CLAIMED_CHECKMARK_INSET;
-						g.drawImage(checkmark, x, y, null);
-					}
-				}
-			}
-		};
-		cell.setOpaque(false);
-		cell.setPreferredSize(new Dimension(tileSize, tileSize));
-		cell.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-		return cell;
+		return TaskTileCellFactory.newClaimedTaskCellForTaskGrid(tileSize, tileBg, checkmarkImg, centerTileIconImg, isCenter);
 	}
 
 	private void showAreaRingBonusIfNeeded(JDialog parentDialog, String areaId, TaskTile tile, int ringBonus)
@@ -2169,7 +1664,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		titleLabel.setFont(titleLabel.getFont().deriveFont(java.awt.Font.BOLD, 13f));
 		header.add(titleLabel, java.awt.BorderLayout.CENTER);
 		BufferedImage xBtnImg = ImageUtil.loadImageResource(GridScapePlugin.class, "x_button.png");
-		JButton closeBtn = newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
+		JButton closeBtn = TaskPopupUiFactory.newPopupButtonWithIcon(xBtnImg, POPUP_TEXT);
 		closeBtn.addActionListener(e -> {
 			GridScapeSounds.play(audioPlayer, GridScapeSounds.BUTTON_PRESS, client);
 			detail.dispose();
@@ -2195,7 +1690,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		else if (state == TaskState.COMPLETED_UNCLAIMED)
 		{
 			// Should not normally reach here (single-click claims); show Claim as fallback
-			JButton claimBtn = newRectangleButton("Claim", buttonRect, textColor);
+			JButton claimBtn = TaskPopupUiFactory.newRectangleButton("Claim", buttonRect, textColor);
 			claimBtn.addActionListener(e -> {
 				clientThread.invoke(() -> {
 					java.util.List<String> unmet = (tile.getRequirements() != null && !tile.getRequirements().isEmpty())
@@ -2223,7 +1718,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 			JLabel revealLabel = new JLabel("<html>Complete this task then click 'Claim'.</html>");
 			revealLabel.setForeground(textColor);
 			body.add(revealLabel);
-			JButton claimBtn = newRectangleButton("Claim", buttonRect, textColor);
+			JButton claimBtn = TaskPopupUiFactory.newRectangleButton("Claim", buttonRect, textColor);
 			claimBtn.addActionListener(e -> {
 				clientThread.invoke(() -> {
 					java.util.List<String> unmet = (tile.getRequirements() != null && !tile.getRequirements().isEmpty())
@@ -2314,7 +1809,7 @@ public class GridScapeMapOverlay extends Overlay implements MouseListener
 		if (!worldMapRect.contains(event.getX(), event.getY())) return event;
 		WorldMap worldMap = client.getWorldMap();
 		float pixelsPerTile = worldMap.getWorldMapZoom();
-		WorldPoint wp = screenToWorldPoint(worldMap, worldMapRect, pixelsPerTile, event.getX(), event.getY());
+		WorldPoint wp = WorldMapAreaPainter.screenToWorldPoint(worldMap, worldMapRect, pixelsPerTile, event.getX(), event.getY());
 		if (wp == null) return event;
 
 		// Add New Area mode: Shift+left-click adds a corner at the clicked tile
