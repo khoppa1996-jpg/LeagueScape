@@ -2286,7 +2286,7 @@
       "id": "heroes_quest",
       "displayName": "Heroes' Quest",
       "tier": 3,
-      "prerequisites": ["burthorpe"],
+      "prerequisites": ["burthorpe", "shield_of_arrav", "lost_city", "merlins_crystal", "dragon_slayer_i"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Heroes' Quest" }
     },
     {
@@ -2414,7 +2414,7 @@
       "id": "jungle_potion",
       "displayName": "Jungle Potion",
       "tier": 1,
-      "prerequisites": ["karamja"],
+      "prerequisites": ["karamja", "druidic_ritual"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Jungle Potion" }
     },
     {
@@ -2430,7 +2430,7 @@
       "id": "underground_pass",
       "displayName": "Underground Pass",
       "tier": 3,
-      "prerequisites": ["isafdar"],
+      "prerequisites": ["isafdar", "biohazard"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Underground Pass" }
     },
     {
@@ -2446,7 +2446,7 @@
       "id": "the_tourist_trap",
       "displayName": "The Tourist Trap",
       "tier": 2,
-      "prerequisites": ["kharidian_desert", "al_kharid"],
+      "prerequisites": ["desert", "al_kharid"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Tourist Trap" }
     },
     {
@@ -2494,7 +2494,7 @@
       "id": "legends_quest",
       "displayName": "Legends' Quest",
       "tier": 4,
-      "prerequisites": ["ardougne"],
+      "prerequisites": ["ardougne", "heroes_quest", "family_crest", "shilo_village", "underground_pass", "waterfall_quest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Legends' Quest" }
     },
     {
@@ -2510,7 +2510,7 @@
       "id": "eadgars_ruse",
       "displayName": "Eadgar's Ruse",
       "tier": 2,
-      "prerequisites": ["taverley"],
+      "prerequisites": ["taverley", "burthorpe", "ardougne", "trollheim", "druidic_ritual", "troll_stronghold"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Eadgar's Ruse" }
     },
     {
@@ -2550,7 +2550,7 @@
       "id": "regicide",
       "displayName": "Regicide",
       "tier": 3,
-      "prerequisites": ["isafdar"],
+      "prerequisites": ["isafdar", "underground_pass"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Regicide" }
     },
     {
@@ -2558,7 +2558,7 @@
       "id": "tai_bwo_wannai_trio",
       "displayName": "Tai Bwo Wannai Trio",
       "tier": 2,
-      "prerequisites": ["karamja"],
+      "prerequisites": ["karamja", "jungle_potion"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tai Bwo Wannai Trio" }
     },
     {
@@ -2566,7 +2566,7 @@
       "id": "troll_stronghold",
       "displayName": "Troll Stronghold",
       "tier": 2,
-      "prerequisites": ["burthorpe"],
+      "prerequisites": ["burthorpe", "death_plateau"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Troll Stronghold" }
     },
     {
@@ -2574,7 +2574,7 @@
       "id": "shades_of_mortton",
       "displayName": "Shades of Mort'ton",
       "tier": 2,
-      "prerequisites": ["southern_morytania"],
+      "prerequisites": ["southern_morytania", "druidic_ritual"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Shades of Mort'ton" }
     },
     {
@@ -2598,7 +2598,7 @@
       "id": "throne_of_miscellania",
       "displayName": "Throne of Miscellania",
       "tier": 3,
-      "prerequisites": ["fremennik_isles"],
+      "prerequisites": ["fremennik_isles", "the_fremennik_trials"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Throne of Miscellania" }
     },
     {
@@ -2606,7 +2606,7 @@
       "id": "monkey_madness_i",
       "displayName": "Monkey Madness I",
       "tier": 4,
-      "prerequisites": ["ape_atoll"],
+      "prerequisites": ["ape_atoll", "gnome_stronghold", "the_grand_tree"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Monkey Madness I" }
     },
     {
@@ -2638,7 +2638,7 @@
       "id": "creature_of_fenkenstrain",
       "displayName": "Creature of Fenkenstrain",
       "tier": 2,
-      "prerequisites": ["canifis"],
+      "prerequisites": ["haunted_wood"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Creature of Fenkenstrain" }
     },
     {
@@ -2646,7 +2646,7 @@
       "id": "roving_elves",
       "displayName": "Roving Elves",
       "tier": 3,
-      "prerequisites": ["isafdar"],
+      "prerequisites": ["isafdar", "regicide"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Roving Elves" }
     },
     {
@@ -2662,7 +2662,7 @@
       "id": "one_small_favour",
       "displayName": "One Small Favour",
       "tier": 3,
-      "prerequisites": ["karamja"],
+      "prerequisites": ["karamja", "shilo_village", "rune_mysteries"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "One Small Favour" }
     },
     {
@@ -2670,7 +2670,7 @@
       "id": "mountain_daughter",
       "displayName": "Mountain Daughter",
       "tier": 2,
-      "prerequisites": ["rellekka"],
+      "prerequisites": ["rellekka", "the_fremennik_trials"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Mountain Daughter" }
     },
     {
@@ -2678,7 +2678,7 @@
       "id": "between_a_rock",
       "displayName": "Between a Rock...",
       "tier": 3,
-      "prerequisites": ["rellekka"],
+      "prerequisites": ["rellekka", "the_giant_dwarf"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Between a Rock..." }
     },
     {
@@ -2702,7 +2702,7 @@
       "id": "desert_treasure_i",
       "displayName": "Desert Treasure I",
       "tier": 4,
-      "prerequisites": ["desert"],
+      "prerequisites": ["desert", "the_dig_site", "temple_of_ikov", "the_tourist_trap", "troll_stronghold", "priest_in_peril", "waterfall_quest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Desert Treasure I" }
     },
     {
@@ -2750,7 +2750,7 @@
       "id": "mournings_end_part_i",
       "displayName": "Mourning's End Part I",
       "tier": 4,
-      "prerequisites": ["isafdar"],
+      "prerequisites": ["isafdar", "roving_elves"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Mourning's End Part I" }
     },
     {
@@ -2758,7 +2758,7 @@
       "id": "forgettable_tale",
       "displayName": "Forgettable Tale...",
       "tier": 2,
-      "prerequisites": ["rellekka"],
+      "prerequisites": ["rellekka", "the_giant_dwarf", "fishing_contest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Forgettable Tale..." }
     },
     {
@@ -2774,7 +2774,7 @@
       "id": "a_tail_of_two_cats",
       "displayName": "A Tail of Two Cats",
       "tier": 2,
-      "prerequisites": ["burthorpe"],
+      "prerequisites": ["burthorpe", "icthlarin's_little_helper"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "A Tail of Two Cats" }
     },
     {
@@ -2782,7 +2782,7 @@
       "id": "wanted!",
       "displayName": "Wanted!",
       "tier": 2,
-      "prerequisites": ["falador"],
+      "prerequisites": ["falador", "recruitment_drive"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Wanted!" }
     },
     {
@@ -2790,7 +2790,7 @@
       "id": "mournings_end_part_ii",
       "displayName": "Mourning's End Part II",
       "tier": 4,
-      "prerequisites": ["isafdar"],
+      "prerequisites": ["isafdar", "mourning's_end_part_i"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Mourning's End Part II" }
     },
     {
@@ -2798,7 +2798,7 @@
       "id": "rum_deal",
       "displayName": "Rum Deal",
       "tier": 3,
-      "prerequisites": ["port_phasmatys"],
+      "prerequisites": ["zogre_flesh_eaters", "port_phasmatys"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Rum Deal" }
     },
     {
@@ -2806,7 +2806,7 @@
       "id": "shadow_of_the_storm",
       "displayName": "Shadow of the Storm",
       "tier": 2,
-      "prerequisites": ["al_kharid"],
+      "prerequisites": ["the_golem"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Shadow of the Storm" }
     },
     {
@@ -2814,7 +2814,7 @@
       "id": "making_history",
       "displayName": "Making History",
       "tier": 2,
-      "prerequisites": ["ardougne"],
+      "prerequisites": ["observatory_quest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Making History" }
     },
     {
@@ -2822,7 +2822,7 @@
       "id": "ratcatchers",
       "displayName": "Ratcatchers",
       "tier": 2,
-      "prerequisites": ["varrock"],
+      "prerequisites": ["varrock", "icthlarin's_little_helper"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Ratcatchers" }
     },
     {
@@ -2838,7 +2838,7 @@
       "id": "devious_minds",
       "displayName": "Devious Minds",
       "tier": 3,
-      "prerequisites": ["silvarea"],
+      "prerequisites": ["silvarea", "wanted!", "troll_stronghold", "doric's_quest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Devious Minds" }
     },
     {
@@ -2862,7 +2862,7 @@
       "id": "cabin_fever",
       "displayName": "Cabin Fever",
       "tier": 3,
-      "prerequisites": ["port_phasmatys"],
+      "prerequisites": ["rum_deal, pirate's_treasure"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Cabin Fever" }
     },
     {
@@ -2875,18 +2875,10 @@
     },
     {
       "type": "quest",
-      "id": "recipe_for_disaster",
-      "displayName": "Recipe for Disaster",
-      "tier": 3,
-      "prerequisites": ["lumbridge, cooks_assistant"],
-      "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Recipe for Disaster" }
-    },
-    {
-      "type": "quest",
       "id": "in_aid_of_the_myreque",
       "displayName": "In Aid of the Myreque",
       "tier": 2,
-      "prerequisites": ["canifis"],
+      "prerequisites": ["in_search_of_the_myreque"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "In Aid of the Myreque" }
     },
     {
@@ -2918,7 +2910,7 @@
       "id": "royal_trouble",
       "displayName": "Royal Trouble",
       "tier": 3,
-      "prerequisites": ["fremennik_isles"],
+      "prerequisites": ["fremennik_isles", "throne_of_miscellania"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Royal Trouble" }
     },
     {
@@ -2950,7 +2942,7 @@
       "id": "the_eyes_of_glouphrie",
       "displayName": "The Eyes of Glouphrie",
       "tier": 2,
-      "prerequisites": ["gnome_stronghold"],
+      "prerequisites": ["gnome_stronghold", "the_grand_tree"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Eyes of Glouphrie" }
     },
     {
@@ -2958,7 +2950,7 @@
       "id": "darkness_of_hallowvale",
       "displayName": "Darkness of Hallowvale",
       "tier": 3,
-      "prerequisites": ["southern_morytania"],
+      "prerequisites": ["southern_morytania", "in_aid_of_the_myreque", "nature_spirit"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Darkness of Hallowvale" }
     },
     {
@@ -2966,7 +2958,7 @@
       "id": "the_slug_menace",
       "displayName": "The Slug Menace",
       "tier": 2,
-      "prerequisites": ["falador"],
+      "prerequisites": ["falador", "wanted!"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Slug Menace" }
     },
     {
@@ -2974,7 +2966,7 @@
       "id": "elemental_workshop_ii",
       "displayName": "Elemental Workshop II",
       "tier": 2,
-      "prerequisites": ["camelot_seers"],
+      "prerequisites": ["camelot_seers", "elemental_workshop_i"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Elemental Workshop II" }
     },
     {
@@ -2982,7 +2974,7 @@
       "id": "my_arms_big_adventure",
       "displayName": "My Arm's Big Adventure",
       "tier": 3,
-      "prerequisites": ["trollheim"],
+      "prerequisites": ["trollheim", "karamja", "eadgars_ruse"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "My Arm's Big Adventure" }
     },
     {
@@ -3030,7 +3022,7 @@
       "id": "the_fremennik_isles",
       "displayName": "The Fremennik Isles",
       "tier": 3,
-      "prerequisites": ["rellekka"],
+      "prerequisites": ["rellekka", "the_fremennik_trials"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Fremennik Isles" }
     },
     {
@@ -3038,7 +3030,7 @@
       "id": "the_great_brain_robbery",
       "displayName": "The Great Brain Robbery",
       "tier": 3,
-      "prerequisites": ["mos_le_harmless"],
+      "prerequisites": ["mos_le_harmless", "creature_of_fenkenstrain", "cabin_fever", "rum_deal"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Great Brain Robbery" }
     },
     {
@@ -3046,7 +3038,7 @@
       "id": "what_lies_below",
       "displayName": "What Lies Below",
       "tier": 2,
-      "prerequisites": ["varrock"],
+      "prerequisites": ["varrock", "rune_mysteries"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "What Lies Below" }
     },
     {
@@ -3054,7 +3046,7 @@
       "id": "olafs_quest",
       "displayName": "Olaf's Quest",
       "tier": 2,
-      "prerequisites": ["rellekka"],
+      "prerequisites": ["rellekka", "the_fremennik_trials"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Olaf's Quest" }
     },
     {
@@ -3078,7 +3070,7 @@
       "id": "grim_tales",
       "displayName": "Grim Tales",
       "tier": 4,
-      "prerequisites": ["taverley"],
+      "prerequisites": ["taverley", "witch_s_house"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Grim Tales" }
     },
     {
@@ -3102,7 +3094,7 @@
       "id": "biohazard",
       "displayName": "Biohazard",
       "tier": 1,
-      "prerequisites": ["ardougne"],
+      "prerequisites": ["ardougne", "plague_city"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Biohazard" }
     },
     {
@@ -3118,7 +3110,7 @@
       "id": "rag_and_bone_man_ii",
       "displayName": "Rag and Bone Man II",
       "tier": 3,
-      "prerequisites": ["silvarea"],
+      "prerequisites": ["silvarea", "rag_and_bone_man_i", "skippy_and_the_mogres", "horror_from_the_deep", "creature_of_fenkenstrain", "waterfall_quest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Rag and Bone Man II" }
     },
     {
@@ -3142,7 +3134,7 @@
       "id": "zogre_flesh_eaters",
       "displayName": "Zogre Flesh Eaters",
       "tier": 2,
-      "prerequisites": ["feldip_hills"],
+      "prerequisites": ["feldip_hills", "big_chompy_bird_hunting"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Zogre Flesh Eaters" }
     },
     {
@@ -3158,7 +3150,7 @@
       "id": "client_of_kourend",
       "displayName": "Client of Kourend",
       "tier": 1,
-      "prerequisites": ["port_piscarilius"],
+      "prerequisites": ["port_piscarilius", "x_marks_the_spot"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Client of Kourend" }
     },
     {
@@ -3166,7 +3158,7 @@
       "id": "the_queen_of_thieves",
       "displayName": "The Queen of Thieves",
       "tier": 2,
-      "prerequisites": ["port_piscarilius"],
+      "prerequisites": ["port_piscarilius", "client_of_kourend", "x_marks_the_spot"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Queen of Thieves" }
     },
     {
@@ -3190,7 +3182,7 @@
       "id": "the_depths_of_despair",
       "displayName": "The Depths of Despair",
       "tier": 2,
-      "prerequisites": ["hosidius"],
+      "prerequisites": ["hosidius", "client_of_kourend", "x_marks_the_spot"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Depths of Despair" }
     },
     {
@@ -3278,7 +3270,7 @@
       "id": "tale_of_the_righteous",
       "displayName": "Tale of the Righteous",
       "tier": 2,
-      "prerequisites": ["shayzien"],
+      "prerequisites": ["shayzien", "client_of_kourend", "x_marks_the_spot"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Tale of the Righteous" }
     },
     {
@@ -3286,7 +3278,7 @@
       "id": "making_friends_with_my_arm",
       "displayName": "Making Friends with My Arm",
       "tier": 4,
-      "prerequisites": ["trollheim", "troll_romance"],
+      "prerequisites": ["trollheim", "my_arms_big_adventure"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Making Friends with My Arm" }
     },
     {
@@ -3310,7 +3302,7 @@
       "id": "the_ascent_of_arceuus",
       "displayName": "The Ascent of Arceuus",
       "tier": 2,
-      "prerequisites": ["arceuus"],
+      "prerequisites": ["arceuus", "client_of_kourend", "x_marks_the_spot"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Ascent of Arceuus" }
     },
     {
@@ -3318,7 +3310,7 @@
       "id": "the_forsaken_tower",
       "displayName": "The Forsaken Tower",
       "tier": 2,
-      "prerequisites": ["lovakengj"],
+      "prerequisites": ["lovakengj", "client_of_kourend", "x_marks_the_spot"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Forsaken Tower" }
     },
     {
@@ -3390,7 +3382,7 @@
       "id": "beneath_cursed_sands",
       "displayName": "Beneath Cursed Sands",
       "tier": 4,
-      "prerequisites": ["sophanem"],
+      "prerequisites": ["sophanem", "icthlarin's_little_helper"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Beneath Cursed Sands" }
     },
     {
@@ -3398,7 +3390,7 @@
       "id": "temple_of_the_eye",
       "displayName": "Temple of the Eye",
       "tier": 2,
-      "prerequisites": ["al_kharid"],
+      "prerequisites": ["al_kharid", "enter_the_abyss", "rune_mysteries"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Temple of the Eye" }
     },
     {
@@ -3406,7 +3398,7 @@
       "id": "the_path_of_glouphrie",
       "displayName": "The Path of Glouphrie",
       "tier": 3,
-      "prerequisites": ["khazard_battlegrounds"],
+      "prerequisites": ["khazard_battlegrounds", "the_grand_tree", "eyes_of_glouphrie"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Path of Glouphrie" }
     },
     {
@@ -3454,7 +3446,7 @@
       "id": "perilous_moons",
       "displayName": "Perilous Moons",
       "tier": 4,
-      "prerequisites": ["western_varlamore"],
+      "prerequisites": ["western_varlamore", "children_of_the_sun"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Perilous Moons" }
     },
     {
@@ -3486,7 +3478,7 @@
       "id": "the_heart_of_darkness",
       "displayName": "The Heart of Darkness",
       "tier": 3,
-      "prerequisites": ["eastern_varlamore, western_varlamore,proudspire"],
+      "prerequisites": ["eastern_varlamore, western_varlamore,proudspire", "twilight's_promise"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Heart of Darkness" }
     },
     {
@@ -3510,7 +3502,7 @@
       "id": "ethically_acquired_antiquities",
       "displayName": "Ethically Acquired Antiquities",
       "tier": 1,
-      "prerequisites": ["eastern_varlamore, varrock"],
+      "prerequisites": ["eastern_varlamore", "varrock"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Ethically Acquired Antiquities" }
     },
     {
@@ -3518,7 +3510,7 @@
       "id": "the_final_dawn",
       "displayName": "The Final Dawn",
       "tier": 4,
-      "prerequisites": ["tlati_rainforest, western_varlamore, eastern_varlamore, aldarin, proudspire, auburnvale, custodia_mountains"],
+      "prerequisites": ["the_heart_of_darkness", "perilous_moons", "tlati_rainforest", "western_varlamore", "eastern_varlamore", "aldarin", "proudspire", "auburnvale", "custodia_mountains"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Final Dawn" }
     },
     {
@@ -3822,7 +3814,7 @@
       "id": "the_enchanted_key",
       "displayName": "The Enchanted Key",
       "tier": 2,
-      "prerequisites": ["yanille", "ardougne"],
+      "prerequisites": ["yanille", "ardougne", "making_history"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "The Enchanted Key" }
     },
     {
@@ -3838,7 +3830,7 @@
       "id": "family_pest",
       "displayName": "Family Pest",
       "tier": 2,
-      "prerequisites": ["varrock"],
+      "prerequisites": ["varrock", "family_crest"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Family Pest" }
     },
     {
@@ -3854,7 +3846,7 @@
       "id": "in_search_of_knowledge",
       "displayName": "In Search of Knowledge",
       "tier": 3,
-      "prerequisites": ["hosidius", "arceuus", "kourend_woodland"],
+      "prerequisites": ["hosidius", "arceuus", "kourend_woodland", "the_ascent_of_arceuus"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "In Search of Knowledge" }
     },
     {
@@ -3878,7 +3870,7 @@
       "id": "hopespears_will",
       "displayName": "Hopespear's Will",
       "tier": 4,
-      "prerequisites": ["hemenster"],
+      "prerequisites": ["hemenster", "land_of_the_goblins"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "Hopespear's Will" }
     },
     {
@@ -3894,7 +3886,7 @@
       "id": "his_faithful_servants",
       "displayName": "His Faithful Servants",
       "tier": 3,
-      "prerequisites": ["southern_morytania"],
+      "prerequisites": ["southern_morytania", "barrows"],
       "taskLink": { "type": "taskFilter", "taskType": "Quest", "requirementsContains": "His Faithful Servants" }
     },
     {
