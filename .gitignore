@@ -12,6 +12,9 @@ sync_quest_prereqs.py
 boss_tasks.json
 collection_log_items.json
 tasks_for_review.json
+gather_craft_quantity_supplement.json
 achievement_diary_tasks.json
 collection_log_tasks.json
 .cursor/plans
+out/
+tools/
