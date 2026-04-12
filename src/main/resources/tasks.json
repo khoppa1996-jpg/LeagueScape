@@ -37169,1525 +37169,1597 @@
     "f2p": true
   },
   {
-      "displayName":  "Burn 50 Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 150 Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 50 Oak Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 150 Oak Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 50 Willow Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 150 Willow Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 50 Maple Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "corsair_cove, kebos_lowlands, shayzien, kourend_woodland, kingstown, camelot_seers, prifddinas, isle_of_souls, barbarian_waterfall, ardougne, aldarin, auburnvale",
-      "areaRequirement":  "any",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 150 Maple Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "corsair_cove, kebos_lowlands, shayzien, kourend_woodland, kingstown, camelot_seers, prifddinas, isle_of_souls, barbarian_waterfall, ardougne, aldarin, auburnvale",
-      "areaRequirement":  "any",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 50 Yew Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 150 Yew Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Burn 50 Magic Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "gnome_stronghold, lovakengj, kourend_woodland, arceuus, kingstown, hosidius, isafdar, corsair_cove, camelot_seers, deep_wilderness, western_varlamore, aldarin, auburnvale, tlati_rainforest, ardent_se, western_s",
-      "areaRequirement":  "any"
-  },
-  {
-      "displayName":  "Burn 150 Magic Logs",
-      "taskType":  "Firemaking",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "gnome_stronghold, lovakengj, kourend_woodland, arceuus, kingstown, hosidius, isafdar, corsair_cove, camelot_seers, deep_wilderness, western_varlamore, aldarin, auburnvale, tlati_rainforest, ardent_se, western_s",
-      "areaRequirement":  "any"
-  },
+    "displayName": "Burn 50 Logs",
+    "taskType": "Firemaking",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 150 Logs",
+    "taskType": "Firemaking",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 50 Oak Logs",
+    "taskType": "Firemaking",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 150 Oak Logs",
+    "taskType": "Firemaking",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 50 Willow Logs",
+    "taskType": "Firemaking",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 150 Willow Logs",
+    "taskType": "Firemaking",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 50 Maple Logs",
+    "taskType": "Firemaking",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "corsair_cove, kebos_lowlands, shayzien, kourend_woodland, kingstown, camelot_seers, prifddinas, isle_of_souls, barbarian_waterfall, ardougne, aldarin, auburnvale",
+    "areaRequirement": "any",
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 150 Maple Logs",
+    "taskType": "Firemaking",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "corsair_cove, kebos_lowlands, shayzien, kourend_woodland, kingstown, camelot_seers, prifddinas, isle_of_souls, barbarian_waterfall, ardougne, aldarin, auburnvale",
+    "areaRequirement": "any",
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 50 Yew Logs",
+    "taskType": "Firemaking",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 150 Yew Logs",
+    "taskType": "Firemaking",
+    "difficulty": 5,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Burn 50 Magic Logs",
+    "taskType": "Firemaking",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "gnome_stronghold, lovakengj, kourend_woodland, arceuus, kingstown, hosidius, isafdar, corsair_cove, camelot_seers, deep_wilderness, western_varlamore, aldarin, auburnvale, tlati_rainforest, ardent_se, western_s",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Burn 150 Magic Logs",
+    "taskType": "Firemaking",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "gnome_stronghold, lovakengj, kourend_woodland, arceuus, kingstown, hosidius, isafdar, corsair_cove, camelot_seers, deep_wilderness, western_varlamore, aldarin, auburnvale, tlati_rainforest, ardent_se, western_s",
+    "areaRequirement": "any"
+  },
   {
-      "displayName":  "Smelt 50 Bronze Bars",
-      "taskType":  "Smithing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Smelt 50 Bronze Bars",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 150 Bronze Bars",
-      "taskType":  "Smithing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
-  },
-  {
-      "displayName":  "Smelt 50 Iron Bars",
-      "taskType":  "Smithing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Smelt 150 Bronze Bars",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Smelt 50 Iron Bars",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 150 Iron Bars",
-      "taskType":  "Smithing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Smelt 150 Iron Bars",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 50 Steel Bars",
-      "taskType":  "Smithing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Smelt 50 Steel Bars",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 150 Steel Bars",
-      "taskType":  "Smithing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Smelt 150 Steel Bars",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 50 Gold Bars",
-      "taskType":  "Smithing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Smelt 50 Gold Bars",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 150 Gold Bars",
-      "taskType":  "Smithing",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Smelt 150 Gold Bars",
+    "taskType": "Smithing",
+    "difficulty": 4,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 50 Mithril Bars",
-      "taskType":  "Smithing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Smelt 50 Mithril Bars",
+    "taskType": "Smithing",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 150 Mithril Bars",
-      "taskType":  "Smithing",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Smelt 150 Mithril Bars",
+    "taskType": "Smithing",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 50 Adamantite Bars",
-      "taskType":  "Smithing",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "f2p":  true
+    "displayName": "Smelt 50 Adamantite Bars",
+    "taskType": "Smithing",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 150 Adamantite Bars",
-      "taskType":  "Smithing",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "f2p":  true
+    "displayName": "Smelt 150 Adamantite Bars",
+    "taskType": "Smithing",
+    "difficulty": 5,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 50 Runite Bars",
-      "taskType":  "Smithing",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "81-90",
-      "area":  "fremennik_isles, unquiet, shrouded_w, fossil_island, northwestern_wilderness, northern_e, taverley, isafdar, isle_of_souls, deep_wilderness, falador, ardougne, corsair_cove, proudspire, musa_point, custodia_mountains, prifddinas, western_n",
-      "areaRequirement":  "any",
-      "f2p":  true
+    "displayName": "Smelt 50 Runite Bars",
+    "taskType": "Smithing",
+    "difficulty": 5,
+    "requirements": "81-90",
+    "onceOnly": true,
+    "area": "fremennik_isles, unquiet, shrouded_w, fossil_island, northwestern_wilderness, northern_e, taverley, isafdar, isle_of_souls, deep_wilderness, falador, ardougne, corsair_cove, proudspire, musa_point, custodia_mountains, prifddinas, western_n",
+    "areaRequirement": "any",
+    "f2p": true
   },
   {
-      "displayName":  "Smelt 100 Runite Bars",
-      "taskType":  "Smithing",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "81-90",
-      "area":  "fremennik_isles, unquiet, shrouded_w, fossil_island, northwestern_wilderness, northern_e, taverley, isafdar, isle_of_souls, deep_wilderness, falador, ardougne, corsair_cove, proudspire, musa_point, custodia_mountains, prifddinas, western_n",
-      "areaRequirement":  "any",
-      "f2p":  true
+    "displayName": "Smelt 100 Runite Bars",
+    "taskType": "Smithing",
+    "difficulty": 5,
+    "requirements": "81-90",
+    "onceOnly": true,
+    "area": "fremennik_isles, unquiet, shrouded_w, fossil_island, northwestern_wilderness, northern_e, taverley, isafdar, isle_of_souls, deep_wilderness, falador, ardougne, corsair_cove, proudspire, musa_point, custodia_mountains, prifddinas, western_n",
+    "areaRequirement": "any",
+    "f2p": true
   },
-  {
-      "displayName":  "Smelt a Bar in the Darkmeyer Furnace",
-      "taskType":  "Smithing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "area":  "darkmeyer"
+  {
+    "displayName": "Smelt a Bar in the Darkmeyer Furnace",
+    "taskType": "Smithing",
+    "difficulty": 2,
+    "onceOnly": true,
+    "area": "darkmeyer"
   },
   {
-      "displayName":  "Catch 50 Shrimp",
-      "taskType":  "Fishing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Catch 50 Shrimp",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Shrimp",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Catch 150 Shrimp",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Anchovies",
-      "taskType":  "Fishing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Catch 50 Anchovies",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Anchovies",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Catch 150 Anchovies",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Trout",
-      "taskType":  "Fishing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Catch 50 Trout",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Trout",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Catch 150 Trout",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Pike",
-      "taskType":  "Fishing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Catch 50 Pike",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Pike",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Catch 150 Pike",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Salmon",
-      "taskType":  "Fishing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Catch 50 Salmon",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Salmon",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Catch 150 Salmon",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Tuna",
-      "taskType":  "Fishing",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Catch 50 Tuna",
+    "taskType": "Fishing",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Tuna",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Catch 150 Tuna",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Lobsters",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Catch 50 Lobsters",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Lobsters",
-      "taskType":  "Fishing",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Catch 150 Lobsters",
+    "taskType": "Fishing",
+    "difficulty": 4,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Swordfish",
-      "taskType":  "Fishing",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Catch 50 Swordfish",
+    "taskType": "Fishing",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 150 Swordfish",
-      "taskType":  "Fishing",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Catch 150 Swordfish",
+    "taskType": "Fishing",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Catch 50 Monkfish",
-      "taskType":  "Fishing",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Monkfish",
+    "taskType": "Fishing",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 150 Monkfish",
-      "taskType":  "Fishing",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "piscatoris"
+    "displayName": "Catch 150 Monkfish",
+    "taskType": "Fishing",
+    "difficulty": 5,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Sharks",
-      "taskType":  "Fishing",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80"
+    "displayName": "Catch 50 Sharks",
+    "taskType": "Fishing",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true
   },
   {
-      "displayName":  "Catch 150 Sharks",
-      "taskType":  "Fishing",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80"
+    "displayName": "Catch 150 Sharks",
+    "taskType": "Fishing",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true
   },
   {
-      "displayName":  "Cook 50 Shrimp",
-      "taskType":  "Cooking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Cook 50 Shrimp",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Shrimp",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Cook 150 Shrimp",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Anchovies",
-      "taskType":  "Cooking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Cook 50 Anchovies",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Anchovies",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Cook 150 Anchovies",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Trout",
-      "taskType":  "Cooking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Cook 50 Trout",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Trout",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Cook 150 Trout",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Pike",
-      "taskType":  "Cooking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Cook 50 Pike",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Pike",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Cook 150 Pike",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Salmon",
-      "taskType":  "Cooking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Cook 50 Salmon",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Salmon",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Cook 150 Salmon",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Tuna",
-      "taskType":  "Cooking",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Cook 50 Tuna",
+    "taskType": "Cooking",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Tuna",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Cook 150 Tuna",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Lobsters",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Cook 50 Lobsters",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Lobsters",
-      "taskType":  "Cooking",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Cook 150 Lobsters",
+    "taskType": "Cooking",
+    "difficulty": 4,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Swordfish",
-      "taskType":  "Cooking",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Cook 50 Swordfish",
+    "taskType": "Cooking",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 150 Swordfish",
-      "taskType":  "Cooking",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Cook 150 Swordfish",
+    "taskType": "Cooking",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 50 Monkfish",
-      "taskType":  "Cooking",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "piscatoris",
-      "f2p":  false
+    "displayName": "Cook 50 Monkfish",
+    "taskType": "Cooking",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "piscatoris",
+    "f2p": false
   },
   {
-      "displayName":  "Cook 150 Monkfish",
-      "taskType":  "Cooking",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "piscatoris",
-      "f2p":  false
+    "displayName": "Cook 150 Monkfish",
+    "taskType": "Cooking",
+    "difficulty": 5,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "piscatoris",
+    "f2p": false
   },
   {
-      "displayName":  "Cook 50 Sharks",
-      "taskType":  "Cooking",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "f2p":  true
+    "displayName": "Cook 50 Sharks",
+    "taskType": "Cooking",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cook 100 Sharks",
-      "taskType":  "Cooking",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "f2p":  true
+    "displayName": "Cook 100 Sharks",
+    "taskType": "Cooking",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Spin 50 Wool",
-      "taskType":  "Crafting",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Spin 50 Wool",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Spin 150 Wool",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "f2p":  true
+    "displayName": "Spin 150 Wool",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Spin 50 Linen Yarn",
-      "taskType":  "Crafting",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20"
+    "displayName": "Spin 50 Linen Yarn",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true
   },
   {
-      "displayName":  "Spin 150 Linen Yarn",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20"
+    "displayName": "Spin 150 Linen Yarn",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true
   },
   {
-      "displayName":  "Spin 50 Hemp Yarn",
-      "taskType":  "Crafting",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40"
+    "displayName": "Spin 50 Hemp Yarn",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true
   },
   {
-      "displayName":  "Spin 150 Hemp Yarn",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40"
+    "displayName": "Spin 150 Hemp Yarn",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true
   },
   {
-      "displayName":  "Spin 50 Cotton Yarn",
-      "taskType":  "Crafting",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80"
+    "displayName": "Spin 50 Cotton Yarn",
+    "taskType": "Crafting",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true
   },
   {
-      "displayName":  "Spin 150 Cotton Yarn",
-      "taskType":  "Crafting",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80"
+    "displayName": "Spin 150 Cotton Yarn",
+    "taskType": "Crafting",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true
   },
   {
-      "displayName":  "Cut 20 Sapphires",
-      "taskType":  "Crafting",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Cut 20 Sapphires",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 50 Sapphires",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "f2p":  true
+    "displayName": "Cut 50 Sapphires",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 20 Emeralds",
-      "taskType":  "Crafting",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Cut 20 Emeralds",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 50 Emeralds",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "f2p":  true
+    "displayName": "Cut 50 Emeralds",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 20 Rubies",
-      "taskType":  "Crafting",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Cut 20 Rubies",
+    "taskType": "Crafting",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 50 Rubies",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "f2p":  true
+    "displayName": "Cut 50 Rubies",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 20 Diamonds",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Cut 20 Diamonds",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 50 Diamonds",
-      "taskType":  "Crafting",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "f2p":  true
+    "displayName": "Cut 50 Diamonds",
+    "taskType": "Crafting",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 20 Dragonstones",
-      "taskType":  "Crafting",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "f2p":  true
+    "displayName": "Cut 20 Dragonstones",
+    "taskType": "Crafting",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Cut 50 Dragonstones",
-      "taskType":  "Crafting",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "f2p":  true
+    "displayName": "Cut 50 Dragonstones",
+    "taskType": "Crafting",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "f2p": true
   },
   {
-      "displayName":  "Snare 50 Crimson Swifts",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "feldip_hills"
+    "displayName": "Snare 50 Crimson Swifts",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "feldip_hills"
   },
   {
-      "displayName":  "Snare 50 Tropical Wagtails",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "area":  "feldip_hills"
+    "displayName": "Snare 50 Tropical Wagtails",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "feldip_hills"
   },
   {
-      "displayName":  "Catch 20 Spined Larupias",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "feldip_hills"
+    "displayName": "Catch 20 Spined Larupias",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "feldip_hills"
   },
   {
-      "displayName":  "Catch 20 Black Warlocks",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "feldip_hills"
+    "displayName": "Catch 20 Black Warlocks",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "feldip_hills"
   },
   {
-      "displayName":  "Catch 50 Carnivorous Chinchompas",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "Eagles\u0027 Peak, 61-70",
-      "area":  "feldip_hills, prifddinas, western_s",
-      "areaRequirement":  "any"
+    "displayName": "Catch 50 Carnivorous Chinchompas",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "Eagles' Peak, 61-70",
+    "onceOnly": true,
+    "area": "feldip_hills, prifddinas, western_s",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Catch 150 Carnivorous Chinchompas",
-      "taskType":  "Hunter",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "Eagles\u0027 Peak, 61-70",
-      "area":  "feldip_hills, prifddinas, western_s",
-      "areaRequirement":  "any"
+    "displayName": "Catch 150 Carnivorous Chinchompas",
+    "taskType": "Hunter",
+    "difficulty": 5,
+    "requirements": "Eagles' Peak, 61-70",
+    "onceOnly": true,
+    "area": "feldip_hills, prifddinas, western_s",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Catch 20 Golden Warblers",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "uzer_desert"
+    "displayName": "Catch 20 Golden Warblers",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "uzer_desert"
   },
   {
-      "displayName":  "Catch 20 Desert Devils",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "area":  "uzer_desert"
+    "displayName": "Catch 20 Desert Devils",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "uzer_desert"
   },
   {
-      "displayName":  "Catch 20 Orange Salamanders",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "uzer_desert, necropolis"
+    "displayName": "Catch 20 Orange Salamanders",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "uzer_desert, necropolis"
   },
   {
-      "displayName":  "Catch 20 Horned Graahks",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "karamja"
+    "displayName": "Catch 20 Horned Graahks",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "karamja"
   },
   {
-      "displayName":  "Catch 20 Red Salamnders",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "khazard_battlegrounds"
+    "displayName": "Catch 20 Red Salamnders",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "khazard_battlegrounds"
   },
   {
-      "displayName":  "Catch 20 Black Salamanders",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "northeast_wilderness"
+    "displayName": "Catch 20 Black Salamanders",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "northeast_wilderness"
   },
   {
-      "displayName":  "Catch 50 Embertail Jerboas",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "western_varlamore"
+    "displayName": "Catch 50 Embertail Jerboas",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "western_varlamore"
   },
   {
-      "displayName":  "Catch 50 Pyre Foxes",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "eastern_varlamore"
+    "displayName": "Catch 50 Pyre Foxes",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
   },
   {
-      "displayName":  "Catch 50 Sunlight moths",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "eastern_varlamore"
+    "displayName": "Catch 50 Sunlight moths",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
   },
   {
-      "displayName":  "Catch 50 Sunlight Antelopes",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "eastern_varlamore"
+    "displayName": "Catch 50 Sunlight Antelopes",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
   },
   {
-      "displayName":  "Catch 50 Moonlight Moths",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "western_varlamore"
+    "displayName": "Catch 50 Moonlight Moths",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "western_varlamore"
   },
   {
-      "displayName":  "Catch 50 Tecu Salamanders",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "western_varlamore"
+    "displayName": "Catch 50 Tecu Salamanders",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "western_varlamore"
   },
   {
-      "displayName":  "Catch 50 Moonlight Antelopes",
-      "taskType":  "Hunter",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "91-99",
-      "area":  "western_varlamore"
+    "displayName": "Catch 50 Moonlight Antelopes",
+    "taskType": "Hunter",
+    "difficulty": 5,
+    "requirements": "91-99",
+    "onceOnly": true,
+    "area": "western_varlamore"
   },
   {
-      "displayName":  "Catch 50 Polar Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "rellekka"
+    "displayName": "Catch 50 Polar Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "rellekka"
   },
   {
-      "displayName":  "Catch 50 Cerulean Twitches",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "area":  "rellekka"
+    "displayName": "Catch 50 Cerulean Twitches",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "rellekka"
   },
   {
-      "displayName":  "Catch 50 Sapphire Glacialis",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "area":  "rellekka"
-  },
+    "displayName": "Catch 50 Sapphire Glacialis",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "area": "rellekka"
+  },
   {
-      "displayName":  "Catch 50 Snowy Nights",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "rellekka"
-  },
+    "displayName": "Catch 50 Snowy Nights",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "rellekka"
+  },
   {
-      "displayName":  "Catch 50 Sabre-toothed Kyatts",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "rellekka"
-  },
+    "displayName": "Catch 50 Sabre-toothed Kyatts",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "rellekka"
+  },
   {
-      "displayName":  "Catch 50 Swamp Lizards",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "area":  "mort_myre_swamp, slepe",
-      "areaRequirement":  "any"
+    "displayName": "Catch 50 Swamp Lizards",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "area": "mort_myre_swamp, slepe",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Catch 50 Common Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Common Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Copper longtails",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Copper longtails",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Ruby Harvests",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Ruby Harvests",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Wild Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Wild Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Ferrets",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "Eagles\u0027 Peak, 21-30",
-      "area":  "piscatoris",
-      "areaRequirement":  "any"
+    "displayName": "Catch 50 Ferrets",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "Eagles' Peak, 21-30",
+    "onceOnly": true,
+    "area": "piscatoris",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Catch 50 Prickly Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Prickly Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Razor-backed Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Razor-backed Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Grey Chinchompas",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "Eagles\u0027 Peak, 51-60",
-      "area":  "piscatoris, isle_of_souls, kourend_woodland",
-      "areaRequirement":  "any"
+    "displayName": "Catch 50 Grey Chinchompas",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "Eagles' Peak, 51-60",
+    "onceOnly": true,
+    "area": "piscatoris, isle_of_souls, kourend_woodland",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Catch 150 Grey Chinchompas",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "Eagles\u0027 Peak, 51-60",
-      "area":  "piscatoris, isle_of_souls, kourend_woodland",
-      "areaRequirement":  "any"
+    "displayName": "Catch 150 Grey Chinchompas",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "Eagles' Peak, 51-60",
+    "onceOnly": true,
+    "area": "piscatoris, isle_of_souls, kourend_woodland",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Catch 50 Spotted Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Spotted Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 150 Spotted Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "piscatoris"
+    "displayName": "Catch 150 Spotted Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Dark Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Dark Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 150 Dark Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "piscatoris"
+    "displayName": "Catch 150 Dark Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Dashing Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "piscatoris"
+    "displayName": "Catch 50 Dashing Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 150 Dashing Kebbits",
-      "taskType":  "Hunter",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "piscatoris"
+    "displayName": "Catch 150 Dashing Kebbits",
+    "taskType": "Hunter",
+    "difficulty": 5,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "piscatoris"
   },
   {
-      "displayName":  "Catch 50 Black Chinchompas",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "Eagles\u0027 Peak, 71-80",
-      "area":  "north_central_wilderness"
+    "displayName": "Catch 50 Black Chinchompas",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "Eagles' Peak, 71-80",
+    "onceOnly": true,
+    "area": "north_central_wilderness"
   },
   {
-      "displayName":  "Catch 50 Red Crabs",
-      "taskType":  "Hunter",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "area":  "ardent_ne"
+    "displayName": "Catch 50 Red Crabs",
+    "taskType": "Hunter",
+    "difficulty": 2,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "area": "ardent_ne"
   },
   {
-      "displayName":  "Catch 150 Red Crabs",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "21-30",
-      "area":  "ardent_ne"
+    "displayName": "Catch 150 Red Crabs",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true,
+    "area": "ardent_ne"
   },
   {
-      "displayName":  "Catch 50 Blue Crabs",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "unquiet"
+    "displayName": "Catch 50 Blue Crabs",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "unquiet"
   },
   {
-      "displayName":  "Catch 150 Blue Crabs",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "unquiet"
+    "displayName": "Catch 150 Blue Crabs",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "unquiet"
   },
   {
-      "displayName":  "Catch 50 Rainbow Crabs",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "shrouded_w"
+    "displayName": "Catch 50 Rainbow Crabs",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "shrouded_w"
   },
   {
-      "displayName":  "Catch 150 Rainbow Crabs",
-      "taskType":  "Hunter",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "shrouded_w"
+    "displayName": "Catch 150 Rainbow Crabs",
+    "taskType": "Hunter",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "shrouded_w"
   },
   {
-      "displayName":  "Catch 50 Maniacal Monkeys",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "51-60, Monkey Madness II",
-      "area":  "ape_atoll"
+    "displayName": "Catch 50 Maniacal Monkeys",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "51-60, Monkey Madness II",
+    "onceOnly": true,
+    "area": "ape_atoll"
   },
   {
-      "displayName":  "Catch 150 Maniacal Monkeys",
-      "taskType":  "Hunter",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "51-60, Monkey Madness II",
-      "area":  "ape_atoll"
+    "displayName": "Catch 150 Maniacal Monkeys",
+    "taskType": "Hunter",
+    "difficulty": 5,
+    "requirements": "51-60, Monkey Madness II",
+    "onceOnly": true,
+    "area": "ape_atoll"
   },
   {
-      "displayName":  "Catch 50 Eclectic Implings",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50"
+    "displayName": "Catch 50 Eclectic Implings",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true
   },
   {
-      "displayName":  "Catch 150 Eclectic Implings",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50"
+    "displayName": "Catch 150 Eclectic Implings",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true
   },
   {
-      "displayName":  "Catch 50 Nature Implings",
-      "taskType":  "Hunter",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60"
+    "displayName": "Catch 50 Nature Implings",
+    "taskType": "Hunter",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true
   },
   {
-      "displayName":  "Catch 150 Nature Implings",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "51-60"
+    "displayName": "Catch 150 Nature Implings",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true
   },
   {
-      "displayName":  "Catch 10 Ninja Implings",
-      "taskType":  "Hunter",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80"
+    "displayName": "Catch 10 Ninja Implings",
+    "taskType": "Hunter",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true
   },
   {
-      "displayName":  "Pickpocket 50 Lumbridge Citizens",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 50 Lumbridge Citizens",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 150 Lumbridge Citizens",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 150 Lumbridge Citizens",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 50 H.A.M. Members",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 50 H.A.M. Members",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 150 H.A.M. Members",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "11-20",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 150 H.A.M. Members",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 50 Master Farmers",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "draynor, varrock, kebos_lowlands, ardougne, western_varlamore, hosidius, eastern_varlamore, proudspire, tlati_rainforest",
-      "areaRequirement":  "any"
+    "displayName": "Pickpocket 50 Master Farmers",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "draynor, varrock, kebos_lowlands, ardougne, western_varlamore, hosidius, eastern_varlamore, proudspire, tlati_rainforest",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Pickpocket 150 Master Farmers",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "draynor, varrock, kebos_lowlands, ardougne, western_varlamore, hosidius, eastern_varlamore, proudspire, tlati_rainforest",
-      "areaRequirement":  "any"
+    "displayName": "Pickpocket 150 Master Farmers",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "draynor, varrock, kebos_lowlands, ardougne, western_varlamore, hosidius, eastern_varlamore, proudspire, tlati_rainforest",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Pickpocket 50 Farmers",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 50 Farmers",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 150 Farmers",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 150 Farmers",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 50 Rogues",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "deep_wilderness"
+    "displayName": "Pickpocket 50 Rogues",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "deep_wilderness"
   },
   {
-      "displayName":  "Pickpocket 150 Rogues",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40",
-      "area":  "deep_wilderness"
+    "displayName": "Pickpocket 150 Rogues",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true,
+    "area": "deep_wilderness"
   },
   {
-      "displayName":  "Pickpocket 50 Villagers",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 21-30",
-      "area":  "polnivneach_desert"
+    "displayName": "Pickpocket 50 Villagers",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "The Feud, 21-30",
+    "onceOnly": true,
+    "area": "polnivneach_desert"
   },
   {
-      "displayName":  "Pickpocket 150 Villagers",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 21-30",
-      "area":  "polnivneach_desert"
+    "displayName": "Pickpocket 150 Villagers",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "The Feud, 21-30",
+    "onceOnly": true,
+    "area": "polnivneach_desert"
   },
   {
-      "displayName":  "Pickpocket 50 Cave Goblins",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "Lost Tribe, 31-40",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 50 Cave Goblins",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "Lost Tribe, 31-40",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 150 Cave Goblins",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "Lost Tribe, 31-40",
-      "area":  "lumbridge"
+    "displayName": "Pickpocket 150 Cave Goblins",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "Lost Tribe, 31-40",
+    "onceOnly": true,
+    "area": "lumbridge"
   },
   {
-      "displayName":  "Pickpocket 50 Guards",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "31-40"
+    "displayName": "Pickpocket 50 Guards",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true
   },
   {
-      "displayName":  "Pickpocket 150 Guards",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "31-40"
+    "displayName": "Pickpocket 150 Guards",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "31-40",
+    "onceOnly": true
   },
   {
-      "displayName":  "Pickpocket 50 Bearded Bandits",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 41-50",
-      "area":  "polnivneach_desert"
+    "displayName": "Pickpocket 50 Bearded Bandits",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "The Feud, 41-50",
+    "onceOnly": true,
+    "area": "polnivneach_desert"
   },
   {
-      "displayName":  "Pickpocket 150 Bearded Bandits",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 41-50",
-      "area":  "polnivneach_desert"
+    "displayName": "Pickpocket 150 Bearded Bandits",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "The Feud, 41-50",
+    "onceOnly": true,
+    "area": "polnivneach_desert"
   },
   {
-      "displayName":  "Pickpocket 50 Wealthy Citizens",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "eastern_varlamore"
+    "displayName": "Pickpocket 50 Wealthy Citizens",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
   },
   {
-      "displayName":  "Pickpocket 150 Wealthy Citizens",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "41-50",
-      "area":  "eastern_varlamore"
+    "displayName": "Pickpocket 150 Wealthy Citizens",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "41-50",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
   },
   {
-      "displayName":  "Pickpocket 50 Desert Bandits",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "jaldraocht"
+    "displayName": "Pickpocket 50 Desert Bandits",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "jaldraocht"
   },
   {
-      "displayName":  "Pickpocket 150 Desert Bandits",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "jaldraocht"
-  },
+    "displayName": "Pickpocket 150 Desert Bandits",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "jaldraocht"
+  },
   {
-      "displayName":  "Pickpocket 50 Knights of Ardougne",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "ardougne"
-  },
+    "displayName": "Pickpocket 50 Knights of Ardougne",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "ardougne"
+  },
   {
-      "displayName":  "Pickpocket 150 Knights of Ardougne",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "51-60",
-      "area":  "ardougne"
-  },
+    "displayName": "Pickpocket 150 Knights of Ardougne",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "ardougne"
+  },
   {
-      "displayName":  "Pickpocket 50 Fremenniks",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "The Fremennik Trials, 41-50",
-      "area":  "rellekka"
-  },
-  {
-      "displayName":  "Pickpocket 150 Fremenniks",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "The Fremennik Trials, 41-50",
-      "area":  "rellekka"
-  },
-  {
-      "displayName":  "Pickpocket 50 Pollnivnian Bandits",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 41-50",
-      "area":  "polnivneach_desert"
-  },
-  {
-      "displayName":  "Pickpocket 150 Pollnivnian Bandits",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 41-50",
-      "area":  "polnivneach_desert"
-  },
-  {
-      "displayName":  "Pickpocket 50 Pirates",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "47 Sailing, 51-60",
-      "area":  "unquiet, sunset, western_n",
-      "areaRequirement":  "any"
-  },
-  {
-      "displayName":  "Pickpocket 150 Pirates",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "47 Sailing, 51-60",
-      "area":  "unquiet, sunset, western_n",
-      "areaRequirement":  "any"
-  },
-  {
-      "displayName":  "Pickpocket 50 Yanille Watchmen",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "yanille"
-  },
-  {
-      "displayName":  "Pickpocket 150 Yanille Watchmen",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "yanille"
-  },
-  {
-      "displayName":  "Pickpocket 50 Menaphite Thugs",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 61-70",
-      "area":  "polnivneach_desert",
-      "areaRequirement":  "any"
-  },
+    "displayName": "Pickpocket 50 Fremenniks",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "The Fremennik Trials, 41-50",
+    "onceOnly": true,
+    "area": "rellekka"
+  },
+  {
+    "displayName": "Pickpocket 150 Fremenniks",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "The Fremennik Trials, 41-50",
+    "onceOnly": true,
+    "area": "rellekka"
+  },
+  {
+    "displayName": "Pickpocket 50 Pollnivnian Bandits",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "The Feud, 41-50",
+    "onceOnly": true,
+    "area": "polnivneach_desert"
+  },
+  {
+    "displayName": "Pickpocket 150 Pollnivnian Bandits",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "The Feud, 41-50",
+    "onceOnly": true,
+    "area": "polnivneach_desert"
+  },
+  {
+    "displayName": "Pickpocket 50 Pirates",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "47 Sailing, 51-60",
+    "onceOnly": true,
+    "area": "unquiet, sunset, western_n",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Pickpocket 150 Pirates",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "47 Sailing, 51-60",
+    "onceOnly": true,
+    "area": "unquiet, sunset, western_n",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Pickpocket 50 Yanille Watchmen",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "yanille"
+  },
+  {
+    "displayName": "Pickpocket 150 Yanille Watchmen",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "yanille"
+  },
+  {
+    "displayName": "Pickpocket 50 Menaphite Thugs",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "The Feud, 61-70",
+    "onceOnly": true,
+    "area": "polnivneach_desert",
+    "areaRequirement": "any"
+  },
   {
-      "displayName":  "Pickpocket 150 Menaphite Thugs",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "The Feud, 61-70",
-      "area":  "polnivneach_desert",
-      "areaRequirement":  "any"
+    "displayName": "Pickpocket 150 Menaphite Thugs",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "The Feud, 61-70",
+    "onceOnly": true,
+    "area": "polnivneach_desert",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Pickpocket 50 Paladins",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "ardougne"
+    "displayName": "Pickpocket 50 Paladins",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "ardougne"
   },
   {
-      "displayName":  "Pickpocket 150 Paladins",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "61-70",
-      "area":  "ardougne"
+    "displayName": "Pickpocket 150 Paladins",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "61-70",
+    "onceOnly": true,
+    "area": "ardougne"
   },
   {
-      "displayName":  "Pickpocket 50 Gnomes",
-      "taskType":  "Thieving",
-      "difficulty":  4,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "gnome_stronghold, khazard_battlegrounds",
-      "areaRequirement":  "any"
+    "displayName": "Pickpocket 50 Gnomes",
+    "taskType": "Thieving",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "gnome_stronghold, khazard_battlegrounds",
+    "areaRequirement": "any"
   },
   {
-      "displayName":  "Pickpocket 150 Gnomes",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "gnome_stronghold, khazard_battlegrounds",
-      "areaRequirement":  "any"
-  },
-  {
-      "displayName":  "Pickpocket 50 Heroes",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "ardougne"
-  },
-  {
-      "displayName":  "Pickpocket 100 Heroes",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "71-80",
-      "area":  "ardougne"
-  },
-  {
-      "displayName":  "Pickpocket 50 Vyres",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "Sins of the Father, 81-90",
-      "area":  "darkmeyer"
-  },
-  {
-      "displayName":  "Pickpocket 100 Vyres",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "Sins of the Father, 81-90",
-      "area":  "darkmeyer"
-  },
-  {
-      "displayName":  "Pickpocket 50 Elves",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "81-90",
-      "area":  "prifddinas"
-  },
-  {
-      "displayName":  "Pickpocket 100 Elves",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "81-90",
-      "area":  "prifddinas"
-  },
-  {
-      "displayName":  "Pickpocket 50 TzHaar",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "81-90",
-      "area":  "musa_point"
-  },
-  {
-      "displayName":  "Pickpocket 100 TzHaar",
-      "taskType":  "Thieving",
-      "difficulty":  5,
-      "onceOnly":  true,
-      "requirements":  "81-90",
-      "area":  "musa_point"
-  },
-  {
-      "displayName":  "Pickpocket 50 Citizens of Varlamore",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "eastern_varlamore"
-  },
-  {
-      "displayName":  "Pickpocket 150 Citizens of Varlamore",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "eastern_varlamore"
-  },
-  {
-      "displayName":  "Pickpocket 50 Tourists in Varlamore",
-      "taskType":  "Thieving",
-      "difficulty":  2,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "eastern_varlamore"
-  },
-  {
-      "displayName":  "Pickpocket 150 Tourists in Varlamore",
-      "taskType":  "Thieving",
-      "difficulty":  3,
-      "onceOnly":  true,
-      "requirements":  "1-10",
-      "area":  "eastern_varlamore"
+    "displayName": "Pickpocket 150 Gnomes",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "gnome_stronghold, khazard_battlegrounds",
+    "areaRequirement": "any"
+  },
+  {
+    "displayName": "Pickpocket 50 Heroes",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "ardougne"
+  },
+  {
+    "displayName": "Pickpocket 100 Heroes",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "ardougne"
+  },
+  {
+    "displayName": "Pickpocket 50 Vyres",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "Sins of the Father, 81-90",
+    "onceOnly": true,
+    "area": "darkmeyer"
+  },
+  {
+    "displayName": "Pickpocket 100 Vyres",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "Sins of the Father, 81-90",
+    "onceOnly": true,
+    "area": "darkmeyer"
+  },
+  {
+    "displayName": "Pickpocket 50 Elves",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "81-90",
+    "onceOnly": true,
+    "area": "prifddinas"
+  },
+  {
+    "displayName": "Pickpocket 100 Elves",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "81-90",
+    "onceOnly": true,
+    "area": "prifddinas"
+  },
+  {
+    "displayName": "Pickpocket 50 TzHaar",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "81-90",
+    "onceOnly": true,
+    "area": "musa_point"
+  },
+  {
+    "displayName": "Pickpocket 100 TzHaar",
+    "taskType": "Thieving",
+    "difficulty": 5,
+    "requirements": "81-90",
+    "onceOnly": true,
+    "area": "musa_point"
+  },
+  {
+    "displayName": "Pickpocket 50 Citizens of Varlamore",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Pickpocket 150 Citizens of Varlamore",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Pickpocket 50 Tourists in Varlamore",
+    "taskType": "Thieving",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Pickpocket 150 Tourists in Varlamore",
+    "taskType": "Thieving",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true,
+    "area": "eastern_varlamore"
+  },
+  {
+    "displayName": "Complete the Tempor Tantrum at Swordfish rank",
+    "taskType": "Sailing",
+    "difficulty": 1,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "ardent_ne"
+  },
+  {
+    "displayName": "Complete the Tempor Tantrum at Shark Rank",
+    "taskType": "Sailing",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "ardent_ne"
+  },
+  {
+    "displayName": "Complete the Tempor Tantrum at Marlin Rank",
+    "taskType": "Sailing",
+    "difficulty": 3,
+    "requirements": "11-20",
+    "onceOnly": true,
+    "area": "ardent_ne"
+  },
+  {
+    "displayName": "Complete the Jubbly Jive at Swordfish Rank",
+    "taskType": "Sailing",
+    "difficulty": 2,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "shrouded_e"
+  },
+  {
+    "displayName": "Complete the Jubbly Jive at Shark Rank",
+    "taskType": "Sailing",
+    "difficulty": 3,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "shrouded_e"
+  },
+  {
+    "displayName": "Complete the Jubbly Jive at Marlin Rank",
+    "taskType": "Sailing",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true,
+    "area": "shrouded_e"
+  },
+  {
+    "displayName": "Complete the Gwenith Glide at Swordfish Rank",
+    "taskType": "Sailing",
+    "difficulty": 3,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "western_n"
+  },
+  {
+    "displayName": "Complete the Gwenith Glide at Shark Rank",
+    "taskType": "Sailing",
+    "difficulty": 4,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "western_n"
+  },
+  {
+    "displayName": "Complete the Gwenith Glide at Marlin Rank",
+    "taskType": "Sailing",
+    "difficulty": 5,
+    "requirements": "71-80",
+    "onceOnly": true,
+    "area": "western_n"
   }
 ]
