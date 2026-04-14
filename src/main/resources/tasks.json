@@ -304,6 +304,8 @@
     "taskType": "Smithing",
     "difficulty": 2,
     "requirements": "31-40",
+    "area": "sophanem, al_kharid, rimmington, shrouded_w, rellekka, lassar, falador, proudspire, gnome_stronghold, isle_of_souls, musa_point, fremennik_isles, aldarin, prifddinas, unquiet, eastern_varlamore, tlati_rainforest, deep_wilderness, ardougne",
+    "areaRequirement": "any",
     "f2p": true
   },
   {
@@ -489,25 +491,33 @@
     "taskType": "Crafting",
     "difficulty": 1,
     "requirements": "1-10",
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any",
     "f2p": true
   },
   {
     "displayName": "Spin some Linen Yarn",
     "taskType": "Crafting",
     "difficulty": 1,
-    "requirements": "11-20"
+    "requirements": "11-20",
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin some Hemp Yarn",
     "taskType": "Crafting",
     "difficulty": 1,
-    "requirements": "31-40"
+    "requirements": "31-40",
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin some Cotton Yarn",
     "taskType": "Crafting",
     "difficulty": 3,
-    "requirements": "71-80"
+    "requirements": "71-80",
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Cut a Sapphire",
@@ -12362,7 +12372,7 @@
     "taskType": "Hunter",
     "difficulty": 3,
     "requirements": "Eagles' Peak, 61-70",
-    "area": "feldip_hills, prifddinas, western_s",
+    "area": "feldip_hills, prifddinas, western_s, unquiet, tlati_rainforest",
     "areaRequirement": "any"
   },
   {
@@ -14110,13 +14120,17 @@
     "displayName": "Spin a Bowstring",
     "taskType": "Crafting",
     "difficulty": 1,
-    "requirements": "1-10"
+    "requirements": "1-10",
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin a Crossbow String",
     "taskType": "Crafting",
     "difficulty": 1,
-    "requirements": "1-10"
+    "requirements": "1-10",
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin a Rope",
@@ -37061,6 +37075,62 @@
     "onceOnly": true
   },
   {
+    "displayName": "Fletch 50 Shortbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 2,
+    "requirements": "1-10",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fletch 50 Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 3,
+    "requirements": "1-10",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fletch 50 Oak Shortbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 2,
+    "requirements": "11-20",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fletch 50 Oak Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 3,
+    "requirements": "21-30",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fletch 50 Willow Shortbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 3,
+    "requirements": "31-40",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fletch 50 Willow Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 4,
+    "requirements": "31-40",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fletch 50 Maple Shortbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 3,
+    "requirements": "41-50",
+    "onceOnly": true
+  },
+  {
+    "displayName": "Fletch 50 Maple Longbow(u)",
+    "taskType": "Fletching",
+    "difficulty": 4,
+    "requirements": "51-60",
+    "onceOnly": true
+  },
+  {
     "displayName": "Chop 150 Logs",
     "taskType": "Woodcutting",
     "difficulty": 3,
@@ -37323,6 +37393,8 @@
     "taskType": "Smithing",
     "difficulty": 3,
     "requirements": "31-40",
+    "area": "sophanem, al_kharid, rimmington, shrouded_w, rellekka, lassar, falador, proudspire, gnome_stronghold, isle_of_souls, musa_point, fremennik_isles, aldarin, prifddinas, unquiet, eastern_varlamore, tlati_rainforest, deep_wilderness, ardougne",
+    "areaRequirement": "any",
     "onceOnly": true,
     "f2p": true
   },
@@ -37331,6 +37403,8 @@
     "taskType": "Smithing",
     "difficulty": 4,
     "requirements": "31-40",
+    "area": "sophanem, al_kharid, rimmington, shrouded_w, rellekka, lassar, falador, proudspire, gnome_stronghold, isle_of_souls, musa_point, fremennik_isles, aldarin, prifddinas, unquiet, eastern_varlamore, tlati_rainforest, deep_wilderness, ardougne",
+    "areaRequirement": "any",
     "onceOnly": true,
     "f2p": true
   },
@@ -37385,13 +37459,6 @@
     "area": "fremennik_isles, unquiet, shrouded_w, fossil_island, northwestern_wilderness, northern_e, taverley, isafdar, isle_of_souls, deep_wilderness, falador, ardougne, corsair_cove, proudspire, musa_point, custodia_mountains, prifddinas, western_n",
     "areaRequirement": "any",
     "f2p": true
-  },
-  {
-    "displayName": "Smelt a Bar in the Darkmeyer Furnace",
-    "taskType": "Smithing",
-    "difficulty": 2,
-    "onceOnly": true,
-    "area": "darkmeyer"
   },
   {
     "displayName": "Catch 50 Shrimp",
@@ -37719,7 +37786,9 @@
     "difficulty": 2,
     "requirements": "1-10",
     "onceOnly": true,
-    "f2p": true
+    "f2p": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin 150 Wool",
@@ -37727,49 +37796,63 @@
     "difficulty": 3,
     "requirements": "1-10",
     "onceOnly": true,
-    "f2p": true
+    "f2p": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin 50 Linen Yarn",
     "taskType": "Crafting",
     "difficulty": 2,
     "requirements": "11-20",
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin 150 Linen Yarn",
     "taskType": "Crafting",
     "difficulty": 3,
     "requirements": "11-20",
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin 50 Hemp Yarn",
     "taskType": "Crafting",
     "difficulty": 2,
     "requirements": "31-40",
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin 150 Hemp Yarn",
     "taskType": "Crafting",
     "difficulty": 3,
     "requirements": "31-40",
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin 50 Cotton Yarn",
     "taskType": "Crafting",
     "difficulty": 4,
     "requirements": "71-80",
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Spin 150 Cotton Yarn",
     "taskType": "Crafting",
     "difficulty": 5,
     "requirements": "71-80",
-    "onceOnly": true
+    "onceOnly": true,
+    "area": "lumbridge, fremennik_isles, isafdar, prifddinas, rellekka, sophanem, edgeville, kingstown, ardougne, falador, gnome_stronghold, rimmington, camelot_seers, proudspire, auburnvale, ruins_of_unkah, fossil_island, isle_of_souls, shrouded_e",
+    "areaRequirement":"any"
   },
   {
     "displayName": "Cut 20 Sapphires",
@@ -37889,7 +37972,7 @@
     "difficulty": 4,
     "requirements": "Eagles' Peak, 61-70",
     "onceOnly": true,
-    "area": "feldip_hills, prifddinas, western_s",
+    "area": "feldip_hills, prifddinas, western_s, unquiet, tlati_rainforest",
     "areaRequirement": "any"
   },
   {
@@ -37898,7 +37981,7 @@
     "difficulty": 5,
     "requirements": "Eagles' Peak, 61-70",
     "onceOnly": true,
-    "area": "feldip_hills, prifddinas, western_s",
+    "area": "feldip_hills, prifddinas, western_s, unquiet, tlati_rainforest",
     "areaRequirement": "any"
   },
   {
