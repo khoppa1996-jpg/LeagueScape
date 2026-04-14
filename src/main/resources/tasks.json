@@ -38844,5 +38844,56 @@
     "requirements": "71-80",
     "onceOnly": true,
     "area": "western_n"
+  },
+  {
+    "displayName": "Cry in a Wheat Field",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Sit by a River",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Jig in a Fairy Ring",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Jump for Joy on a Castle Roof",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "onceOnly": true,
+    "area": "lumbridge, varrock, falador, ardougne, camelot_seers, kingstown, haunted_wood",
+    "areaRequirement": "any",
+    "f2p": true
+  },
+  {
+    "displayName": "Blow a Kiss under a tree",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Dance at a crossroads",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "onceOnly": true,
+    "f2p": true
+  },
+  {
+    "displayName": "Panic underground",
+    "taskType": "Activity",
+    "difficulty": 1,
+    "onceOnly": true,
+    "f2p": true
   }
 ]
