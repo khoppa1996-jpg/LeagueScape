@@ -60,6 +60,11 @@ public class WorldUnlockService
 		"worldUnlockQuestMultiplier",
 		"worldUnlockAchievementDiaryMultiplier"
 	};
+	/**
+	 * Relative weight for assigning a <em>higher</em> skill bracket when the same skill still has a
+	 * <b>lower</b> bracket revealed on the grid but not claimed (vs weight {@code 1.0} for other eligible tiles).
+	 */
+	private static final double SKILL_NEXT_BRACKET_WHILE_LOWER_UNCLAIMED_WEIGHT = 0.12;
 
 	private final ConfigManager configManager;
 	private final GridScapeConfig config;
@@ -197,6 +202,9 @@ public class WorldUnlockService
 	 * unlocked area prerequisite), 10% neighbor area (from areas.json adjacency to an unlocked area only), 10% boss
 	 * (bosses whose prerequisites are satisfied for assignment), 3% achievement diary (unlocked area prerequisite).
 	 * Fallback order matches that priority.
+	 * <p>Skill assignment uses weighted picks: if a skill bracket is already on the grid but not claimed, the next
+	 * higher bracket of that skill is much less likely than other skills’ lower brackets (or other categories), so
+	 * players tend to claim or diversify before the chain advances.
 	 */
 	public List<WorldUnlockTilePlacement> getGrid()
 	{
@@ -356,7 +364,7 @@ public class WorldUnlockService
 
 				// Cumulative thresholds: 65% skill, 12% quest, 10% neighbor area, 10% boss, 3% diary (quest/boss ≥ area).
 				if (roll < 0.65 && !skillTiles.isEmpty())
-					chosen = skillTiles.remove(rng.nextInt(skillTiles.size()));
+					chosen = chooseTileWithSkillBracketWeights(skillTiles, revealedTileIds, claimedIds, rng);
 				else if (roll < 0.77 && !questEligible.isEmpty())
 					chosen = chooseFromLowestTier(questTiles, questEligible, questLowestTier, rng);
 				else if (roll < 0.87 && !areaEligible.isEmpty())
@@ -368,7 +376,7 @@ public class WorldUnlockService
 
 				// Fallback if rolled category was empty: skill → quest → area → boss → diary
 				if (chosen == null && !skillTiles.isEmpty())
-					chosen = skillTiles.remove(rng.nextInt(skillTiles.size()));
+					chosen = chooseTileWithSkillBracketWeights(skillTiles, revealedTileIds, claimedIds, rng);
 				if (chosen == null && !questEligible.isEmpty())
 					chosen = chooseFromLowestTier(questTiles, questEligible, questLowestTier, rng);
 				if (chosen == null && !areaEligible.isEmpty())
@@ -395,7 +403,7 @@ public class WorldUnlockService
 				}
 				if (!stillAvailable.isEmpty())
 				{
-					chosen = stillAvailable.get(rng.nextInt(stillAvailable.size()));
+					chosen = chooseTileWithSkillBracketWeights(stillAvailable, revealedTileIds, claimedIds, rng);
 					skillTiles.remove(chosen);
 					questTiles.remove(chosen);
 					areaTiles.remove(chosen);
@@ -491,6 +499,70 @@ public class WorldUnlockService
 		int i = list.indexOf(tile);
 		if (i < 0) return null;
 		return list.remove(i);
+	}
+
+	/**
+	 * Removes and returns one tile. Skill tiles that continue a chain before a lower revealed bracket is claimed use
+	 * {@link #SKILL_NEXT_BRACKET_WHILE_LOWER_UNCLAIMED_WEIGHT}; non-skill tiles use weight 1.0.
+	 */
+	private WorldUnlockTile chooseTileWithSkillBracketWeights(List<WorldUnlockTile> tiles, Set<String> revealedTileIds, Set<String> claimedIds, Random rng)
+	{
+		if (tiles == null || tiles.isEmpty())
+			return null;
+		int n = tiles.size();
+		double total = 0;
+		double[] weights = new double[n];
+		for (int i = 0; i < n; i++)
+		{
+			WorldUnlockTile t = tiles.get(i);
+			double w = isSkillNextBracketDeprioritized(t, revealedTileIds, claimedIds) ? SKILL_NEXT_BRACKET_WHILE_LOWER_UNCLAIMED_WEIGHT : 1.0;
+			weights[i] = w;
+			total += w;
+		}
+		if (total <= 0)
+			return null;
+		double r = rng.nextDouble() * total;
+		for (int i = 0; i < n; i++)
+		{
+			r -= weights[i];
+			if (r <= 0)
+				return tiles.remove(i);
+		}
+		return tiles.remove(n - 1);
+	}
+
+	/**
+	 * True if {@code candidate} is a skill tile strictly above another tile of the same skill that is already on the grid
+	 * and not yet claimed.
+	 */
+	private boolean isSkillNextBracketDeprioritized(WorldUnlockTile candidate, Set<String> revealedTileIds, Set<String> claimedIds)
+	{
+		if (candidate == null || !WorldUnlockTileType.SKILL.equals(candidate.getType()))
+			return false;
+		TaskLink candLink = candidate.getTaskLink();
+		if (candLink == null || candLink.getSkillName() == null)
+			return false;
+		int candBand = getSkillLevelBand(candidate);
+		if (candBand < 0)
+			return false;
+		String skill = candLink.getSkillName();
+		for (String tileId : revealedTileIds)
+		{
+			if (tileId == null || claimedIds.contains(tileId))
+				continue;
+			WorldUnlockTile onGrid = getTileById(tileId);
+			if (onGrid == null || !WorldUnlockTileType.SKILL.equals(onGrid.getType()))
+				continue;
+			TaskLink link = onGrid.getTaskLink();
+			if (link == null || link.getSkillName() == null)
+				continue;
+			if (!skill.equalsIgnoreCase(link.getSkillName()))
+				continue;
+			int band = getSkillLevelBand(onGrid);
+			if (band >= 0 && band < candBand)
+				return true;
+		}
+		return false;
 	}
 
 	/** Puts tiles that are area type and whose id is in neighborAreaIds at the end, then shuffles each part. Used for ring 1–2 so skills 1–10 fill first. */

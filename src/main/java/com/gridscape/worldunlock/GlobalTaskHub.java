@@ -44,6 +44,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -127,6 +128,12 @@ public final class GlobalTaskHub extends JPanel
 	private final Set<String> disabledAreas = new HashSet<>();
 	/** When true, the hub list only shows tasks with a hub bookmark at that grid cell. */
 	private boolean showBookmarkedOnly;
+	/**
+	 * After "Select all" is turned off, we hide every plank until the user changes a filter.
+	 * Unlike "every value disabled" in the tier/type/area sets alone, this forces an empty list so that
+	 * re-enabling e.g. only Prayer can show rows without tier/area still blocking every row.
+	 */
+	private boolean hubFilterHideAll;
 
 	private Timer searchDebounce;
 	private boolean reloadPosted;
@@ -340,15 +347,82 @@ public final class GlobalTaskHub extends JPanel
 		menu.show(invoker, 0, invoker.getHeight());
 	}
 
+	/** True when every tier, type, and area filter is enabled (nothing in the disabled sets) and we are not in hide-all mode. */
+	private boolean allTierTypeAreaFiltersSelected()
+	{
+		return !hubFilterHideAll && disabledTiers.isEmpty() && disabledTypes.isEmpty() && disabledAreas.isEmpty();
+	}
+
+	private void selectAllTierTypeAreaFilters()
+	{
+		hubFilterHideAll = false;
+		disabledTiers.clear();
+		disabledTypes.clear();
+		disabledAreas.clear();
+	}
+
+	private void deselectAllTierTypeAreaFilters()
+	{
+		disabledTiers.clear();
+		disabledTypes.clear();
+		disabledAreas.clear();
+		for (HubRow r : allRows)
+			disabledTiers.add(r.difficultyTier);
+		Set<String> types = new LinkedHashSet<>();
+		for (HubRow r : allRows)
+			types.add(r.typeStr);
+		disabledTypes.addAll(types);
+		Set<String> areas = new LinkedHashSet<>();
+		for (HubRow r : allRows)
+			for (String a : splitAreaTokens(r.areas))
+				areas.add(a);
+		disabledAreas.addAll(areas);
+		hubFilterHideAll = true;
+	}
+
+	/** When every present value in this dimension is still disabled, that dimension does not narrow the list (wildcard). */
+	private static boolean dimensionIsWildcard(Set<Integer> present, Set<Integer> disabled)
+	{
+		if (present.isEmpty())
+			return true;
+		for (Integer p : present)
+			if (!disabled.contains(p))
+				return false;
+		return true;
+	}
+
+	private static boolean dimensionIsWildcardStr(Set<String> present, Set<String> disabled)
+	{
+		if (present.isEmpty())
+			return true;
+		for (String p : present)
+			if (!disabled.contains(p))
+				return false;
+		return true;
+	}
+
 	private void showFiltersMenu(Component invoker)
 	{
 		final JPopupMenu root = new JPopupMenu();
-		addFilterSectionHeader(root, "Tier");
+		JCheckBoxMenuItem selectAllCb = new JCheckBoxMenuItem("Select all", allTierTypeAreaFiltersSelected());
+		applyMenuHideOnClickFalse(selectAllCb);
+		selectAllCb.addActionListener(e -> {
+			if (selectAllCb.isSelected())
+				selectAllTierTypeAreaFilters();
+			else
+				deselectAllTierTypeAreaFilters();
+			applyFilters();
+			reopenFiltersMenu(root, invoker);
+		});
+		root.add(selectAllCb);
+		root.addSeparator();
 		TreeSet<Integer> tiers = new TreeSet<>();
 		for (HubRow r : allRows)
 			tiers.add(r.difficultyTier);
+		JMenu tierMenu = new JMenu("Tier");
+		applyMenuHideOnClickFalse(tierMenu);
 		if (tiers.isEmpty())
-			addFilterEmptyLine(root, "(no tiers)");
+			addFilterEmptyLine(tierMenu.getPopupMenu(), "(no tiers)");
 		else
 		{
 			for (int tier : tiers)
@@ -362,16 +436,17 @@ public final class GlobalTaskHub extends JPanel
 					else
 						disabledTiers.add(ft);
 				});
-				root.add(cb);
+				tierMenu.add(cb);
 			}
 		}
-		root.addSeparator();
-		addFilterSectionHeader(root, "Type");
+		root.add(tierMenu);
 		Set<String> types = new LinkedHashSet<>();
 		for (HubRow r : allRows)
 			types.add(r.typeStr);
+		JMenu typeMenu = new JMenu("Type");
+		applyMenuHideOnClickFalse(typeMenu);
 		if (types.isEmpty())
-			addFilterEmptyLine(root, "(no types)");
+			addFilterEmptyLine(typeMenu.getPopupMenu(), "(no types)");
 		else
 		{
 			for (String ty : types)
@@ -384,17 +459,18 @@ public final class GlobalTaskHub extends JPanel
 					else
 						disabledTypes.add(ty);
 				});
-				root.add(cb);
+				typeMenu.add(cb);
 			}
 		}
-		root.addSeparator();
-		addFilterSectionHeader(root, "Area");
+		root.add(typeMenu);
 		Set<String> areas = new LinkedHashSet<>();
 		for (HubRow r : allRows)
 			for (String a : splitAreaTokens(r.areas))
 				areas.add(a);
+		JMenu areaMenu = new JMenu("Area");
+		applyMenuHideOnClickFalse(areaMenu);
 		if (areas.isEmpty())
-			addFilterEmptyLine(root, "(no areas)");
+			addFilterEmptyLine(areaMenu.getPopupMenu(), "(no areas)");
 		else
 		{
 			for (String a : areas)
@@ -407,9 +483,10 @@ public final class GlobalTaskHub extends JPanel
 					else
 						disabledAreas.add(a);
 				});
-				root.add(cb);
+				areaMenu.add(cb);
 			}
 		}
+		root.add(areaMenu);
 		root.addSeparator();
 		addFilterSectionHeader(root, "Bookmarks");
 		JCheckBoxMenuItem bookmarkOnly = new JCheckBoxMenuItem("Bookmarked tasks only", showBookmarkedOnly);
@@ -417,16 +494,21 @@ public final class GlobalTaskHub extends JPanel
 		bookmarkOnly.addActionListener(e -> {
 			showBookmarkedOnly = bookmarkOnly.isSelected();
 			applyFilters();
-			if (MENU_ITEM_SET_HIDE_ON_CLICK == null)
-			{
-				SwingUtilities.invokeLater(() -> {
-					if (invoker.isShowing())
-						root.show(invoker, 0, invoker.getHeight());
-				});
-			}
+			reopenFiltersMenu(root, invoker);
 		});
 		root.add(bookmarkOnly);
 		root.show(invoker, 0, invoker.getHeight());
+	}
+
+	private void reopenFiltersMenu(JPopupMenu root, Component invoker)
+	{
+		if (MENU_ITEM_SET_HIDE_ON_CLICK == null)
+		{
+			SwingUtilities.invokeLater(() -> {
+				if (invoker.isShowing())
+					root.show(invoker, 0, invoker.getHeight());
+			});
+		}
 	}
 
 	private void wireFilterCheckbox(JPopupMenu root, Component invoker, JCheckBoxMenuItem cb, Runnable onToggle)
@@ -434,14 +516,9 @@ public final class GlobalTaskHub extends JPanel
 		applyMenuHideOnClickFalse(cb);
 		cb.addActionListener(e -> {
 			onToggle.run();
+			hubFilterHideAll = false;
 			applyFilters();
-			if (MENU_ITEM_SET_HIDE_ON_CLICK == null)
-			{
-				SwingUtilities.invokeLater(() -> {
-					if (invoker.isShowing())
-						root.show(invoker, 0, invoker.getHeight());
-				});
-			}
+			reopenFiltersMenu(root, invoker);
 		});
 	}
 
@@ -505,6 +582,7 @@ public final class GlobalTaskHub extends JPanel
 			allRows.add(new HubRow(t, diffTier, typeStr, areas));
 		}
 		mergeFilterStateWithData();
+		hubFilterHideAll = false;
 		applyFilters();
 	}
 
@@ -544,13 +622,33 @@ public final class GlobalTaskHub extends JPanel
 	{
 		String q = searchField.getText().trim().toLowerCase(Locale.ROOT);
 		List<HubRow> visible = new ArrayList<>();
+		if (hubFilterHideAll)
+		{
+			tileListPanel.removeAll();
+			tileListPanel.revalidate();
+			tileListPanel.repaint();
+			return;
+		}
+		Set<Integer> presentTiers = new HashSet<>();
+		Set<String> presentTypes = new LinkedHashSet<>();
+		Set<String> presentAreas = new LinkedHashSet<>();
 		for (HubRow r : allRows)
 		{
-			if (disabledTiers.contains(r.difficultyTier))
+			presentTiers.add(r.difficultyTier);
+			presentTypes.add(r.typeStr);
+			for (String a : splitAreaTokens(r.areas))
+				presentAreas.add(a);
+		}
+		boolean tierWildcard = dimensionIsWildcard(presentTiers, disabledTiers);
+		boolean typeWildcard = dimensionIsWildcardStr(presentTypes, disabledTypes);
+		boolean areaWildcard = dimensionIsWildcardStr(presentAreas, disabledAreas);
+		for (HubRow r : allRows)
+		{
+			if (!tierWildcard && disabledTiers.contains(r.difficultyTier))
 				continue;
-			if (disabledTypes.contains(r.typeStr))
+			if (!typeWildcard && disabledTypes.contains(r.typeStr))
 				continue;
-			if (!areaRowVisible(r))
+			if (!areaWildcard && !areaRowVisible(r))
 				continue;
 			if (showBookmarkedOnly && !service.isTaskHubBookmarked(r.tile.getRow(), r.tile.getCol()))
 				continue;
