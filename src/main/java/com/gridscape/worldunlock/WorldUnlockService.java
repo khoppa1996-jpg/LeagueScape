@@ -65,6 +65,10 @@ public class WorldUnlockService
 	 * <b>lower</b> bracket revealed on the grid but not claimed (vs weight {@code 1.0} for other eligible tiles).
 	 */
 	private static final double SKILL_NEXT_BRACKET_WHILE_LOWER_UNCLAIMED_WEIGHT = 0.12;
+	/** When at least one boss is eligible for the grid, this much of the ring-3+ roll moves from skill to boss (10% → 20% boss, 65% → 55% skill). */
+	private static final double BOSS_REVEAL_BOOST_ROLL_SHARE = 0.10;
+	/** Final mixed fallback: multiply boss weights by this when unplaced bosses remain (stacked with skill-bracket weights). */
+	private static final double BOSS_REVEAL_FALLBACK_WEIGHT_MULTIPLIER = 2.5;
 
 	private final ConfigManager configManager;
 	private final GridScapeConfig config;
@@ -201,7 +205,8 @@ public class WorldUnlockService
 	 * Rings 1–2: only tier-1 skill tiles (levels 1–10). Ring 3+ (weighted roll): 65% skill, 12% quest (requires an
 	 * unlocked area prerequisite), 10% neighbor area (from areas.json adjacency to an unlocked area only), 10% boss
 	 * (bosses whose prerequisites are satisfied for assignment), 3% achievement diary (unlocked area prerequisite).
-	 * Fallback order matches that priority.
+	 * While at least one such boss is waiting to be placed, boss share rises to 20% and skill drops to 55%.
+	 * Fallback order matches that priority; the all-categories fallback also weights boss tiles more heavily when bosses remain.
 	 * <p>Skill assignment uses weighted picks: if a skill bracket is already on the grid but not claimed, the next
 	 * higher bracket of that skill is much less likely than other skills’ lower brackets (or other categories), so
 	 * players tend to claim or diversify before the chain advances.
@@ -362,14 +367,20 @@ public class WorldUnlockService
 					.collect(Collectors.toList());
 				List<WorldUnlockTile> diaryLowestTier = lowestTierTiles(diaryEligible);
 
-				// Cumulative thresholds: 65% skill, 12% quest, 10% neighbor area, 10% boss, 3% diary (quest/boss ≥ area).
-				if (roll < 0.65 && !skillTiles.isEmpty())
+				// Cumulative thresholds: base 65% / 12% / 10% / 10% / 3%; when bosses are eligible, shift 10% from skill → boss.
+				boolean bossRevealBoost = !bossEligible.isEmpty();
+				double pSkill = bossRevealBoost ? (0.65 - BOSS_REVEAL_BOOST_ROLL_SHARE) : 0.65;
+				double pQuest = pSkill + 0.12;
+				double pArea = pQuest + 0.10;
+				double pBoss = pArea + (bossRevealBoost ? (0.10 + BOSS_REVEAL_BOOST_ROLL_SHARE) : 0.10);
+
+				if (roll < pSkill && !skillTiles.isEmpty())
 					chosen = chooseTileWithSkillBracketWeights(skillTiles, revealedTileIds, claimedIds, rng);
-				else if (roll < 0.77 && !questEligible.isEmpty())
+				else if (roll < pQuest && !questEligible.isEmpty())
 					chosen = chooseFromLowestTier(questTiles, questEligible, questLowestTier, rng);
-				else if (roll < 0.87 && !areaEligible.isEmpty())
+				else if (roll < pArea && !areaEligible.isEmpty())
 					chosen = chooseFromLowestTier(areaTiles, areaEligible, areaLowestTier, rng);
-				else if (roll < 0.97 && !bossEligible.isEmpty())
+				else if (roll < pBoss && !bossEligible.isEmpty())
 					chosen = chooseFromLowestTier(bossTiles, bossEligible, bossLowestTier, rng);
 				else if (!diaryEligible.isEmpty())
 					chosen = chooseFromLowestTier(otherNonSkillTiles, diaryEligible, diaryLowestTier, rng);
@@ -403,7 +414,8 @@ public class WorldUnlockService
 				}
 				if (!stillAvailable.isEmpty())
 				{
-					chosen = chooseTileWithSkillBracketWeights(stillAvailable, revealedTileIds, claimedIds, rng);
+					double bossMult = bossTiles.isEmpty() ? 1.0 : BOSS_REVEAL_FALLBACK_WEIGHT_MULTIPLIER;
+					chosen = chooseTileWithRevealWeights(stillAvailable, revealedTileIds, claimedIds, rng, bossMult);
 					skillTiles.remove(chosen);
 					questTiles.remove(chosen);
 					areaTiles.remove(chosen);
@@ -503,9 +515,14 @@ public class WorldUnlockService
 
 	/**
 	 * Removes and returns one tile. Skill tiles that continue a chain before a lower revealed bracket is claimed use
-	 * {@link #SKILL_NEXT_BRACKET_WHILE_LOWER_UNCLAIMED_WEIGHT}; non-skill tiles use weight 1.0.
+	 * {@link #SKILL_NEXT_BRACKET_WHILE_LOWER_UNCLAIMED_WEIGHT}; boss tiles use {@code bossPriorityMultiplier} on top when &gt; 1.
 	 */
 	private WorldUnlockTile chooseTileWithSkillBracketWeights(List<WorldUnlockTile> tiles, Set<String> revealedTileIds, Set<String> claimedIds, Random rng)
+	{
+		return chooseTileWithRevealWeights(tiles, revealedTileIds, claimedIds, rng, 1.0);
+	}
+
+	private WorldUnlockTile chooseTileWithRevealWeights(List<WorldUnlockTile> tiles, Set<String> revealedTileIds, Set<String> claimedIds, Random rng, double bossPriorityMultiplier)
 	{
 		if (tiles == null || tiles.isEmpty())
 			return null;
@@ -516,6 +533,8 @@ public class WorldUnlockService
 		{
 			WorldUnlockTile t = tiles.get(i);
 			double w = isSkillNextBracketDeprioritized(t, revealedTileIds, claimedIds) ? SKILL_NEXT_BRACKET_WHILE_LOWER_UNCLAIMED_WEIGHT : 1.0;
+			if (bossPriorityMultiplier > 1.0 && WorldUnlockTileType.BOSS.equals(t.getType()))
+				w *= bossPriorityMultiplier;
 			weights[i] = w;
 			total += w;
 		}
